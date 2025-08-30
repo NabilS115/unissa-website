@@ -57,13 +57,13 @@
                 });
             </script>
         </div>
-        <div class="relative">
-            <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none" onclick="document.getElementById('profileDropdown').classList.toggle('hidden')">
+        <div class="relative group" id="profile-group">
+            <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.001 9.001 0 0112 15c2.21 0 4.21.805 5.879 2.146M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
-            <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden z-50">
+            <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 opacity-0 pointer-events-none z-50">
                 @auth
                     <div class="px-4 py-2 text-black">
                         <div class="font-bold">{{ Auth::user()->name }}</div>
@@ -80,6 +80,37 @@
                     <a href="/register" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Register</a>
                 @endauth
             </div>
+            <style>
+                #profileDropdown {
+                    opacity: 0;
+                    pointer-events: none;
+                }
+                #profile-group.active #profileDropdown {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var group = document.getElementById('profile-group');
+                    var icon = document.getElementById('profileMenuButton');
+                    var dropdown = document.getElementById('profileDropdown');
+                    var timer;
+                    function activate() {
+                        clearTimeout(timer);
+                        group.classList.add('active');
+                    }
+                    function deactivate() {
+                        timer = setTimeout(function() {
+                            group.classList.remove('active');
+                        }, 120);
+                    }
+                    icon.addEventListener('mouseenter', activate);
+                    icon.addEventListener('mouseleave', deactivate);
+                    dropdown.addEventListener('mouseenter', activate);
+                    dropdown.addEventListener('mouseleave', deactivate);
+                });
+            </script>
         </div>
     </div>
     </div>
