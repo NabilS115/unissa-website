@@ -8,7 +8,8 @@
     </div>
     <nav>
         <ul class="flex gap-4 nav-list">
-            <li><a href="#" class="text-white hover:underline nav-link">Home</a></li>
+            <li><a href="/" class="text-white hover:underline nav-link">Home</a></li>
+            <li><a href="/food-list" class="text-white hover:underline nav-link">Catalog</a></li>
             <li><a href="#" class="text-white hover:underline nav-link">About</a></li>
             <li><a href="#" class="text-white hover:underline nav-link">Contact</a></li>
         </ul>
