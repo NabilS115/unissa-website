@@ -8,8 +8,8 @@
     </div>
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
-            <a href="#" class="text-white mb-2 hover:underline">Home</a>
-            <a href="#" class="text-white mb-2 hover:underline">Catalog</a>
+            <a href="/" class="text-white mb-2 hover:underline">Home</a>
+            <a href="/food-list" class="text-white mb-2 hover:underline">Catalog</a>
             <a href="#" class="text-white mb-2 hover:underline">Menu</a>
             <a href="#" class="text-white mb-2 hover:underline">About</a>
             <a href="#" class="text-white hover:underline">Contact us</a>
@@ -24,7 +24,7 @@
             </div>
             <div class="flex items-center gap-2 mb-2">
                 <svg width="20" height="20" fill="currentColor"><rect x="2" y="6" width="16" height="8" rx="2"/></svg>
-                <a href="mailto:somthing@gmail.com" class="underline">somthing@gmail.com</a>
+                <a href="mailto:somthing@gmail.com" class="underline">something@gmail.com</a>
             </div>
             <div class="flex items-center gap-2">
                 <svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8"/><rect x="8" y="14" width="4" height="2"/></svg>
