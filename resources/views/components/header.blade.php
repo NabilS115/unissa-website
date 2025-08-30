@@ -5,30 +5,82 @@
             <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">Something Company</h1>
     </div>
-    <div class="flex-1 flex justify-center items-center">
-        <form class="w-full max-w-md flex" action="#" method="GET">
-            <input type="text" name="search" placeholder="Search..." class="w-full px-4 py-2 rounded-l-md text-black focus:outline-none" />
-            <button type="submit" class="bg-white text-teal-600 px-4 py-2 rounded-r-md font-semibold">Search</button>
-        </form>
-    </div>
-    <nav>
-        <ul class="flex gap-4 nav-list">
-            <li><a href="/" class="text-white hover:underline nav-link">Home</a></li>
-            <li><a href="/food-list" class="text-white hover:underline nav-link">Catalog</a></li>
-            <li><a href="#" class="text-white hover:underline nav-link">About</a></li>
-            <li><a href="#" class="text-white hover:underline nav-link">Contact</a></li>
-        </ul>
-    </nav>
-    <div class="relative ml-12">
+    <div class="flex items-center gap-6 ml-12">
+        <nav>
+            <ul class="flex gap-4 nav-list">
+                <li><a href="/" class="text-white hover:underline nav-link">Home</a></li>
+                <li><a href="/food-list" class="text-white hover:underline nav-link">Catalog</a></li>
+                <li><a href="#" class="text-white hover:underline nav-link">About</a></li>
+                <li><a href="#" class="text-white hover:underline nav-link">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="relative group" id="searchbar-group">
+            <button id="searchbar-icon" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow" style="width:40px;height:40px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-6 h-6">
+                    <circle cx="11" cy="11" r="8" stroke-width="2" stroke="#008080" fill="none"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="#008080" />
+                </svg>
+            </button>
+            <form id="searchbar-dropdown" class="absolute right-0 top-full mt-2 w-96 flex bg-white rounded shadow transition-all duration-300 opacity-0 pointer-events-none z-50" action="#" method="GET">
+                <input type="text" name="search" placeholder="Search..." class="w-full px-4 py-2 rounded-l-md text-black focus:outline-none" />
+                <button type="submit" class="bg-white text-teal-600 px-4 py-2 rounded-r-md font-semibold">Search</button>
+            </form>
+            <style>
+                #searchbar-dropdown {
+                    opacity: 0;
+                    pointer-events: none;
+                }
+                #searchbar-group.active #searchbar-dropdown {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var group = document.getElementById('searchbar-group');
+                    var icon = document.getElementById('searchbar-icon');
+                    var dropdown = document.getElementById('searchbar-dropdown');
+                    var timer;
+                    function activate() {
+                        clearTimeout(timer);
+                        group.classList.add('active');
+                    }
+                    function deactivate() {
+                        timer = setTimeout(function() {
+                            group.classList.remove('active');
+                        }, 120);
+                    }
+                    icon.addEventListener('mouseenter', activate);
+                    icon.addEventListener('mouseleave', deactivate);
+                    dropdown.addEventListener('mouseenter', activate);
+                    dropdown.addEventListener('mouseleave', deactivate);
+                });
+            </script>
+        </div>
+        <div class="relative">
             <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none" onclick="document.getElementById('profileDropdown').classList.toggle('hidden')">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.001 9.001 0 0112 15c2.21 0 4.21.805 5.879 2.146M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
-            <div id="profileDropdown" class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-2 hidden z-50">
-                <a href="/login" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Login</a>
-                <a href="/register" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Register</a>
+            <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden z-50">
+                @auth
+                    <div class="px-4 py-2 text-black">
+                        <div class="font-bold">{{ Auth::user()->name }}</div>
+                        <div class="text-sm text-gray-600">{{ Auth::user()->email }}</div>
+                    </div>
+                    <hr class="my-2">
+                    <a href="/profile" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Profile</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">Logout</button>
+                    </form>
+                @else
+                    <a href="/login" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Login</a>
+                    <a href="/register" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Register</a>
+                @endauth
             </div>
         </div>
+    </div>
     </div>
 </header>
