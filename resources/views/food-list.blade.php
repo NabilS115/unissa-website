@@ -4,12 +4,38 @@
 @section('title', 'Food Catalog - List')
 
 @section('content')
+    
     <section class="w-full h-64 flex flex-col items-center justify-center mb-8 relative">
         <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Food Banner" class="absolute inset-0 w-full h-full object-cover opacity-70">
         <div class="relative z-10 text-center">
         <div class="relative z-10 text-center">
             <h2 class="text-4xl font-extrabold text-white drop-shadow-lg mb-2">Explore Our Food Selection</h2>
             <p class="text-lg text-white drop-shadow-md">Browse 20 delicious dishes from around the world.</p>
+        </div>
+    </section>
+
+    <!-- Search, Filter, Sort Section -->
+    <section class="w-full flex flex-wrap items-center justify-between gap-4 px-8 py-4 mb-8">
+        <div class="flex-1 min-w-[200px]">
+            <input type="text" placeholder="Search food..." class="w-full border border-teal-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400" />
+        </div>
+        <div class="flex items-center gap-4">
+                <label class="text-sm font-medium text-teal-700 mr-1">Category:</label>
+            <select class="border border-teal-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <option value="">All Categories</option>
+                <option value="Pizza">Pizza</option>
+                <option value="Salad">Salad</option>
+                <option value="Meat">Meat</option>
+                <option value="Seafood">Seafood</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Dessert">Dessert</option>
+            </select>
+                <label class="text-sm font-medium text-teal-700 ml-2 mr-1">Sort by:</label>
+            <select class="border border-teal-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <option value="">Sort By</option>
+                <option value="name">Name</option>
+                <option value="category">Category</option>
+            </select>
         </div>
     </section>
 
@@ -49,26 +75,26 @@
         @foreach ($groups as $group => $names)
             <div>
                 <div class="flex items-center mb-6">
-                    <h3 class="ml-20 pr-4 text-lg font-semibold text-teal-700 tracking-wide uppercase bg-white">{{ $group }}</h3>
+                    <h3 class="ml-2 pr-4 text-lg font-semibold text-teal-700 tracking-wide uppercase bg-white">{{ $group }}</h3>
                     <div class="flex-1 border-b border-teal-300 ml-2"></div>
                 </div>
-                <div class="flex flex-wrap justify-center gap-6">
+                <div class="flex flex-wrap justify-start gap-6 ml-8">
                     @foreach ($foods as $food)
                         @if (in_array($food['name'], $names))
-                            <div class="max-w-sm w-80 rounded overflow-hidden shadow-lg bg-white food-card flex flex-col" style="min-height: 420px;">
+                            <div class="max-w-sm w-80 rounded overflow-hidden shadow-lg bg-white food-card flex flex-col" style="min-height: 210px;">
                                 <div class="w-full h-48 food-image relative flex-shrink-0">
-                                    <img src="{{ $food['img'] }}" alt="{{ $food['name'] }}" class="absolute inset-0 w-full h-full object-cover opacity-80" style="height: 192px;">
+                                    <img src="{{ $food['img'] }}" alt="{{ $food['name'] }}" class="absolute inset-0 w-full h-full object-cover opacity-80" style="height: 185px;">
                                 </div>
-                                <div class="px-6 py-4 card-content flex-1 flex flex-col justify-between">
+                                <div class="px-3 py-1 card-content flex-1 flex flex-col justify-between" style="min-height: 32px; height: 32px;">
                                     <div>
-                                        <div class="font-bold text-xl mb-2 card-title">{{ $food['name'] }}</div>
-                                        <p class="text-gray-700 text-base card-description line-clamp-3">
+                                        <div class="font-bold text-base mb-1 card-title">{{ $food['name'] }}</div>
+                                        <p class="text-gray-700 text-xs card-description line-clamp-2">
                                             {{ $food['desc'] }}
                                         </p>
                                     </div>
-                                    <div class="px-0 pt-4 pb-2 tags-section">
+                                    <div class="px-0 pt-2 pb-1 tags-section">
                                         @foreach ($food['tags'] as $tag)
-                                            <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#{{ $tag }}</span>
+                                            <span class="inline-block bg-teal-600 rounded-full px-2 py-0.5 text-xs font-semibold text-white mr-1 tag">#{{ $tag }}</span>
                                         @endforeach
                                     </div>
                                 </div>
