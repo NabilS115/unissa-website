@@ -7,7 +7,7 @@
     
     <section class="w-full flex items-center justify-center mb-8" style="height: 400px;">
     <div class="relative w-full h-full flex items-stretch shadow-lg overflow-hidden" style="height: 400px; border-top-right-radius: 200px; border-bottom-right-radius: 200px; margin-right: 32px;">
-            <div class="absolute inset-0 w-full h-full" style="background: linear-gradient(90deg, #fbbf24 0%, #fbbf24 50%, #22c55e 100%); pointer-events:none;"></div>
+            <div class="absolute inset-0 w-full h-full" style="background: linear-gradient(90deg, #ff5f33ff 10%, #fbbf24 50%, #22c55e 100%); pointer-events:none;"></div>
             <div class="flex-1 flex items-center pl-12 z-10" style="width: 55%;">
                 <div class="text-left">
                     <h1 class="text-[4rem] font-extrabold text-white mb-2 drop-shadow-lg">Something's Food Catalog</h1>
