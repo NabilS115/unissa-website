@@ -5,12 +5,17 @@
 
 @section('content')
     
-    <section class="w-full h-64 flex flex-col items-center justify-center mb-8 relative">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Food Banner" class="absolute inset-0 w-full h-full object-cover opacity-70">
-        <div class="relative z-10 text-center">
-        <div class="relative z-10 text-center">
-            <h2 class="text-4xl font-extrabold text-white drop-shadow-lg mb-2">Explore Our Food Selection</h2>
-            <p class="text-lg text-white drop-shadow-md">Browse 20 delicious dishes from around the world.</p>
+    <section class="w-full flex items-center justify-center mb-8" style="height: 400px;">
+    <div class="relative w-full h-full flex items-stretch shadow-lg overflow-hidden" style="height: 400px; border-top-right-radius: 200px; border-bottom-right-radius: 200px; margin-right: 32px;">
+            <div class="absolute inset-0 w-full h-full" style="background: linear-gradient(90deg, #fbbf24 0%, #fbbf24 50%, #22c55e 100%); pointer-events:none;"></div>
+            <div class="flex-1 flex items-center pl-12 z-10" style="width: 55%;">
+                <div class="text-left">
+                    <h1 class="text-[4rem] font-extrabold text-white mb-2 drop-shadow-lg">Something's Food Catalog</h1>
+                    <h2 class="text-4xl font-bold text-white mb-2 drop-shadow">Discover Wonderful Dishes</h2>
+                    <p class="text-2xl text-white drop-shadow">From local favorites to global cuisine</p>
+                </div>
+            </div>
+            <img src="/nasii-lemak.png" alt="Nasi Lemak" class="object-cover rounded-full z-10" style="height: 360px; width: 360px; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); object-fit: cover;" />
         </div>
     </section>
 
