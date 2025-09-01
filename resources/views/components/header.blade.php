@@ -11,7 +11,7 @@
                 <li><a href="/" class="text-white hover:underline nav-link">Home</a></li>
                 <li><a href="/food-list" class="text-white hover:underline nav-link">Catalog</a></li>
                 <li><a href="#" class="text-white hover:underline nav-link">About</a></li>
-                <li><a href="#" class="text-white hover:underline nav-link">Contact</a></li>
+                <li><a href="/contact" class="text-white hover:underline nav-link">Contact</a></li>
             </ul>
         </nav>
         <div class="relative group" id="searchbar-group">

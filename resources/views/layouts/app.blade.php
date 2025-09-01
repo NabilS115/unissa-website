@@ -56,7 +56,7 @@
             flex-direction: column;
         }
         .main-content {
-            flex: 1;
+            flex: 1 0 auto;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;

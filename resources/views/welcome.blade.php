@@ -13,7 +13,7 @@
         </div>
     </section>
 
-    <main class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content">
+    <main class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
         <!-- Food Cards -->
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
             <div class="w-full h-48 flex items-center justify-center food-image pizza-bg">
