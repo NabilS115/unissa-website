@@ -36,24 +36,31 @@
                 }
             </style>
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var group = document.getElementById('searchbar-group');
-                    var icon = document.getElementById('searchbar-icon');
-                    var dropdown = document.getElementById('searchbar-dropdown');
-                    var timer;
-                    function activate() {
-                        clearTimeout(timer);
-                        group.classList.add('active');
+                document.addEventListener('click', function(e) {
+                    // Toggle dropdowns for search and profile icons
+                    var searchIcon = document.getElementById('searchbar-icon');
+                    var searchGroup = document.getElementById('searchbar-group');
+                    var profileIcon = document.getElementById('profileMenuButton');
+                    var profileGroup = document.getElementById('profile-group');
+                    // Search icon click
+                    if (searchIcon && searchGroup && searchIcon.contains(e.target)) {
+                        // Close other dropdowns
+                        if (profileGroup) profileGroup.classList.remove('active');
+                        searchGroup.classList.toggle('active');
+                        e.stopPropagation();
+                        return;
                     }
-                    function deactivate() {
-                        timer = setTimeout(function() {
-                            group.classList.remove('active');
-                        }, 120);
+                    // Profile icon click
+                    if (profileIcon && profileGroup && profileIcon.contains(e.target)) {
+                        // Close other dropdowns
+                        if (searchGroup) searchGroup.classList.remove('active');
+                        profileGroup.classList.toggle('active');
+                        e.stopPropagation();
+                        return;
                     }
-                    icon.addEventListener('mouseenter', activate);
-                    icon.addEventListener('mouseleave', deactivate);
-                    dropdown.addEventListener('mouseenter', activate);
-                    dropdown.addEventListener('mouseleave', deactivate);
+                    // Click outside closes both
+                    if (searchGroup) searchGroup.classList.remove('active');
+                    if (profileGroup) profileGroup.classList.remove('active');
                 });
             </script>
         </div>
@@ -90,27 +97,6 @@
                     pointer-events: auto;
                 }
             </style>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var group = document.getElementById('profile-group');
-                    var icon = document.getElementById('profileMenuButton');
-                    var dropdown = document.getElementById('profileDropdown');
-                    var timer;
-                    function activate() {
-                        clearTimeout(timer);
-                        group.classList.add('active');
-                    }
-                    function deactivate() {
-                        timer = setTimeout(function() {
-                            group.classList.remove('active');
-                        }, 120);
-                    }
-                    icon.addEventListener('mouseenter', activate);
-                    icon.addEventListener('mouseleave', deactivate);
-                    dropdown.addEventListener('mouseenter', activate);
-                    dropdown.addEventListener('mouseleave', deactivate);
-                });
-            </script>
         </div>
     </div>
     </div>
