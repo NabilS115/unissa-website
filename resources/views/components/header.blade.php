@@ -37,14 +37,14 @@
             </style>
             <script>
                 document.addEventListener('click', function(e) {
-                    // Toggle dropdowns for search and profile icons
                     var searchIcon = document.getElementById('searchbar-icon');
                     var searchGroup = document.getElementById('searchbar-group');
+                    var searchDropdown = document.getElementById('searchbar-dropdown');
                     var profileIcon = document.getElementById('profileMenuButton');
                     var profileGroup = document.getElementById('profile-group');
+                    var profileDropdown = document.getElementById('profileDropdown');
                     // Search icon click
                     if (searchIcon && searchGroup && searchIcon.contains(e.target)) {
-                        // Close other dropdowns
                         if (profileGroup) profileGroup.classList.remove('active');
                         searchGroup.classList.toggle('active');
                         e.stopPropagation();
@@ -52,10 +52,17 @@
                     }
                     // Profile icon click
                     if (profileIcon && profileGroup && profileIcon.contains(e.target)) {
-                        // Close other dropdowns
                         if (searchGroup) searchGroup.classList.remove('active');
                         profileGroup.classList.toggle('active');
                         e.stopPropagation();
+                        return;
+                    }
+                    // Click inside search dropdown
+                    if (searchDropdown && searchDropdown.contains(e.target)) {
+                        return;
+                    }
+                    // Click inside profile dropdown
+                    if (profileDropdown && profileDropdown.contains(e.target)) {
                         return;
                     }
                     // Click outside closes both
