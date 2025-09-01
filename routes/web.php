@@ -27,4 +27,8 @@ Route::get('/food-list', function () {
     return view('food-list');
 });
 
+Route::get('/company-history', function () {
+    return view('company-history');
+});
+
 require __DIR__.'/auth.php';
