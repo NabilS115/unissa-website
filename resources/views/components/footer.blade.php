@@ -26,8 +26,8 @@
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
             <a href="/" class="text-white mb-2 hover:underline">Home</a>
             <a href="/food-list" class="text-white mb-2 hover:underline">Catalog</a>
-            <a href="#" class="text-white mb-2 hover:underline">About</a>
-            <a href="#" class="text-white hover:underline">Contact us</a>
+            <a href="/company-history" class="text-white mb-2 hover:underline">About</a>
+            <a href="/contact" class="text-white hover:underline">Contact</a>
         </div>
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col items-center min-w-[200px]">
             <span class="font-bold mb-2">Follow Us</span>
