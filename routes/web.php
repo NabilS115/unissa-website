@@ -23,6 +23,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin-profile', function () {
         return view('admin-profile');
     })->name('admin.profile');
+    Route::get('/edit-profile', function () {
+        return view('edit-profile');
+    })->name('edit.profile');
+    Route::put('/edit-profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');

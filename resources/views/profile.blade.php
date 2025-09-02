@@ -8,14 +8,18 @@
         <div class="flex items-center gap-4">
             <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-24 h-24 rounded-full object-cover border-4 border-teal-600">
             <div>
-                <div class="text-2xl font-bold text-teal-700">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</div>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold text-teal-700">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</span>
+                    <a href="/edit-profile" class="inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-teal-100 transition" title="Edit Profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24" class="text-teal-700">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13z" />
+                        </svg>
+                    </a>
+                </div>
                 <div class="text-gray-600">Role: {{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</div>
             </div>
         </div>
-        <div class="flex gap-2">
-            <a href="/settings/profile" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Edit Profile</a>
-            <a href="mailto:{{ Auth::user()->email }}" class="bg-gray-200 text-teal-700 px-4 py-2 rounded hover:bg-gray-300">Send Message</a>
-        </div>
+    <!-- Edit button moved to beside name -->
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
