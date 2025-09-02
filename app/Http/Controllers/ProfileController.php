@@ -23,4 +23,19 @@ class ProfileController extends Controller
 
     return Redirect::route('profile')->with('profile-updated', true);
     }
+    
+        public function updatePhoto(Request $request)
+        {
+            $request->validate([
+                'profile_photo' => ['required', 'image', 'max:2048'],
+            ]);
+
+            $user = Auth::user();
+            $file = $request->file('profile_photo');
+            $path = $file->store('profile-photos', 'public');
+            $user->profile_photo_url = \Illuminate\Support\Facades\Storage::url($path);
+            $user->save();
+
+            return Redirect::route('edit.profile')->with('profile-photo-updated', true);
+        }
 }
