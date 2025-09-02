@@ -27,7 +27,9 @@
                     </a>
                     <div class="flex flex-col gap-6 w-full text-center text-black">
                         {{ $slot }}
-                        <a href="{{ route('password.request') }}" class="text-sm text-[#008080] hover:underline mt-2">Forgot Password?</a>
+                        @if (request()->routeIs('login'))
+                            <a href="{{ route('password.request') }}" class="text-sm text-[#008080] hover:underline mt-2">Forgot Password?</a>
+                        @endif
                     </div>
                 </div>
             </div>
