@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Redirect;
 
 class ProfileController extends Controller
 {
+    public function deletePhoto(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->profile_photo_url) {
+            // Remove file from storage if it exists and is not the default
+            $path = str_replace('/storage/', '', $user->profile_photo_url);
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($path);
+            }
+            $user->profile_photo_url = null;
+            $user->save();
+        }
+        return \Illuminate\Support\Facades\Redirect::route('edit.profile')->with('profile-photo-deleted', true);
+    }
     public function update(Request $request)
     {
         $user = Auth::user();
