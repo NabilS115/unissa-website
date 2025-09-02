@@ -20,6 +20,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', function () {
         return view('profile');
     })->name('profile');
+    Route::get('/admin-profile', function () {
+        return view('admin-profile');
+    })->name('admin.profile');
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');

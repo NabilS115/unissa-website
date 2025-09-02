@@ -3,30 +3,86 @@
 @section('title', 'Profile')
 
 @section('content')
-<div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8 mt-8">
-    <h2 class="text-3xl font-bold text-teal-700 mb-4">Profile</h2>
-    <div class="flex flex-col items-center mb-6">
-    <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Default profile icon" class="w-32 h-32 rounded-full object-cover mb-2 border-4 border-teal-600">
-        <form action="/settings/profile/photo" method="POST" enctype="multipart/form-data" class="flex flex-col items-center gap-2">
-            @csrf
-            <label for="profile_photo" class="bg-teal-600 text-white px-3 py-1 rounded cursor-pointer hover:bg-teal-700">Change Photo</label>
-            <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*" onchange="this.form.submit()">
-        </form>
-        @if(Auth::user()->profile_photo_url)
-        <form action="/settings/profile/photo/delete" method="POST" class="mt-2">
-            @csrf
-            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete Photo</button>
-        </form>
-        @endif
+<div class="max-w-3xl mx-auto bg-white rounded-lg shadow p-8 mt-8">
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+            <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-24 h-24 rounded-full object-cover border-4 border-teal-600">
+            <div>
+                <div class="text-2xl font-bold text-teal-700">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</div>
+                <div class="text-gray-600">Role: {{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</div>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <a href="/settings/profile" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Edit Profile</a>
+            <a href="mailto:{{ Auth::user()->email }}" class="bg-gray-200 text-teal-700 px-4 py-2 rounded hover:bg-gray-300">Send Message</a>
+        </div>
     </div>
-    <div class="mb-6">
-        <div class="font-semibold text-lg">Name:</div>
-        <div class="text-gray-700">{{ Auth::user()->name }}</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+            <div class="font-semibold">Faculty / Department:</div>
+            <div class="text-gray-700">{{ Auth::user()->department ?? 'Faculty of Usuluddin' }}</div>
+        </div>
+        <div>
+            <div class="font-semibold">Email:</div>
+            <div class="text-gray-700">{{ Auth::user()->email ?? 'name@unissa.edu.bn' }}</div>
+        </div>
+        <div>
+            <div class="font-semibold">Phone:</div>
+            <div class="text-gray-700">{{ Auth::user()->phone ?? '+673 xxxx xxxx' }}</div>
+        </div>
     </div>
-    <div class="mb-6">
-        <div class="font-semibold text-lg">Email:</div>
-        <div class="text-gray-700">{{ Auth::user()->email }}</div>
+    <div class="mb-4 font-semibold text-lg">Short Bio / Academic Background</div>
+    <div class="mt-8">
+        <div class="font-semibold text-lg mb-4">My Reviews</div>
+        <div class="relative flex items-center justify-center max-w-xl mx-auto">
+            <button onclick="moveReview(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-transparent border border-transparent text-teal-600 hover:bg-teal-600 hover:text-white w-10 h-10 flex items-center justify-center rounded-full z-10 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <div id="reviews-carousel" class="overflow-hidden w-full">
+                <div id="reviews-track" class="flex transition-transform duration-500 ease-in-out" style="width:100%">
+                    <div class="min-w-full px-4">
+                        <div class="bg-white rounded-xl shadow-lg p-6 border flex flex-col gap-2">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-yellow-400 text-2xl">★★★★☆</span>
+                                <span class="text-gray-900 font-medium">"Great quality, fast delivery"</span>
+                            </div>
+                            <div class="text-gray-600 text-sm">Product: Handmade Tote Bag</div>
+                        </div>
+                    </div>
+                    <div class="min-w-full px-4">
+                        <div class="bg-white rounded-xl shadow-lg p-6 border flex flex-col gap-2">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-yellow-400 text-2xl">★★★★★</span>
+                                <span class="text-gray-900 font-medium">"Excellent communication and support."</span>
+                            </div>
+                            <div class="text-gray-600 text-sm">Product: Islamic Book Set</div>
+                        </div>
+                    </div>
+                    <div class="min-w-full px-4">
+                        <div class="bg-white rounded-xl shadow-lg p-6 border flex flex-col gap-2">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-yellow-400 text-2xl">★★★☆☆</span>
+                                <span class="text-gray-900 font-medium">"Product as described, but shipping was slow."</span>
+                            </div>
+                            <div class="text-gray-600 text-sm">Product: Prayer Mat</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="moveReview(1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent border border-transparent text-teal-600 hover:bg-teal-600 hover:text-white w-10 h-10 flex items-center justify-center rounded-full z-10 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </button>
+        </div>
     </div>
-    <a href="/settings/profile" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Edit Profile</a>
+    <script>
+        let currentReview = 0;
+        function moveReview(dir) {
+            const track = document.getElementById('reviews-track');
+            const total = track.children.length;
+            currentReview = Math.max(0, Math.min(currentReview + dir, total - 1));
+            track.style.transform = `translateX(-${currentReview * 100}%)`;
+        }
+    </script>
+</div>
 </div>
 @endsection
