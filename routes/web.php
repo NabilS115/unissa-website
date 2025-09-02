@@ -2,11 +2,12 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
+// contact routes
 Route::get('/contact', function () {
     return view('contact');
 });
 
-
+//homepage routes
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
@@ -15,6 +16,7 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// profile routes
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
     Route::get('/profile', function () {
@@ -33,10 +35,12 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
+// catalog routes
 Route::get('/food-list', function () {
     return view('food-list');
 });
 
+// about routes
 Route::get('/company-history', function () {
     return view('company-history');
 });
