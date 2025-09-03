@@ -26,12 +26,34 @@
                 <button type="submit" class="bg-white text-teal-600 px-4 py-2 rounded-r-md font-semibold">Search</button>
                 <div id="search-suggestions" class="absolute left-0 top-full w-full bg-white border border-teal-200 rounded-b shadow-lg z-50 hidden"></div>
             </form>
+            @php
+$foods = [
+    ['name' => 'Margherita Pizza'],
+    ['name' => 'Veggie Pizza'],
+    ['name' => 'Caesar Salad'],
+    ['name' => 'Greek Salad'],
+    ['name' => 'Beef Burger'],
+    ['name' => 'BBQ Ribs'],
+    ['name' => 'Chicken Curry'],
+    ['name' => 'Chicken Shawarma'],
+    ['name' => 'Sushi Platter'],
+    ['name' => 'Grilled Salmon'],
+    ['name' => 'Shrimp Paella'],
+    ['name' => 'Lobster Bisque'],
+    ['name' => 'Falafel Wrap'],
+    ['name' => 'Vegetable Stir Fry'],
+    ['name' => 'Pad Thai'],
+    ['name' => 'Chocolate Cake'],
+    ['name' => 'Ice Cream Sundae'],
+    ['name' => 'Eggs Benedict'],
+    ['name' => 'Tacos'],
+    ['name' => 'Pasta Carbonara'],
+];
+@endphp
             <script>
+                const suggestions = @json(array_map(fn($f) => $f['name'], $foods));
                 const searchInput = document.getElementById('main-search-input');
                 const suggestionsBox = document.getElementById('search-suggestions');
-                const suggestions = [
-                    'Margherita Pizza', 'Caesar Salad', 'Beef Burger', 'Greek Salad', 'Sushi Platter', 'Pad Thai', 'Tacos', 'Falafel Wrap', 'Grilled Salmon', 'Chicken Curry', 'Pasta Carbonara', 'BBQ Ribs', 'Vegetable Stir Fry', 'Lobster Bisque', 'Eggs Benedict', 'Chicken Shawarma', 'Veggie Pizza', 'Shrimp Paella', 'Chocolate Cake', 'Ice Cream Sundae'
-                ];
                 searchInput.addEventListener('input', function() {
                     const value = this.value.toLowerCase();
                     if (!value) {
