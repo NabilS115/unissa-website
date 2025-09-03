@@ -60,7 +60,7 @@
                     <svg width="24" height="24" viewBox="0 0 320 512" fill="currentColor"><path d="M279.14 288l14.22-92.66h-88.91V127.89c0-25.35 12.42-50.06 52.24-50.06H293V6.26S259.5 0 225.36 0c-73.22 0-121.36 44.38-121.36 124.72V195.3H22.89V288h81.11v224h100.2V288z"/></svg>
                 </a>
                 <a href="#" class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-100 text-teal-600 hover:bg-teal-200 transition" title="X (FKA Twitter)">
-                    <!-- X Official SVG: exact path, themed color -->
+                    <!-- X Official SVG -->
                     <svg width="24" height="24" viewBox="0 0 512 512" fill="none">
                         <path d="M437.252 80H338.748L256 196.252 173.252 80H74.748L208.252 256 74.748 432H173.252L256 315.748 338.748 432h98.504L303.748 256 437.252 80z" fill="#0d9488"/>
                     </svg>
