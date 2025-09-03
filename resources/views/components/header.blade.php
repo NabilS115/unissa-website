@@ -21,10 +21,41 @@
                     <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="#008080" />
                 </svg>
             </button>
-            <form id="searchbar-dropdown" class="absolute right-0 top-full mt-2 w-96 flex bg-white rounded shadow transition-all duration-300 opacity-0 pointer-events-none z-50" action="#" method="GET">
-                <input type="text" name="search" placeholder="Search..." class="w-full px-4 py-2 rounded-l-md text-black focus:outline-none" />
+            <form id="searchbar-dropdown" class="absolute right-0 top-full mt-2 w-96 flex bg-white rounded shadow transition-all duration-300 opacity-0 pointer-events-none z-50" action="{{ route('search') }}" method="GET">
+                <input type="text" name="search" id="main-search-input" placeholder="Search..." class="w-full px-4 py-2 rounded-l-md text-black focus:outline-none" autocomplete="off" />
                 <button type="submit" class="bg-white text-teal-600 px-4 py-2 rounded-r-md font-semibold">Search</button>
+                <div id="search-suggestions" class="absolute left-0 top-full w-full bg-white border border-teal-200 rounded-b shadow-lg z-50 hidden"></div>
             </form>
+            <script>
+                const searchInput = document.getElementById('main-search-input');
+                const suggestionsBox = document.getElementById('search-suggestions');
+                const suggestions = [
+                    'Margherita Pizza', 'Caesar Salad', 'Beef Burger', 'Greek Salad', 'Sushi Platter', 'Pad Thai', 'Tacos', 'Falafel Wrap', 'Grilled Salmon', 'Chicken Curry', 'Pasta Carbonara', 'BBQ Ribs', 'Vegetable Stir Fry', 'Lobster Bisque', 'Eggs Benedict', 'Chicken Shawarma', 'Veggie Pizza', 'Shrimp Paella', 'Chocolate Cake', 'Ice Cream Sundae'
+                ];
+                searchInput.addEventListener('input', function() {
+                    const value = this.value.toLowerCase();
+                    if (!value) {
+                        suggestionsBox.style.display = 'none';
+                        suggestionsBox.innerHTML = '';
+                        return;
+                    }
+                    const filtered = suggestions.filter(s => s.toLowerCase().includes(value));
+                    if (filtered.length) {
+                        suggestionsBox.innerHTML = filtered.map(s => `<div class='px-4 py-2 cursor-pointer hover:bg-teal-50 text-gray-800'>${s}</div>`).join('');
+                        suggestionsBox.style.display = 'block';
+                    } else {
+                        suggestionsBox.style.display = 'none';
+                        suggestionsBox.innerHTML = '';
+                    }
+                });
+                suggestionsBox.addEventListener('mousedown', function(e) {
+                    if (e.target && e.target.textContent) {
+                        searchInput.value = e.target.textContent;
+                        suggestionsBox.style.display = 'none';
+                        suggestionsBox.innerHTML = '';
+                    }
+                });
+            </script>
             <style>
                 #searchbar-dropdown {
                     opacity: 0;

@@ -46,4 +46,6 @@ Route::get('/company-history', function () {
     return view('company-history');
 });
 
+Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
+
 require __DIR__.'/auth.php';

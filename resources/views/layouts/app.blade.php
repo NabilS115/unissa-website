@@ -117,9 +117,11 @@
     </style>
     @yield('head')
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
     @include('components.header')
-    @yield('content')
+    <main class="flex-1">
+        @yield('content')
+    </main>
     @include('components.footer')
 </body>
 </html>
