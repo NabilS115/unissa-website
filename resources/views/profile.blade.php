@@ -11,8 +11,9 @@
                 <div class="flex items-center gap-2">
                     <span class="text-2xl font-bold text-teal-700">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</span>
                     <a href="/edit-profile" class="inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-teal-100 transition" title="Edit Profile">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24" class="text-teal-700">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" class="text-teal-700">
+                            <path d="M3 17.25V21h3.75l11.06-11.06a1.06 1.06 0 0 0-1.5-1.5L6.25 19.5H3z" fill="currentColor"/>
+                            <path d="M14.06 7.94l2 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </a>
                 </div>
