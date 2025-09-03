@@ -125,10 +125,16 @@ $foods = [
             </script>
         </div>
         <div class="relative group" id="profile-group">
-            <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.001 9.001 0 0112 15c2.21 0 4.21.805 5.879 2.146M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+            <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden">
+                @if(Auth::check() && Auth::user()->profile_photo_url)
+                    <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover">
+                @else
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="24" height="24" class="">
+                        <circle cx="20" cy="20" r="18" fill="#fff" stroke="#0d9488" stroke-width="2" />
+                        <circle cx="20" cy="16" r="5" fill="none" stroke="#0d9488" stroke-width="2" />
+                        <path d="M12 30c0-4 8-4 8-4s8 0 8 4" fill="none" stroke="#0d9488" stroke-width="2" />
+                    </svg>
+                @endif
             </button>
             <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 opacity-0 pointer-events-none z-50">
                 @auth

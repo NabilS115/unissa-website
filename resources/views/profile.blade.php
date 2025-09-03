@@ -83,7 +83,7 @@
         function moveReview(dir) {
             const track = document.getElementById('reviews-track');
             const total = track.children.length;
-            currentReview = Math.max(0, Math.min(currentReview + dir, total - 1));
+            currentReview = (currentReview + dir + total) % total;
             track.style.transform = `translateX(-${currentReview * 100}%)`;
         }
     </script>
