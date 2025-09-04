@@ -70,20 +70,33 @@
                 <h2 class="text-white text-3xl font-extrabold tracking-tight">Events</h2>
             </div>
             <div class="w-2/3 flex items-center justify-center relative bg-teal-50 py-8">
-                <!-- Carousel Controls (left) -->
-                <button id="event-carousel-prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded-full bg-white shadow p-2">
-                    &#8249;
-                </button>
                 <!-- Event Images -->
-                <div class="flex justify-center items-center">
-                    <img id="event-carousel-img"
-                        src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80"
-                        alt="Event"
-                        class="w-[32rem] h-64 object-cover rounded-lg border border-teal-200 hover:scale-105 transition-transform duration-200 transition-opacity duration-500 opacity-100">
+                <div class="flex justify-center items-center overflow-hidden w-full h-64">
+                    <div id="event-carousel-track" class="flex transition-transform duration-500 ease-in-out w-full h-full">
+                        <div class="min-w-full h-full flex">
+                            <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
+                                alt="Event 1"
+                                class="w-full h-full object-cover rounded-none transition-transform duration-200">
+                        </div>
+                        <div class="min-w-full h-full flex">
+                            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1600&q=80"
+                                alt="Event 2"
+                                class="w-full h-full object-cover rounded-none transition-transform duration-200">
+                        </div>
+                        <div class="min-w-full h-full flex">
+                            <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80"
+                                alt="Event 3"
+                                class="w-full h-full object-cover rounded-none transition-transform duration-200">
+                        </div>
+                    </div>
                 </div>
                 <!-- Carousel Controls (right) -->
-                <button id="event-carousel-next" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded-full bg-white shadow p-2">
+                <button id="event-carousel-next" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded-full bg-white/60 shadow p-2">
                     &#8250;
+                </button>
+                <!-- Carousel Controls (left) -->
+                <button id="event-carousel-prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded-full bg-white/60 shadow p-2">
+                    &#8249;
                 </button>
                 <!-- Carousel Dots -->
                 <div id="event-carousel-dots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
@@ -93,43 +106,32 @@
         </div>
     </section>
     <script>
-        // Carousel logic for Events section
-        const eventImages = [
-            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80",
-            "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=900&q=80",
-            "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=900&q=80"
-        ];
+        // Sliding carousel logic for Events section
         let currentEvent = 0;
-        const imgEl = document.getElementById('event-carousel-img');
+        const track = document.getElementById('event-carousel-track');
+        const slides = track.children.length;
         const prevBtn = document.getElementById('event-carousel-prev');
         const nextBtn = document.getElementById('event-carousel-next');
         const dotsEl = document.getElementById('event-carousel-dots');
 
         function updateCarousel() {
-            // Fade out
-            imgEl.style.opacity = 0;
-            setTimeout(() => {
-                imgEl.src = eventImages[currentEvent];
-                // Fade in
-                imgEl.style.opacity = 1;
-            }, 300);
-
+            track.style.transform = `translateX(-${currentEvent * 100}%)`;
             // Update dots
             dotsEl.innerHTML = '';
-            eventImages.forEach((_, idx) => {
+            for (let i = 0; i < slides; i++) {
                 const dot = document.createElement('span');
-                dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${idx === currentEvent ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
-                dot.onclick = () => { currentEvent = idx; updateCarousel(); };
+                dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentEvent ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
+                dot.onclick = () => { currentEvent = i; updateCarousel(); };
                 dotsEl.appendChild(dot);
-            });
+            }
         }
 
         prevBtn.onclick = function() {
-            currentEvent = (currentEvent - 1 + eventImages.length) % eventImages.length;
+            currentEvent = (currentEvent - 1 + slides) % slides;
             updateCarousel();
         };
         nextBtn.onclick = function() {
-            currentEvent = (currentEvent + 1) % eventImages.length;
+            currentEvent = (currentEvent + 1) % slides;
             updateCarousel();
         };
 
