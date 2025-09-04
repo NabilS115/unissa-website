@@ -20,9 +20,6 @@
                 </style>
                 <div class="flex flex-col items-center gap-4">
                     <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
-                        <span class="flex h-16 w-16 mb-2 items-center justify-center rounded-full bg-white shadow">
-                            <x-app-logo-icon class="size-14 fill-current text-[#008080]" />
-                        </span>
                         <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
                     </a>
                     <div class="flex flex-col gap-6 w-full text-center text-black">
@@ -32,6 +29,11 @@
                         @endif
                     </div>
                 </div>
+            </div>
+        </div>
+        @fluxScripts
+    </body>
+</html>
             </div>
         </div>
         @fluxScripts
