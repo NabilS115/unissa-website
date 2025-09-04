@@ -91,11 +91,13 @@
                     </div>
                 </div>
                 <!-- Carousel Controls (right) -->
-                <button id="event-carousel-next" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded-full bg-white/60 shadow p-2">
+                <button id="event-carousel-next"
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2">
                     &#8250;
                 </button>
                 <!-- Carousel Controls (left) -->
-                <button id="event-carousel-prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded-full bg-white/60 shadow p-2">
+                <button id="event-carousel-prev"
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2">
                     &#8249;
                 </button>
                 <!-- Carousel Dots -->

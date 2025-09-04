@@ -1,7 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
-use App\Http\Controllers\ReviewController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -48,7 +47,6 @@ Route::get('/company-history', function () {
 });
 
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
-Route::get('/review', [ReviewController::class, 'index'])->middleware('auth');
-Route::post('/review', [ReviewController::class, 'store'])->middleware('auth');
+Route::view('/review', 'review');
 
 require __DIR__.'/auth.php';
