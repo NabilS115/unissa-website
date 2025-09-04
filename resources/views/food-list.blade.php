@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Food Catalog - List')
@@ -86,24 +85,45 @@
                 <div class="flex flex-wrap justify-start gap-6 ml-8">
                     @foreach ($foods as $food)
                         @if (in_array($food['name'], $names))
-                            <div class="max-w-sm w-80 rounded overflow-hidden shadow-lg bg-white food-card flex flex-col" style="min-height: 210px;">
-                                <div class="w-full h-48 food-image relative flex-shrink-0">
-                                    <img src="{{ $food['img'] }}" alt="{{ $food['name'] }}" class="absolute inset-0 w-full h-full object-cover opacity-80" style="height: 185px;">
-                                </div>
-                                <div class="px-3 py-1 card-content flex-1 flex flex-col justify-between" style="min-height: 32px; height: 32px;">
-                                    <div>
-                                        <div class="font-bold text-base mb-1 card-title">{{ $food['name'] }}</div>
-                                        <p class="text-gray-700 text-xs card-description line-clamp-2">
-                                            {{ $food['desc'] }}
-                                        </p>
+                            @if ($food['name'] === 'Margherita Pizza')
+                                <a href="/review" class="max-w-sm w-80 rounded overflow-hidden shadow-lg bg-white food-card flex flex-col" style="min-height: 210px; text-decoration: none;">
+                                    <div class="w-full h-48 food-image relative flex-shrink-0">
+                                        <img src="{{ $food['img'] }}" alt="{{ $food['name'] }}" class="absolute inset-0 w-full h-full object-cover opacity-80" style="height: 185px;">
                                     </div>
-                                    <div class="px-0 pt-2 pb-1 tags-section">
-                                        @foreach ($food['tags'] as $tag)
-                                            <span class="inline-block bg-teal-600 rounded-full px-2 py-0.5 text-xs font-semibold text-white mr-1 tag">#{{ $tag }}</span>
-                                        @endforeach
+                                    <div class="px-3 py-1 card-content flex-1 flex flex-col justify-between" style="min-height: 32px; height: 32px;">
+                                        <div>
+                                            <div class="font-bold text-base mb-1 card-title">{{ $food['name'] }}</div>
+                                            <p class="text-gray-700 text-xs card-description line-clamp-2">
+                                                {{ $food['desc'] }}
+                                            </p>
+                                        </div>
+                                        <div class="px-0 pt-2 pb-1 tags-section">
+                                            @foreach ($food['tags'] as $tag)
+                                                <span class="inline-block bg-teal-600 rounded-full px-2 py-0.5 text-xs font-semibold text-white mr-1 tag">#{{ $tag }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </a>
+                            @else
+                                <div class="max-w-sm w-80 rounded overflow-hidden shadow-lg bg-white food-card flex flex-col" style="min-height: 210px;">
+                                    <div class="w-full h-48 food-image relative flex-shrink-0">
+                                        <img src="{{ $food['img'] }}" alt="{{ $food['name'] }}" class="absolute inset-0 w-full h-full object-cover opacity-80" style="height: 185px;">
+                                    </div>
+                                    <div class="px-3 py-1 card-content flex-1 flex flex-col justify-between" style="min-height: 32px; height: 32px;">
+                                        <div>
+                                            <div class="font-bold text-base mb-1 card-title">{{ $food['name'] }}</div>
+                                            <p class="text-gray-700 text-xs card-description line-clamp-2">
+                                                {{ $food['desc'] }}
+                                            </p>
+                                        </div>
+                                        <div class="px-0 pt-2 pb-1 tags-section">
+                                            @foreach ($food['tags'] as $tag)
+                                                <span class="inline-block bg-teal-600 rounded-full px-2 py-0.5 text-xs font-semibold text-white mr-1 tag">#{{ $tag }}</span>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         @endif
                     @endforeach
                 </div>
