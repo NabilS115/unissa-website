@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="flex gap-2">
-            <a href="/settings/profile" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Edit Profile</a>
+            <a href="/edit-profile" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Edit Profile</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
