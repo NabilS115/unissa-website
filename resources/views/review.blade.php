@@ -92,7 +92,7 @@
         </div>
     </div>
     <hr class="my-6">
-    <div class="space-y-6">
+    <div class="space-y-6" id="reviews-list">
         <div class="bg-white rounded-lg border shadow p-4 flex gap-4 items-start">
             <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Danish Naufal" class="w-12 h-12 rounded-full object-cover">
             <div class="flex-1">
@@ -135,11 +135,36 @@
     document.getElementById('write-review-btn').onclick = () => { modal.classList.remove('hidden'); };
     document.getElementById('close-review-modal').onclick = () => { modal.classList.add('hidden'); };
     document.getElementById('cancel-review').onclick = () => { modal.classList.add('hidden'); };
+
     document.getElementById('review-form').onsubmit = function(e) {
         e.preventDefault();
-        // You can add AJAX here to submit the review
-        alert('Thank you for your review!');
+        const rating = this.rating.value;
+        const reviewText = this.review.value;
+        const reviewsList = document.getElementById('reviews-list');
+        const newReview = document.createElement('div');
+        newReview.className = "bg-white rounded-lg border shadow p-4 flex gap-4 items-start";
+        // Use user's profile photo from blade variable
+        const profilePhoto = "{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}";
+        newReview.innerHTML = `
+            <img src="${profilePhoto}" alt="You" class="w-12 h-12 rounded-full object-cover">
+            <div class="flex-1">
+                <div class="flex items-center justify-between mb-1">
+                    <div>
+                        <span class="font-semibold">You</span>
+                        <span class="text-yellow-400 ml-2 text-sm">★ ${rating}</span>
+                    </div>
+                    <span class="text-gray-400 text-xs">${new Date().toLocaleDateString()}</span>
+                </div>
+                <div class="text-gray-700 mb-2">${reviewText}</div>
+                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                    <span>👍 0</span>
+                    <a href="#" class="underline">Report</a>
+                </div>
+            </div>
+        `;
+        reviewsList.prepend(newReview);
         modal.classList.add('hidden');
+        this.reset();
     };
 </script>
 @endsection
