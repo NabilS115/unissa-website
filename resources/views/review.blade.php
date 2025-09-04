@@ -127,6 +127,40 @@
                 </div>
             </div>
         </div>
+        <div class="bg-white rounded-lg border shadow p-4 flex gap-4 items-start">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aisyah Rahman" class="w-12 h-12 rounded-full object-cover">
+            <div class="flex-1">
+                <div class="flex items-center justify-between mb-1">
+                    <div>
+                        <span class="font-semibold">Aisyah Rahman</span>
+                        <span class="text-yellow-400 ml-2 text-sm">★ 5.0</span>
+                    </div>
+                    <span class="text-gray-400 text-xs">2 Jul</span>
+                </div>
+                <div class="text-gray-700 mb-2">Absolutely delicious! The pancakes are fluffy and taste just like home.</div>
+                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                    <span>👍 12</span>
+                    <a href="#" class="underline">Report</a>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg border shadow p-4 flex gap-4 items-start">
+            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Nurul Huda" class="w-12 h-12 rounded-full object-cover">
+            <div class="flex-1">
+                <div class="flex items-center justify-between mb-1">
+                    <div>
+                        <span class="font-semibold">Nurul Huda</span>
+                        <span class="text-yellow-400 ml-2 text-sm">★ 4.7</span>
+                    </div>
+                    <span class="text-gray-400 text-xs">15 Jun</span>
+                </div>
+                <div class="text-gray-700 mb-2">Very tasty and soft pancakes. My kids loved them!</div>
+                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                    <span>👍 6</span>
+                    <a href="#" class="underline">Report</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script>
