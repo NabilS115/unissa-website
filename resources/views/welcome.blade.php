@@ -66,8 +66,10 @@
     <!-- Events Section -->
     <section class="w-full flex items-center justify-center py-10 mb-8">
         <div class="flex w-4/5 bg-white rounded-xl border border-teal-200 shadow-sm overflow-hidden relative" style="min-height: 420px;">
-            <div id="event-bg-carousel" class="absolute inset-0 w-full h-full transition-all duration-500 z-0">
-                <!-- Background images will be rendered by JS -->
+            <div id="event-bg-carousel" class="absolute inset-0 w-full h-full overflow-hidden z-0">
+                <div id="event-bg-track" class="flex w-full h-full transition-transform duration-700">
+                    <!-- Slides will be rendered by JS -->
+                </div>
             </div>
             <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
                 <!-- Carousel Controls (right) -->
@@ -88,48 +90,80 @@
         </div>
     </section>
     <script>
-        // Sliding background carousel logic for Events section
+        // Sliding background carousel logic for Events section (sliding animation)
         const eventImages = [
             "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
             "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1600&q=80",
             "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80"
         ];
         let currentEvent = 0;
-        const bgCarousel = document.getElementById('event-bg-carousel');
+        const bgTrack = document.getElementById('event-bg-track');
         const prevBtn = document.getElementById('event-carousel-prev');
         const nextBtn = document.getElementById('event-carousel-next');
         const dotsEl = document.getElementById('event-carousel-dots');
+        let eventInterval = null;
 
         function renderEventBgCarousel() {
-            bgCarousel.innerHTML = '';
+            // Render slides
+            bgTrack.innerHTML = '';
             eventImages.forEach((src, i) => {
-                const imgDiv = document.createElement('div');
-                imgDiv.className = `absolute inset-0 w-full h-full transition-opacity duration-700 ${i === currentEvent ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
-                imgDiv.style.backgroundImage = `url('${src}')`;
-                imgDiv.style.backgroundSize = 'cover';
-                imgDiv.style.backgroundPosition = 'center';
-                imgDiv.style.backgroundRepeat = 'no-repeat';
-                bgCarousel.appendChild(imgDiv);
+                const slide = document.createElement('div');
+                slide.className = "min-w-full h-full";
+                slide.style.backgroundImage = `url('${src}')`;
+                slide.style.backgroundSize = 'cover';
+                slide.style.backgroundPosition = 'center';
+                slide.style.backgroundRepeat = 'no-repeat';
+                bgTrack.appendChild(slide);
             });
+            updateEventBgCarousel();
             // Dots
             dotsEl.innerHTML = '';
             for (let i = 0; i < eventImages.length; i++) {
                 const dot = document.createElement('span');
                 dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentEvent ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
-                dot.onclick = () => { currentEvent = i; renderEventBgCarousel(); };
+                dot.onclick = () => { 
+                    currentEvent = i; 
+                    updateEventBgCarousel(); 
+                    resetEventInterval();
+                };
                 dotsEl.appendChild(dot);
             }
         }
 
+        function updateEventBgCarousel() {
+            bgTrack.style.transform = `translateX(-${currentEvent * 100}%)`;
+        }
+
+        function moveEventCarousel(dir) {
+            currentEvent = (currentEvent + dir + eventImages.length) % eventImages.length;
+            updateEventBgCarousel();
+            updateEventBgDots();
+        }
+
+        function resetEventInterval() {
+            if (eventInterval) clearInterval(eventInterval);
+            eventInterval = setInterval(() => {
+                moveEventCarousel(1);
+            }, 4000);
+        }
+
+        function updateEventBgDots() {
+            // Update dots' active state
+            Array.from(dotsEl.children).forEach((dot, i) => {
+                dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentEvent ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
+            });
+        }
+
         prevBtn.onclick = function() {
-            currentEvent = (currentEvent - 1 + eventImages.length) % eventImages.length;
-            renderEventBgCarousel();
+            moveEventCarousel(-1);
+            resetEventInterval();
         };
         nextBtn.onclick = function() {
-            currentEvent = (currentEvent + 1) % eventImages.length;
-            renderEventBgCarousel();
+            moveEventCarousel(1);
+            resetEventInterval();
         };
 
         renderEventBgCarousel();
+        resetEventInterval();
     </script>
 @endsection
