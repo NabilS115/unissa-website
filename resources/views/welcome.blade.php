@@ -91,13 +91,13 @@
     </main>
 
     <script>
-        // Sliding background carousel logic for Events section (sliding animation)
+        // Sliding background carousel logic for Events section (infinite looping animation)
         const eventImages = [
             "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1600&q=80",
             "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1600&q=80",
             "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80",
             "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
-            "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80" // new last image
+            "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80"
         ];
         let currentEvent = 0;
         const bgTrack = document.getElementById('event-bg-track');
@@ -107,9 +107,19 @@
         let eventInterval = null;
 
         function renderEventBgCarousel() {
-            // Render slides
+            // Render slides with clones for infinite loop
             bgTrack.innerHTML = '';
-            eventImages.forEach((src, i) => {
+            // Clone last slide to the beginning
+            const firstClone = document.createElement('div');
+            firstClone.className = "min-w-full h-full";
+            firstClone.style.backgroundImage = `url('${eventImages[eventImages.length - 1]}')`;
+            firstClone.style.backgroundSize = 'cover';
+            firstClone.style.backgroundPosition = 'center';
+            firstClone.style.backgroundRepeat = 'no-repeat';
+            bgTrack.appendChild(firstClone);
+
+            // Real slides
+            eventImages.forEach((src) => {
                 const slide = document.createElement('div');
                 slide.className = "min-w-full h-full";
                 slide.style.backgroundImage = `url('${src}')`;
@@ -118,29 +128,75 @@
                 slide.style.backgroundRepeat = 'no-repeat';
                 bgTrack.appendChild(slide);
             });
-            updateEventBgCarousel();
+
+            // Clone first slide to the end
+            const lastClone = document.createElement('div');
+            lastClone.className = "min-w-full h-full";
+            lastClone.style.backgroundImage = `url('${eventImages[0]}')`;
+            lastClone.style.backgroundSize = 'cover';
+            lastClone.style.backgroundPosition = 'center';
+            lastClone.style.backgroundRepeat = 'no-repeat';
+            bgTrack.appendChild(lastClone);
+
+            // Set initial position (translateX(-100%))
+            bgTrack.style.transition = 'none';
+            bgTrack.style.transform = `translateX(-${(currentEvent + 1) * 100}%)`;
+            void bgTrack.offsetWidth; // force reflow
+            bgTrack.style.transition = 'transform 0.7s';
+
             // Dots
             dotsEl.innerHTML = '';
             for (let i = 0; i < eventImages.length; i++) {
                 const dot = document.createElement('span');
                 dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentEvent ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
                 dot.onclick = () => { 
-                    currentEvent = i; 
-                    updateEventBgCarousel(); 
+                    goToEventSlide(i);
                     resetEventInterval();
                 };
                 dotsEl.appendChild(dot);
             }
         }
 
-        function updateEventBgCarousel() {
-            bgTrack.style.transform = `translateX(-${currentEvent * 100}%)`;
+        function goToEventSlide(idx) {
+            currentEvent = idx;
+            bgTrack.style.transition = 'transform 0.7s';
+            bgTrack.style.transform = `translateX(-${(currentEvent + 1) * 100}%)`;
+            updateEventBgDots();
         }
 
         function moveEventCarousel(dir) {
-            currentEvent = (currentEvent + dir + eventImages.length) % eventImages.length;
-            updateEventBgCarousel();
-            updateEventBgDots();
+            bgTrack.style.transition = 'transform 0.7s';
+            if (dir === 1) {
+                currentEvent++;
+                bgTrack.style.transform = `translateX(-${(currentEvent + 1) * 100}%)`;
+                if (currentEvent === eventImages.length) {
+                    setTimeout(() => {
+                        bgTrack.style.transition = 'none';
+                        currentEvent = 0;
+                        bgTrack.style.transform = `translateX(-100%)`;
+                        updateEventBgDots();
+                        void bgTrack.offsetWidth;
+                        bgTrack.style.transition = 'transform 0.7s';
+                    }, 700);
+                } else {
+                    updateEventBgDots();
+                }
+            } else {
+                currentEvent--;
+                bgTrack.style.transform = `translateX(-${(currentEvent + 1) * 100}%)`;
+                if (currentEvent < 0) {
+                    setTimeout(() => {
+                        bgTrack.style.transition = 'none';
+                        currentEvent = eventImages.length - 1;
+                        bgTrack.style.transform = `translateX(-${eventImages.length * 100}%)`;
+                        updateEventBgDots();
+                        void bgTrack.offsetWidth;
+                        bgTrack.style.transition = 'transform 0.7s';
+                    }, 700);
+                } else {
+                    updateEventBgDots();
+                }
+            }
         }
 
         function resetEventInterval() {
@@ -151,7 +207,6 @@
         }
 
         function updateEventBgDots() {
-            // Update dots' active state
             Array.from(dotsEl.children).forEach((dot, i) => {
                 dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentEvent ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
             });
