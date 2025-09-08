@@ -65,78 +65,71 @@
 
     <!-- Events Section -->
     <section class="w-full flex items-center justify-center py-10 mb-8">
-        <div class="flex w-4/5 bg-white rounded-xl border border-teal-200 shadow-sm overflow-hidden">
-            <div class="flex items-center justify-center w-1/3 bg-gradient-to-br from-teal-600 to-teal-400 p-8">
-                <h2 class="text-white text-3xl font-extrabold tracking-tight">Events</h2>
+        <div class="flex w-4/5 bg-white rounded-xl border border-teal-200 shadow-sm overflow-hidden relative" style="min-height: 420px;">
+            <div id="event-bg-carousel" class="absolute inset-0 w-full h-full transition-all duration-500 z-0">
+                <!-- Background images will be rendered by JS -->
             </div>
-            <div class="w-2/3 flex items-center justify-center relative bg-teal-50 py-8">
-                <!-- Event Images -->
-                <div class="flex justify-center items-center overflow-hidden w-full h-64">
-                    <div id="event-carousel-track" class="flex transition-transform duration-500 ease-in-out w-full h-full">
-                        <div class="min-w-full h-full flex">
-                            <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
-                                alt="Event 1"
-                                class="w-full h-full object-cover rounded-none transition-transform duration-200">
-                        </div>
-                        <div class="min-w-full h-full flex">
-                            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1600&q=80"
-                                alt="Event 2"
-                                class="w-full h-full object-cover rounded-none transition-transform duration-200">
-                        </div>
-                        <div class="min-w-full h-full flex">
-                            <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80"
-                                alt="Event 3"
-                                class="w-full h-full object-cover rounded-none transition-transform duration-200">
-                        </div>
-                    </div>
-                </div>
+            <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
                 <!-- Carousel Controls (right) -->
                 <button id="event-carousel-next"
-                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2">
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
                     &#8250;
                 </button>
                 <!-- Carousel Controls (left) -->
                 <button id="event-carousel-prev"
-                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2">
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
                     &#8249;
                 </button>
                 <!-- Carousel Dots -->
-                <div id="event-carousel-dots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                <div id="event-carousel-dots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
                     <!-- Dots will be rendered by JS -->
                 </div>
             </div>
         </div>
     </section>
     <script>
-        // Sliding carousel logic for Events section
+        // Sliding background carousel logic for Events section
+        const eventImages = [
+            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+            "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1600&q=80",
+            "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80"
+        ];
         let currentEvent = 0;
-        const track = document.getElementById('event-carousel-track');
-        const slides = track.children.length;
+        const bgCarousel = document.getElementById('event-bg-carousel');
         const prevBtn = document.getElementById('event-carousel-prev');
         const nextBtn = document.getElementById('event-carousel-next');
         const dotsEl = document.getElementById('event-carousel-dots');
 
-        function updateCarousel() {
-            track.style.transform = `translateX(-${currentEvent * 100}%)`;
-            // Update dots
+        function renderEventBgCarousel() {
+            bgCarousel.innerHTML = '';
+            eventImages.forEach((src, i) => {
+                const imgDiv = document.createElement('div');
+                imgDiv.className = `absolute inset-0 w-full h-full transition-opacity duration-700 ${i === currentEvent ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
+                imgDiv.style.backgroundImage = `url('${src}')`;
+                imgDiv.style.backgroundSize = 'cover';
+                imgDiv.style.backgroundPosition = 'center';
+                imgDiv.style.backgroundRepeat = 'no-repeat';
+                bgCarousel.appendChild(imgDiv);
+            });
+            // Dots
             dotsEl.innerHTML = '';
-            for (let i = 0; i < slides; i++) {
+            for (let i = 0; i < eventImages.length; i++) {
                 const dot = document.createElement('span');
                 dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentEvent ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
-                dot.onclick = () => { currentEvent = i; updateCarousel(); };
+                dot.onclick = () => { currentEvent = i; renderEventBgCarousel(); };
                 dotsEl.appendChild(dot);
             }
         }
 
         prevBtn.onclick = function() {
-            currentEvent = (currentEvent - 1 + slides) % slides;
-            updateCarousel();
+            currentEvent = (currentEvent - 1 + eventImages.length) % eventImages.length;
+            renderEventBgCarousel();
         };
         nextBtn.onclick = function() {
-            currentEvent = (currentEvent + 1) % slides;
-            updateCarousel();
+            currentEvent = (currentEvent + 1) % eventImages.length;
+            renderEventBgCarousel();
         };
 
-        updateCarousel();
+        renderEventBgCarousel();
     </script>
 @endsection
