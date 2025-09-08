@@ -45,6 +45,9 @@
                 </a>
             </div>
             <div class="flex items-center gap-2 mb-2">
+                <span>Jalan Pasar Baharu, BE1310, Bandar Seri Begawan, Brunei Darussalam</span>
+            </div>
+            <div class="flex items-center gap-2 mb-2">
                 <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M2 6a2 2 0 012-2h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm2 0v.01l8 5.99 8-5.99V6H4zm16 2.24l-8 5.99-8-5.99V18h16V8.24z"/></svg>
                 <a href="mailto:somthing@gmail.com" class="underline">something@gmail.com</a>
             </div>
