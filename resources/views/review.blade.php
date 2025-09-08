@@ -4,18 +4,12 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8 mt-8">
-    <div class="flex gap-6 mb-6">
-        <div class="relative flex items-center justify-center w-40 h-40">
-            <div class="overflow-hidden w-40 h-40 flex items-center justify-center">
-                <div class="min-w-full h-full flex items-center justify-center">
-                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" alt="Homemade Pancakes 1" class="w-full h-full object-cover rounded-lg border">
-                </div>
-            </div>
-        </div>
-        <div>
-            <div class="text-2xl font-bold mb-2">Homemade Pancakes</div>
-            <div class="font-semibold mb-1">Product Description</div>
-            <div class="text-gray-700 text-base">
+    <div class="flex flex-col items-center gap-6 mb-6">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Homemade Pancakes" class="w-[28rem] h-72 object-cover rounded-lg border mb-2">
+        <div class="w-full">
+            <div class="text-2xl font-bold mb-2 text-center">Homemade Pancakes</div>
+            <div class="font-semibold mb-1 text-center">Product Description</div>
+            <div class="text-gray-700 text-base text-center">
                 Fluffy and golden, our homemade pancakes are made with simple, wholesome ingredients. Perfectly soft on the inside with a light crisp edge, they're great for breakfast or brunch.
             </div>
         </div>
