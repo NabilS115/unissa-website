@@ -90,6 +90,46 @@
         </div>
     </main>
 
+    <!-- Featured Reviews Section -->
+    <section class="w-full flex flex-col items-center justify-center py-12 bg-teal-50">
+        <h2 class="text-3xl font-bold text-teal-700 mb-6">Featured Reviews</h2>
+        <div class="flex flex-row flex-wrap justify-center gap-8 w-full max-w-5xl px-2 overflow-x-hidden">
+            <div class="bg-white rounded-xl shadow-lg border p-6 min-w-[320px] max-w-sm flex flex-col gap-2">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Danish Naufal" class="w-12 h-12 rounded-full object-cover">
+                    <div>
+                        <span class="font-semibold text-teal-700">Danish Naufal</span>
+                        <span class="text-yellow-400 ml-2 text-sm">★ 4.9</span>
+                    </div>
+                </div>
+                <div class="text-gray-700 mb-1">"The best pancake that I ever eaten for the past 10 years"</div>
+                <div class="text-gray-500 text-xs">Product: Homemade Pancakes</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg border p-6 min-w-[320px] max-w-sm flex flex-col gap-2">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aisyah Rahman" class="w-12 h-12 rounded-full object-cover">
+                    <div>
+                        <span class="font-semibold text-teal-700">Aisyah Rahman</span>
+                        <span class="text-yellow-400 ml-2 text-sm">★ 5.0</span>
+                    </div>
+                </div>
+                <div class="text-gray-700 mb-1">"Absolutely delicious! The pancakes are fluffy and taste just like home."</div>
+                <div class="text-gray-500 text-xs">Product: Homemade Pancakes</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg border p-6 min-w-[320px] max-w-sm flex flex-col gap-2">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Hitstonecold Ayeeee" class="w-12 h-12 rounded-full object-cover">
+                    <div>
+                        <span class="font-semibold text-teal-700">Hitstonecold Ayeeee</span>
+                        <span class="text-yellow-400 ml-2 text-sm">★ 4.1</span>
+                    </div>
+                </div>
+                <div class="text-gray-700 mb-1">"It is worth the price. Not much too say."</div>
+                <div class="text-gray-500 text-xs">Product: Homemade Pancakes</div>
+            </div>
+        </div>
+    </section>
+
     <script>
         // Sliding background carousel logic for Events section (infinite looping animation)
         const eventImages = [
