@@ -147,7 +147,7 @@
             if (eventInterval) clearInterval(eventInterval);
             eventInterval = setInterval(() => {
                 moveEventCarousel(1);
-            }, 4000);
+            }, 5000);
         }
 
         function updateEventBgDots() {
