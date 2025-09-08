@@ -12,6 +12,33 @@
         </div>
     </section>
 
+    <!-- Events Section -->
+    <section class="w-full flex items-center justify-center py-10 mb-8">
+        <div class="flex w-4/5 bg-white rounded-xl border border-teal-200 shadow-sm overflow-hidden relative" style="min-height: 420px;">
+            <div id="event-bg-carousel" class="absolute inset-0 w-full h-full overflow-hidden z-0">
+                <div id="event-bg-track" class="flex w-full h-full transition-transform duration-700">
+                    <!-- Slides will be rendered by JS -->
+                </div>
+            </div>
+            <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
+                <!-- Carousel Controls (right) -->
+                <button id="event-carousel-next"
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
+                    &#8250;
+                </button>
+                <!-- Carousel Controls (left) -->
+                <button id="event-carousel-prev"
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
+                    &#8249;
+                </button>
+                <!-- Carousel Dots -->
+                <div id="event-carousel-dots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
+                    <!-- Dots will be rendered by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
     <main class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
         <!-- Food Cards -->
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
@@ -63,32 +90,6 @@
         </div>
     </main>
 
-    <!-- Events Section -->
-    <section class="w-full flex items-center justify-center py-10 mb-8">
-        <div class="flex w-4/5 bg-white rounded-xl border border-teal-200 shadow-sm overflow-hidden relative" style="min-height: 420px;">
-            <div id="event-bg-carousel" class="absolute inset-0 w-full h-full overflow-hidden z-0">
-                <div id="event-bg-track" class="flex w-full h-full transition-transform duration-700">
-                    <!-- Slides will be rendered by JS -->
-                </div>
-            </div>
-            <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
-                <!-- Carousel Controls (right) -->
-                <button id="event-carousel-next"
-                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
-                    &#8250;
-                </button>
-                <!-- Carousel Controls (left) -->
-                <button id="event-carousel-prev"
-                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
-                    &#8249;
-                </button>
-                <!-- Carousel Dots -->
-                <div id="event-carousel-dots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
-                    <!-- Dots will be rendered by JS -->
-                </div>
-            </div>
-        </div>
-    </section>
     <script>
         // Sliding background carousel logic for Events section (sliding animation)
         const eventImages = [
