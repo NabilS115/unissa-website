@@ -6,27 +6,10 @@
 <div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8 mt-8">
     <div class="flex gap-6 mb-6">
         <div class="relative flex items-center justify-center w-40 h-40">
-            <button id="product-carousel-prev" class="absolute left-0 top-1/2 -translate-y-1/2 bg-white/60 text-teal-600 hover:text-teal-800 rounded shadow w-8 h-8 flex items-center justify-center z-10 transition">
-                &#8249;
-            </button>
             <div class="overflow-hidden w-40 h-40 flex items-center justify-center">
-                <div id="product-carousel-track" class="flex transition-transform duration-500 ease-in-out w-full h-full">
-                    <div class="min-w-full h-full flex items-center justify-center">
+                <div class="min-w-full h-full flex items-center justify-center">
                         <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" alt="Homemade Pancakes 1" class="w-full h-full object-cover rounded-lg border">
-                    </div>
-                    <div class="min-w-full h-full flex items-center justify-center">
-                        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Homemade Pancakes 2" class="w-full h-full object-cover rounded-lg border">
-                    </div>
-                    <div class="min-w-full h-full flex items-center justify-center">
-                        <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="Homemade Pancakes 3" class="w-full h-full object-cover rounded-lg border">
-                    </div>
                 </div>
-            </div>
-            <button id="product-carousel-next" class="absolute right-0 top-1/2 -translate-y-1/2 bg-white/60 text-teal-600 hover:text-teal-800 rounded shadow w-8 h-8 flex items-center justify-center z-10 transition">
-                &#8250;
-            </button>
-            <div id="product-carousel-dots" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
-                <!-- Dots will be rendered by JS -->
             </div>
         </div>
         <div>
@@ -223,36 +206,5 @@
         modal.classList.add('hidden');
         this.reset();
     };
-
-    // Product image carousel logic for the main product image
-    let currentProductImg = 0;
-    const productTrack = document.getElementById('product-carousel-track');
-    const productSlides = productTrack.children.length;
-    const productPrevBtn = document.getElementById('product-carousel-prev');
-    const productNextBtn = document.getElementById('product-carousel-next');
-    const productDotsEl = document.getElementById('product-carousel-dots');
-
-    function updateProductCarousel() {
-        productTrack.style.transform = `translateX(-${currentProductImg * 100}%)`;
-        // Update dots
-        productDotsEl.innerHTML = '';
-        for (let i = 0; i < productSlides; i++) {
-            const dot = document.createElement('span');
-            dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentProductImg ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
-            dot.onclick = () => { currentProductImg = i; updateProductCarousel(); };
-            productDotsEl.appendChild(dot);
-        }
-    }
-
-    productPrevBtn.onclick = function() {
-        currentProductImg = (currentProductImg - 1 + productSlides) % productSlides;
-        updateProductCarousel();
-    };
-    productNextBtn.onclick = function() {
-        currentProductImg = (currentProductImg + 1) % productSlides;
-        updateProductCarousel();
-    };
-
-    updateProductCarousel();
 </script>
 @endsection
