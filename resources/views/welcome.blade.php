@@ -41,7 +41,9 @@
 
     <!-- Food Cards Section -->
     <section class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
-        <h2 class="w-full text-3xl font-bold text-teal-700 mb-6 text-center">Food Catalog</h2>
+        <h2 class="w-full text-3xl font-bold text-teal-700 mb-6 text-center">
+            <a href="/food-list" class="hover:underline">Food</a>
+        </h2>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
             <div class="w-full h-48 flex items-center justify-center food-image pizza-bg">
                 <span>🍕</span>
