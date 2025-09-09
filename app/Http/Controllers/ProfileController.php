@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -52,4 +53,17 @@ class ProfileController extends Controller
 
             return Redirect::route('edit.profile')->with('profile-photo-updated', true);
         }
+        public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = $request->user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('password-updated', true);
+    }
 }

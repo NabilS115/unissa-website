@@ -82,5 +82,50 @@
             @endif
         </div>
     </form>
+    <hr class="my-8">
+    <form method="POST" action="{{ route('profile.password') }}" class="space-y-6">
+        @csrf
+        @method('PUT')
+        <div class="text-xl font-bold text-teal-700 mb-2">Change Password</div>
+        <div class="relative">
+            <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+            <input name="current_password" id="current_password" type="password" required autocomplete="current-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 pr-12" />
+            <button type="button" class="absolute right-2 top-8 text-gray-500 hover:text-teal-600" onclick="togglePassword('current_password', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+            </button>
+        </div>
+        <div class="relative">
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+            <input name="password" id="password" type="password" required autocomplete="new-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 pr-12" />
+            <button type="button" class="absolute right-2 top-8 text-gray-500 hover:text-teal-600" onclick="togglePassword('password', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+            </button>
+        </div>
+        <div class="relative">
+            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+            <input name="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 pr-12" />
+            <button type="button" class="absolute right-2 top-8 text-gray-500 hover:text-teal-600" onclick="togglePassword('password_confirmation', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+            </button>
+        </div>
+        <div class="flex items-center gap-4 mt-6">
+            <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition w-full">Change Password</button>
+            @if (session('password-updated'))
+                <span class="me-3 text-green-600 font-medium">{{ __('Password updated.') }}</span>
+            @endif
+        </div>
+    </form>
+    <script>
+    function togglePassword(id, btn) {
+        const input = document.getElementById(id);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.querySelector('svg').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.042-3.368m3.087-2.933A9.956 9.956 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.973 9.973 0 01-4.293 5.411M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />';
+        } else {
+            input.type = 'password';
+            btn.querySelector('svg').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+        }
+    }
+    </script>
 </div>
 @endsection

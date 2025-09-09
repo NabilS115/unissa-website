@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use App\Http\Controllers\ProfileController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -31,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/photo', [App\Http\Controllers\ProfileController::class, 'updatePhoto'])->name('profile.photo');
     Route::post('/profile/photo/delete', [App\Http\Controllers\ProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
     Route::put('/edit-profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
