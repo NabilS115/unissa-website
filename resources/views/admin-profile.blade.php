@@ -8,16 +8,19 @@
         <div class="flex items-center gap-4">
             <img src="{{ Auth::user()->profile_photo_url ?? asset('images/default-profile.svg') }}" alt="Admin Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-teal-600">
             <div>
-                <div class="text-2xl font-bold text-teal-700">{{ Auth::user()->name ?? 'System Admin' }}</div>
-                <div class="text-gray-600">Role: Platform Administrator</div>
+                <div class="flex items-center gap-2">
+                    <div class="text-2xl font-bold text-teal-700">{{ Auth::user()->name ?? 'System Admin' }}</div>
+                    <a href="/edit-profile" class="inline-flex items-center justify-center w-6 h-6 text-teal-600 hover:text-teal-800 transition" title="Edit Profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20h4l10-10-4-4L4 16v4z" />
+                        </svg>
+                    </a>
+                </div>
+                <div class="text-gray-600 text-base mt-0">Role: Platform Administrator</div>
             </div>
         </div>
         <div class="flex gap-2">
-            <a href="/edit-profile" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Edit Profile</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
-            </form>
+            
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
