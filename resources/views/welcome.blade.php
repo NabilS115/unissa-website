@@ -183,7 +183,7 @@
 
     <!-- Vendors Section -->
     <section class="w-full flex flex-col items-center justify-center py-12 bg-white">
-        <a href="/vendors" class="text-3xl font-bold text-teal-700 mb-6 hover:underline">Our Vendors</a>
+        <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center">Our Vendors</h2>
         <div class="relative w-full max-w-5xl flex items-center justify-center">
             <button id="vendors-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/60 rounded shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8249;</button>
             <div class="overflow-hidden w-full">
