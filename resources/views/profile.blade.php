@@ -23,6 +23,11 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
+            <div class="font-semibold">Full Name:</div>
+            <div class="text-gray-700">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</div>
+        </div>
+        <div></div>
+        <div>
             <div class="font-semibold">Faculty / Department:</div>
             <div class="text-gray-700">{{ Auth::user()->department ?? 'Faculty of Usuluddin' }}</div>
         </div>
