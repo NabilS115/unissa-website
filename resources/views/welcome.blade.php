@@ -39,8 +39,9 @@
         </div>
     </section>
 
-    <main class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
-        <!-- Food Cards -->
+    <!-- Food Cards Section -->
+    <section class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
+        <h2 class="w-full text-3xl font-bold text-teal-700 mb-6 text-center">Food Catalog</h2>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
             <div class="w-full h-48 flex items-center justify-center food-image pizza-bg">
                 <span>🍕</span>
@@ -56,7 +57,6 @@
                 <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Cheese</span>
             </div>
         </div>
-
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
             <div class="w-full h-48 flex items-center justify-center food-image salad-bg">
                 <span>🥗</span>
@@ -72,7 +72,6 @@
                 <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Healthy</span>
             </div>
         </div>
-
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
             <div class="w-full h-48 flex items-center justify-center food-image burger-bg">
                 <span>🍔</span>
@@ -88,14 +87,14 @@
                 <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Meat</span>
             </div>
         </div>
-    </main>
+    </section>
 
     <!-- Merchandise Section -->
     <section class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
         <h2 class="w-full text-3xl font-bold text-teal-700 mb-6 text-center">Merchandise</h2>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 flex items-center justify-center merch-image tshirt-bg">
-                <span>👕</span>
+            <div class="w-full h-48 flex items-center justify-center rounded-b-xl bg-teal-100">
+                <span class="text-5xl">👕</span>
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">UNISSA T-Shirt</div>
@@ -109,8 +108,8 @@
             </div>
         </div>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 flex items-center justify-center merch-image mug-bg">
-                <span>☕</span>
+            <div class="w-full h-48 flex items-center justify-center rounded-b-xl bg-yellow-100">
+                <span class="text-5xl">☕</span>
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">UNISSA Mug</div>
@@ -124,8 +123,8 @@
             </div>
         </div>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 flex items-center justify-center merch-image tote-bg">
-                <span>👜</span>
+            <div class="w-full h-48 flex items-center justify-center rounded-b-xl bg-pink-100">
+                <span class="text-5xl">👜</span>
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">UNISSA Tote Bag</div>
@@ -494,6 +493,12 @@
                 name: "Ali's Seafood",
                 type: "Seafood",
                 desc: "Fresh seafood delivered daily from the coast."
+            },
+            {
+                img: "https://randomuser.me/api/portraits/women/30.jpg",
+                name: "Lina's Juice Bar",
+                type: "Beverages",
+                desc: "Freshly squeezed juices and smoothies made to order."
             }
         ];
         let currentVendor = 0;
