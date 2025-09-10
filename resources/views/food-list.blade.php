@@ -156,7 +156,7 @@
                     ['name' => 'UNISSA Mug', 'desc' => 'Ceramic mug with UNISSA branding. Perfect for your morning coffee.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1517685352821-92cf88aee5a5?auto=format&fit=crop&w=400&q=80'],
                     ['name' => 'UNISSA Travel Mug', 'desc' => 'Insulated travel mug for hot and cold drinks.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80'],
                     ['name' => 'UNISSA Classic Cup', 'desc' => 'Classic white cup with UNISSA logo.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                    ['name' => 'UNISSA Tote Bag', 'desc' => 'Eco-friendly tote bag for everyday use, featuring the UNISSA logo.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80'],
+                    ['name' => 'UNISSA Tote Bag', 'desc' => 'Eco-friendly tote bag for everyday use, featuring the UNISSA logo.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80'],
                     ['name' => 'UNISSA Canvas Bag', 'desc' => 'Durable canvas bag with large capacity.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80'],
                     ['name' => 'UNISSA Eco Bag', 'desc' => 'Reusable eco bag with green UNISSA print.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'],
                 ];
@@ -171,7 +171,7 @@
                             <p class="text-2xl text-white drop-shadow">T-shirts, mugs, bags, and more</p>
                         </div>
                     </div>
-                    <img src="/merch-banner.png" alt="Merchandise" class="object-cover rounded-full z-10" style="height: 360px; width: 360px; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); object-fit: cover;" />
+                    <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80" alt="Merchandise" class="object-cover rounded-full z-10" style="height: 360px; width: 360px; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); object-fit: cover;" />
                 </div>
             </section>
             <div class="w-full flex justify-center mb-8">
