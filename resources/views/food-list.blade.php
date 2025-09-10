@@ -81,7 +81,7 @@
                     </div>
                 </div>
             </section>
-            <div class="space-y-12">
+            <div class="space-y-12 mb-20">
                 @foreach ($groups as $group => $names)
                     <template x-if="foodFilter === 'All' || foodFilter === '{{ $group }}'">
                     <div>
@@ -171,7 +171,7 @@
                             <p class="text-2xl text-white drop-shadow">T-shirts, mugs, bags, and more</p>
                         </div>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80" alt="Merchandise" class="object-cover rounded-full z-10" style="height: 360px; width: 360px; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); object-fit: cover;" />
+                    <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80" alt="Merchandise" class="object-cover rounded-full z-10 mb-8" style="height: 360px; width: 360px; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); object-fit: cover;" />
                 </div>
             </section>
             <div class="w-full flex justify-center mb-8">
@@ -198,7 +198,7 @@
                     </div>
                 </div>
             </section>
-            <div class="space-y-12">
+            <div class="space-y-12 mb-20">
                 @foreach ($merchGroups as $group => $names)
                     <template x-if="merchFilter === 'All' || merchFilter === '{{ $group }}'">
                     <div>
