@@ -4,6 +4,10 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto bg-white rounded-lg shadow p-12 mt-8">
+    <button onclick="window.history.back()" class="mb-6 flex items-center gap-2 px-4 py-2 rounded bg-teal-600 text-white hover:bg-teal-700 transition font-semibold">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+        Back
+    </button>
     <div class="flex flex-col lg:flex-row gap-12">
         <!-- Left: Image, Description, Ratings -->
         <div class="flex-1 flex flex-col items-center lg:items-start">

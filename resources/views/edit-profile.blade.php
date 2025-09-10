@@ -110,11 +110,19 @@
         </div>
         <div class="flex items-center gap-4 mt-6">
             <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition w-full">Change Password</button>
-            @if (session('password-updated'))
-                <span class="me-3 text-green-600 font-medium">{{ __('Password updated.') }}</span>
-            @endif
         </div>
     </form>
+    @if (session('password-updated'))
+        <div id="password-toast" class="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+            {{ __('Password updated.') }}
+        </div>
+        <script>
+            setTimeout(function() {
+                var toast = document.getElementById('password-toast');
+                if (toast) toast.style.display = 'none';
+            }, 3000);
+        </script>
+    @endif
     <script>
     function togglePassword(id, btn) {
         const input = document.getElementById(id);
