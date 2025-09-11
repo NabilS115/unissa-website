@@ -76,6 +76,9 @@
                             <button @click="foodSearch = foodSearchInput" class="ml-2 px-3 py-2 rounded-full bg-teal-600 text-white font-semibold hover:bg-teal-700 transition flex items-center justify-center">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                             </button>
+                            <button @click="foodSearchInput = ''; foodSearch = ''" x-show="foodSearch || foodSearchInput" class="ml-1 px-2 py-2 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition flex items-center justify-center" title="Clear search">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
                         </div>
                         <template x-if="foodSearchInput && showFoodPredictions">
                             <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
@@ -200,6 +203,9 @@
                             <input type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @blur="setTimeout(() => showMerchPredictions = false, 100)" class="w-full border border-indigo-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
                             <button @click="merchSearch = merchSearchInput" class="ml-2 px-3 py-2 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </button>
+                            <button @click="merchSearchInput = ''; merchSearch = ''" x-show="merchSearch || merchSearchInput" class="ml-1 px-2 py-2 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition flex items-center justify-center" title="Clear search">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                             </button>
                         </div>
                         <template x-if="merchSearchInput && showMerchPredictions">
