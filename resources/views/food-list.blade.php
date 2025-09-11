@@ -89,7 +89,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <label class="text-sm font-medium text-teal-700">Sort by:</label>
-                        <select class="border border-teal-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400">
+                        <select x-model="foodSort" class="border border-teal-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400">
                             <option value="">Sort By</option>
                             <option value="name">Name</option>
                             <option value="category">Category</option>
@@ -98,7 +98,7 @@
                 </div>
             </section>
             <div class="flex flex-wrap justify-start gap-6 ml-8 mb-20">
-                <template x-for="food in sortedFoods" :key="food.name">
+                <template x-for="food in pagedFoods" :key="food.name">
                     <div>
                         <template x-if="food.name === 'Margherita Pizza'">
                             <a :href="'/review'" class="max-w-sm w-80 rounded overflow-hidden shadow-lg bg-white food-card flex flex-col" style="min-height: 210px; text-decoration: none;">
@@ -138,6 +138,15 @@
                         </template>
                     </div>
                 </template>
+            </div>
+            <div class="flex justify-center items-center gap-4 mb-8">
+                <button @click="foodPage > 1 && foodPage--" :disabled="foodPage === 1" class="px-3 py-1 rounded bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <span x-text="'Page ' + foodPage + ' of ' + foodTotalPages"></span>
+                <button @click="foodPage < foodTotalPages && foodPage++" :disabled="foodPage === foodTotalPages" class="px-3 py-1 rounded bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </button>
             </div>
         </div>
     </template>
@@ -191,7 +200,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <label class="text-sm font-medium text-indigo-700">Sort by:</label>
-                        <select class="border border-indigo-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                        <select x-model="merchSort" class="border border-indigo-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
                             <option value="">Sort By</option>
                             <option value="name">Name</option>
                             <option value="category">Category</option>
@@ -200,7 +209,7 @@
                 </div>
             </section>
             <div class="flex flex-wrap justify-start gap-6 ml-8 mb-20">
-                <template x-for="item in sortedMerch" :key="item.name">
+                <template x-for="item in pagedMerch" :key="item.name">
                     <div class="max-w-sm w-80 rounded overflow-hidden shadow-lg bg-white merch-card flex flex-col" style="min-height: 210px;">
                         <div class="w-full h-48 merch-image relative flex-shrink-0">
                             <img :src="item.img" :alt="item.name" class="absolute inset-0 w-full h-full object-cover opacity-80" style="height: 185px;">
@@ -219,6 +228,15 @@
                     </div>
                 </template>
             </div>
+            <div class="flex justify-center items-center gap-4 mb-8">
+                <button @click="merchPage > 1 && merchPage--" :disabled="merchPage === 1" class="px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <span x-text="'Page ' + merchPage + ' of ' + merchTotalPages"></span>
+                <button @click="merchPage < merchTotalPages && merchPage++" :disabled="merchPage === merchTotalPages" class="px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </button>
+            </div>
         </div>
     </template>
 </div>
@@ -230,32 +248,68 @@ function foodMerchComponent() {
         tab: 'food',
         foodFilter: 'All',
         merchFilter: 'All',
+        foodSort: '',
+        merchSort: '',
         foodSearch: '',
         merchSearch: '',
         showFoodPredictions: false,
         showMerchPredictions: false,
         foods: @json($foods),
         merchandise: @json($merchandise),
+        foodPage: 1,
+        foodPerPage: 8,
+        merchPage: 1,
+        merchPerPage: 8,
         blurActive() {
             if (document.activeElement) document.activeElement.blur();
         },
         get sortedFoods() {
             let search = this.foodSearch.toLowerCase();
             let filtered = this.foods.filter(f => this.foodFilter === 'All' || f.category === this.foodFilter);
-            return filtered.slice().sort((a, b) => {
+            let sorted = filtered.slice().sort((a, b) => {
                 let aMatch = a.name.toLowerCase().includes(search) || a.desc.toLowerCase().includes(search);
                 let bMatch = b.name.toLowerCase().includes(search) || b.desc.toLowerCase().includes(search);
                 return (bMatch ? 1 : 0) - (aMatch ? 1 : 0);
             });
+            if (this.foodSort === 'name') {
+                sorted.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (this.foodSort === 'category') {
+                sorted.sort((a, b) => a.category.localeCompare(b.category));
+            }
+            return sorted;
+        },
+        get pagedFoods() {
+            const start = (this.foodPage - 1) * this.foodPerPage;
+            return this.sortedFoods.slice(start, start + this.foodPerPage);
+        },
+        get foodTotalPages() {
+            return Math.max(1, Math.ceil(this.sortedFoods.length / this.foodPerPage));
         },
         get sortedMerch() {
             let search = this.merchSearch.toLowerCase();
             let filtered = this.merchandise.filter(m => this.merchFilter === 'All' || m.category === this.merchFilter);
-            return filtered.slice().sort((a, b) => {
+            let sorted = filtered.slice().sort((a, b) => {
                 let aMatch = a.name.toLowerCase().includes(search) || a.desc.toLowerCase().includes(search);
                 let bMatch = b.name.toLowerCase().includes(search) || b.desc.toLowerCase().includes(search);
                 return (bMatch ? 1 : 0) - (aMatch ? 1 : 0);
             });
+            if (this.merchSort === 'name') {
+                sorted.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (this.merchSort === 'category') {
+                sorted.sort((a, b) => a.category.localeCompare(b.category));
+            }
+            return sorted;
+        },
+        get pagedMerch() {
+            const start = (this.merchPage - 1) * this.merchPerPage;
+            return this.sortedMerch.slice(start, start + this.merchPerPage);
+        },
+        get merchTotalPages() {
+            return Math.max(1, Math.ceil(this.sortedMerch.length / this.merchPerPage));
+        },
+        $watch: {
+            sortedFoods() { this.foodPage = 1; },
+            sortedMerch() { this.merchPage = 1; }
         }
     }
 }
