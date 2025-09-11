@@ -6,26 +6,26 @@
 @php
     $categories = ['All', 'Pizza', 'Salad', 'Meat', 'Seafood', 'Vegetarian', 'Dessert'];
     $foods = [
-        ['name' => 'Margherita Pizza', 'category' => 'Pizza', 'desc' => 'Classic pizza with tomato, mozzarella, and basil.', 'tags' => ['Pizza', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Veggie Pizza', 'category' => 'Pizza', 'desc' => 'Loaded with fresh vegetables.', 'tags' => ['Pizza', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Caesar Salad', 'category' => 'Salad', 'desc' => 'Crisp romaine, parmesan, and creamy dressing.', 'tags' => ['Salad', 'Healthy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Greek Salad', 'category' => 'Salad', 'desc' => 'Tomatoes, cucumbers, feta, and olives.', 'tags' => ['Salad', 'Greek'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Beef Burger', 'category' => 'Meat', 'desc' => 'Juicy beef patty with fresh toppings.', 'tags' => ['Burger', 'Meat'], 'img' => 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'BBQ Ribs', 'category' => 'Meat', 'desc' => 'Tender ribs with smoky BBQ sauce.', 'tags' => ['BBQ', 'Meat'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Chicken Curry', 'category' => 'Meat', 'desc' => 'Spicy chicken curry with rice.', 'tags' => ['Curry', 'Spicy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Chicken Shawarma', 'category' => 'Meat', 'desc' => 'Spiced chicken wrapped in pita.', 'tags' => ['Wrap', 'Middle Eastern'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Sushi Platter', 'category' => 'Seafood', 'desc' => 'Assorted sushi rolls and sashimi.', 'tags' => ['Sushi', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Grilled Salmon', 'category' => 'Seafood', 'desc' => 'Fresh salmon fillet grilled to perfection.', 'tags' => ['Fish', 'Healthy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Shrimp Paella', 'category' => 'Seafood', 'desc' => 'Spanish rice dish with shrimp.', 'tags' => ['Rice', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Lobster Bisque', 'category' => 'Seafood', 'desc' => 'Rich and creamy lobster soup.', 'tags' => ['Soup', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Falafel Wrap', 'category' => 'Vegetarian', 'desc' => 'Chickpea balls wrapped with veggies.', 'tags' => ['Wrap', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Vegetable Stir Fry', 'category' => 'Vegetarian', 'desc' => 'Mixed veggies sautéed in soy sauce.', 'tags' => ['Vegetarian', 'Asian'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Pad Thai', 'category' => 'Vegetarian', 'desc' => 'Stir-fried noodles with shrimp and peanuts.', 'tags' => ['Noodles', 'Thai'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Chocolate Cake', 'category' => 'Dessert', 'desc' => 'Rich chocolate cake with ganache.', 'tags' => ['Dessert', 'Cake'], 'img' => 'https://images.unsplash.com/photo-1519864600265-abb224b9bfa5?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Ice Cream Sundae', 'category' => 'Dessert', 'desc' => 'Vanilla ice cream with toppings.', 'tags' => ['Dessert', 'Ice Cream'], 'img' => 'https://images.unsplash.com/photo-1464306076886-debede1a7b8a?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Eggs Benedict', 'category' => 'Dessert', 'desc' => 'Poached eggs on English muffin.', 'tags' => ['Breakfast', 'Eggs'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Tacos', 'category' => 'Dessert', 'desc' => 'Corn tortillas filled with spiced meat.', 'tags' => ['Tacos', 'Mexican'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'Pasta Carbonara', 'category' => 'Dessert', 'desc' => 'Creamy pasta with bacon and cheese.', 'tags' => ['Pasta', 'Italian'], 'img' => 'https://images.unsplash.com/photo-1523987355523-c7b5b0723c6b?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Margherita Pizza', 'category' => 'Pizza', 'rating' => 4.8, 'desc' => 'Classic pizza with tomato, mozzarella, and basil.', 'tags' => ['Pizza', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Veggie Pizza', 'category' => 'Pizza', 'rating' => 4.5, 'desc' => 'Loaded with fresh vegetables.', 'tags' => ['Pizza', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Caesar Salad', 'category' => 'Salad', 'rating' => 4.2, 'desc' => 'Crisp romaine, parmesan, and creamy dressing.', 'tags' => ['Salad', 'Healthy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Greek Salad', 'category' => 'Salad', 'rating' => 4.3, 'desc' => 'Tomatoes, cucumbers, feta, and olives.', 'tags' => ['Salad', 'Greek'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Beef Burger', 'category' => 'Meat', 'rating' => 4.7, 'desc' => 'Juicy beef patty with fresh toppings.', 'tags' => ['Burger', 'Meat'], 'img' => 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'BBQ Ribs', 'category' => 'Meat', 'rating' => 4.6, 'desc' => 'Tender ribs with smoky BBQ sauce.', 'tags' => ['BBQ', 'Meat'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Chicken Curry', 'category' => 'Meat', 'rating' => 4.4, 'desc' => 'Spicy chicken curry with rice.', 'tags' => ['Curry', 'Spicy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Chicken Shawarma', 'category' => 'Meat', 'rating' => 4.5, 'desc' => 'Spiced chicken wrapped in pita.', 'tags' => ['Wrap', 'Middle Eastern'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Sushi Platter', 'category' => 'Seafood', 'rating' => 4.9, 'desc' => 'Assorted sushi rolls and sashimi.', 'tags' => ['Sushi', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Grilled Salmon', 'category' => 'Seafood', 'rating' => 4.8, 'desc' => 'Fresh salmon fillet grilled to perfection.', 'tags' => ['Fish', 'Healthy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Shrimp Paella', 'category' => 'Seafood', 'rating' => 4.7, 'desc' => 'Spanish rice dish with shrimp.', 'tags' => ['Rice', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Lobster Bisque', 'category' => 'Seafood', 'rating' => 4.6, 'desc' => 'Rich and creamy lobster soup.', 'tags' => ['Soup', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Falafel Wrap', 'category' => 'Vegetarian', 'rating' => 4.5, 'desc' => 'Chickpea balls wrapped with veggies.', 'tags' => ['Wrap', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Vegetable Stir Fry', 'category' => 'Vegetarian', 'rating' => 4.3, 'desc' => 'Mixed veggies sautéed in soy sauce.', 'tags' => ['Vegetarian', 'Asian'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Pad Thai', 'category' => 'Vegetarian', 'rating' => 4.4, 'desc' => 'Stir-fried noodles with shrimp and peanuts.', 'tags' => ['Noodles', 'Thai'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Chocolate Cake', 'category' => 'Dessert', 'rating' => 4.9, 'desc' => 'Rich chocolate cake with ganache.', 'tags' => ['Dessert', 'Cake'], 'img' => 'https://images.unsplash.com/photo-1519864600265-abb224b9bfa5?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Ice Cream Sundae', 'category' => 'Dessert', 'rating' => 4.7, 'desc' => 'Vanilla ice cream with toppings.', 'tags' => ['Dessert', 'Ice Cream'], 'img' => 'https://images.unsplash.com/photo-1464306076886-debede1a7b8a?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Eggs Benedict', 'category' => 'Dessert', 'rating' => 4.6, 'desc' => 'Poached eggs on English muffin.', 'tags' => ['Breakfast', 'Eggs'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Tacos', 'category' => 'Dessert', 'rating' => 4.5, 'desc' => 'Corn tortillas filled with spiced meat.', 'tags' => ['Tacos', 'Mexican'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'Pasta Carbonara', 'category' => 'Dessert', 'rating' => 4.8, 'desc' => 'Creamy pasta with bacon and cheese.', 'tags' => ['Pasta', 'Italian'], 'img' => 'https://images.unsplash.com/photo-1523987355523-c7b5b0723c6b?auto=format&fit=crop&w=400&q=80'],
     ];
     $merchCategories = ['All', 'T-Shirt', 'Mug', 'Tote Bag'];
     $merchGroups = [
@@ -34,15 +34,15 @@
         'Tote Bag' => ['UNISSA Tote Bag', 'UNISSA Canvas Bag', 'UNISSA Eco Bag'],
     ];
     $merchandise = [
-        ['name' => 'UNISSA T-Shirt', 'category' => 'T-Shirt', 'desc' => 'Comfortable cotton t-shirt with UNISSA logo. Available in all sizes.', 'tags' => ['TShirt', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'UNISSA Polo Shirt', 'category' => 'T-Shirt', 'desc' => 'Smart polo shirt with embroidered UNISSA crest.', 'tags' => ['TShirt', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'UNISSA Long Sleeve', 'category' => 'T-Shirt', 'desc' => 'Long sleeve shirt for cooler days, UNISSA branding.', 'tags' => ['TShirt', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1526178613658-3f1622045557?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'UNISSA Mug', 'category' => 'Mug', 'desc' => 'Ceramic mug with UNISSA branding. Perfect for your morning coffee.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1517685352821-92cf88aee5a5?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'UNISSA Travel Mug', 'category' => 'Mug', 'desc' => 'Insulated travel mug for hot and cold drinks.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'UNISSA Classic Cup', 'category' => 'Mug', 'desc' => 'Classic white cup with UNISSA logo.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'UNISSA Tote Bag', 'category' => 'Tote Bag', 'desc' => 'Eco-friendly tote bag for everyday use, featuring the UNISSA logo.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80'],
-        ['name' => 'UNISSA Canvas Bag', 'category' => 'Tote Bag', 'desc' => 'Durable canvas bag with large capacity.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80'],
-        ['name' => 'UNISSA Eco Bag', 'category' => 'Tote Bag', 'desc' => 'Reusable eco bag with green UNISSA print.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA T-Shirt', 'category' => 'T-Shirt', 'rating' => 4.7, 'desc' => 'Comfortable cotton t-shirt with UNISSA logo. Available in all sizes.', 'tags' => ['TShirt', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA Polo Shirt', 'category' => 'T-Shirt', 'rating' => 4.6, 'desc' => 'Smart polo shirt with embroidered UNISSA crest.', 'tags' => ['TShirt', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA Long Sleeve', 'category' => 'T-Shirt', 'rating' => 4.5, 'desc' => 'Long sleeve shirt for cooler days, UNISSA branding.', 'tags' => ['TShirt', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1526178613658-3f1622045557?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA Mug', 'category' => 'Mug', 'rating' => 4.6, 'desc' => 'Ceramic mug with UNISSA branding. Perfect for your morning coffee.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1517685352821-92cf88aee5a5?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA Travel Mug', 'category' => 'Mug', 'rating' => 4.5, 'desc' => 'Insulated travel mug for hot and cold drinks.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA Classic Cup', 'category' => 'Mug', 'rating' => 4.4, 'desc' => 'Classic white cup with UNISSA logo.', 'tags' => ['Mug', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA Tote Bag', 'category' => 'Tote Bag', 'rating' => 4.7, 'desc' => 'Eco-friendly tote bag for everyday use, featuring the UNISSA logo.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80'],
+        ['name' => 'UNISSA Canvas Bag', 'category' => 'Tote Bag', 'rating' => 4.6, 'desc' => 'Durable canvas bag with large capacity.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80'],
+        ['name' => 'UNISSA Eco Bag', 'category' => 'Tote Bag', 'rating' => 4.5, 'desc' => 'Reusable eco bag with green UNISSA print.', 'tags' => ['ToteBag', 'Merch'], 'img' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'],
     ];
 @endphp
 <div x-data="foodMerchComponent()" x-cloak>
@@ -108,6 +108,10 @@
                                 <div class="px-3 py-1 card-content flex-1 flex flex-col justify-between" style="min-height: 32px; height: 32px;">
                                     <div>
                                         <div class="font-bold text-base mb-1 card-title" x-text="food.name"></div>
+                                        <div class="flex items-center gap-1 mb-1">
+                                            <svg class="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                                            <span class="text-sm text-gray-700 font-semibold" x-text="food.rating"></span>
+                                        </div>
                                         <p class="text-gray-700 text-xs card-description line-clamp-2" x-text="food.desc"></p>
                                     </div>
                                     <div class="px-0 pt-2 pb-1 tags-section">
@@ -126,6 +130,10 @@
                                 <div class="px-3 py-1 card-content flex-1 flex flex-col justify-between" style="min-height: 32px; height: 32px;">
                                     <div>
                                         <div class="font-bold text-base mb-1 card-title" x-text="food.name"></div>
+                                        <div class="flex items-center gap-1 mb-1">
+                                            <svg class="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                                            <span class="text-sm text-gray-700 font-semibold" x-text="food.rating"></span>
+                                        </div>
                                         <p class="text-gray-700 text-xs card-description line-clamp-2" x-text="food.desc"></p>
                                     </div>
                                     <div class="px-0 pt-2 pb-1 tags-section">
@@ -217,6 +225,10 @@
                         <div class="px-3 py-1 card-content flex-1 flex flex-col justify-between" style="min-height: 32px; height: 32px;">
                             <div>
                                 <div class="font-bold text-base mb-1 card-title" x-text="item.name"></div>
+                                <div class="flex items-center gap-1 mb-1">
+                                    <svg class="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                                    <span class="text-sm text-gray-700 font-semibold" x-text="item.rating"></span>
+                                </div>
                                 <p class="text-gray-700 text-xs card-description line-clamp-2" x-text="item.desc"></p>
                             </div>
                             <div class="px-0 pt-2 pb-1 tags-section">
