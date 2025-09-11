@@ -70,13 +70,18 @@
             <!-- ...existing filter section... -->
             <section class="w-full flex flex-col gap-3 px-8 py-4 mb-8">
                 <div class="flex flex-col sm:flex-row gap-3 items-center justify-between w-full">
-                    <div class="relative w-full sm:w-1/3">
-                        <input type="text" placeholder="Search food..." x-model="foodSearch" @focus="showFoodPredictions = true" @blur="setTimeout(() => showFoodPredictions = false, 100)" class="w-full border border-teal-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400" />
-                        <template x-if="foodSearch && showFoodPredictions">
-                            <ul class="absolute left-0 right-0 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
+                    <div class="w-full sm:w-1/3 relative">
+                        <div class="flex items-center gap-2">
+                            <input type="text" placeholder="Search food..." x-model="foodSearchInput" @focus="showFoodPredictions = true" @blur="setTimeout(() => showFoodPredictions = false, 100)" class="w-full border border-teal-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400" />
+                            <button @click="foodSearch = foodSearchInput" class="ml-2 px-3 py-2 rounded-full bg-teal-600 text-white font-semibold hover:bg-teal-700 transition flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </button>
+                        </div>
+                        <template x-if="foodSearchInput && showFoodPredictions">
+                            <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
                                 <template x-for="food in foods" :key="food.name">
-                                    <template x-if="food.name.toLowerCase().includes(foodSearch.toLowerCase())">
-                                        <li @mousedown.prevent="foodSearch = food.name; showFoodPredictions = false" class="px-4 py-2 hover:bg-teal-100 cursor-pointer text-sm" x-text="food.name"></li>
+                                    <template x-if="food.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
+                                        <li @mousedown.prevent="foodSearchInput = food.name; showFoodPredictions = false" class="px-4 py-2 hover:bg-teal-100 cursor-pointer text-sm" x-text="food.name"></li>
                                     </template>
                                 </template>
                             </ul>
@@ -93,6 +98,7 @@
                             <option value="">Sort By</option>
                             <option value="name">Name</option>
                             <option value="category">Category</option>
+                            <option value="rating">Rating</option>
                         </select>
                     </div>
                 </div>
@@ -189,13 +195,18 @@
             </div>
             <section class="w-full flex flex-col gap-3 px-8 py-4 mb-8">
                 <div class="flex flex-col sm:flex-row gap-3 items-center justify-between w-full">
-                    <div class="relative w-full sm:w-1/3">
-                        <input type="text" placeholder="Search merchandise..." x-model="merchSearch" @focus="showMerchPredictions = true" @blur="setTimeout(() => showMerchPredictions = false, 100)" class="w-full border border-indigo-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-                        <template x-if="merchSearch && showMerchPredictions">
-                            <ul class="absolute left-0 right-0 bg-white border border-indigo-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
+                    <div class="w-full sm:w-1/3 relative">
+                        <div class="flex items-center gap-2">
+                            <input type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @blur="setTimeout(() => showMerchPredictions = false, 100)" class="w-full border border-indigo-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                            <button @click="merchSearch = merchSearchInput" class="ml-2 px-3 py-2 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </button>
+                        </div>
+                        <template x-if="merchSearchInput && showMerchPredictions">
+                            <ul class="absolute left-0 right-0 mt-2 bg-white border border-indigo-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
                                 <template x-for="item in merchandise" :key="item.name">
-                                    <template x-if="item.name.toLowerCase().includes(merchSearch.toLowerCase())">
-                                        <li @mousedown.prevent="merchSearch = item.name; showMerchPredictions = false" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-sm" x-text="item.name"></li>
+                                    <template x-if="item.name.toLowerCase().includes(merchSearchInput.toLowerCase())">
+                                        <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-sm" x-text="item.name"></li>
                                     </template>
                                 </template>
                             </ul>
@@ -212,6 +223,7 @@
                             <option value="">Sort By</option>
                             <option value="name">Name</option>
                             <option value="category">Category</option>
+                            <option value="rating">Rating</option>
                         </select>
                     </div>
                 </div>
@@ -263,7 +275,9 @@ function foodMerchComponent() {
         foodSort: '',
         merchSort: '',
         foodSearch: '',
+        foodSearchInput: '',
         merchSearch: '',
+        merchSearchInput: '',
         showFoodPredictions: false,
         showMerchPredictions: false,
         foods: @json($foods),
@@ -277,18 +291,22 @@ function foodMerchComponent() {
         },
         get sortedFoods() {
             let search = this.foodSearch.toLowerCase();
-            let filtered = this.foods.filter(f => this.foodFilter === 'All' || f.category === this.foodFilter);
-            let sorted = filtered.slice().sort((a, b) => {
-                let aMatch = a.name.toLowerCase().includes(search) || a.desc.toLowerCase().includes(search);
-                let bMatch = b.name.toLowerCase().includes(search) || b.desc.toLowerCase().includes(search);
-                return (bMatch ? 1 : 0) - (aMatch ? 1 : 0);
-            });
+            let filtered = this.foods.filter(f =>
+                (this.foodFilter === 'All' || f.category === this.foodFilter) &&
+                (
+                    !search ||
+                    f.name.toLowerCase().includes(search) ||
+                    f.desc.toLowerCase().includes(search)
+                )
+            );
             if (this.foodSort === 'name') {
-                sorted.sort((a, b) => a.name.localeCompare(b.name));
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
             } else if (this.foodSort === 'category') {
-                sorted.sort((a, b) => a.category.localeCompare(b.category));
+                filtered.sort((a, b) => a.category.localeCompare(b.category));
+            } else if (this.foodSort === 'rating') {
+                filtered.sort((a, b) => b.rating - a.rating);
             }
-            return sorted;
+            return filtered;
         },
         get pagedFoods() {
             const start = (this.foodPage - 1) * this.foodPerPage;
@@ -299,18 +317,22 @@ function foodMerchComponent() {
         },
         get sortedMerch() {
             let search = this.merchSearch.toLowerCase();
-            let filtered = this.merchandise.filter(m => this.merchFilter === 'All' || m.category === this.merchFilter);
-            let sorted = filtered.slice().sort((a, b) => {
-                let aMatch = a.name.toLowerCase().includes(search) || a.desc.toLowerCase().includes(search);
-                let bMatch = b.name.toLowerCase().includes(search) || b.desc.toLowerCase().includes(search);
-                return (bMatch ? 1 : 0) - (aMatch ? 1 : 0);
-            });
+            let filtered = this.merchandise.filter(m =>
+                (this.merchFilter === 'All' || m.category === this.merchFilter) &&
+                (
+                    !search ||
+                    m.name.toLowerCase().includes(search) ||
+                    m.desc.toLowerCase().includes(search)
+                )
+            );
             if (this.merchSort === 'name') {
-                sorted.sort((a, b) => a.name.localeCompare(b.name));
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
             } else if (this.merchSort === 'category') {
-                sorted.sort((a, b) => a.category.localeCompare(b.category));
+                filtered.sort((a, b) => a.category.localeCompare(b.category));
+            } else if (this.merchSort === 'rating') {
+                filtered.sort((a, b) => b.rating - a.rating);
             }
-            return sorted;
+            return filtered;
         },
         get pagedMerch() {
             const start = (this.merchPage - 1) * this.merchPerPage;
