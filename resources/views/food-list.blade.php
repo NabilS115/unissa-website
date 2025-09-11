@@ -7,6 +7,9 @@
     tab: 'food',
     foodFilter: 'All',
     merchFilter: 'All',
+    blurActive() {
+        if (document.activeElement) document.activeElement.blur();
+    }
 }" x-cloak>
     <template x-if="tab === 'food'">
         <div>
@@ -58,8 +61,8 @@
             </section>
             <div class="w-full flex justify-center mb-8">
                 <div class="inline-flex rounded-lg bg-gray-100 p-1 shadow">
-                    <button @click="tab = 'food'" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Food & Beverages</button>
-                    <button @click="tab = 'merch'" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Merchandise</button>
+                    <button type="button" @click="blurActive(); tab = 'food'" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Food & Beverages</button>
+                    <button type="button" @click="blurActive(); tab = 'merch'" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Merchandise</button>
                 </div>
             </div>
             <!-- ...existing filter section... -->
@@ -176,8 +179,8 @@
             </section>
             <div class="w-full flex justify-center mb-8">
                 <div class="inline-flex rounded-lg bg-gray-100 p-1 shadow">
-                    <button @click="tab = 'food'" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Food & Beverages</button>
-                    <button @click="tab = 'merch'" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Merchandise</button>
+                    <button type="button" @click="blurActive(); tab = 'food'" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Food & Beverages</button>
+                    <button type="button" @click="blurActive(); tab = 'merch'" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Merchandise</button>
                 </div>
             </div>
             <section class="w-full flex flex-col gap-3 px-8 py-4 mb-8">
