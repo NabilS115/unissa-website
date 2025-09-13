@@ -13,6 +13,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public string $role = 'user'; // keep this default
 
     /**
      * Handle an incoming registration request.
@@ -23,7 +24,10 @@ new #[Layout('components.layouts.auth')] class extends Component {
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            // Remove 'role' from validation
         ]);
+
+        $validated['role'] = 'user'; // Always set role to 'user'
 
         $validated['password'] = Hash::make($validated['password']);
 
@@ -31,7 +35,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         Auth::login($user);
 
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+        // Redirect to homepage after registration
+        $this->redirectIntended(route('home', absolute: false), navigate: true);
     }
 }; ?>
 
@@ -96,4 +101,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
         <span>{{ __('Already have an account?') }}</span>
         <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
     </div>
+</div>
+    </form>
 </div>

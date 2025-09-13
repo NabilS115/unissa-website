@@ -19,7 +19,14 @@
                 <div class="text-gray-600">Role: {{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</div>
             </div>
         </div>
-    <!-- Edit button moved to beside name -->
+        <!-- Delete Account Button (top right) -->
+        <form method="POST" action="{{ route('profile.destroy') }}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                Delete Account
+            </button>
+        </form>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>

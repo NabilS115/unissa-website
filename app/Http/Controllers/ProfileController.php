@@ -66,4 +66,15 @@ class ProfileController extends Controller
 
         return back()->with('password-updated', true);
     }
+    public function destroy(Request $request)
+    {
+        $user = Auth::user();
+        Auth::logout();
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('status', 'Account deleted successfully.');
+    }
 }

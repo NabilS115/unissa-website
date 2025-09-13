@@ -31,6 +31,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'photo' => ['nullable', 'image', 'max:2048'],
+            // 'role' => ['required', 'in:user,admin'], // Removed role validation
         ]);
 
         $photoData = null;
@@ -43,13 +44,14 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'photo' => $photoData,
+            'role' => 'user', // Always set role to user
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        // Redirect to homepage instead of dashboard
+        // Redirect to homepage after registration
         return redirect('/');
     }
 }
