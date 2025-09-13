@@ -2,6 +2,9 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Response;
+use App\Models\User;
+use App\Models\Image;
 
 // contact routes
 Route::get('/contact', function () {
@@ -50,5 +53,24 @@ Route::get('/company-history', function () {
 
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 Route::view('/review', 'review');
+
+Route::get('/user/photo/{id}', function ($id) {
+    $user = User::findOrFail($id);
+    if ($user->photo) {
+        return Response::make($user->photo, 200, [
+            'Content-Type' => 'image/jpeg',
+            'Content-Disposition' => 'inline; filename="profile.jpg"'
+        ]);
+    }
+    abort(404);
+});
+
+Route::get('/image/{name}', function ($name) {
+    $image = Image::where('name', $name)->firstOrFail();
+    return Response::make($image->data, 200, [
+        'Content-Type' => $image->mime_type,
+        'Content-Disposition' => 'inline; filename="'.$image->name.'"'
+    ]);
+});
 
 require __DIR__.'/auth.php';

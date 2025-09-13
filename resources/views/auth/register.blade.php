@@ -10,7 +10,7 @@
                 Create an Account
             </h2>
         </div>
-        <form action="/register" method="POST" class="space-y-4">
+        <form action="/register" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
@@ -35,6 +35,14 @@
                 <input type="password" name="password_confirmation" id="password_confirmation" required
                     class="block w-full px-3 py-2 mt-1 text-gray-900 bg-gray-50 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
                     placeholder="Confirm your password">
+            </div>
+            <div>
+                <label for="photo" class="block text-sm font-medium text-gray-700">Profile Photo</label>
+                <input id="photo" type="file" name="photo" accept="image/*"
+                    class="block w-full px-3 py-2 mt-1 text-gray-900 bg-gray-50 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                @error('photo')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
             <div>
                 <button type="submit"
