@@ -16,7 +16,7 @@
     <div class="flex items-center gap-4">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <div class="flex flex-col">
-            <span class="font-bold text-lg">Something<br>Company</span>
+            <span class="font-bold text-lg">Tijarah Co Sdn Bhd</span>
         </div>
     </div>
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
