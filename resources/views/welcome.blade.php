@@ -45,8 +45,8 @@
             <a href="/food-list" class="hover:underline">Foods & Beverages</a>
         </h2>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
-            <div class="w-full h-48 flex items-center justify-center food-image pizza-bg">
-                <img src="/images/pizza.jpg" alt="Delicious Pizza" class="object-cover w-full h-full rounded-t" />
+            <div class="w-full h-48 relative food-image pizza-bg">
+                <img src="/images/pizza.jpg" alt="Delicious Pizza" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">Delicious Pizza</div>
@@ -60,8 +60,8 @@
             </div>
         </div>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
-            <div class="w-full h-48 flex items-center justify-center food-image salad-bg">
-                <img src="/images/salad.jpg" alt="Fresh Salad" class="object-cover w-full h-full rounded-t" />
+            <div class="w-full h-48 relative food-image salad-bg">
+                <img src="/images/salad.jpg" alt="Fresh Salad" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">Fresh Salad</div>
@@ -75,8 +75,8 @@
             </div>
         </div>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
-            <div class="w-full h-48 flex items-center justify-center food-image burger-bg">
-                <img src="/images/burger.jpg" alt="Gourmet Burger" class="object-cover w-full h-full rounded-t" />
+            <div class="w-full h-48 relative food-image burger-bg">
+                <img src="/images/burger.jpg" alt="Gourmet Burger" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">Gourmet Burger</div>
@@ -95,8 +95,8 @@
     <section class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
         <h2 class="w-full text-3xl font-bold text-teal-700 mb-6 text-center">Merchandise</h2>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 flex items-center justify-center rounded-b-xl bg-teal-100">
-                <img src="/images/tshirt.jpg" alt="UNISSA T-Shirt" class="object-cover w-full h-full rounded-t" />
+            <div class="w-full h-48 relative rounded-b-xl bg-teal-100">
+                <img src="/images/tshirt.jpg" alt="UNISSA T-Shirt" class="absolute inset-0 w-full h-full object-cover rounded-t bg-teal-100" />
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">UNISSA T-Shirt</div>
@@ -110,8 +110,8 @@
             </div>
         </div>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 flex items-center justify-center rounded-b-xl bg-yellow-100">
-                <img src="/images/mug.jpg" alt="UNISSA Mug" class="object-cover w-full h-full rounded-t" />
+            <div class="w-full h-48 relative rounded-b-xl bg-yellow-100">
+                <img src="/images/mug.jpg" alt="UNISSA Mug" class="absolute inset-0 w-full h-full object-cover rounded-t bg-yellow-100" />
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">UNISSA Mug</div>
@@ -125,8 +125,8 @@
             </div>
         </div>
         <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 flex items-center justify-center rounded-b-xl bg-pink-100">
-                <img src="/images/totebag.jpg" alt="UNISSA Tote Bag" class="object-cover w-full h-full rounded-t" />
+            <div class="w-full h-48 relative rounded-b-xl bg-pink-100">
+                <img src="/images/totebag.jpg" alt="UNISSA Tote Bag" class="absolute inset-0 w-full h-full object-cover rounded-t bg-pink-100" />
             </div>
             <div class="px-6 py-4 card-content">
                 <div class="font-bold text-xl mb-2 card-title">UNISSA Tote Bag</div>
