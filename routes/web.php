@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Response;
 use App\Models\User;
 use App\Models\Image;
+use App\Http\Controllers\FoodCatalogController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -46,9 +47,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // catalog routes
-Route::get('/food-list', function () {
-    return view('food-list');
-});
+Route::get('/food-list', [FoodCatalogController::class, 'index'])->name('food-list');
 
 // about routes
 Route::get('/company-history', function () {
@@ -96,4 +95,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
 });
 
+require __DIR__.'/auth.php';
 require __DIR__.'/auth.php';
