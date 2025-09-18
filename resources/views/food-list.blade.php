@@ -164,6 +164,38 @@
             </div>
         </div>
     </template>
+
+    @if(auth()->user()?->is_admin)
+    <div class="w-full flex justify-end px-8 mb-4">
+        <button @click="showUpload = true"
+            class="bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-teal-700 transition">
+            Upload Image
+        </button>
+    </div>
+    <div x-show="showUpload" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <form method="POST" action="{{ route('catalog.upload') }}" enctype="multipart/form-data"
+              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            @csrf
+            <button type="button" @click="showUpload = false"
+                class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
+            <h2 class="text-xl font-bold mb-4">Upload Catalog Image</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Image File</label>
+                <input type="file" name="image" required class="border rounded px-3 py-2 w-full" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Type</label>
+                <select name="type" class="border rounded px-3 py-2 w-full">
+                    <option value="food">Food & Beverages</option>
+                    <option value="merch">Merchandise</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">
+                Upload
+            </button>
+        </form>
+    </div>
+    @endif
 </div>
 @endsection
 
@@ -182,6 +214,7 @@ function foodMerchComponent() {
         merchSearchInput: '',
         showFoodPredictions: false,
         showMerchPredictions: false,
+        showUpload: false,
         foods: @json($foods),
         merchandise: @json($merchandise),
         foodPage: 1,
