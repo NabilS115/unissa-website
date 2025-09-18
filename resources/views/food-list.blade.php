@@ -8,25 +8,26 @@
 @endphp
 
 <div x-data="foodMerchComponent()" x-cloak>
-    <!-- Banner Section (now uses Alpine.js tab variable) -->
-    <div class="w-full flex items-center justify-center mb-8" style="height: 260px;">
+    <!-- Merchandise/Food Banner Section -->
+    <div class="w-full flex items-center justify-center mb-8" style="height: 250px;">
         <div class="relative w-full h-full flex items-stretch shadow-lg overflow-hidden"
-             style="height: 260px; border-top-right-radius: 130px; border-bottom-right-radius: 130px; margin-right: 32px;">
+             style="height: 250px; border-radius: 0 125px 125px 0; margin-right: 32px;">
             <div class="absolute inset-0 w-full h-full"
-                 style="background: linear-gradient(90deg, #6a7fd1 10%, #e17fc2 50%, #fbbf24 100%); pointer-events:none;">
+                 :style="tab === 'merch' 
+                    ? 'background: linear-gradient(90deg, #6a7fd1 10%, #e17fc2 50%, #fbbf24 100%); pointer-events:none;' 
+                    : 'background: linear-gradient(90deg, #ffbe2f 10%, #6adf7b 100%); pointer-events:none;'">
             </div>
             <div class="flex-1 flex items-center pl-12 z-10" style="width: 55%;">
                 <div class="text-left">
-                    <h1 class="text-[2.5rem] font-extrabold text-white mb-2 drop-shadow-lg"
-                        x-text="tab === 'food' ? `Something's Food Catalog` : `Something's Merchandise`"></h1>
-                    <h2 class="text-2xl font-bold text-white mb-2 drop-shadow"
-                        x-text="tab === 'food' ? 'Discover Wonderful Dishes' : 'Discover Unique Merchandise'"></h2>
-                    <p class="text-lg text-white drop-shadow"
-                        x-text="tab === 'food' ? 'From local favorites to global cuisine' : 'T-shirts, mugs, bags, and more'"></p>
+                    <h1 class="text-5xl font-extrabold text-white mb-2 drop-shadow-lg" x-show="tab === 'merch'" x-text="'Merchandise'"></h1>
+                    <h1 class="text-4xl font-extrabold text-black mb-2 drop-shadow-lg" x-show="tab === 'food'" style="line-height: 1.1;">
+                        FOODS & BEVERAGES
+                    </h1>
+                    <h2 class="text-2xl font-bold text-white mb-2 drop-shadow" x-show="tab === 'merch'" x-text="'Discover Unique Merchandise'"></h2>
                 </div>
             </div>
-            <img :src="tab === 'food' ? '/nasii-lemak.png' : '/images/merch-banner.jpg'"
-                 :alt="tab === 'food' ? 'Nasi Lemak' : 'Merchandise Banner'"
+            <img :src="tab === 'merch' ? '/images/merch-banner2.png' : '/nasii-lemak.png'"
+                 :alt="tab === 'merch' ? 'Merchandise Banner' : 'Nasi Lemak'"
                  class="object-cover rounded-full z-10"
                  style="height: 200px; width: 200px; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); object-fit: cover;" />
         </div>
