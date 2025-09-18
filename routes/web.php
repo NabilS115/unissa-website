@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Response;
 use App\Models\User;
 use App\Models\Image;
 use App\Http\Controllers\FoodCatalogController;
+use App\Http\Controllers\Admin\CatalogController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -48,6 +49,9 @@ Route::middleware(['auth'])->group(function () {
 
 // catalog routes
 Route::get('/food-list', [FoodCatalogController::class, 'index'])->name('food-list');
+Route::post('/catalog/add', [CatalogController::class, 'add'])->name('catalog.add');
+Route::post('/catalog/edit/{id}', [CatalogController::class, 'edit'])->name('catalog.edit');
+Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('catalog.upload');
 
 // about routes
 Route::get('/company-history', function () {

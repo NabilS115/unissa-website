@@ -90,6 +90,83 @@
             </div>
         </div>
     </section>
+    {{-- Admin features --}}
+    @if(auth()->check() && auth()->user()->role === 'admin')
+    <!-- Add Product Button -->
+    <div class="w-full flex justify-end px-8 mb-4">
+        <button @click="showAddModal = true"
+            class="bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-teal-700 transition">
+            Add Product
+        </button>
+    </div>
+    <!-- Add Product Modal -->
+    <div x-show="showAddModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <form method="POST" action="{{ route('catalog.add') }}" enctype="multipart/form-data"
+              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            @csrf
+            <button type="button" @click="showAddModal = false"
+                class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
+            <h2 class="text-xl font-bold mb-4">Add Product</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Name</label>
+                <input type="text" name="name" required class="border rounded px-3 py-2 w-full" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Description</label>
+                <textarea name="desc" required class="border rounded px-3 py-2 w-full"></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Category</label>
+                <input type="text" name="category" required class="border rounded px-3 py-2 w-full" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Image</label>
+                <input type="file" name="img" required class="border rounded px-3 py-2 w-full" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Type</label>
+                <select name="type" class="border rounded px-3 py-2 w-full">
+                    <option value="food">Food & Beverages</option>
+                    <option value="merch">Merchandise</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">
+                Add
+            </button>
+        </form>
+    </div>
+    <!-- Edit Product Modal -->
+    <div x-show="showEditModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <form method="POST" :action="editFormAction" enctype="multipart/form-data"
+              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            @csrf
+            <button type="button" @click="showEditModal = false"
+                class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
+            <h2 class="text-xl font-bold mb-4">Edit Product</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Name</label>
+                <input type="text" name="name" :value="editProduct.name" required class="border rounded px-3 py-2 w-full" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Description</label>
+                <textarea name="desc" required class="border rounded px-3 py-2 w-full" x-text="editProduct.desc"></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Category</label>
+                <input type="text" name="category" :value="editProduct.category" required class="border rounded px-3 py-2 w-full" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Image</label>
+                <input type="file" name="img" class="border rounded px-3 py-2 w-full" />
+            </div>
+            <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">
+                Save
+            </button>
+        </form>
+    </div>
+    @endif
+
+    <!-- Food Cards -->
     <template x-if="tab === 'food'">
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
@@ -97,6 +174,22 @@
                     <div class="rounded overflow-hidden shadow-lg bg-white food-card flex flex-col">
                         <div class="w-full h-48 relative food-image">
                             <img :src="food.img" :alt="food.name" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
+                            @if(auth()->user()?->role === 'admin')
+                            <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
+                                <!-- Fix: Use only JS for route parameter, not Blade -->
+                                <button @click="openEditModal(food, '/catalog/edit/' + food.id)"
+                                    class="bg-teal-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-teal-700">
+                                    Edit
+                                </button>
+                                <form method="POST" :action="'/catalog/delete/' + food.id" onsubmit="return confirm('Delete this product?')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-red-700 mt-1">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                            @endif
                         </div>
                         <div class="px-6 py-4 card-content flex-1 flex flex-col justify-between">
                             <div>
@@ -127,6 +220,7 @@
             </div>
         </div>
     </template>
+    <!-- Merchandise Cards -->
     <template x-if="tab === 'merch'">
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
@@ -134,6 +228,21 @@
                     <div class="rounded overflow-hidden shadow-lg bg-white merch-card flex flex-col">
                         <div class="w-full h-48 relative merch-image">
                             <img :src="item.img" :alt="item.name" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
+                            @if(auth()->user()?->role === 'admin')
+                            <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
+                                <button @click="openEditModal(item, '/catalog/edit/' + item.id)"
+                                    class="bg-indigo-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-indigo-700">
+                                    Edit
+                                </button>
+                                <form method="POST" :action="'/catalog/delete/' + item.id" onsubmit="return confirm('Delete this product?')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-red-700 mt-1">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                            @endif
                         </div>
                         <div class="px-6 py-4 card-content flex-1 flex flex-col justify-between">
                             <div>
@@ -165,7 +274,7 @@
         </div>
     </template>
 
-    @if(auth()->user()?->is_admin)
+    @if(auth()->user()?->role === 'admin')
     <div class="w-full flex justify-end px-8 mb-4">
         <button @click="showUpload = true"
             class="bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-teal-700 transition">
@@ -215,6 +324,10 @@ function foodMerchComponent() {
         showFoodPredictions: false,
         showMerchPredictions: false,
         showUpload: false,
+        showAddModal: false,
+        showEditModal: false,
+        editProduct: {},
+        editFormAction: '',
         foods: @json($foods),
         merchandise: @json($merchandise),
         foodPage: 1,
@@ -275,6 +388,11 @@ function foodMerchComponent() {
         },
         get merchTotalPages() {
             return Math.max(1, Math.ceil(this.sortedMerch.length / this.merchPerPage));
+        },
+        openEditModal(product, action) {
+            this.editProduct = product;
+            this.editFormAction = action;
+            this.showEditModal = true;
         },
         $watch: {
             sortedFoods() { this.foodPage = 1; },
