@@ -100,7 +100,7 @@
         </button>
     </div>
     <!-- Add Product Modal -->
-    <div x-show="showAddModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div x-show="showAddModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" action="{{ route('catalog.add') }}" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             @csrf
@@ -136,7 +136,7 @@
         </form>
     </div>
     <!-- Edit Product Modal -->
-    <div x-show="showEditModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" :action="editFormAction" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             @csrf
@@ -281,7 +281,8 @@
             Upload Image
         </button>
     </div>
-    <div x-show="showUpload" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <!-- Fix: Add x-cloak to the modal for proper hiding before Alpine loads -->
+    <div x-show="showUpload" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" action="{{ route('catalog.upload') }}" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             @csrf
