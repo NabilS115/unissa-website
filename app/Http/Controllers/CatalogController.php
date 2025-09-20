@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Food;
-use App\Models\Merchandise; // Make sure this model exists and matches your 'merchandises' table
+use App\Models\Merchandise;
 
 class CatalogController extends Controller
 {

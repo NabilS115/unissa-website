@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Response;
 use App\Models\User;
 use App\Models\Image;
 use App\Http\Controllers\FoodCatalogController;
-use App\Http\Controllers\Admin\CatalogController;
+use App\Http\Controllers\CatalogController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -97,6 +97,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     // Site Settings (example)
     Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
+
+    // Admin Catalog Management
+    Route::post('/catalog/add', [CatalogController::class, 'add'])->name('admin.catalog.add');
+    Route::post('/catalog/edit/{id}', [CatalogController::class, 'edit'])->name('admin.catalog.edit');
+    Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('admin.catalog.upload');
 });
 
 require __DIR__.'/auth.php';
