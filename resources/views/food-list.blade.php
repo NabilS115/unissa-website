@@ -281,7 +281,6 @@
             Upload Image
         </button>
     </div>
-    <!-- Fix: Add x-cloak to the modal for proper hiding before Alpine loads -->
     <div x-show="showUpload" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" action="{{ route('catalog.upload') }}" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
@@ -308,6 +307,14 @@
     @endif
 </div>
 @endsection
+
+<head>
+    <!-- ...existing code... -->
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+    <!-- ...existing code... -->
+</head>
 
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
