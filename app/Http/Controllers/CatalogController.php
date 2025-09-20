@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Food;
+use App\Models\Merchandise; // Make sure this model exists and matches your 'merchandises' table
 
 class CatalogController extends Controller
 {
@@ -16,15 +18,25 @@ class CatalogController extends Controller
             'type' => 'required|in:food,merch',
         ]);
         $path = $request->file('img')->store('catalog', 'public');
-        // Example: Product::create([...])
-        // Replace Product with your actual model (e.g. Food or Merchandise)
-        // Product::create([
-        //     'name' => $request->name,
-        //     'desc' => $request->desc,
-        //     'category' => $request->category,
-        //     'img' => '/storage/' . $path,
-        //     'type' => $request->type,
-        // ]);
+        $imgPath = '/storage/' . $path;
+
+        if ($request->type === 'food') {
+            Food::create([
+                'name' => $request->name,
+                'desc' => $request->desc,
+                'category' => $request->category,
+                'img' => $imgPath,
+                'type' => $request->type,
+            ]);
+        } else {
+            Merchandise::create([
+                'name' => $request->name,
+                'desc' => $request->desc,
+                'category' => $request->category,
+                'img' => $imgPath,
+                'type' => $request->type,
+            ]);
+        }
         return back()->with('success', 'Product added!');
     }
 

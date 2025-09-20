@@ -14,6 +14,6 @@ class FoodCatalogController extends Controller
         array_unshift($categories, 'All');
         $foods = Food::all();
         $merchandise = Merchandise::all();
-        return view('food-list', compact('categories', 'foods', 'merchandise'));
+        return view('catalog', compact('categories', 'foods', 'merchandise'));
     }
 }

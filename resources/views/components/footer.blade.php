@@ -22,7 +22,7 @@
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
             <a href="/" class="text-white mb-2 hover:underline">Home</a>
-            <a href="/food-list" class="text-white mb-2 hover:underline">Catalog</a>
+            <a href="/catalog" class="text-white mb-2 hover:underline">Catalog</a>
             <a href="/company-history" class="text-white mb-2 hover:underline">About</a>
             <a href="/contact" class="text-white hover:underline">Contact Us</a>
         </div>

@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // catalog routes
-Route::get('/food-list', [FoodCatalogController::class, 'index'])->name('food-list');
+Route::get('/catalog', [FoodCatalogController::class, 'index'])->name('catalog');
 Route::post('/catalog/add', [CatalogController::class, 'add'])->name('catalog.add');
 Route::post('/catalog/edit/{id}', [CatalogController::class, 'edit'])->name('catalog.edit');
 Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('catalog.upload');
