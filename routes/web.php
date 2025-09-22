@@ -5,8 +5,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Response;
 use App\Models\User;
 use App\Models\Image;
-use App\Http\Controllers\FoodCatalogController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\AdminCatalogController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -48,7 +48,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // catalog routes
-Route::get('/catalog', [FoodCatalogController::class, 'index'])->name('catalog');
+// Make sure your form uses method="POST" and enctype="multipart/form-data"
+// Example form:
+// <form action="{{ route('catalog.add') }}" method="POST" enctype="multipart/form-data">
+//     @csrf
+//     <!-- fields -->
+// </form>
+Route::get('/catalog', [CatalogController::class, 'index'])->name('products.catalog');
 Route::post('/catalog/add', [CatalogController::class, 'add'])->name('catalog.add');
 Route::post('/catalog/edit/{id}', [CatalogController::class, 'edit'])->name('catalog.edit');
 Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('catalog.upload');
@@ -97,12 +103,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     // Site Settings (example)
     Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
-
-    // Admin Catalog Management
-    Route::post('/catalog/add', [CatalogController::class, 'add'])->name('admin.catalog.add');
-    Route::post('/catalog/edit/{id}', [CatalogController::class, 'edit'])->name('admin.catalog.edit');
-    Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('admin.catalog.upload');
 });
 
-require __DIR__.'/auth.php';
+// Admin Catalog routes
+Route::middleware(['auth'])->prefix('admin/catalog')->group(function () {
+    Route::post('/add', [AdminCatalogController::class, 'add'])->name('admin.catalog.add');
+    Route::post('/edit/{id}', [AdminCatalogController::class, 'edit'])->name('admin.catalog.edit');
+    Route::post('/upload', [AdminCatalogController::class, 'upload'])->name('admin.catalog.upload');
+});
+
 require __DIR__.'/auth.php';

@@ -4,6 +4,8 @@
 
 @section('content')
 @php
+    $food = $food ?? [];
+    $merchandise = $merchandise ?? [];
     $categories = $categories ?? ['All'];
 @endphp
 
@@ -53,7 +55,7 @@
                 </div>
                 <template x-if="tab === 'food' && foodSearchInput && showFoodPredictions">
                     <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
-                        <template x-for="food in foods" :key="food.name">
+                        <template x-for="food in food" :key="food.name">
                             <template x-if="food.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
                                 <li @mousedown.prevent="foodSearchInput = food.name; showFoodPredictions = false" class="px-4 py-2 hover:bg-teal-100 cursor-pointer text-sm" x-text="food.name"></li>
                             </template>
@@ -101,7 +103,7 @@
     </div>
     <!-- Add Product Modal -->
     <div x-show="showAddModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-        <form method="POST" action="{{ route('catalog.add') }}" enctype="multipart/form-data"
+        <form x-ref="addForm" @submit.prevent="submitAddProduct" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             @csrf
             <button type="button" @click="showAddModal = false"
@@ -290,7 +292,7 @@
             <h2 class="text-xl font-bold mb-4">Upload Catalog Image</h2>
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2">Image File</label>
-                <input type="file" name="image" required class="border rounded px-3 py-2 w-full" />
+                <input type="file" name="img" required class="border rounded px-3 py-2 w-full" />
             </div>
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2">Type</label>
@@ -305,6 +307,11 @@
         </form>
     </div>
     @endif
+
+    <!-- No Products Message -->
+    <div class="w-full text-center py-8" x-show="(tab === 'food' ? sortedFoods : sortedMerch).length === 0">
+        <p class="text-gray-500 text-lg">No products found.</p>
+    </div>
 </div>
 @endsection
 
@@ -336,7 +343,7 @@ function foodMerchComponent() {
         showEditModal: false,
         editProduct: {},
         editFormAction: '',
-        foods: @json($foods),
+        food: @json($food),
         merchandise: @json($merchandise),
         foodPage: 1,
         foodPerPage: 8,
@@ -347,7 +354,7 @@ function foodMerchComponent() {
         },
         get sortedFoods() {
             let search = this.foodSearch.toLowerCase();
-            let filtered = this.foods.filter(f =>
+            let filtered = this.food.filter(f =>
                 (this.foodFilter === 'All' || f.category === this.foodFilter) &&
                 (
                     !search ||
@@ -401,6 +408,32 @@ function foodMerchComponent() {
             this.editProduct = product;
             this.editFormAction = action;
             this.showEditModal = true;
+        },
+        submitAddProduct() {
+            const form = this.$refs.addForm;
+            const formData = new FormData(form);
+            fetch('{{ route('catalog.add') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.product) {
+                    if (data.product.type === 'food') {
+                        this.food.push(data.product);
+                    } else {
+                        this.merchandise.push(data.product);
+                    }
+                    this.showAddModal = false;
+                    form.reset();
+                } else {
+                    alert('Failed to add product.');
+                }
+            })
+            .catch(() => alert('Error adding product.'));
         },
         $watch: {
             sortedFoods() { this.foodPage = 1; },
