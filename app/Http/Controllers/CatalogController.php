@@ -12,65 +12,70 @@ class CatalogController extends Controller
     {
         \Log::info('Add product request received', $request->all());
 
-        // Log if request method is not POST
         if (!$request->isMethod('post')) {
             \Log::error('Request method is not POST');
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'error' => 'Invalid request method'], 405);
+            }
             return back()->withErrors(['error' => 'Invalid request method'])->withInput();
         }
 
-        // Log validation errors
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'desc' => 'required|string',
                 'category' => 'required|string|max:255',
-                // Increase max size to 20MB (20480 KB)
                 'img' => 'required|image|max:20480',
                 'type' => 'required|in:food,merch',
             ], [
-                // Custom error message for image size
                 'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation failed', ['errors' => $e->errors()]);
-            // Optionally, add a flash message for the user
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+            }
             return back()->withErrors($e->errors())->withInput();
         }
 
         try {
             if (!$request->hasFile('img')) {
                 \Log::error('No image file found in request');
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'error' => 'Image file is required'], 422);
+                }
                 return back()->withErrors(['img' => 'Image file is required'])->withInput();
             }
 
             $path = $request->file('img')->store('catalog', 'public');
             $imgPath = '/storage/' . $path;
-
             $validated['img'] = $imgPath;
 
             \Log::info('Validated data before create', $validated);
 
-            // Ensure $validated['img'] exists
             if (empty($validated['img'])) {
                 \Log::error('Validated array missing img key', $validated);
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'error' => 'Image upload failed.'], 500);
+                }
                 return back()->withErrors(['img' => 'Image upload failed.'])->withInput();
             }
 
-            // Log Product model fillable fields
             $fillable = (new Product)->getFillable();
             \Log::info('Product model fillable fields', $fillable);
 
-            // Check for missing fillable fields
             $missing = array_diff(array_keys($validated), $fillable);
             if ($missing) {
                 \Log::warning('Validated keys not in fillable', $missing);
             }
 
-            // Try to create product and catch SQL errors
             try {
                 $newProduct = Product::create($validated);
             } catch (\Exception $e) {
                 \Log::error('SQL/Product::create error', ['error' => $e->getMessage()]);
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'error' => 'SQL error: ' . $e->getMessage()], 500);
+                }
                 return back()->withErrors(['error' => 'SQL error: ' . $e->getMessage()])->withInput();
             }
 
@@ -80,7 +85,6 @@ class CatalogController extends Controller
                 'id' => $newProduct ? $newProduct->id : null,
             ]);
 
-            // Check if the product is actually in the database
             $check = Product::where('name', $validated['name'])->first();
             \Log::info('Product check after create', [
                 'check' => $check ? $check->toArray() : null,
@@ -88,6 +92,9 @@ class CatalogController extends Controller
 
             if ($newProduct && $newProduct->id) {
                 \Log::info('Product saved to database', $newProduct->toArray());
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => true, 'product' => $newProduct]);
+                }
                 return redirect()->route('products.catalog')->with('success', 'Product added!');
             } else {
                 \Log::error('Product save failed', [
@@ -95,10 +102,16 @@ class CatalogController extends Controller
                     'newProduct' => $newProduct,
                     'db_error' => \DB::connection()->getPdo() ? null : 'No PDO connection'
                 ]);
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'error' => 'Failed to save product'], 500);
+                }
                 return back()->withErrors(['error' => 'Failed to save product'])->withInput();
             }
         } catch (\Exception $e) {
             \Log::error('Product add failed: ' . $e->getMessage());
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'error' => 'Failed to add product: ' . $e->getMessage()], 500);
+            }
             return back()->withErrors(['error' => 'Failed to add product: ' . $e->getMessage()])->withInput();
         }
     }
@@ -141,20 +154,9 @@ class CatalogController extends Controller
 
     public function index()
     {
-        $products = Product::all();
-        \Log::info('CatalogController@index products SQL', [
-            'sql' => Product::query()->toSql(),
-            'connection' => (new Product)->getConnectionName(),
-            'table' => (new Product)->getTable(),
-        ]);
-        \Log::info('CatalogController@index products count', ['count' => $products->count()]);
-        \Log::info('CatalogController@index products', $products->toArray());
-        if ($products->isEmpty()) {
-            \Log::warning('No products found in products table');
-        }
-        $food = $products->where('type', 'food')->values();
-        $merchandise = $products->where('type', 'merch')->values();
-        $categories = $products->pluck('category')->unique()->values();
-        return view('products.catalog', compact('products', 'food', 'merchandise', 'categories'));
+        $merchandise = \App\Models\Product::where('type', 'merch')->get();
+        $food = \App\Models\Product::where('type', 'food')->get();
+        $categories = \App\Models\Product::pluck('category')->unique()->values()->all();
+        return view('products.catalog', compact('food', 'merchandise', 'categories'));
     }
 }

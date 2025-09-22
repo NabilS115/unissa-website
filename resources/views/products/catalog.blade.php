@@ -6,6 +6,10 @@
 @php
     $food = $food ?? [];
     $merchandise = $merchandise ?? [];
+    // If $merchandise is a collection, convert to array of objects (not associative arrays)
+    if ($merchandise instanceof \Illuminate\Support\Collection) {
+        $merchandise = $merchandise->map(function($item) { return (object)$item; })->toArray();
+    }
     $categories = $categories ?? ['All'];
 @endphp
 
@@ -226,7 +230,7 @@
     <template x-if="tab === 'merch'">
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
-                <template x-for="item in pagedMerch" :key="item.name">
+                <template x-for="item in pagedMerch" :key="item.id">
                     <div class="rounded overflow-hidden shadow-lg bg-white merch-card flex flex-col">
                         <div class="w-full h-48 relative merch-image">
                             <img :src="item.img" :alt="item.name" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
@@ -312,6 +316,10 @@
     <div class="w-full text-center py-8" x-show="(tab === 'food' ? sortedFoods : sortedMerch).length === 0">
         <p class="text-gray-500 text-lg">No products found.</p>
     </div>
+
+    {{-- Debug output for merchandise --}}
+    {{-- <pre>{{ print_r($merchandise, true) }}</pre> --}}
+    {{-- Remove after confirming data is present --}}
 </div>
 @endsection
 
@@ -415,16 +423,18 @@ function foodMerchComponent() {
             fetch('{{ route('catalog.add') }}', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
                 },
                 body: formData
             })
             .then(res => res.json())
             .then(data => {
+                console.log('Added product:', data.product);
                 if (data.success && data.product) {
                     if (data.product.type === 'food') {
                         this.food.push(data.product);
-                    } else {
+                    } else if (data.product.type === 'merch') {
                         this.merchandise.push(data.product);
                     }
                     this.showAddModal = false;

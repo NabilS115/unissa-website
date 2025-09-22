@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
 //     @csrf
 //     <!-- fields -->
 // </form>
-Route::get('/catalog', [CatalogController::class, 'index'])->name('products.catalog');
+Route::get('/catalog', [\App\Http\Controllers\CatalogController::class, 'index'])->name('products.catalog');
 Route::post('/catalog/add', [CatalogController::class, 'add'])->name('catalog.add');
 Route::post('/catalog/edit/{id}', [CatalogController::class, 'edit'])->name('catalog.edit');
 Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('catalog.upload');
