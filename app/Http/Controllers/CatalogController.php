@@ -121,30 +121,36 @@ class CatalogController extends Controller
         }
     }
 
-    public function edit(\Illuminate\Http\Request $request, $id)
+    public function edit(Request $request, $id)
     {
         // Only allow admin
         if (!auth()->check() || auth()->user()->role !== 'admin') {
             abort(403, 'Unauthorized');
         }
 
-        $request->validate([
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'desc' => 'required|string',
             'category' => 'required|string|max:255',
-            'img' => 'nullable|image|max:2048',
+            'img' => 'nullable|image|max:20480',
+        ], [
+            'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
         ]);
-        // Example: $product = Product::findOrFail($id);
-        // Update fields
-        // $product->name = $request->name;
-        // $product->desc = $request->desc;
-        // $product->category = $request->category;
-        // if ($request->hasFile('img')) {
-        //     $path = $request->file('img')->store('catalog', 'public');
-        //     $product->img = '/storage/' . $path;
-        // }
-        // $product->save();
-        return back()->with('success', 'Product updated!');
+
+        $product->name = $validated['name'];
+        $product->desc = $validated['desc'];
+        $product->category = $validated['category'];
+
+        if ($request->hasFile('img')) {
+            $path = $request->file('img')->store('catalog', 'public');
+            $product->img = '/storage/' . $path;
+        }
+
+        $product->save();
+
+        return redirect()->route('products.catalog')->with('success', 'Product updated!');
     }
 
     public function upload(\Illuminate\Http\Request $request)

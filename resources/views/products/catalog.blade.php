@@ -171,6 +171,7 @@
         <form method="POST" :action="editFormAction" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             @csrf
+            @method('PUT')
             <button type="button" @click="showEditModal = false"
                 class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
             <h2 class="text-xl font-bold mb-4">Edit Product</h2>
