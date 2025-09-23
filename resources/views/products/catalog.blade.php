@@ -6,11 +6,12 @@
 @php
     $food = $food ?? [];
     $merchandise = $merchandise ?? [];
-    // If $merchandise is a collection, convert to array of objects (not associative arrays)
     if ($merchandise instanceof \Illuminate\Support\Collection) {
         $merchandise = $merchandise->map(function($item) { return (object)$item; })->toArray();
     }
-    $categories = $categories ?? ['All'];
+    // Separate categories for food and merch
+    $foodCategories = \App\Models\Product::where('type', 'food')->pluck('category')->unique()->values()->all();
+    $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
 @endphp
 
 <div x-data="foodMerchComponent()" x-cloak>
@@ -77,9 +78,33 @@
                 </template>
             </div>
             <div class="flex-1 flex flex-wrap gap-2 items-center justify-center sm:justify-start overflow-x-auto py-1">
-                @foreach ($categories as $cat)
-                <button type="button" @click="tab === 'food' ? foodFilter = '{{ $cat }}' : merchFilter = '{{ $cat }}'" :class="(tab === 'food' ? foodFilter : merchFilter) === '{{ $cat }}' ? (tab === 'food' ? 'bg-teal-600 text-white' : 'bg-indigo-600 text-white') : 'bg-gray-100 text-teal-700'" class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-teal-100 transition">{{ $cat }}</button>
-                @endforeach
+                {{-- Category filter buttons, separated by tab --}}
+                <template x-if="tab === 'food'">
+                    <div>
+                        <!-- Move "All" button to the left -->
+                        <button type="button" @click="foodFilter = 'All'"
+                            :class="foodFilter === 'All' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'"
+                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-teal-100 transition">All</button>
+                        @foreach ($foodCategories as $cat)
+                        <button type="button" @click="foodFilter = '{{ $cat }}'"
+                            :class="foodFilter === '{{ $cat }}' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'"
+                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-teal-100 transition">{{ $cat }}</button>
+                        @endforeach
+                    </div>
+                </template>
+                <template x-if="tab === 'merch'">
+                    <div>
+                        <!-- Move "All" button to the left -->
+                        <button type="button" @click="merchFilter = 'All'"
+                            :class="merchFilter === 'All' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-teal-700'"
+                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-indigo-100 transition">All</button>
+                        @foreach ($merchCategories as $cat)
+                        <button type="button" @click="merchFilter = '{{ $cat }}'"
+                            :class="merchFilter === '{{ $cat }}' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-teal-700'"
+                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-indigo-100 transition">{{ $cat }}</button>
+                        @endforeach
+                    </div>
+                </template>
             </div>
             <div class="flex items-center gap-2">
                 <label class="text-sm font-medium text-teal-700">Sort by:</label>
