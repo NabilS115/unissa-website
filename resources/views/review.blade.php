@@ -48,78 +48,43 @@
         </div>
     </div>
     <!-- Right: Reviews -->
-    <div>
-        <div class="space-y-6" id="reviews-list">
-            <!-- ...existing review cards... -->
-            <div class="bg-white rounded-lg border shadow p-4 flex gap-4 items-start">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Danish Naufal" class="w-12 h-12 rounded-full object-cover">
-                <div class="flex-1">
-                    <div class="flex items-center justify-between mb-1">
-                        <div>
-                            <span class="font-semibold">Danish Naufal</span>
-                            <span class="text-yellow-400 ml-2 text-sm">★ 4.9</span>
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        {{-- Debug: Show reviews array --}}
+        {{-- @dump($reviews) --}}
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+            <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+            Reviews
+        </h2>
+        <div class="divide-y divide-gray-200" id="reviews-list">
+            @isset($reviews)
+                @forelse($reviews as $review)
+                <div class="py-6 flex gap-6 items-start">
+                    <img src="{{ $review->user->profile_photo_url ?? asset('images/default-profile.svg') }}"
+                         alt="{{ $review->user->name ?? 'User' }}"
+                         class="w-14 h-14 rounded-full object-cover border-2 border-yellow-400 shadow">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-lg text-gray-800">{{ $review->user->name ?? 'User' }}</span>
+                                <span class="text-yellow-400 font-bold">★ {{ number_format($review->rating, 1) }}</span>
+                            </div>
+                            <span class="text-gray-400 text-xs">{{ $review->created_at->format('d M Y') }}</span>
                         </div>
-                        <span class="text-gray-400 text-xs">10 Sept</span>
-                    </div>
-                    <div class="text-gray-700 mb-2">The best pancake that i ever eaten for the past 10 years</div>
-                    <div class="flex items-center gap-4 text-gray-500 text-sm">
-                        <span>👍 4</span>
-                        <a href="#" class="underline">Report</a>
+                        <div class="text-gray-700 mb-2 text-base">{{ $review->review }}</div>
+                        <div class="flex items-center gap-6 text-gray-500 text-sm mt-2">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 9l-5 5-5-5"/>
+                                </svg> Helpful
+                            </span>
+                            <a href="#" class="underline">Report</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- ...repeat for other reviews... -->
-            <div class="bg-white rounded-lg border shadow p-4 flex gap-4 items-start">
-                <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Hitstonecold Ayeeee" class="w-12 h-12 rounded-full object-cover">
-                <div class="flex-1">
-                    <div class="flex items-center justify-between mb-1">
-                        <div>
-                            <span class="font-semibold">Hitstonecold Ayeeee</span>
-                            <span class="text-yellow-400 ml-2 text-sm">★ 4.1</span>
-                        </div>
-                        <span class="text-gray-400 text-xs">23 Aug</span>
-                    </div>
-                    <div class="text-gray-700 mb-2">It is worth the price. not much too say</div>
-                    <div class="flex items-center gap-4 text-gray-500 text-sm">
-                        <span>👍 8</span>
-                        <a href="#" class="underline">Report</a>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg border shadow p-4 flex gap-4 items-start">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aisyah Rahman" class="w-12 h-12 rounded-full object-cover">
-                <div class="flex-1">
-                    <div class="flex items-center justify-between mb-1">
-                        <div>
-                            <span class="font-semibold">Aisyah Rahman</span>
-                            <span class="text-yellow-400 ml-2 text-sm">★ 5.0</span>
-                        </div>
-                        <span class="text-gray-400 text-xs">2 Jul</span>
-                    </div>
-                    <div class="text-gray-700 mb-2">Absolutely delicious! The pancakes are fluffy and taste just like home.</div>
-                    <div class="flex items-center gap-4 text-gray-500 text-sm">
-                        <span>👍 12</span>
-                        <a href="#" class="underline">Report</a>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg border shadow p-4 flex gap-4 items-start">
-                <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Nurul Huda" class="w-12 h-12 rounded-full object-cover">
-                <div class="flex-1">
-                    <div class="flex items-center justify-between mb-1">
-                        <div>
-                            <span class="font-semibold">Nurul Huda</span>
-                            <span class="text-yellow-400 ml-2 text-sm">★ 4.7</span>
-                        </div>
-                        <span class="text-gray-400 text-xs">15 Jun</span>
-                    </div>
-                    <div class="text-gray-700 mb-2">Very tasty and soft pancakes. My kids loved them!</div>
-                    <div class="flex items-center gap-4 text-gray-500 text-sm">
-                        <span>👍 6</span>
-                        <a href="#" class="underline">Report</a>
-                    </div>
-                </div>
-            </div>
+                @empty
+                <div class="py-8 text-center text-gray-400">No reviews yet. Be the first to write one!</div>
+                @endforelse
+            @endisset
         </div>
     </div>
 </div>
@@ -157,35 +122,58 @@
     document.getElementById('close-review-modal').onclick = () => { modal.classList.add('hidden'); };
     document.getElementById('cancel-review').onclick = () => { modal.classList.add('hidden'); };
 
-    document.getElementById('review-form').onsubmit = function(e) {
+    document.getElementById('review-form').onsubmit = async function(e) {
         e.preventDefault();
         const rating = this.rating.value;
         const reviewText = this.review.value;
-        const reviewsList = document.getElementById('reviews-list');
-        const newReview = document.createElement('div');
-        newReview.className = "bg-white rounded-lg border shadow p-4 flex gap-4 items-start";
-        // Use user's profile photo from blade variable
-        const profilePhoto = "{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}";
-        newReview.innerHTML = `
-            <img src="${profilePhoto}" alt="You" class="w-12 h-12 rounded-full object-cover">
-            <div class="flex-1">
-                <div class="flex items-center justify-between mb-1">
-                    <div>
-                        <span class="font-semibold">You</span>
-                        <span class="text-yellow-400 ml-2 text-sm">★ ${rating}</span>
+        // Send review to backend
+        try {
+            const res = await fetch("{{ route('review.add', $product->id) }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    rating: rating,
+                    review: reviewText
+                })
+            });
+            if (res.ok) {
+                // Optionally, fetch and re-render all reviews from backend here
+                // For now, just add to frontend
+                const data = await res.json();
+                const reviewsList = document.getElementById('reviews-list');
+                const newReview = document.createElement('div');
+                newReview.className = "bg-white rounded-lg border shadow p-4 flex gap-4 items-start";
+                const profilePhoto = "{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}";
+                newReview.innerHTML = `
+                    <img src="${profilePhoto}" alt="You" class="w-12 h-12 rounded-full object-cover">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-1">
+                            <div>
+                                <span class="font-semibold">You</span>
+                                <span class="text-yellow-400 ml-2 text-sm">★ ${rating}</span>
+                            </div>
+                            <span class="text-gray-400 text-xs">${new Date().toLocaleDateString()}</span>
+                        </div>
+                        <div class="text-gray-700 mb-2">${reviewText}</div>
+                        <div class="flex items-center gap-4 text-gray-500 text-sm">
+                            <span>👍 0</span>
+                            <a href="#" class="underline">Report</a>
+                        </div>
                     </div>
-                    <span class="text-gray-400 text-xs">${new Date().toLocaleDateString()}</span>
-                </div>
-                <div class="text-gray-700 mb-2">${reviewText}</div>
-                <div class="flex items-center gap-4 text-gray-500 text-sm">
-                    <span>👍 0</span>
-                    <a href="#" class="underline">Report</a>
-                </div>
-            </div>
-        `;
-        reviewsList.prepend(newReview);
-        modal.classList.add('hidden');
-        this.reset();
+                `;
+                reviewsList.prepend(newReview);
+                modal.classList.add('hidden');
+                this.reset();
+            } else {
+                alert("Failed to submit review.");
+            }
+        } catch {
+            alert("Network error.");
+        }
     };
 </script>
 @endsection
