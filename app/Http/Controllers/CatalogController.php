@@ -10,6 +10,11 @@ class CatalogController extends Controller
 {
     public function add(Request $request)
     {
+        // Only allow admin
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
         \Log::info('Add product request received', $request->all());
 
         if (!$request->isMethod('post')) {
@@ -118,6 +123,11 @@ class CatalogController extends Controller
 
     public function edit(\Illuminate\Http\Request $request, $id)
     {
+        // Only allow admin
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'desc' => 'required|string',
@@ -139,6 +149,11 @@ class CatalogController extends Controller
 
     public function upload(\Illuminate\Http\Request $request)
     {
+        // Only allow admin
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
         $request->validate([
             'image' => 'required|image|max:2048',
             'type' => 'required|in:food,merch',
@@ -158,5 +173,16 @@ class CatalogController extends Controller
         $food = \App\Models\Product::where('type', 'food')->get();
         $categories = \App\Models\Product::pluck('category')->unique()->values()->all();
         return view('products.catalog', compact('food', 'merchandise', 'categories'));
+    }
+
+    public function destroy($id)
+    {
+        // Only allow admin
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return redirect()->route('products.catalog')->with('success', 'Product deleted!');
     }
 }
