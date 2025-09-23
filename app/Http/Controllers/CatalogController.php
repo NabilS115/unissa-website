@@ -134,7 +134,6 @@ class CatalogController extends Controller
             'desc' => 'required|string',
             'category' => 'required|string|max:255',
             'img' => 'nullable|image|max:20480',
-            'img_position' => 'nullable|string|in:top,center,bottom,left,right',
             'crop_img' => 'nullable',
         ], [
             'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
@@ -143,7 +142,6 @@ class CatalogController extends Controller
         $product->name = $validated['name'];
         $product->desc = $validated['desc'];
         $product->category = $validated['category'];
-        $product->img_position = $request->input('img_position', '');
 
         if ($request->hasFile('img')) {
             $imgFile = $request->file('img');

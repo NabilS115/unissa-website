@@ -169,7 +169,8 @@
     <!-- Edit Product Modal -->
     <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" :action="editFormAction" enctype="multipart/form-data"
-              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative"
+              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative overflow-y-auto"
+              style="max-height:90vh;"
               @submit.prevent="handleEditSubmit">
             @csrf
             @method('PUT')
@@ -178,14 +179,36 @@
             <h2 class="text-2xl font-bold mb-6 text-center">Edit Product</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Left: Image Section -->
-                <div>
-                    <div class="mb-4">
+                <div class="flex flex-col items-center justify-start">
+                    <div class="mb-4 w-full">
                         <label class="block text-sm font-medium mb-2">Current Image</label>
                         <img :src="editProduct.img" :alt="editProduct.name" id="edit-current-img" class="w-full h-40 object-contain rounded bg-gray-100 border" />
+                        <button type="button"
+                                class="mt-2 px-4 py-1 bg-teal-500 text-white rounded font-semibold hover:bg-teal-700 block mx-auto"
+                                @click="startCrop('current')">Crop Current Image</button>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Change Image</label>
-                        <input type="file" name="img" id="edit-img-input" class="border rounded px-3 py-2 w-full" accept="image/*" />
+                    <div class="mb-4 w-full">
+                        <label class="block text-sm font-medium mb-2">Change Image <span class="text-xs text-gray-500">(click & drag to crop)</span></label>
+                        <input type="file" name="img" id="edit-img-input" class="border rounded px-3 py-2 w-full" accept="image/*"
+                            @change="event => startCrop('new', event)" />
+                        <div x-show="showCropper" id="edit-cropper-preview"
+                             class="mt-4 flex flex-col items-center justify-center"
+                             style="width:100%;max-width:360px;min-height:220px;background:#f9fafb;border:2px solid #e2e8f0;border-radius:0.75rem;position:relative;z-index:10;">
+                            <img id="edit-cropper-img"
+                                 style="width:100%;max-width:320px;max-height:180px;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#fff;" />
+                            <button type="button"
+                                    class="mt-4 px-6 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700 block mx-auto"
+                                    style="width:fit-content;"
+                                    @click="finishCrop">Crop & Preview</button>
+                            <template x-if="croppedUrl">
+                                <div class="mt-6 w-full flex flex-col items-center justify-center"
+                                     style="background:#fff;border:1px solid #e2e8f0;border-radius:0.75rem;padding:1rem;">
+                                    <label class="block text-xs text-gray-500 mb-2">Cropped Preview:</label>
+                                    <img :src="croppedUrl"
+                                         style="width:100%;max-width:180px;max-height:180px;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#f9fafb;box-shadow:0 2px 8px 0 rgba(0,0,0,0.04);" />
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </div>
                 <!-- Right: Fields Section -->
@@ -543,17 +566,30 @@ document.addEventListener('alpine:init', () => {
                 if (this.croppedBlob) {
                     formData.set('img', this.croppedBlob, 'cropped.png');
                 }
-                await fetch(this.editFormAction, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                }).then(res => {
-                    if (res.ok) window.location.reload();
-                    else alert('Failed to update product.');
-                });
+                // Remove any img_position from FormData (no column check needed in frontend)
+                formData.delete('img_position');
+                try {
+                    const res = await fetch(this.editFormAction, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+                    if (res.ok) {
+                        window.location.reload();
+                    } else {
+                        let msg = 'Failed to update product.';
+                        try {
+                            const data = await res.json();
+                            if (data && data.message) msg = data.message;
+                        } catch {}
+                        alert(msg);
+                    }
+                } catch (err) {
+                    alert('Network error: Failed to update product.');
+                }
             },
             $watch: {
                 sortedFoods() { this.foodPage = 1; },
