@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Image;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\AdminCatalogController;
+use App\Http\Controllers\ReviewController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -112,5 +113,7 @@ Route::middleware(['auth'])->prefix('admin/catalog')->group(function () {
     Route::post('/edit/{id}', [AdminCatalogController::class, 'edit'])->name('admin.catalog.edit');
     Route::post('/upload', [AdminCatalogController::class, 'upload'])->name('admin.catalog.upload');
 });
+
+Route::get('/review/{id}', [ReviewController::class, 'show'])->name('review.show');
 
 require __DIR__.'/auth.php';

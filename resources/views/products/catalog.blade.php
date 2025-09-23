@@ -243,7 +243,8 @@
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.name">
-                    <div class="rounded overflow-hidden shadow-lg bg-white food-card flex flex-col">
+                    <div class="rounded overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer"
+                         @click="food.id ? window.location.href = '/review/' + food.id : null">
                         <div class="w-full h-48 relative food-image flex items-center justify-center bg-white">
                             <img :src="food.img" :alt="food.name"
                                  class="w-full h-full object-cover rounded-t bg-white mx-auto"
@@ -391,6 +392,7 @@
     {{-- <pre>{{ print_r($merchandise, true) }}</pre> --}}
     {{-- Remove after confirming data is present --}}
 </div>
+{{-- End section content --}}
 @endsection
 
 <head>
