@@ -182,30 +182,32 @@
                 <div class="flex flex-col items-center justify-start">
                     <div class="mb-4 w-full">
                         <label class="block text-sm font-medium mb-2">Current Image</label>
-                        <img :src="editProduct.img" :alt="editProduct.name" id="edit-current-img" class="w-full h-40 object-contain rounded bg-gray-100 border" />
-                        <button type="button"
-                                class="mt-2 px-4 py-1 bg-teal-500 text-white rounded font-semibold hover:bg-teal-700 block mx-auto"
-                                @click="startCrop('current')">Crop Current Image</button>
+                        <img :src="editProduct.img" :alt="editProduct.name" id="edit-current-img"
+                             class="w-full h-48 object-contain rounded bg-gray-100 border" />
                     </div>
                     <div class="mb-4 w-full">
                         <label class="block text-sm font-medium mb-2">Change Image <span class="text-xs text-gray-500">(click & drag to crop)</span></label>
                         <input type="file" name="img" id="edit-img-input" class="border rounded px-3 py-2 w-full" accept="image/*"
-                            @change="event => startCrop('new', event)" />
+                            @change="event => startCrop(event)" />
                         <div x-show="showCropper" id="edit-cropper-preview"
                              class="mt-4 flex flex-col items-center justify-center"
-                             style="width:100%;max-width:360px;min-height:220px;background:#f9fafb;border:2px solid #e2e8f0;border-radius:0.75rem;position:relative;z-index:10;">
-                            <img id="edit-cropper-img"
-                                 style="width:100%;max-width:320px;max-height:180px;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#fff;" />
+                             style="width:100%;max-width:100%;height:192px;background:#f9fafb;border:2px solid #e2e8f0;border-radius:0.75rem;position:relative;z-index:10;">
+                            <div style="width:100%;height:192px;display:flex;align-items:center;justify-content:center;">
+                                <img id="edit-cropper-img"
+                                     style="max-width:100%;max-height:192px;object-fit:cover;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#fff;" />
+                            </div>
+                        </div>
+                        <div x-show="showCropper" class="flex flex-col items-center justify-center mt-2">
                             <button type="button"
-                                    class="mt-4 px-6 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700 block mx-auto"
+                                    class="mt-2 px-6 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700 block mx-auto"
                                     style="width:fit-content;"
                                     @click="finishCrop">Crop & Preview</button>
                             <template x-if="croppedUrl">
-                                <div class="mt-6 w-full flex flex-col items-center justify-center"
+                                <div class="mt-4 w-full flex flex-col items-center justify-center"
                                      style="background:#fff;border:1px solid #e2e8f0;border-radius:0.75rem;padding:1rem;">
                                     <label class="block text-xs text-gray-500 mb-2">Cropped Preview:</label>
                                     <img :src="croppedUrl"
-                                         style="width:100%;max-width:180px;max-height:180px;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#f9fafb;box-shadow:0 2px 8px 0 rgba(0,0,0,0.04);" />
+                                         style="width:100%;height:192px;object-fit:cover;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#f9fafb;box-shadow:0 2px 8px 0 rgba(0,0,0,0.04);" />
                                 </div>
                             </template>
                         </div>
@@ -520,37 +522,27 @@ document.addEventListener('alpine:init', () => {
             cropper: null,
             croppedBlob: null,
             croppedUrl: '',
-            cropSource: '', // 'current' or 'new'
-            startCrop(source, event = null) {
-                this.cropSource = source;
+            startCrop(event) {
                 this.showCropper = true;
                 this.croppedBlob = null;
                 this.croppedUrl = '';
                 let img = document.getElementById('edit-cropper-img');
                 if (this.cropper) this.cropper.destroy();
-                if (source === 'current') {
-                    img.src = this.editProduct.img;
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    img.src = e.target.result;
                     this.$nextTick(() => {
                         this.cropper = new Cropper(img, {
-                            aspectRatio: 1,
-                            viewMode: 1,
+                            aspectRatio: 4/3,
+                            viewMode: 0, // allow cropping outside image boundary
+                            autoCropArea: 1,
+                            zoomOnWheel: true,
                         });
                     });
-                } else if (source === 'new' && event) {
-                    const file = event.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        img.src = e.target.result;
-                        this.$nextTick(() => {
-                            this.cropper = new Cropper(img, {
-                                aspectRatio: 1,
-                                viewMode: 1,
-                            });
-                        });
-                    };
-                    reader.readAsDataURL(file);
-                }
+                };
+                reader.readAsDataURL(file);
             },
             finishCrop() {
                 if (this.cropper) {
