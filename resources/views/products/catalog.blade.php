@@ -169,31 +169,46 @@
     <!-- Edit Product Modal -->
     <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" :action="editFormAction" enctype="multipart/form-data"
-              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative"
+              @submit.prevent="handleEditSubmit">
             @csrf
             @method('PUT')
             <button type="button" @click="showEditModal = false"
                 class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
-            <h2 class="text-xl font-bold mb-4">Edit Product</h2>
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Name</label>
-                <input type="text" name="name" :value="editProduct.name" required class="border rounded px-3 py-2 w-full" />
+            <h2 class="text-2xl font-bold mb-6 text-center">Edit Product</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Left: Image Section -->
+                <div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Current Image</label>
+                        <img :src="editProduct.img" :alt="editProduct.name" id="edit-current-img" class="w-full h-40 object-contain rounded bg-gray-100 border" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Change Image</label>
+                        <input type="file" name="img" id="edit-img-input" class="border rounded px-3 py-2 w-full" accept="image/*" />
+                    </div>
+                </div>
+                <!-- Right: Fields Section -->
+                <div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Name</label>
+                        <input type="text" name="name" :value="editProduct.name" required class="border rounded px-3 py-2 w-full" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Description</label>
+                        <textarea name="desc" required class="border rounded px-3 py-2 w-full min-h-[100px]" x-text="editProduct.desc"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Category</label>
+                        <input type="text" name="category" :value="editProduct.category" required class="border rounded px-3 py-2 w-full" />
+                    </div>
+                    <div class="flex justify-end mt-8">
+                        <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded font-semibold hover:bg-teal-700">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Description</label>
-                <textarea name="desc" required class="border rounded px-3 py-2 w-full" x-text="editProduct.desc"></textarea>
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Category</label>
-                <input type="text" name="category" :value="editProduct.category" required class="border rounded px-3 py-2 w-full" />
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Image</label>
-                <input type="file" name="img" class="border rounded px-3 py-2 w-full" />
-            </div>
-            <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">
-                Save
-            </button>
         </form>
     </div>
     @endif
@@ -204,8 +219,10 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.name">
                     <div class="rounded overflow-hidden shadow-lg bg-white food-card flex flex-col">
-                        <div class="w-full h-48 relative food-image">
-                            <img :src="food.img" :alt="food.name" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
+                        <div class="w-full h-48 relative food-image flex items-center justify-center bg-white">
+                            <img :src="food.img" :alt="food.name"
+                                 class="w-full h-full object-cover rounded-t bg-white mx-auto"
+                                 style="display:block;" />
                             @if(auth()->user()?->role === 'admin')
                             <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
                                 <!-- Fix: Use only JS for route parameter, not Blade -->
@@ -258,8 +275,10 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="item in pagedMerch" :key="item.id">
                     <div class="rounded overflow-hidden shadow-lg bg-white merch-card flex flex-col">
-                        <div class="w-full h-48 relative merch-image">
-                            <img :src="item.img" :alt="item.name" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
+                        <div class="w-full h-48 relative merch-image flex items-center justify-center bg-white">
+                            <img :src="item.img" :alt="item.name"
+                                 class="w-full h-full object-cover rounded-t bg-white mx-auto"
+                                 style="display:block;" />
                             @if(auth()->user()?->role === 'admin')
                             <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
                                 <button @click="openEditModal(item, '/catalog/edit/' + item.id)"
@@ -354,129 +373,195 @@
     <style>
         [x-cloak] { display: none !important; }
     </style>
-    <!-- ...existing code... -->
+    <!-- Add Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
 </head>
 
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
-function foodMerchComponent() {
-    return {
-        tab: 'food',
-        foodFilter: 'All',
-        merchFilter: 'All',
-        foodSort: '',
-        merchSort: '',
-        foodSearch: '',
-        foodSearchInput: '',
-        merchSearch: '',
-        merchSearchInput: '',
-        showFoodPredictions: false,
-        showMerchPredictions: false,
-        showUpload: false,
-        showAddModal: false,
-        showEditModal: false,
-        editProduct: {},
-        editFormAction: '',
-        food: @json($food),
-        merchandise: @json($merchandise),
-        foodPage: 1,
-        foodPerPage: 8,
-        merchPage: 1,
-        merchPerPage: 8,
-        blurActive() {
-            if (document.activeElement) document.activeElement.blur();
-        },
-        get sortedFoods() {
-            let search = this.foodSearch.toLowerCase();
-            let filtered = this.food.filter(f =>
-                (this.foodFilter === 'All' || f.category === this.foodFilter) &&
-                (
-                    !search ||
-                    f.name.toLowerCase().includes(search) ||
-                    f.desc.toLowerCase().includes(search)
-                )
-            );
-            if (this.foodSort === 'name') {
-                filtered.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (this.foodSort === 'category') {
-                filtered.sort((a, b) => a.category.localeCompare(b.category));
-            } else if (this.foodSort === 'rating') {
-                filtered.sort((a, b) => b.rating - a.rating);
-            }
-            return filtered;
-        },
-        get pagedFoods() {
-            const start = (this.foodPage - 1) * this.foodPerPage;
-            return this.sortedFoods.slice(start, start + this.foodPerPage);
-        },
-        get foodTotalPages() {
-            return Math.max(1, Math.ceil(this.sortedFoods.length / this.foodPerPage));
-        },
-        get sortedMerch() {
-            let search = this.merchSearch.toLowerCase();
-            let filtered = this.merchandise.filter(m =>
-                (this.merchFilter === 'All' || m.category === this.merchFilter) &&
-                (
-                    !search ||
-                    m.name.toLowerCase().includes(search) ||
-                    m.desc.toLowerCase().includes(search)
-                )
-            );
-            if (this.merchSort === 'name') {
-                filtered.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (this.merchSort === 'category') {
-                filtered.sort((a, b) => a.category.localeCompare(b.category));
-            } else if (this.merchSort === 'rating') {
-                filtered.sort((a, b) => b.rating - a.rating);
-            }
-            return filtered;
-        },
-        get pagedMerch() {
-            const start = (this.merchPage - 1) * this.merchPerPage;
-            return this.sortedMerch.slice(start, start + this.merchPerPage);
-        },
-        get merchTotalPages() {
-            return Math.max(1, Math.ceil(this.sortedMerch.length / this.merchPerPage));
-        },
-        openEditModal(product, action) {
-            this.editProduct = product;
-            this.editFormAction = action;
-            this.showEditModal = true;
-        },
-        submitAddProduct() {
-            const form = this.$refs.addForm;
-            const formData = new FormData(form);
-            fetch('{{ route('catalog.add') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log('Added product:', data.product);
-                if (data.success && data.product) {
-                    if (data.product.type === 'food') {
-                        this.food.push(data.product);
-                    } else if (data.product.type === 'merch') {
-                        this.merchandise.push(data.product);
-                    }
-                    this.showAddModal = false;
-                    form.reset();
-                } else {
-                    alert('Failed to add product.');
+document.addEventListener('alpine:init', () => {
+    Alpine.data('foodMerchComponent', function() {
+        return {
+            tab: 'food',
+            foodFilter: 'All',
+            merchFilter: 'All',
+            foodSort: '',
+            merchSort: '',
+            foodSearch: '',
+            foodSearchInput: '',
+            merchSearch: '',
+            merchSearchInput: '',
+            showFoodPredictions: false,
+            showMerchPredictions: false,
+            showUpload: false,
+            showAddModal: false,
+            showEditModal: false,
+            editProduct: {},
+            editFormAction: '',
+            food: @json($food),
+            merchandise: @json($merchandise),
+            foodPage: 1,
+            foodPerPage: 8,
+            merchPage: 1,
+            merchPerPage: 8,
+            blurActive() {
+                if (document.activeElement) document.activeElement.blur();
+            },
+            get sortedFoods() {
+                let search = this.foodSearch.toLowerCase();
+                let filtered = this.food.filter(f =>
+                    (this.foodFilter === 'All' || f.category === this.foodFilter) &&
+                    (
+                        !search ||
+                        f.name.toLowerCase().includes(search) ||
+                        f.desc.toLowerCase().includes(search)
+                    )
+                );
+                if (this.foodSort === 'name') {
+                    filtered.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (this.foodSort === 'category') {
+                    filtered.sort((a, b) => a.category.localeCompare(b.category));
+                } else if (this.foodSort === 'rating') {
+                    filtered.sort((a, b) => b.rating - a.rating);
                 }
-            })
-            .catch(() => alert('Error adding product.'));
-        },
-        $watch: {
-            sortedFoods() { this.foodPage = 1; },
-            sortedMerch() { this.merchPage = 1; }
+                return filtered;
+            },
+            get pagedFoods() {
+                const start = (this.foodPage - 1) * this.foodPerPage;
+                return this.sortedFoods.slice(start, start + this.foodPerPage);
+            },
+            get foodTotalPages() {
+                return Math.max(1, Math.ceil(this.sortedFoods.length / this.foodPerPage));
+            },
+            get sortedMerch() {
+                let search = this.merchSearch.toLowerCase();
+                let filtered = this.merchandise.filter(m =>
+                    (this.merchFilter === 'All' || m.category === this.merchFilter) &&
+                    (
+                        !search ||
+                        m.name.toLowerCase().includes(search) ||
+                        m.desc.toLowerCase().includes(search)
+                    )
+                );
+                if (this.merchSort === 'name') {
+                    filtered.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (this.merchSort === 'category') {
+                    filtered.sort((a, b) => a.category.localeCompare(b.category));
+                } else if (this.merchSort === 'rating') {
+                    filtered.sort((a, b) => b.rating - a.rating);
+                }
+                return filtered;
+            },
+            get pagedMerch() {
+                const start = (this.merchPage - 1) * this.merchPerPage;
+                return this.sortedMerch.slice(start, start + this.merchPerPage);
+            },
+            get merchTotalPages() {
+                return Math.max(1, Math.ceil(this.sortedMerch.length / this.merchPerPage));
+            },
+            openEditModal(product, action) {
+                this.editProduct = product;
+                this.editFormAction = action;
+                this.showEditModal = true;
+            },
+            submitAddProduct() {
+                const form = this.$refs.addForm;
+                const formData = new FormData(form);
+                fetch('{{ route('catalog.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Added product:', data.product);
+                    if (data.success && data.product) {
+                        if (data.product.type === 'food') {
+                            this.food.push(data.product);
+                        } else if (data.product.type === 'merch') {
+                            this.merchandise.push(data.product);
+                        }
+                        this.showAddModal = false;
+                        form.reset();
+                    } else {
+                        alert('Failed to add product.');
+                    }
+                })
+                .catch(() => alert('Error adding product.'));
+            },
+            showCropper: false,
+            cropper: null,
+            croppedBlob: null,
+            croppedUrl: '',
+            cropSource: '', // 'current' or 'new'
+            startCrop(source, event = null) {
+                this.cropSource = source;
+                this.showCropper = true;
+                this.croppedBlob = null;
+                this.croppedUrl = '';
+                let img = document.getElementById('edit-cropper-img');
+                if (this.cropper) this.cropper.destroy();
+                if (source === 'current') {
+                    img.src = this.editProduct.img;
+                    this.$nextTick(() => {
+                        this.cropper = new Cropper(img, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                        });
+                    });
+                } else if (source === 'new' && event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        img.src = e.target.result;
+                        this.$nextTick(() => {
+                            this.cropper = new Cropper(img, {
+                                aspectRatio: 1,
+                                viewMode: 1,
+                            });
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+            finishCrop() {
+                if (this.cropper) {
+                    this.cropper.getCroppedCanvas().toBlob(blob => {
+                        this.croppedBlob = blob;
+                        this.croppedUrl = URL.createObjectURL(blob);
+                    });
+                }
+            },
+            async handleEditSubmit(e) {
+                const form = e.target;
+                const formData = new FormData(form);
+                if (this.croppedBlob) {
+                    formData.set('img', this.croppedBlob, 'cropped.png');
+                }
+                await fetch(this.editFormAction, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                }).then(res => {
+                    if (res.ok) window.location.reload();
+                    else alert('Failed to update product.');
+                });
+            },
+            $watch: {
+                sortedFoods() { this.foodPage = 1; },
+                sortedMerch() { this.merchPage = 1; }
+            }
         }
-    }
-}
+    });
+});
 </script>
 
 

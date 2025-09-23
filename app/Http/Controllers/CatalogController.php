@@ -123,7 +123,6 @@ class CatalogController extends Controller
 
     public function edit(Request $request, $id)
     {
-        // Only allow admin
         if (!auth()->check() || auth()->user()->role !== 'admin') {
             abort(403, 'Unauthorized');
         }
@@ -135,6 +134,8 @@ class CatalogController extends Controller
             'desc' => 'required|string',
             'category' => 'required|string|max:255',
             'img' => 'nullable|image|max:20480',
+            'img_position' => 'nullable|string|in:top,center,bottom,left,right',
+            'crop_img' => 'nullable',
         ], [
             'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
         ]);
@@ -142,10 +143,21 @@ class CatalogController extends Controller
         $product->name = $validated['name'];
         $product->desc = $validated['desc'];
         $product->category = $validated['category'];
+        $product->img_position = $request->input('img_position', '');
 
         if ($request->hasFile('img')) {
-            $path = $request->file('img')->store('catalog', 'public');
-            $product->img = '/storage/' . $path;
+            $imgFile = $request->file('img');
+            if ($request->has('crop_img')) {
+                // Crop image to square (center) using Intervention Image
+                $image = \Intervention\Image\Facades\Image::make($imgFile)->fit(400, 400);
+                $filename = uniqid('catalog_') . '.' . $imgFile->getClientOriginalExtension();
+                $path = storage_path('app/public/catalog/' . $filename);
+                $image->save($path);
+                $product->img = '/storage/catalog/' . $filename;
+            } else {
+                $path = $imgFile->store('catalog', 'public');
+                $product->img = '/storage/' . $path;
+            }
         }
 
         $product->save();
