@@ -339,9 +339,9 @@
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.id">
-                    <div class="rounded-xl overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100"
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100 min-h-[400px]"
                          @click="navigateToReview(food.id)">
-                        <div class="w-full h-52 relative food-image flex items-center justify-center bg-gradient-to-br from-teal-50 to-green-50">
+                        <div class="w-full h-52 relative food-image flex items-center justify-center bg-gradient-to-br from-teal-50 to-green-50 flex-shrink-0">
                             <img :src="food.img" :alt="food.name"
                                  class="w-full h-full object-cover"
                                  style="display:block;" />
@@ -365,7 +365,7 @@
                                 <span class="text-xs font-bold text-white bg-green-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90" x-text="food.category"></span>
                             </div>
                         </div>
-                        <div class="px-6 py-5 card-content flex-1 flex flex-col justify-between">
+                        <div class="px-6 py-5 card-content flex-1 flex flex-col justify-between min-h-[200px]">
                             <div class="flex-1">
                                 <div class="font-bold text-xl mb-3 card-title text-gray-800 line-clamp-2" x-text="food.name"></div>
                                 <div class="flex items-center gap-2 mb-3">
@@ -401,9 +401,9 @@
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="item in pagedMerch" :key="item.id">
-                    <div class="rounded-xl overflow-hidden shadow-lg bg-white merch-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100"
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white merch-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100 min-h-[400px]"
                          @click="navigateToReview(item.id)">
-                        <div class="w-full h-52 relative merch-image flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
+                        <div class="w-full h-52 relative merch-image flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 flex-shrink-0">
                             <img :src="item.img" :alt="item.name"
                                  class="w-full h-full object-cover"
                                  style="display:block;" />
@@ -427,7 +427,7 @@
                                 <span class="text-xs font-bold text-white bg-purple-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90" x-text="item.category"></span>
                             </div>
                         </div>
-                        <div class="px-6 py-5 card-content flex-1 flex flex-col justify-between">
+                        <div class="px-6 py-5 card-content flex-1 flex flex-col justify-between min-h-[200px]">
                             <div class="flex-1">
                                 <div class="font-bold text-xl mb-3 card-title text-gray-800 line-clamp-2" x-text="item.name"></div>
                                 <div class="flex items-center gap-2 mb-3">
