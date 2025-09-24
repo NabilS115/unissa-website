@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Review;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
@@ -31,6 +32,19 @@ class ReviewController extends Controller
             'rating' => $request->rating,
             'review' => $request->review,
         ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function destroy($id)
+    {
+        // Check if user is admin
+        if (!Auth::user() || Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $review = Review::findOrFail($id);
+        $review->delete();
 
         return response()->json(['success' => true]);
     }

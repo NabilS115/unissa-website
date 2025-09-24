@@ -6,9 +6,86 @@
 @php
     $food = $food ?? [];
     $merchandise = $merchandise ?? [];
+    
+    // Convert merchandise to objects if they're arrays
     if ($merchandise instanceof \Illuminate\Support\Collection) {
-        $merchandise = $merchandise->map(function($item) { return (object)$item; })->toArray();
+        $merchandise = $merchandise->map(function($item) { 
+            return is_array($item) ? (object)$item : $item; 
+        })->toArray();
+    } else {
+        // Handle regular arrays
+        $merchandise = array_map(function($item) {
+            return is_array($item) ? (object)$item : $item;
+        }, $merchandise);
     }
+    
+    // Calculate average ratings for each product using the same logic as review page
+    foreach ($food as &$foodItem) {
+        if ((is_object($foodItem) || is_array($foodItem)) && isset($foodItem->id)) {
+            $productId = is_object($foodItem) ? $foodItem->id : $foodItem['id'];
+            $reviews = \App\Models\Review::where('product_id', $productId)->get();
+            $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+            
+            foreach ($reviews as $review) {
+                $rating = (int) $review->rating;
+                if ($rating >= 1 && $rating <= 5) {
+                    $ratings[$rating]++;
+                }
+            }
+            
+            $totalRatings = array_sum($ratings);
+            $averageRating = 0;
+            
+            if ($totalRatings > 0) {
+                $weightedSum = 0;
+                foreach ($ratings as $star => $count) {
+                    $weightedSum += $star * $count;
+                }
+                $averageRating = $weightedSum / $totalRatings;
+            }
+            
+            if (is_object($foodItem)) {
+                $foodItem->calculated_rating = number_format($averageRating, 1);
+            } else {
+                $foodItem['calculated_rating'] = number_format($averageRating, 1);
+            }
+        }
+    }
+    
+    foreach ($merchandise as &$merchItem) {
+        if ((is_object($merchItem) || is_array($merchItem)) && (isset($merchItem->id) || isset($merchItem['id']))) {
+            $productId = is_object($merchItem) ? $merchItem->id : $merchItem['id'];
+            $reviews = \App\Models\Review::where('product_id', $productId)->get();
+            $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+            
+            foreach ($reviews as $review) {
+                $rating = (int) $review->rating;
+                if ($rating >= 1 && $rating <= 5) {
+                    $ratings[$rating]++;
+                }
+            }
+            
+            $totalRatings = array_sum($ratings);
+            $averageRating = 0;
+            
+            if ($totalRatings > 0) {
+                $weightedSum = 0;
+                foreach ($ratings as $star => $count) {
+                    $weightedSum += $star * $count;
+                }
+                $averageRating = $weightedSum / $totalRatings;
+            }
+            
+            if (is_object($merchItem)) {
+                $merchItem->calculated_rating = number_format($averageRating, 1);
+            } else {
+                $merchItem['calculated_rating'] = number_format($averageRating, 1);
+                // Convert to object after adding calculated_rating
+                $merchItem = (object)$merchItem;
+            }
+        }
+    }
+    
     // Separate categories for food and merch
     $foodCategories = \App\Models\Product::where('type', 'food')->pluck('category')->unique()->values()->all();
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
@@ -60,7 +137,7 @@
                 </div>
                 <template x-if="tab === 'food' && foodSearchInput && showFoodPredictions">
                     <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
-                        <template x-for="food in food" :key="food.name">
+                        <template x-for="food in food" :key="food.id">
                             <template x-if="food.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
                                 <li @mousedown.prevent="foodSearchInput = food.name; showFoodPredictions = false" class="px-4 py-2 hover:bg-teal-100 cursor-pointer text-sm" x-text="food.name"></li>
                             </template>
@@ -69,7 +146,7 @@
                 </template>
                 <template x-if="tab === 'merch' && merchSearchInput && showMerchPredictions">
                     <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
-                        <template x-for="item in merchandise" :key="item.name">
+                        <template x-for="item in merchandise" :key="item.id">
                             <template x-if="item.name.toLowerCase().includes(merchSearchInput.toLowerCase())">
                                 <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-sm" x-text="item.name"></li>
                             </template>
@@ -242,21 +319,20 @@
     <template x-if="tab === 'food'">
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
-                <template x-for="food in pagedFoods" :key="food.name">
+                <template x-for="food in pagedFoods" :key="food.id">
                     <div class="rounded overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer"
-                         @click="food.id ? window.location.href = '/review/' + food.id : null">
+                         @click="navigateToReview(food.id)">
                         <div class="w-full h-48 relative food-image flex items-center justify-center bg-white">
                             <img :src="food.img" :alt="food.name"
                                  class="w-full h-full object-cover rounded-t bg-white mx-auto"
                                  style="display:block;" />
                             @if(auth()->user()?->role === 'admin')
                             <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
-                                <!-- Fix: Use only JS for route parameter, not Blade -->
-                                <button @click="openEditModal(food, '/catalog/edit/' + food.id)"
+                                <button @click.stop="openEditModal(food, '/catalog/edit/' + food.id)"
                                     class="bg-teal-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-teal-700">
                                     Edit
                                 </button>
-                                <form method="POST" :action="'/catalog/delete/' + food.id" onsubmit="return confirm('Delete this product?')" class="inline">
+                                <form method="POST" :action="'/catalog/delete/' + food.id" onsubmit="event.stopPropagation(); return confirm('Delete this product?')" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-red-700 mt-1">
@@ -271,7 +347,7 @@
                                 <div class="font-bold text-xl mb-2 card-title" x-text="food.name"></div>
                                 <div class="flex items-center gap-1 mb-1">
                                     <svg class="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
-                                    <span class="text-sm text-gray-700 font-semibold" x-text="food.rating"></span>
+                                    <span class="text-sm text-gray-700 font-semibold" x-text="getAverageRating(food)"></span>
                                 </div>
                                 <p class="text-gray-700 text-base card-description" x-text="food.desc"></p>
                             </div>
@@ -300,18 +376,19 @@
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="item in pagedMerch" :key="item.id">
-                    <div class="rounded overflow-hidden shadow-lg bg-white merch-card flex flex-col">
+                    <div class="rounded overflow-hidden shadow-lg bg-white merch-card flex flex-col cursor-pointer"
+                         @click="navigateToReview(item.id)">
                         <div class="w-full h-48 relative merch-image flex items-center justify-center bg-white">
                             <img :src="item.img" :alt="item.name"
                                  class="w-full h-full object-cover rounded-t bg-white mx-auto"
                                  style="display:block;" />
                             @if(auth()->user()?->role === 'admin')
                             <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
-                                <button @click="openEditModal(item, '/catalog/edit/' + item.id)"
+                                <button @click.stop="openEditModal(item, '/catalog/edit/' + item.id)"
                                     class="bg-indigo-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-indigo-700">
                                     Edit
                                 </button>
-                                <form method="POST" :action="'/catalog/delete/' + item.id" onsubmit="return confirm('Delete this product?')" class="inline">
+                                <form method="POST" :action="'/catalog/delete/' + item.id" onsubmit="event.stopPropagation(); return confirm('Delete this product?')" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-red-700 mt-1">
@@ -326,7 +403,7 @@
                                 <div class="font-bold text-xl mb-2 card-title" x-text="item.name"></div>
                                 <div class="flex items-center gap-1 mb-1">
                                     <svg class="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
-                                    <span class="text-sm text-gray-700 font-semibold" x-text="item.rating"></span>
+                                    <span class="text-sm text-gray-700 font-semibold" x-text="getAverageRating(item)"></span>
                                 </div>
                                 <p class="text-gray-700 text-base card-description" x-text="item.desc"></p>
                             </div>
@@ -584,6 +661,70 @@ document.addEventListener('alpine:init', () => {
                 } catch (err) {
                     alert('Network error: Failed to update product.');
                 }
+            },
+            // Add navigation method to preserve state
+            navigateToReview(productId) {
+                if (!productId) return;
+                
+                // Store current page state in sessionStorage
+                const currentState = {
+                    tab: this.tab,
+                    foodFilter: this.foodFilter,
+                    merchFilter: this.merchFilter,
+                    foodSort: this.foodSort,
+                    merchSort: this.merchSort,
+                    foodSearch: this.foodSearch,
+                    merchSearch: this.merchSearch,
+                    foodPage: this.foodPage,
+                    merchPage: this.merchPage,
+                    scrollPosition: window.scrollY
+                };
+                
+                sessionStorage.setItem('catalogState', JSON.stringify(currentState));
+                window.location.href = '/review/' + productId;
+            },
+            // Add init method to restore state
+            init() {
+                // Check if we need to restore state from review page
+                const restoreState = sessionStorage.getItem('restoreCatalogState');
+                if (restoreState) {
+                    try {
+                        const state = JSON.parse(restoreState);
+                        this.tab = state.tab || 'food';
+                        this.foodFilter = state.foodFilter || 'All';
+                        this.merchFilter = state.merchFilter || 'All';
+                        this.foodSort = state.foodSort || '';
+                        this.merchSort = state.merchSort || '';
+                        this.foodSearch = state.foodSearch || '';
+                        this.merchSearch = state.merchSearch || '';
+                        this.foodSearchInput = state.foodSearch || '';
+                        this.merchSearchInput = state.merchSearch || '';
+                        this.foodPage = state.foodPage || 1;
+                        this.merchPage = state.merchPage || 1;
+                        
+                        // Restore scroll position after a brief delay
+                        setTimeout(() => {
+                            if (state.scrollPosition) {
+                                window.scrollTo(0, state.scrollPosition);
+                            }
+                        }, 100);
+                        
+                        // Clear the restore state
+                        sessionStorage.removeItem('restoreCatalogState');
+                    } catch (e) {
+                        console.error('Error restoring catalog state:', e);
+                    }
+                }
+            },
+            // Simplified method to use pre-calculated rating
+            getAverageRating(product) {
+                // Use the calculated rating from backend
+                if (product.calculated_rating !== undefined) {
+                    return product.calculated_rating;
+                }
+                
+                // Fallback to "0.0" if no rating calculated
+                return '0.0';
             },
             $watch: {
                 sortedFoods() { this.foodPage = 1; },
