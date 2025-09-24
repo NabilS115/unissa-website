@@ -11,7 +11,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
-                Back to Catalog
+                <span id="back-button-text">Back to Catalog</span>
             </button>
         </div>
 
@@ -296,9 +296,23 @@
         const savedState = sessionStorage.getItem('catalogState');
         
         if (savedState) {
-            // Go back to catalog with restored state
-            sessionStorage.setItem('restoreCatalogState', savedState);
-            window.location.href = '/catalog';
+            try {
+                const state = JSON.parse(savedState);
+                
+                // If coming from homepage, go back to homepage
+                if (state.source === 'homepage') {
+                    sessionStorage.removeItem('catalogState'); // Clean up
+                    window.location.href = '/';
+                    return;
+                }
+                
+                // Otherwise, go back to catalog with restored state
+                sessionStorage.setItem('restoreCatalogState', savedState);
+                window.location.href = '/catalog';
+            } catch (e) {
+                // If parsing fails, fallback to catalog
+                window.location.href = '/catalog';
+            }
         } else if (document.referrer && document.referrer !== window.location.href) {
             window.history.back();
         } else {
@@ -306,6 +320,23 @@
             window.location.href = '/catalog';
         }
     }
+
+    // Update back button text based on source
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedState = sessionStorage.getItem('catalogState');
+        const backButtonText = document.getElementById('back-button-text');
+        
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                if (state.source === 'homepage') {
+                    backButtonText.textContent = 'Back to Homepage';
+                }
+            } catch (e) {
+                // Keep default text if parsing fails
+            }
+        }
+    });
 
     // Modal logic
     const modal = document.getElementById('review-modal');

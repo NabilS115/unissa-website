@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\HomeController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -15,9 +16,12 @@ Route::get('/contact', function () {
 });
 
 //homepage routes
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Featured products overview (Admin only)
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/featured', [HomeController::class, 'manageFeatured'])->name('featured.manage');
+});
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -112,6 +116,14 @@ Route::middleware(['auth'])->prefix('admin/catalog')->group(function () {
     Route::post('/add', [AdminCatalogController::class, 'add'])->name('admin.catalog.add');
     Route::post('/edit/{id}', [AdminCatalogController::class, 'edit'])->name('admin.catalog.edit');
     Route::post('/upload', [AdminCatalogController::class, 'upload'])->name('admin.catalog.upload');
+});
+
+// Featured products management (Admin only)
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/featured', [HomeController::class, 'manageFeatured'])->name('featured.manage');
+    Route::post('/admin/featured', [HomeController::class, 'addFeatured'])->name('featured.add');
+    Route::delete('/admin/featured/{id}', [HomeController::class, 'removeFeatured'])->name('featured.remove');
+    Route::post('/admin/featured/order', [HomeController::class, 'updateFeaturedOrder'])->name('featured.order');
 });
 
 Route::get('/review/{id}', [ReviewController::class, 'show'])->name('review.show');

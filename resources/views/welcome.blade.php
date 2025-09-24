@@ -1,20 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Food Catalog')
+@section('title', 'UNISSA - Food Catalog')
 
 @section('content')
-    <!-- Banner Section -->
-    <section class="w-full h-72 flex flex-col items-center justify-center mb-8 relative">
-    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Food Banner" class="absolute inset-0 w-full h-full object-cover opacity-70">
-        <div class="relative z-10 text-center">
-            <h2 class="text-5xl font-extrabold text-white drop-shadow-lg mb-4">Taste the World, One Bite at a Time</h2>
-            <p class="text-xl text-white drop-shadow-md">Discover flavors, savor moments, and enjoy every meal.</p>
+    <!-- Hero Banner Section -->
+    <section class="w-full h-80 flex flex-col items-center justify-center mb-12 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80" alt="Food Banner" class="absolute inset-0 w-full h-full object-cover">
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">Taste the World, One Bite at a Time</h1>
+            <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">Discover flavors, savor moments, and enjoy every meal.</p>
+            <a href="/catalog" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors shadow-lg">
+                Explore Catalog
+                <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </a>
         </div>
     </section>
 
     <!-- Events Section -->
-    <section class="w-full flex items-center justify-center py-10 mb-8">
-        <div class="flex w-4/5 bg-white rounded-xl border border-teal-200 shadow-sm overflow-hidden relative" style="min-height: 420px;">
+    <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden relative" style="min-height: 420px;">
             <div id="event-bg-carousel" class="absolute inset-0 w-full h-full overflow-hidden z-0">
                 <div id="event-bg-track" class="flex w-full h-full transition-transform duration-700">
                     <!-- Slides will be rendered by JS -->
@@ -23,12 +30,12 @@
             <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
                 <!-- Carousel Controls (right) -->
                 <button id="event-carousel-next"
-                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
                     &#8250;
                 </button>
                 <!-- Carousel Controls (left) -->
                 <button id="event-carousel-prev"
-                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2x1 hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded bg-white/60 shadow p-2 z-20">
                     &#8249;
                 </button>
                 <!-- Carousel Dots -->
@@ -40,159 +47,214 @@
     </section>
 
     <!-- Food Cards Section -->
-    <section class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
-        <h2 class="w-full text-3xl font-bold text-teal-700 mb-6 text-center">
-            <a href="/catalog" class="hover:underline">Foods & Beverages</a>
-        </h2>
-        <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
-            <div class="w-full h-48 relative food-image pizza-bg">
-                <img src="/images/pizza.jpg" alt="Delicious Pizza" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
+    <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-teal-700 mb-2">
+                    <a href="/catalog" class="hover:underline">Top-Rated Foods & Beverages</a>
+                </h2>
+                <p class="text-gray-600">Discover our customers' favorite culinary experiences</p>
             </div>
-            <div class="px-6 py-4 card-content">
-                <div class="font-bold text-xl mb-2 card-title">Delicious Pizza</div>
-                <p class="text-gray-700 text-base card-description">
-                    A tasty pizza topped with fresh ingredients and melted cheese.
-                </p>
-            </div>
-            <div class="px-6 pt-4 pb-2 tags-section">
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Pizza</span>
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Cheese</span>
-            </div>
+            @if(auth()->check() && auth()->user()->role === 'admin')
+                <div class="mt-4 lg:mt-0">
+                    <a href="{{ route('featured.manage') }}" class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors">
+                        View Featured Products
+                    </a>
+                </div>
+            @endif
         </div>
-        <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
-            <div class="w-full h-48 relative food-image salad-bg">
-                <img src="/images/salad.jpg" alt="Fresh Salad" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
-            </div>
-            <div class="px-6 py-4 card-content">
-                <div class="font-bold text-xl mb-2 card-title">Fresh Salad</div>
-                <p class="text-gray-700 text-base card-description">
-                    A healthy mix of fresh vegetables and a light dressing.
-                </p>
-            </div>
-            <div class="px-6 pt-4 pb-2 tags-section">
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Salad</span>
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Healthy</span>
-            </div>
-        </div>
-        <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white food-card">
-            <div class="w-full h-48 relative food-image burger-bg">
-                <img src="/images/burger.jpg" alt="Gourmet Burger" class="absolute inset-0 w-full h-full object-cover rounded-t bg-white" />
-            </div>
-            <div class="px-6 py-4 card-content">
-                <div class="font-bold text-xl mb-2 card-title">Gourmet Burger</div>
-                <p class="text-gray-700 text-base card-description">
-                    A juicy burger with premium ingredients and special sauce.
-                </p>
-            </div>
-            <div class="px-6 pt-4 pb-2 tags-section">
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Burger</span>
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Meat</span>
-            </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @if($featuredFood && $featuredFood->count() > 0)
+                @foreach($featuredFood as $product)
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border border-gray-100"
+                         onclick="navigateToReview({{ $product->id }})">
+                        <div class="w-full h-48 relative bg-gradient-to-br from-teal-50 to-green-50 overflow-hidden">
+                            <img src="{{ $product->img }}" alt="{{ $product->name }}"
+                                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                            <!-- Category Badge -->
+                            <div class="absolute top-3 left-3 z-10">
+                                <span class="text-xs font-bold text-white bg-green-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90">{{ $product->category }}</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl mb-2 text-gray-800 line-clamp-2">{{ $product->name }}</h3>
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
+                                    <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                    </svg>
+                                    <span class="text-sm text-yellow-700 font-semibold">{{ $product->calculated_rating }}</span>
+                                </div>
+                                <span class="text-sm text-gray-500">{{ $product->review_count }} reviews</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">{{ Str::limit($product->desc, 120) }}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="inline-block bg-teal-100 text-teal-700 rounded-full px-3 py-1 text-xs font-medium">#{{ ucfirst($product->type) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="col-span-full text-center py-12">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">No Featured Foods Yet</h3>
+                    <p class="text-gray-600 mb-4">Be the first to review our amazing products!</p>
+                    <a href="/catalog" class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">Browse Catalog</a>
+                </div>
+            @endif
         </div>
     </section>
 
     <!-- Merchandise Section -->
-    <section class="flex flex-wrap justify-center gap-6 p-6 flex-1 main-content mb-16">
-        <h2 class="w-full text-3xl font-bold text-teal-700 mb-6 text-center">Merchandise</h2>
-        <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 relative rounded-b-xl bg-teal-100">
-                <img src="/images/tshirt.jpg" alt="UNISSA T-Shirt" class="absolute inset-0 w-full h-full object-cover rounded-t bg-teal-100" />
-            </div>
-            <div class="px-6 py-4 card-content">
-                <div class="font-bold text-xl mb-2 card-title">UNISSA T-Shirt</div>
-                <p class="text-gray-700 text-base card-description">
-                    Comfortable cotton t-shirt with UNISSA logo. Available in all sizes.
-                </p>
-            </div>
-            <div class="px-6 pt-4 pb-2 tags-section">
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#TShirt</span>
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Merch</span>
-            </div>
+    <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-teal-700 mb-2">Premium Merchandise</h2>
+            <p class="text-gray-600">Exclusive items loved by our community</p>
         </div>
-        <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 relative rounded-b-xl bg-yellow-100">
-                <img src="/images/mug.jpg" alt="UNISSA Mug" class="absolute inset-0 w-full h-full object-cover rounded-t bg-yellow-100" />
-            </div>
-            <div class="px-6 py-4 card-content">
-                <div class="font-bold text-xl mb-2 card-title">UNISSA Mug</div>
-                <p class="text-gray-700 text-base card-description">
-                    Ceramic mug with UNISSA branding. Perfect for your morning coffee.
-                </p>
-            </div>
-            <div class="px-6 pt-4 pb-2 tags-section">
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Mug</span>
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Merch</span>
-            </div>
-        </div>
-        <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white merch-card">
-            <div class="w-full h-48 relative rounded-b-xl bg-pink-100">
-                <img src="/images/totebag.jpg" alt="UNISSA Tote Bag" class="absolute inset-0 w-full h-full object-cover rounded-t bg-pink-100" />
-            </div>
-            <div class="px-6 py-4 card-content">
-                <div class="font-bold text-xl mb-2 card-title">UNISSA Tote Bag</div>
-                <p class="text-gray-700 text-base card-description">
-                    Eco-friendly tote bag for everyday use, featuring the UNISSA logo.
-                </p>
-            </div>
-            <div class="px-6 pt-4 pb-2 tags-section">
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#ToteBag</span>
-                <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag">#Merch</span>
-            </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @if($featuredMerch && $featuredMerch->count() > 0)
+                @foreach($featuredMerch as $product)
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border border-gray-100"
+                         onclick="navigateToReview({{ $product->id }})">
+                        <div class="w-full h-48 relative bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden">
+                            <img src="{{ $product->img }}" alt="{{ $product->name }}"
+                                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                            <!-- Category Badge -->
+                            <div class="absolute top-3 left-3 z-10">
+                                <span class="text-xs font-bold text-white bg-purple-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90">{{ $product->category }}</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl mb-2 text-gray-800 line-clamp-2">{{ $product->name }}</h3>
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
+                                    <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                    </svg>
+                                    <span class="text-sm text-yellow-700 font-semibold">{{ $product->calculated_rating }}</span>
+                                </div>
+                                <span class="text-sm text-gray-500">{{ $product->review_count }} reviews</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">{{ Str::limit($product->desc, 120) }}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="inline-block bg-indigo-100 text-indigo-700 rounded-full px-3 py-1 text-xs font-medium">#{{ ucfirst($product->type) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="col-span-full text-center py-12">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">No Featured Merchandise Yet</h3>
+                    <p class="text-gray-600 mb-4">Check out our amazing merchandise collection!</p>
+                    <a href="/catalog" class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">Browse Catalog</a>
+                </div>
+            @endif
         </div>
     </section>
 
     <!-- Featured Reviews Section -->
-    <section class="w-full flex flex-col items-center justify-center py-12 bg-teal-50">
-        <h2 class="text-3xl font-bold text-teal-700 mb-6">Featured Reviews</h2>
-        <div class="flex flex-row flex-wrap justify-center gap-8 w-full max-w-5xl px-2 overflow-x-hidden">
-            <div class="bg-white rounded-xl shadow-lg border p-6 min-w-[320px] max-w-sm flex flex-col gap-2">
-                <div class="flex items-center gap-3 mb-2">
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Danish Naufal" class="w-12 h-12 rounded-full object-cover">
-                    <div>
-                        <span class="font-semibold text-teal-700">Danish Naufal</span>
-                        <span class="text-yellow-400 ml-2 text-sm">★ 4.9</span>
-                    </div>
-                </div>
-                <div class="text-gray-700 mb-1">"The best pancake that I ever eaten for the past 10 years"</div>
-                <div class="text-gray-500 text-xs">Product: Homemade Pancakes</div>
+    <section class="w-full bg-gradient-to-br from-teal-50 to-green-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-teal-700 mb-4">What Our Customers Say</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Real experiences from our valued community members</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg border p-6 min-w-[320px] max-w-sm flex flex-col gap-2">
-                <div class="flex items-center gap-3 mb-2">
-                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aisyah Rahman" class="w-12 h-12 rounded-full object-cover">
-                    <div>
-                        <span class="font-semibold text-teal-700">Aisyah Rahman</span>
-                        <span class="text-yellow-400 ml-2 text-sm">★ 5.0</span>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Danish Naufal" class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Danish Naufal</h4>
+                            <div class="flex items-center gap-1">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                    </svg>
+                                @endfor
+                                <span class="ml-2 text-sm text-gray-600">4.9</span>
+                            </div>
+                        </div>
                     </div>
+                    <blockquote class="text-gray-700 italic mb-3">"The best pancake that I ever eaten for the past 10 years"</blockquote>
+                    <p class="text-gray-500 text-sm">Product: Homemade Pancakes</p>
                 </div>
-                <div class="text-gray-700 mb-1">"Absolutely delicious! The pancakes are fluffy and taste just like home."</div>
-                <div class="text-gray-500 text-xs">Product: Homemade Pancakes</div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg border p-6 min-w-[320px] max-w-sm flex flex-col gap-2">
-                <div class="flex items-center gap-3 mb-2">
-                    <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Hitstonecold Ayeeee" class="w-12 h-12 rounded-full object-cover">
-                    <div>
-                        <span class="font-semibold text-teal-700">Hitstonecold Ayeeee</span>
-                        <span class="text-yellow-400 ml-2 text-sm">★ 4.1</span>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aisyah Rahman" class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Aisyah Rahman</h4>
+                            <div class="flex items-center gap-1">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                    </svg>
+                                @endfor
+                                <span class="ml-2 text-sm text-gray-600">5.0</span>
+                            </div>
+                        </div>
                     </div>
+                    <blockquote class="text-gray-700 italic mb-3">"Absolutely delicious! The pancakes are fluffy and taste just like home."</blockquote>
+                    <p class="text-gray-500 text-sm">Product: Homemade Pancakes</p>
                 </div>
-                <div class="text-gray-700 mb-1">"It is worth the price. Not much too say."</div>
-                <div class="text-gray-500 text-xs">Product: Homemade Pancakes</div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Hitstonecold Ayeeee" class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Hitstonecold Ayeeee</h4>
+                            <div class="flex items-center gap-1">
+                                @for($i = 1; $i <= 4; $i++)
+                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                    </svg>
+                                @endfor
+                                <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                </svg>
+                                <span class="ml-2 text-sm text-gray-600">4.1</span>
+                            </div>
+                        </div>
+                    </div>
+                    <blockquote class="text-gray-700 italic mb-3">"It is worth the price. Not much too say."</blockquote>
+                    <p class="text-gray-500 text-sm">Product: Homemade Pancakes</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Vendors Section -->
-    <section class="w-full flex flex-col items-center justify-center py-12 bg-white">
-        <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center">Our Vendors</h2>
-        <div class="relative w-full max-w-5xl flex items-center justify-center">
-            <button id="vendors-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/60 rounded shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8249;</button>
-            <div class="overflow-hidden w-full">
-                <div id="vendors-track" class="flex transition-transform duration-700">
-                    <!-- Vendor slides will be rendered by JS -->
-                </div>
+    <section class="w-full py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-teal-700 mb-4">Our Trusted Partners</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Meet the exceptional vendors who make our culinary journey possible</p>
             </div>
-            <button id="vendors-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/60 rounded shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8250;</button>
-            <div id="vendors-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 z-20"></div>
+            
+            <div class="relative">
+                <div class="overflow-hidden">
+                    <div id="vendors-track" class="flex transition-transform duration-700">
+                        <!-- Vendor slides will be rendered by JS -->
+                    </div>
+                </div>
+                
+                <button id="vendors-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8249;</button>
+                <button id="vendors-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8250;</button>
+                
+                <div id="vendors-dots" class="flex justify-center gap-2 mt-6"></div>
+            </div>
         </div>
     </section>
 
@@ -609,5 +671,36 @@
         vendorsNext.onclick = function() { moveVendorCarousel(1); resetVendorInterval(); };
         renderVendorsCarousel();
         resetVendorInterval();
+
+        // Navigation function for featured products
+        function navigateToReview(productId) {
+            // Save homepage state
+            sessionStorage.setItem('catalogState', JSON.stringify({
+                source: 'homepage',
+                filters: {},
+                search: '',
+                currentTab: 'food',
+                page: 1
+            }));
+            
+            window.location.href = `/review/${productId}`;
+        }
     </script>
+
+    <style>
+        /* Enhanced text clamping utilities */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
 @endsection
