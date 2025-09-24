@@ -14,7 +14,7 @@ class HomeController extends Controller
         // Get featured products based on average ratings
         $featuredFood = $this->getFeaturedProductsByRating('food', 3);
         $featuredMerch = $this->getFeaturedProductsByRating('merch', 3);
-
+        
         return view('welcome', compact('featuredFood', 'featuredMerch'));
     }
 
