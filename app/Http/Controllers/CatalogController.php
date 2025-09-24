@@ -133,6 +133,7 @@ class CatalogController extends Controller
             'name' => 'required|string|max:255',
             'desc' => 'required|string',
             'category' => 'required|string|max:255',
+            'type' => 'required|in:food,merch',
             'img' => 'nullable|image|max:20480',
             'crop_img' => 'nullable',
         ], [
@@ -142,6 +143,7 @@ class CatalogController extends Controller
         $product->name = $validated['name'];
         $product->desc = $validated['desc'];
         $product->category = $validated['category'];
+        $product->type = $validated['type'];
 
         if ($request->hasFile('img')) {
             $imgFile = $request->file('img');
@@ -159,6 +161,10 @@ class CatalogController extends Controller
         }
 
         $product->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Product updated successfully']);
+        }
 
         return redirect()->route('products.catalog')->with('success', 'Product updated!');
     }

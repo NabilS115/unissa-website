@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\ReviewHelpful;
 use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
@@ -47,5 +48,41 @@ class ReviewController extends Controller
         $review->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function helpful(Request $request, $id)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Please login to mark reviews as helpful'], 401);
+        }
+
+        $review = Review::findOrFail($id);
+        $user = auth()->user();
+
+        // Check if user already marked this review as helpful
+        $existingHelpful = ReviewHelpful::where('user_id', $user->id)
+                                      ->where('review_id', $review->id)
+                                      ->first();
+
+        if ($existingHelpful) {
+            // Remove helpful mark
+            $existingHelpful->delete();
+            $review->decrement('helpful_count');
+            $action = 'removed';
+        } else {
+            // Add helpful mark
+            ReviewHelpful::create([
+                'user_id' => $user->id,
+                'review_id' => $review->id,
+            ]);
+            $review->increment('helpful_count');
+            $action = 'added';
+        }
+
+        return response()->json([
+            'success' => true,
+            'action' => $action,
+            'helpful_count' => $review->fresh()->helpful_count,
+        ]);
     }
 }

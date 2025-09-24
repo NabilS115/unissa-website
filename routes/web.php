@@ -117,6 +117,7 @@ Route::middleware(['auth'])->prefix('admin/catalog')->group(function () {
 Route::get('/review/{id}', [ReviewController::class, 'show'])->name('review.show');
 Route::post('/review/{id}/add', [ReviewController::class, 'add'])->name('review.add');
 Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('review.delete')->middleware('auth');
+Route::post('/reviews/{id}/helpful', [ReviewController::class, 'helpful'])->name('review.helpful');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/auth.php';

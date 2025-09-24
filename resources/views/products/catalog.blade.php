@@ -185,15 +185,27 @@
             </div>
             <div class="flex items-center gap-2">
                 <label class="text-sm font-medium text-teal-700">Sort by:</label>
-                <div class="rounded-full border-2 border-teal-300 px-2 py-1 flex items-center bg-white">
-                    <select x-model="tab === 'food' ? foodSort : merchSort"
-                        class="bg-transparent outline-none px-4 py-2 rounded-full focus:ring-0 border-none"
-                        style="box-shadow:none;">
-                        <option value="">Sort By</option>
-                        <option value="name">Name</option>
-                        <option value="category">Category</option>
-                        <option value="rating">Rating</option>
-                    </select>
+                <div class="rounded-full border-2 border-teal-300 px-3 py-1 flex items-center bg-white shadow-sm hover:shadow-md transition-shadow">
+                    <template x-if="tab === 'food'">
+                        <select x-model="foodSort"
+                            class="bg-transparent outline-none px-2 py-1 rounded-full focus:ring-0 border-none text-teal-700 font-medium cursor-pointer"
+                            style="box-shadow:none;">
+                            <option value="">Default</option>
+                            <option value="name">Name (A-Z)</option>
+                            <option value="category">Category</option>
+                            <option value="rating">Rating (High to Low)</option>
+                        </select>
+                    </template>
+                    <template x-if="tab === 'merch'">
+                        <select x-model="merchSort"
+                            class="bg-transparent outline-none px-2 py-1 rounded-full focus:ring-0 border-none text-teal-700 font-medium cursor-pointer"
+                            style="box-shadow:none;">
+                            <option value="">Default</option>
+                            <option value="name">Name (A-Z)</option>
+                            <option value="category">Category</option>
+                            <option value="rating">Rating (High to Low)</option>
+                        </select>
+                    </template>
                 </div>
             </div>
         </div>
@@ -304,6 +316,13 @@
                         <label class="block text-sm font-medium mb-2">Category</label>
                         <input type="text" name="category" :value="editProduct.category" required class="border rounded px-3 py-2 w-full" />
                     </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Type</label>
+                        <select name="type" :value="editProduct.type" class="border rounded px-3 py-2 w-full">
+                            <option value="food">Food & Beverages</option>
+                            <option value="merch">Merchandise</option>
+                        </select>
+                    </div>
                     <div class="flex justify-end mt-8">
                         <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded font-semibold hover:bg-teal-700">
                             Save Changes
@@ -320,40 +339,46 @@
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.id">
-                    <div class="rounded overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer"
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100"
                          @click="navigateToReview(food.id)">
-                        <div class="w-full h-48 relative food-image flex items-center justify-center bg-white">
+                        <div class="w-full h-52 relative food-image flex items-center justify-center bg-gradient-to-br from-teal-50 to-green-50">
                             <img :src="food.img" :alt="food.name"
-                                 class="w-full h-full object-cover rounded-t bg-white mx-auto"
+                                 class="w-full h-full object-cover"
                                  style="display:block;" />
                             @if(auth()->user()?->role === 'admin')
-                            <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
+                            <div class="absolute top-3 right-3 z-20 flex flex-col gap-2">
                                 <button @click.stop="openEditModal(food, '/catalog/edit/' + food.id)"
-                                    class="bg-teal-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-teal-700">
+                                    class="bg-teal-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-teal-700 transition-colors backdrop-blur-sm bg-opacity-90">
                                     Edit
                                 </button>
                                 <form method="POST" :action="'/catalog/delete/' + food.id" onsubmit="event.stopPropagation(); return confirm('Delete this product?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-red-700 mt-1">
+                                    <button type="submit" class="bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-red-700 transition-colors backdrop-blur-sm bg-opacity-90">
                                         Delete
                                     </button>
                                 </form>
                             </div>
                             @endif
-                        </div>
-                        <div class="px-6 py-4 card-content flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="font-bold text-xl mb-2 card-title" x-text="food.name"></div>
-                                <div class="flex items-center gap-1 mb-1">
-                                    <svg class="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
-                                    <span class="text-sm text-gray-700 font-semibold" x-text="getAverageRating(food)"></span>
-                                </div>
-                                <p class="text-gray-700 text-base card-description" x-text="food.desc"></p>
+                            <!-- Category Badge on Image -->
+                            <div class="absolute top-3 left-3 z-10">
+                                <span class="text-xs font-bold text-white bg-green-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90" x-text="food.category"></span>
                             </div>
-                            <div class="px-0 pt-2 pb-1 tags-section">
+                        </div>
+                        <div class="px-6 py-5 card-content flex-1 flex flex-col justify-between">
+                            <div class="flex-1">
+                                <div class="font-bold text-xl mb-3 card-title text-gray-800 line-clamp-2" x-text="food.name"></div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                                        <span class="text-sm text-yellow-700 font-semibold" x-text="getAverageRating(food)"></span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm card-description leading-relaxed line-clamp-3" x-text="food.desc"></p>
+                            </div>
+                            <div class="pt-4 tags-section">
                                 <template x-for="tag in food.tags" :key="tag">
-                                    <span class="inline-block bg-teal-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag" x-text="'#' + tag"></span>
+                                    <span class="inline-block bg-teal-100 text-teal-700 rounded-full px-3 py-1 text-xs font-medium mr-2 mb-2 tag" x-text="'#' + tag"></span>
                                 </template>
                             </div>
                         </div>
@@ -376,40 +401,46 @@
         <div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="item in pagedMerch" :key="item.id">
-                    <div class="rounded overflow-hidden shadow-lg bg-white merch-card flex flex-col cursor-pointer"
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white merch-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100"
                          @click="navigateToReview(item.id)">
-                        <div class="w-full h-48 relative merch-image flex items-center justify-center bg-white">
+                        <div class="w-full h-52 relative merch-image flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
                             <img :src="item.img" :alt="item.name"
-                                 class="w-full h-full object-cover rounded-t bg-white mx-auto"
+                                 class="w-full h-full object-cover"
                                  style="display:block;" />
                             @if(auth()->user()?->role === 'admin')
-                            <div class="absolute top-2 right-2 z-20 flex flex-col gap-1">
+                            <div class="absolute top-3 right-3 z-20 flex flex-col gap-2">
                                 <button @click.stop="openEditModal(item, '/catalog/edit/' + item.id)"
-                                    class="bg-indigo-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-indigo-700">
+                                    class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-indigo-700 transition-colors backdrop-blur-sm bg-opacity-90">
                                     Edit
                                 </button>
                                 <form method="POST" :action="'/catalog/delete/' + item.id" onsubmit="event.stopPropagation(); return confirm('Delete this product?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow text-xs font-semibold hover:bg-red-700 mt-1">
+                                    <button type="submit" class="bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-red-700 transition-colors backdrop-blur-sm bg-opacity-90">
                                         Delete
                                     </button>
                                 </form>
                             </div>
                             @endif
-                        </div>
-                        <div class="px-6 py-4 card-content flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="font-bold text-xl mb-2 card-title" x-text="item.name"></div>
-                                <div class="flex items-center gap-1 mb-1">
-                                    <svg class="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
-                                    <span class="text-sm text-gray-700 font-semibold" x-text="getAverageRating(item)"></span>
-                                </div>
-                                <p class="text-gray-700 text-base card-description" x-text="item.desc"></p>
+                            <!-- Category Badge on Image -->
+                            <div class="absolute top-3 left-3 z-10">
+                                <span class="text-xs font-bold text-white bg-purple-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90" x-text="item.category"></span>
                             </div>
-                            <div class="px-0 pt-2 pb-1 tags-section">
+                        </div>
+                        <div class="px-6 py-5 card-content flex-1 flex flex-col justify-between">
+                            <div class="flex-1">
+                                <div class="font-bold text-xl mb-3 card-title text-gray-800 line-clamp-2" x-text="item.name"></div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                                        <span class="text-sm text-yellow-700 font-semibold" x-text="getAverageRating(item)"></span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm card-description leading-relaxed line-clamp-3" x-text="item.desc"></p>
+                            </div>
+                            <div class="pt-4 tags-section">
                                 <template x-for="tag in item.tags" :key="tag">
-                                    <span class="inline-block bg-indigo-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 tag" x-text="'#' + tag"></span>
+                                    <span class="inline-block bg-indigo-100 text-indigo-700 rounded-full px-3 py-1 text-xs font-medium mr-2 mb-2 tag" x_text="'#' + tag"></span>
                                 </template>
                             </div>
                         </div>
@@ -476,6 +507,21 @@
     <!-- ...existing code... -->
     <style>
         [x-cloak] { display: none !important; }
+        
+        /* Text clamping utilities */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
     <!-- Add Cropper.js CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
@@ -513,6 +559,7 @@ document.addEventListener('alpine:init', () => {
                 if (document.activeElement) document.activeElement.blur();
             },
             get sortedFoods() {
+                console.log('Sorting foods by:', this.foodSort); // Debug log
                 let search = this.foodSearch.toLowerCase();
                 let filtered = this.food.filter(f =>
                     (this.foodFilter === 'All' || f.category === this.foodFilter) &&
@@ -522,13 +569,25 @@ document.addEventListener('alpine:init', () => {
                         f.desc.toLowerCase().includes(search)
                     )
                 );
+                
+                // Apply sorting
                 if (this.foodSort === 'name') {
+                    console.log('Sorting by name');
                     filtered.sort((a, b) => a.name.localeCompare(b.name));
                 } else if (this.foodSort === 'category') {
+                    console.log('Sorting by category');
                     filtered.sort((a, b) => a.category.localeCompare(b.category));
                 } else if (this.foodSort === 'rating') {
-                    filtered.sort((a, b) => b.rating - a.rating);
+                    console.log('Sorting by rating');
+                    filtered.sort((a, b) => {
+                        const ratingA = parseFloat(a.calculated_rating || '0');
+                        const ratingB = parseFloat(b.calculated_rating || '0');
+                        console.log(`Rating A: ${ratingA}, Rating B: ${ratingB}`);
+                        return ratingB - ratingA; // High to low
+                    });
                 }
+                
+                console.log('Filtered results:', filtered.length);
                 return filtered;
             },
             get pagedFoods() {
@@ -539,6 +598,7 @@ document.addEventListener('alpine:init', () => {
                 return Math.max(1, Math.ceil(this.sortedFoods.length / this.foodPerPage));
             },
             get sortedMerch() {
+                console.log('Sorting merch by:', this.merchSort); // Debug log
                 let search = this.merchSearch.toLowerCase();
                 let filtered = this.merchandise.filter(m =>
                     (this.merchFilter === 'All' || m.category === this.merchFilter) &&
@@ -548,13 +608,25 @@ document.addEventListener('alpine:init', () => {
                         m.desc.toLowerCase().includes(search)
                     )
                 );
+                
+                // Apply sorting
                 if (this.merchSort === 'name') {
+                    console.log('Sorting by name');
                     filtered.sort((a, b) => a.name.localeCompare(b.name));
                 } else if (this.merchSort === 'category') {
+                    console.log('Sorting by category');
                     filtered.sort((a, b) => a.category.localeCompare(b.category));
                 } else if (this.merchSort === 'rating') {
-                    filtered.sort((a, b) => b.rating - a.rating);
+                    console.log('Sorting by rating');
+                    filtered.sort((a, b) => {
+                        const ratingA = parseFloat(a.calculated_rating || '0');
+                        const ratingB = parseFloat(b.calculated_rating || '0');
+                        console.log(`Rating A: ${ratingA}, Rating B: ${ratingB}`);
+                        return ratingB - ratingA; // High to low
+                    });
                 }
+                
+                console.log('Filtered results:', filtered.length);
                 return filtered;
             },
             get pagedMerch() {
@@ -727,8 +799,26 @@ document.addEventListener('alpine:init', () => {
                 return '0.0';
             },
             $watch: {
-                sortedFoods() { this.foodPage = 1; },
-                sortedMerch() { this.merchPage = 1; }
+                foodSort: {
+                    handler(newVal) {
+                        console.log('Food sort changed to:', newVal);
+                        this.foodPage = 1;
+                    }
+                },
+                merchSort: {
+                    handler(newVal) {
+                        console.log('Merch sort changed to:', newVal);
+                        this.merchPage = 1;
+                    }
+                },
+                sortedFoods() { 
+                    console.log('sortedFoods changed');
+                    this.foodPage = 1; 
+                },
+                sortedMerch() { 
+                    console.log('sortedMerch changed');
+                    this.merchPage = 1; 
+                }
             }
         }
     });
