@@ -21,12 +21,54 @@
 
     <!-- Events Section -->
     <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden relative" style="min-height: 420px;">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div class="text-center lg:text-left mb-6 lg:mb-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Gallery</h2>
+                <p class="text-gray-600 max-w-2xl">Browse through our featured images and moments</p>
+            </div>
+            @if(auth()->check() && auth()->user()->role === 'admin')
+                <div class="flex gap-2">
+                    <button id="add-gallery-btn" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add Image
+                    </button>
+                    <button id="manage-gallery-btn" class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Manage Images
+                    </button>
+                </div>
+            @endif
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden relative group" style="min-height: 420px;">
             <div id="event-bg-carousel" class="absolute inset-0 w-full h-full overflow-hidden z-0">
                 <div id="event-bg-track" class="flex w-full h-full transition-transform duration-700">
                     <!-- Slides will be rendered by JS -->
                 </div>
             </div>
+            
+            @if(auth()->check() && auth()->user()->role === 'admin')
+                <!-- Admin Controls for Current Image -->
+                <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div class="flex gap-2">
+                        <button id="edit-current-gallery-btn" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors" title="Edit Image">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </button>
+                        <button id="delete-current-gallery-btn" class="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors" title="Delete Image">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            @endif
+            
             <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
                 <!-- Carousel Controls (right) -->
                 <button id="event-carousel-next"
@@ -259,14 +301,36 @@
     </section>
 
     <script>
-        // Sliding background carousel logic for Events section (infinite looping animation)
-        const eventImages = [
-            "/images/nightSky.avif",
-            "/images/foods.avif",
-            "/images/mountains.avif",
-            "/images/mountainSunset.avif",
-            "/images/chair.avif"
-        ];
+        // Enhanced gallery data from database or default
+        let galleryData = @json($galleryImages ?? []);
+        
+        console.log('Gallery data loaded:', galleryData); // Debug log
+        
+        // Map gallery data to the expected format
+        let eventImages = [];
+        if (galleryData && galleryData.length > 0) {
+            eventImages = galleryData.map(item => {
+                console.log('Processing gallery item:', item); // Debug log
+                return {
+                    id: item.id,
+                    image: item.image_url,
+                    active: item.is_active,
+                    order: item.sort_order
+                };
+            });
+            console.log('Mapped event images:', eventImages); // Debug log
+        } else {
+            console.log('Using default images'); // Debug log
+            // Default images if no database images exist
+            eventImages = [
+                { id: null, image: "/images/nightSky.avif" },
+                { id: null, image: "/images/foods.avif" },
+                { id: null, image: "/images/mountains.avif" },
+                { id: null, image: "/images/mountainSunset.avif" },
+                { id: null, image: "/images/chair.avif" }
+            ];
+        }
+        
         let currentEvent = 0;
         const bgTrack = document.getElementById('event-bg-track');
         const prevBtn = document.getElementById('event-carousel-prev');
@@ -275,32 +339,53 @@
         let eventInterval = null;
 
         function renderEventBgCarousel() {
+            console.log('Rendering carousel with images:', eventImages); // Debug log
+            
+            if (!eventImages || eventImages.length === 0) {
+                console.log('No images to display, hiding carousel'); // Debug log
+                document.querySelector('.bg-white.rounded-2xl').style.display = 'none';
+                return;
+            }
+
+            document.querySelector('.bg-white.rounded-2xl').style.display = 'block';
+            
             // Render slides with clones for infinite loop
             bgTrack.innerHTML = '';
             // Clone last slide to the beginning
             const firstClone = document.createElement('div');
             firstClone.className = "min-w-full h-full";
-            firstClone.style.backgroundImage = `url('${eventImages[eventImages.length - 1]}')`;
+            const lastImageUrl = eventImages[eventImages.length - 1].image;
+            console.log('Setting background for first clone:', lastImageUrl); // Debug log
+            firstClone.style.backgroundImage = `url('${lastImageUrl}')`;
             firstClone.style.backgroundSize = 'cover';
             firstClone.style.backgroundPosition = 'center';
             firstClone.style.backgroundRepeat = 'no-repeat';
             bgTrack.appendChild(firstClone);
 
             // Real slides
-            eventImages.forEach((src) => {
+            eventImages.forEach((item, index) => {
                 const slide = document.createElement('div');
                 slide.className = "min-w-full h-full";
-                slide.style.backgroundImage = `url('${src}')`;
+                console.log(`Setting background for slide ${index}:`, item.image); // Debug log
+                slide.style.backgroundImage = `url('${item.image}')`;
                 slide.style.backgroundSize = 'cover';
                 slide.style.backgroundPosition = 'center';
                 slide.style.backgroundRepeat = 'no-repeat';
+                
+                // Add error handling for failed image loads
+                slide.onerror = function() {
+                    console.error('Failed to load image:', item.image);
+                };
+                
                 bgTrack.appendChild(slide);
             });
 
             // Clone first slide to the end
             const lastClone = document.createElement('div');
             lastClone.className = "min-w-full h-full";
-            lastClone.style.backgroundImage = `url('${eventImages[0]}')`;
+            const firstImageUrl = eventImages[0].image;
+            console.log('Setting background for last clone:', firstImageUrl); // Debug log
+            lastClone.style.backgroundImage = `url('${firstImageUrl}')`;
             lastClone.style.backgroundSize = 'cover';
             lastClone.style.backgroundPosition = 'center';
             lastClone.style.backgroundRepeat = 'no-repeat';
@@ -389,8 +474,497 @@
             resetEventInterval();
         };
 
+        @if(auth()->check() && auth()->user()->role === 'admin')
+        // Admin gallery management functions
+        document.getElementById('add-gallery-btn')?.addEventListener('click', () => {
+            showGalleryModal();
+        });
+
+        document.getElementById('manage-gallery-btn')?.addEventListener('click', () => {
+            showGalleryManagementModal();
+        });
+
+        document.getElementById('edit-current-gallery-btn')?.addEventListener('click', () => {
+            if (eventImages[currentEvent] && eventImages[currentEvent].id) {
+                showGalleryModal(eventImages[currentEvent]);
+            }
+        });
+
+        document.getElementById('delete-current-gallery-btn')?.addEventListener('click', () => {
+            if (eventImages[currentEvent] && eventImages[currentEvent].id) {
+                deleteGalleryImage(eventImages[currentEvent].id);
+            }
+        });
+
+        function showGalleryModal(gallery = null) {
+            const isEdit = gallery !== null;
+            const modalHtml = `
+                <div id="gallery-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-2xl font-bold text-gray-900">${isEdit ? 'Edit Gallery Image' : 'Add New Gallery Image'}</h3>
+                                <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <form id="gallery-form" class="space-y-6" enctype="multipart/form-data">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gallery Image</label>
+                                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
+                                        <div class="space-y-1 text-center">
+                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <div class="flex text-sm text-gray-600">
+                                                <label for="image-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
+                                                    <span>${isEdit ? 'Change image' : 'Upload an image'}</span>
+                                                    <input id="image-upload" name="image" type="file" class="sr-only" accept="image/*" ${!isEdit ? 'required' : ''}>
+                                                </label>
+                                                <p class="pl-1">or drag and drop</p>
+                                            </div>
+                                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                                        </div>
+                                    </div>
+                                    <div id="image-preview" class="mt-4 hidden">
+                                        <img id="preview-img" class="h-32 w-full object-cover rounded-lg" />
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
+                                        <input type="number" name="sort_order" value="${isEdit ? gallery.order : 0}" min="0"
+                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                                    </div>
+                                    
+                                    <div class="flex items-center pt-6">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="is_active" ${isEdit ? (gallery.active ? 'checked' : '') : 'checked'}
+                                                   class="rounded border-gray-300 text-teal-600">
+                                            <span class="ml-2 text-sm text-gray-700">Active</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-3 pt-4">
+                                    <button type="button" onclick="closeGalleryModal()" 
+                                            class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" 
+                                            class="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium transition-colors">
+                                        ${isEdit ? 'Update Image' : 'Add Image'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Add image preview functionality
+            const imageInput = document.getElementById('image-upload');
+            const imagePreview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            document.getElementById('gallery-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                
+                // Convert checkbox to boolean
+                formData.set('is_active', formData.get('is_active') ? '1' : '0');
+                
+                try {
+                    const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
+                    const method = 'POST';
+                    
+                    if (isEdit) {
+                        formData.append('_method', 'PUT');
+                    }
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.message);
+                        closeGalleryModal();
+                        window.location.reload();
+                    } else {
+                        alert(result.message || 'Failed to save image.');
+                    }
+                } catch (error) {
+                    alert('Network error occurred.');
+                }
+            });
+        }
+
+        function showGalleryManagementModal() {
+            const modalHtml = `
+                <div id="manage-gallery-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-2xl font-bold text-gray-900">Manage Gallery Images</h3>
+                                <button onclick="closeManageGalleryModal()" class="text-gray-400 hover:text-gray-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div id="gallery-list" class="space-y-4">
+                                <div class="text-center py-8">
+                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
+                                    <p class="text-gray-600 mt-2">Loading images...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            loadGalleryForManagement();
+        }
+
+        async function loadGalleryForManagement() {
+            try {
+                const response = await fetch('/gallery', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+
+                if (response.ok) {
+                    const galleries = await response.json();
+                    displayGalleryForManagement(galleries);
+                } else {
+                    document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Failed to load images.</p>';
+                }
+            } catch (error) {
+                document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Network error occurred.</p>';
+            }
+        }
+
+        function displayGalleryForManagement(galleries) {
+            const listContainer = document.getElementById('gallery-list');
+            
+            if (galleries.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-gray-600 mb-4">No images found.</p>
+                        <button onclick="closeManageGalleryModal(); showGalleryModal();" 
+                                class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
+                            Add Your First Image
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const galleriesHtml = galleries.map(gallery => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start gap-4 flex-1">
+                            <img src="${gallery.image_url}" alt="Gallery image" class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="px-2 py-1 text-xs rounded-full ${gallery.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                        ${gallery.is_active ? 'Active' : 'Inactive'}
+                                    </span>
+                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                        Order: ${gallery.sort_order}
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 text-sm truncate">Uploaded image</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 ml-4">
+                            <button onclick="toggleGalleryActive(${gallery.id})" 
+                                    class="px-3 py-1 text-xs rounded ${gallery.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} transition-colors">
+                                ${gallery.is_active ? 'Hide' : 'Show'}
+                            </button>
+                            <button onclick="closeManageGalleryModal(); showGalleryModal({id: ${gallery.id}, image: '${gallery.image_url}', active: ${gallery.is_active}, order: ${gallery.sort_order}})" 
+                                    class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors">
+                                Edit
+                            </button>
+                            <button onclick="deleteGalleryFromManagement(${gallery.id})" 
+                                    class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            listContainer.innerHTML = galleriesHtml;
+        }
+
+        async function toggleGalleryActive(galleryId) {
+            try {
+                const response = await fetch(`/gallery/${galleryId}/toggle-active`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    loadGalleryForManagement(); // Refresh the list
+                } else {
+                    alert(result.message || 'Failed to update gallery status.');
+                }
+            } catch (error) {
+                alert('Network error occurred.');
+            }
+        }
+
+        async function deleteGalleryFromManagement(galleryId) {
+            if (!confirm('Are you sure you want to delete this image?')) return;
+            
+            try {
+                const response = await fetch(`/gallery/${galleryId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    loadGalleryForManagement(); // Refresh the list
+                } else {
+                    alert(result.message || 'Failed to delete image.');
+                }
+            } catch (error) {
+                alert('Network error occurred.');
+            }
+        }
+
+        async function deleteGalleryImage(galleryId) {
+            if (!confirm('Are you sure you want to delete this image?')) return;
+            
+            try {
+                const response = await fetch(`/gallery/${galleryId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Image deleted successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Failed to delete image.');
+                }
+            } catch (error) {
+                alert('Network error occurred.');
+            }
+        }
+
+        window.closeGalleryModal = function() {
+            const modal = document.getElementById('gallery-modal');
+            if (modal) modal.remove();
+        }
+
+        window.closeManageGalleryModal = function() {
+            const modal = document.getElementById('manage-gallery-modal');
+            if (modal) modal.remove();
+        }
+        @endif
+
+        // Initialize carousel
         renderEventBgCarousel();
         resetEventInterval();
+
+        // Add missing vendors carousel functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vendors Carousel (3 at a time)
+            const vendors = [
+                {
+                    img: "https://randomuser.me/api/portraits/men/21.jpg",
+                    name: "Ahmad's Bakery",
+                    type: "Baked Goods",
+                    desc: "Freshly baked breads, cakes, and pastries every day."
+                },
+                {
+                    img: "https://randomuser.me/api/portraits/women/22.jpg",
+                    name: "Siti's Organics",
+                    type: "Organic Produce",
+                    desc: "Locally grown organic fruits and vegetables."
+                },
+                {
+                    img: "https://randomuser.me/api/portraits/men/23.jpg",
+                    name: "Joe's Grill",
+                    type: "Grilled Specialties",
+                    desc: "Delicious grilled meats and seafood, cooked to perfection."
+                },
+                {
+                    img: "https://randomuser.me/api/portraits/women/24.jpg",
+                    name: "Maya's Sweets",
+                    type: "Desserts",
+                    desc: "Handmade cakes, cookies, and sweet treats."
+                },
+                {
+                    img: "https://randomuser.me/api/portraits/men/25.jpg",
+                    name: "Ali's Seafood",
+                    type: "Seafood",
+                    desc: "Fresh seafood delivered daily from the coast."
+                },
+                {
+                    img: "https://randomuser.me/api/portraits/women/30.jpg",
+                    name: "Lina's Juice Bar",
+                    type: "Beverages",
+                    desc: "Freshly squeezed juices and smoothies made to order."
+                }
+            ];
+            let currentVendor = 0;
+            const vendorsTrack = document.getElementById('vendors-track');
+            const vendorsPrev = document.getElementById('vendors-prev');
+            const vendorsNext = document.getElementById('vendors-next');
+            const vendorsDots = document.getElementById('vendors-dots');
+            let vendorInterval = null;
+            const vendorsPerSlide = 3;
+            
+            function renderVendorsCarousel() {
+                vendorsTrack.innerHTML = '';
+                // Calculate number of slides
+                const totalSlides = Math.ceil(vendors.length / vendorsPerSlide);
+                // Clone last slide to the beginning
+                const lastVendors = vendors.slice(-vendorsPerSlide);
+                vendorsTrack.appendChild(vendorSlideHTML(lastVendors));
+                // Real slides
+                for (let i = 0; i < totalSlides; i++) {
+                    const slideVendors = vendors.slice(i * vendorsPerSlide, (i + 1) * vendorsPerSlide);
+                    vendorsTrack.appendChild(vendorSlideHTML(slideVendors));
+                }
+                // Clone first slide to the end
+                const firstVendors = vendors.slice(0, vendorsPerSlide);
+                vendorsTrack.appendChild(vendorSlideHTML(firstVendors));
+                // Set initial position
+                vendorsTrack.style.transition = 'none';
+                vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                void vendorsTrack.offsetWidth;
+                vendorsTrack.style.transition = 'transform 0.7s';
+                // Dots
+                vendorsDots.innerHTML = '';
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentVendor ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
+                    dot.onclick = () => { goToVendorSlide(i); resetVendorInterval(); };
+                    vendorsDots.appendChild(dot);
+                }
+            }
+            
+            function vendorSlideHTML(vendorArr) {
+                const slide = document.createElement('div');
+                slide.className = "min-w-full flex justify-center gap-8";
+                slide.innerHTML = vendorArr.map(v => `
+                    <div class="bg-teal-50 rounded-xl shadow-lg border p-6 min-w-[260px] max-w-xs flex flex-col items-center gap-2">
+                        <img src="${v.img}" alt="${v.name}" class="w-16 h-16 rounded-full object-cover mb-2">
+                        <span class="font-semibold text-teal-700">${v.name}</span>
+                        <span class="text-gray-500 text-sm">${v.type}</span>
+                        <p class="text-gray-600 text-center text-sm mt-2">${v.desc}</p>
+                    </div>
+                `).join('');
+                return slide;
+            }
+            
+            function goToVendorSlide(idx) {
+                currentVendor = idx;
+                vendorsTrack.style.transition = 'transform 0.7s';
+                vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                updateVendorDots();
+            }
+            
+            function moveVendorCarousel(dir) {
+                const totalSlides = Math.ceil(vendors.length / vendorsPerSlide);
+                vendorsTrack.style.transition = 'transform 0.7s';
+                if (dir === 1) {
+                    currentVendor++;
+                    vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                    if (currentVendor === totalSlides) {
+                        setTimeout(() => {
+                            vendorsTrack.style.transition = 'none';
+                            currentVendor = 0;
+                            vendorsTrack.style.transform = `translateX(-100%)`;
+                            updateVendorDots();
+                            void vendorsTrack.offsetWidth;
+                            vendorsTrack.style.transition = 'transform 0.7s';
+                        }, 700);
+                    } else {
+                        updateVendorDots();
+                    }
+                } else {
+                    currentVendor--;
+                    vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                    if (currentVendor < 0) {
+                        setTimeout(() => {
+                            vendorsTrack.style.transition = 'none';
+                            currentVendor = totalSlides - 1;
+                            vendorsTrack.style.transform = `translateX(-${totalSlides * 100}%)`;
+                            updateVendorDots();
+                            void vendorsTrack.offsetWidth;
+                            vendorsTrack.style.transition = 'transform 0.7s';
+                        }, 700);
+                    } else {
+                        updateVendorDots();
+                    }
+                }
+            }
+            
+            function resetVendorInterval() {
+                if (vendorInterval) clearInterval(vendorInterval);
+                vendorInterval = setInterval(() => {
+                    moveVendorCarousel(1);
+                }, 5000);
+            }
+            
+            function updateVendorDots() {
+                const totalSlides = Math.ceil(vendors.length / vendorsPerSlide);
+                Array.from(vendorsDots.children).forEach((dot, i) => {
+                    dot.className = `w-3 h-3 rounded-full inline-block mx-1 ${i === currentVendor ? 'bg-teal-400' : 'bg-teal-200'} cursor-pointer`;
+                });
+            }
+            
+            vendorsPrev.onclick = function() { moveVendorCarousel(-1); resetVendorInterval(); };
+            vendorsNext.onclick = function() { moveVendorCarousel(1); resetVendorInterval(); };
+            renderVendorsCarousel();
+            resetVendorInterval();
+        });
 
         // Navigation function for featured products
         function navigateToReview(productId) {

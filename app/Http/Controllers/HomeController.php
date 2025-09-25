@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\Gallery;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -15,7 +16,22 @@ class HomeController extends Controller
         $featuredFood = $this->getFeaturedProductsByRating('food', 3);
         $featuredMerch = $this->getFeaturedProductsByRating('merch', 3);
         
-        return view('welcome', compact('featuredFood', 'featuredMerch'));
+        // Get active gallery images with error handling
+        try {
+            $galleryImages = Gallery::active()->ordered()->get()->map(function ($gallery) {
+                return [
+                    'id' => $gallery->id,
+                    'image_url' => $gallery->getImageUrlAttribute(),
+                    'is_active' => $gallery->is_active,
+                    'sort_order' => $gallery->sort_order,
+                ];
+            });
+        } catch (\Exception $e) {
+            // Fallback to empty collection if Gallery table doesn't exist yet
+            $galleryImages = collect([]);
+        }
+
+        return view('welcome', compact('featuredFood', 'featuredMerch', 'galleryImages'));
     }
 
     private function getFeaturedProductsByRating($type, $limit = 3)
