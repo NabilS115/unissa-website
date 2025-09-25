@@ -18,10 +18,15 @@ class GalleryController extends Controller
         try {
             $galleries = Gallery::orderBy('sort_order')->orderBy('created_at', 'desc')->get();
             
+            \Log::info('Gallery index - Found ' . $galleries->count() . ' images');
+            
             $galleriesData = $galleries->map(function ($gallery) {
+                $imageUrl = $gallery->getImageUrlAttribute();
+                \Log::info('Gallery image URL: ' . $imageUrl . ' for ID: ' . $gallery->id);
+                
                 return [
                     'id' => $gallery->id,
-                    'image_url' => $gallery->getImageUrlAttribute(),
+                    'image_url' => $imageUrl,
                     'is_active' => $gallery->is_active,
                     'sort_order' => $gallery->sort_order,
                     'created_at' => $gallery->created_at->format('Y-m-d H:i:s')
@@ -31,7 +36,8 @@ class GalleryController extends Controller
             return response()->json($galleriesData);
         } catch (\Exception $e) {
             \Log::error('Gallery index error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to load images'], 500);
+            \Log::error('Gallery index stack trace: ' . $e->getTraceAsString());
+            return response()->json(['error' => 'Failed to load images', 'message' => $e->getMessage()], 500);
         }
     }
 
