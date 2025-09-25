@@ -65,7 +65,7 @@ Route::get('/catalog', [\App\Http\Controllers\CatalogController::class, 'index']
 Route::post('/catalog/add', [CatalogController::class, 'add'])->name('catalog.add');
 Route::put('/catalog/edit/{id}', [\App\Http\Controllers\CatalogController::class, 'edit'])->name('catalog.edit');
 Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('catalog.upload');
-Route::delete('/catalog/delete/{id}', [\AppHttp\Controllers\CatalogController::class, 'destroy'])->name('catalog.delete');
+Route::delete('/catalog/delete/{id}', [\App\Http\Controllers\CatalogController::class, 'destroy'])->name('catalog.delete');
 
 // about routes
 Route::get('/company-history', function () {
