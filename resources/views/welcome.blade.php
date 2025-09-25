@@ -555,6 +555,14 @@
 
         function showGalleryModal(gallery = null) {
             const isEdit = gallery !== null;
+            
+            // Calculate next sort order for new images
+            let nextSortOrder = 0;
+            if (!isEdit && galleryData && galleryData.length > 0) {
+                const maxOrder = Math.max(...galleryData.map(item => item.sort_order || 0));
+                nextSortOrder = maxOrder + 1;
+            }
+            
             const modalHtml = `
                 <div id="gallery-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative">
@@ -594,8 +602,10 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-                                        <input type="number" name="sort_order" value="${isEdit ? gallery.order : 0}" min="0"
-                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                                        <input type="number" name="sort_order" value="${isEdit ? gallery.order : nextSortOrder}" min="0"
+                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                                               placeholder="0 = first position">
+                                        <p class="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
                                     </div>
                                     
                                     <div class="flex items-center pt-6">
