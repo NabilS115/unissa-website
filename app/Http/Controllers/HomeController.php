@@ -37,10 +37,17 @@ class HomeController extends Controller
                 ->where('rating', '>=', 4) // Only 4-5 star reviews
                 ->whereHas('user') // Make sure user exists
                 ->whereHas('product') // Make sure product exists
+                ->select('reviews.*')
+                ->join('users', 'reviews.user_id', '=', 'users.id')
                 ->orderBy('rating', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->limit(6) // Get more to have variety
-                ->get();
+                ->orderBy('reviews.created_at', 'desc')
+                ->limit(10) // Get more reviews to have variety
+                ->get()
+                ->groupBy('user_id') // Group by user to ensure different users
+                ->map(function($userReviews) {
+                    return $userReviews->first(); // Take the best review from each user
+                })
+                ->take(6); // Take up to 6 different users
         } catch (\Exception $e) {
             // Fallback to empty collection if there's an error
             $featuredReviews = collect([]);
