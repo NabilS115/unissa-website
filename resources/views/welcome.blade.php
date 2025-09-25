@@ -238,9 +238,13 @@
                             </blockquote>
                             <p class="text-gray-500 text-sm">
                                 Product: 
-                                <a href="{{ route('review.show', $review->product->id) }}" class="text-teal-600 hover:text-teal-700 font-medium">
-                                    {{ $review->product->name }}
-                                </a>
+                                @if($review->product)
+                                    <a href="{{ route('review.show', $review->product->id) }}" class="text-teal-600 hover:text-teal-700 font-medium">
+                                        {{ $review->product->name }}
+                                    </a>
+                                @else
+                                    <span class="text-gray-400">Product no longer available</span>
+                                @endif
                             </p>
                         </div>
                     @endforeach

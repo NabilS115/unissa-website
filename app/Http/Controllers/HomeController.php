@@ -31,13 +31,20 @@ class HomeController extends Controller
             $galleryImages = collect([]);
         }
 
-        // Get featured customer reviews (highest rated reviews)
-        $featuredReviews = Review::with(['user', 'product'])
-            ->where('rating', '>=', 4) // Only 4-5 star reviews
-            ->orderBy('rating', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->limit(6) // Get more to have variety
-            ->get();
+        // Get featured customer reviews (highest rated reviews) with proper error handling
+        try {
+            $featuredReviews = Review::with(['user', 'product'])
+                ->where('rating', '>=', 4) // Only 4-5 star reviews
+                ->whereHas('user') // Make sure user exists
+                ->whereHas('product') // Make sure product exists
+                ->orderBy('rating', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->limit(6) // Get more to have variety
+                ->get();
+        } catch (\Exception $e) {
+            // Fallback to empty collection if there's an error
+            $featuredReviews = collect([]);
+        }
 
         return view('welcome', compact('featuredFood', 'featuredMerch', 'galleryImages', 'featuredReviews'));
     }

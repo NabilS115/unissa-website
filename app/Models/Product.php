@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use HasFactory;
+
     protected $table = 'products';
 
     protected $fillable = [
@@ -13,7 +16,7 @@ class Product extends Model
         'desc',
         'category',
         'img',
-        'type',
+        'type'
     ];
 
     // Relationship with Review model
