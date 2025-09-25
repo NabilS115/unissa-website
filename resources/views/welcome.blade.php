@@ -19,7 +19,7 @@
         </div>
     </section>
 
-    <!-- Events Section -->
+    <!-- Gallery Section -->
     <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
             <div class="text-center lg:text-left mb-6 lg:mb-0">
@@ -92,9 +92,7 @@
     <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
             <div>
-                <h2 class="text-3xl font-bold text-teal-700 mb-2">
-                    <a href="/catalog" class="hover:underline">Top-Rated Foods & Beverages</a>
-                </h2>
+                <h2 class="text-3xl font-bold text-teal-700 mb-2">Top-Rated Foods & Beverages</h2>
                 <p class="text-gray-600">Discover our customers' favorite culinary experiences</p>
             </div>
             @if(auth()->check() && auth()->user()->role === 'admin')
