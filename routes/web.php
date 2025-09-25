@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\VendorController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -64,7 +65,7 @@ Route::get('/catalog', [\App\Http\Controllers\CatalogController::class, 'index']
 Route::post('/catalog/add', [CatalogController::class, 'add'])->name('catalog.add');
 Route::put('/catalog/edit/{id}', [\App\Http\Controllers\CatalogController::class, 'edit'])->name('catalog.edit');
 Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('catalog.upload');
-Route::delete('/catalog/delete/{id}', [\App\Http\Controllers\CatalogController::class, 'destroy'])->name('catalog.delete');
+Route::delete('/catalog/delete/{id}', [\AppHttp\Controllers\CatalogController::class, 'destroy'])->name('catalog.delete');
 
 // about routes
 Route::get('/company-history', function () {
@@ -141,5 +142,13 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/gallery/{gallery}/toggle-active', [GalleryController::class, 'toggleActive'])->name('gallery.toggle-active');
 });
 
-require __DIR__.'/auth.php';
+// Vendor management routes (admin only)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
+    Route::post('/vendors', [VendorController::class, 'store'])->name('vendors.store');
+    Route::put('/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
+    Route::delete('/vendors/{vendor}', [VendorController::class, 'destroy'])->name('vendors.destroy');
+    Route::patch('/vendors/{vendor}/toggle-active', [VendorController::class, 'toggleActive'])->name('vendors.toggle-active');
+});
+
 require __DIR__.'/auth.php';
