@@ -31,7 +31,15 @@ class HomeController extends Controller
             $galleryImages = collect([]);
         }
 
-        return view('welcome', compact('featuredFood', 'featuredMerch', 'galleryImages'));
+        // Get featured customer reviews (highest rated reviews)
+        $featuredReviews = Review::with(['user', 'product'])
+            ->where('rating', '>=', 4) // Only 4-5 star reviews
+            ->orderBy('rating', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->limit(6) // Get more to have variety
+            ->get();
+
+        return view('welcome', compact('featuredFood', 'featuredMerch', 'galleryImages', 'featuredReviews'));
     }
 
     private function getFeaturedProductsByRating($type, $limit = 3)

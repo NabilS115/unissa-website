@@ -214,66 +214,119 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center gap-3 mb-4">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Danish Naufal" class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400">
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Danish Naufal</h4>
-                            <div class="flex items-center gap-1">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                                    </svg>
-                                @endfor
-                                <span class="ml-2 text-sm text-gray-600">4.9</span>
+                @if($featuredReviews && $featuredReviews->count() > 0)
+                    @foreach($featuredReviews->take(3) as $review)
+                        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                            <div class="flex items-center gap-3 mb-4">
+                                <img src="{{ $review->user->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($review->user->name ?? 'User') . '&background=f59e0b&color=fff' }}" 
+                                     alt="{{ $review->user->name ?? 'User' }}" 
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">{{ $review->user->name ?? 'User' }}</h4>
+                                    <div class="flex items-center gap-1">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <svg class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                            </svg>
+                                        @endfor
+                                        <span class="ml-2 text-sm text-gray-600">{{ number_format($review->rating, 1) }}</span>
+                                    </div>
+                                </div>
                             </div>
+                            <blockquote class="text-gray-700 italic mb-3">
+                                "{{ Str::limit($review->review, 120) }}"
+                            </blockquote>
+                            <p class="text-gray-500 text-sm">
+                                Product: 
+                                <a href="{{ route('review.show', $review->product->id) }}" class="text-teal-600 hover:text-teal-700 font-medium">
+                                    {{ $review->product->name }}
+                                </a>
+                            </p>
                         </div>
-                    </div>
-                    <blockquote class="text-gray-700 italic mb-3">"The best pancake that I ever eaten for the past 10 years"</blockquote>
-                    <p class="text-gray-500 text-sm">Product: Homemade Pancakes</p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center gap-3 mb-4">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aisyah Rahman" class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400">
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Aisyah Rahman</h4>
-                            <div class="flex items-center gap-1">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                                    </svg>
-                                @endfor
-                                <span class="ml-2 text-sm text-gray-600">5.0</span>
-                            </div>
-                        </div>
-                    </div>
-                    <blockquote class="text-gray-700 italic mb-3">"Absolutely delicious! The pancakes are fluffy and taste just like home."</blockquote>
-                    <p class="text-gray-500 text-sm">Product: Homemade Pancakes</p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center gap-3 mb-4">
-                        <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Hitstonecold Ayeeee" class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400">
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Hitstonecold Ayeeee</h4>
-                            <div class="flex items-center gap-1">
-                                @for($i = 1; $i <= 4; $i++)
-                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                                    </svg>
-                                @endfor
-                                <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                    @endforeach
+                @else
+                    <!-- Fallback content when no reviews exist -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-teal-400 to-blue-500 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <span class="ml-2 text-sm text-gray-600">4.1</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">UNISSA Team</h4>
+                                <div class="flex items-center gap-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                        </svg>
+                                    @endfor
+                                    <span class="ml-2 text-sm text-gray-600">5.0</span>
+                                </div>
                             </div>
                         </div>
+                        <blockquote class="text-gray-700 italic mb-3">"We're committed to providing the best culinary experiences. Be the first to share your review!"</blockquote>
+                        <p class="text-gray-500 text-sm">Join our community of food enthusiasts</p>
                     </div>
-                    <blockquote class="text-gray-700 italic mb-3">"It is worth the price. Not much too say."</blockquote>
-                    <p class="text-gray-500 text-sm">Product: Homemade Pancakes</p>
-                </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-green-400 to-teal-500 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Quality Promise</h4>
+                                <div class="flex items-center gap-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                        </svg>
+                                    @endfor
+                                    <span class="ml-2 text-sm text-gray-600">5.0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <blockquote class="text-gray-700 italic mb-3">"Every product is carefully selected and tested to ensure the highest quality standards."</blockquote>
+                        <p class="text-gray-500 text-sm">Our commitment to excellence</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Community Focus</h4>
+                                <div class="flex items-center gap-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                        </svg>
+                                    @endfor
+                                    <span class="ml-2 text-sm text-gray-600">5.0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <blockquote class="text-gray-700 italic mb-3">"Building a community where food lovers can discover, share, and celebrate amazing culinary experiences."</blockquote>
+                        <p class="text-gray-500 text-sm">Building connections through food</p>
+                    </div>
+                @endif
             </div>
+
+            @if($featuredReviews && $featuredReviews->count() > 3)
+                <div class="text-center mt-12">
+                    <a href="/catalog" class="inline-flex items-center px-6 py-3 bg-white text-teal-600 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-teal-200 hover:border-teal-300">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        View More Reviews
+                    </a>
+                </div>
+            @endif
         </div>
     </section>
 
