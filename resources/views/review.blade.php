@@ -215,7 +215,7 @@
                                 <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
                                     <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                </div>
+                                    </svg>
                                 <h3 class="text-xl font-semibold text-gray-900 mb-2">No reviews yet</h3>
                                 <p class="text-gray-600 mb-6">Be the first to share your thoughts about this {{ strtolower($product->category ?? 'product') }}!</p>
                                 @auth
@@ -290,8 +290,21 @@
 </div>
 
 <script>
-    // Back button functionality
+    // Back button functionality with previous page detection
     function goBack() {
+        // First check if there's a stored previous page from homepage navigation
+        const previousPage = sessionStorage.getItem('previousPage');
+        const previousPageTitle = sessionStorage.getItem('previousPageTitle');
+        
+        if (previousPage) {
+            // Clear the stored information
+            sessionStorage.removeItem('previousPage');
+            sessionStorage.removeItem('previousPageTitle');
+            // Go back to the stored previous page
+            window.location.href = previousPage;
+            return;
+        }
+        
         // Check if we have saved catalog state
         const savedState = sessionStorage.getItem('catalogState');
         
@@ -323,97 +336,154 @@
 
     // Update back button text based on source
     document.addEventListener('DOMContentLoaded', function() {
+        const previousPage = sessionStorage.getItem('previousPage');
+        const previousPageTitle = sessionStorage.getItem('previousPageTitle');
         const savedState = sessionStorage.getItem('catalogState');
         const backButtonText = document.getElementById('back-button-text');
         
-        if (savedState) {
+        // Add null check for backButtonText
+        if (!backButtonText) {
+            console.warn('Back button text element not found');
+            return;
+        }
+        
+        // Priority 1: Check for homepage navigation
+        if (previousPage && previousPageTitle) {
+            if (previousPageTitle.includes('UNISSA') && previousPage.includes(window.location.origin)) {
+                backButtonText.textContent = 'Back to Homepage';
+            } else {
+                backButtonText.textContent = 'Back to Previous Page';
+            }
+        }
+        // Priority 2: Check catalog state
+        else if (savedState) {
             try {
                 const state = JSON.parse(savedState);
                 if (state.source === 'homepage') {
                     backButtonText.textContent = 'Back to Homepage';
                 }
             } catch (e) {
+                console.error('Error parsing saved state:', e);
                 // Keep default text if parsing fails
             }
         }
     });
 
-    // Modal logic
+    // Modal logic - Add null checks
     const modal = document.getElementById('review-modal');
     const writeReviewBtn = document.getElementById('write-review-btn');
     
-    if (writeReviewBtn) {
+    if (writeReviewBtn && modal) {
         writeReviewBtn.onclick = () => { modal.classList.remove('hidden'); };
     }
     
-    document.getElementById('close-review-modal').onclick = () => { modal.classList.add('hidden'); };
-    document.getElementById('cancel-review').onclick = () => { modal.classList.add('hidden'); };
+    const closeReviewModal = document.getElementById('close-review-modal');
+    const cancelReview = document.getElementById('cancel-review');
+    
+    if (closeReviewModal && modal) {
+        closeReviewModal.onclick = () => { modal.classList.add('hidden'); };
+    }
+    
+    if (cancelReview && modal) {
+        cancelReview.onclick = () => { modal.classList.add('hidden'); };
+    }
 
-    document.getElementById('review-form').onsubmit = async function(e) {
-        e.preventDefault();
-        const rating = this.rating.value;
-        const reviewText = this.review.value;
-        
-        // Add loading state
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Submitting...';
-        submitBtn.disabled = true;
-        
-        try {
-            const res = await fetch("{{ route('review.add', $product->id) }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    rating: rating,
-                    review: reviewText,
-                    product_id: {{ $product->id }}
-                })
-            });
+    // Add null check for review form
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        reviewForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const rating = this.rating.value;
+            const reviewText = this.review.value;
             
-            const data = await res.json();
-            
-            if (res.ok) {
-                window.location.reload();
-            } else {
-                console.error('Server response:', data);
-                alert(data.message || "Failed to submit review. Please try again.");
+            // Validate required fields
+            if (!rating || !reviewText.trim()) {
+                alert('Please provide both a rating and review text.');
+                return;
             }
-        } catch (error) {
-            console.error('Network error:', error);
-            alert("Network error. Please check your connection and try again.");
-        } finally {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
-    };
+            
+            // Add loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Use the correct route URL format
+                const response = await fetch(`/review/{{ $product->id }}/add`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        rating: parseInt(rating),
+                        review: reviewText.trim(),
+                        product_id: {{ $product->id }}
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Review submitted successfully!');
+                    // Close the modal first
+                    const modal = document.getElementById('review-modal');
+                    if (modal) {
+                        modal.classList.add('hidden');
+                    }
+                    // Then reload the page
+                    window.location.reload();
+                } else {
+                    console.error('Server response:', data);
+                    alert(data.message || "Failed to submit review. Please try again.");
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert("Network error. Please check your connection and try again.");
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        };
+    }
 
+    // Add error handling for delete review buttons
     document.querySelectorAll('.delete-review-btn').forEach(btn => {
         btn.onclick = async function(e) {
             e.preventDefault();
             if (!confirm('Delete this review?')) return;
+            
             const reviewId = this.getAttribute('data-id');
+            if (!reviewId) {
+                alert('Review ID not found.');
+                return;
+            }
+            
             try {
-                const res = await fetch(`{{ url('/reviews') }}/${reviewId}`, {
+                const res = await fetch(`/reviews/${reviewId}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Accept': 'application/json'
                     }
                 });
+                
                 if (res.ok) {
-                    document.querySelector(`[data-review-id="${reviewId}"]`).remove();
+                    const reviewElement = document.querySelector(`[data-review-id="${reviewId}"]`);
+                    if (reviewElement) {
+                        reviewElement.remove();
+                    }
                     // Reload page to update ratings statistics
                     window.location.reload();
                 } else {
-                    alert('Failed to delete review.');
+                    const errorData = await res.json().catch(() => ({}));
+                    alert(errorData.message || 'Failed to delete review.');
                 }
-            } catch {
-                alert('Network error.');
+            } catch (error) {
+                console.error('Delete review error:', error);
+                alert('Network error occurred.');
             }
         };
     });
@@ -444,53 +514,81 @@
     const ratingText = document.getElementById('rating-text');
     const ratingTexts = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
     
-    starBtns.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            const rating = index + 1;
-            ratingInput.value = rating;
-            ratingText.textContent = ratingTexts[index];
+    if (starBtns.length > 0 && ratingInput && ratingText) {
+        starBtns.forEach((btn, index) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const rating = index + 1;
+                ratingInput.value = rating;
+                ratingText.textContent = ratingTexts[index];
+                
+                starBtns.forEach((star, i) => {
+                    if (i < rating) {
+                        star.classList.remove('text-gray-300');
+                        star.classList.add('text-yellow-400');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
             
-            starBtns.forEach((star, i) => {
-                if (i < rating) {
-                    star.classList.remove('text-gray-300');
-                    star.classList.add('text-yellow-400');
-                } else {
-                    star.classList.remove('text-yellow-400');
-                    star.classList.add('text-gray-300');
-                }
+            btn.addEventListener('mouseenter', () => {
+                const rating = index + 1;
+                starBtns.forEach((star, i) => {
+                    if (i < rating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                const currentRating = parseInt(ratingInput.value) || 5;
+                starBtns.forEach((star, i) => {
+                    if (i < currentRating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
             });
         });
         
-        btn.addEventListener('mouseenter', () => {
-            const rating = index + 1;
-            starBtns.forEach((star, i) => {
-                if (i < rating) {
-                    star.classList.add('text-yellow-400');
-                } else {
-                    star.classList.remove('text-yellow-400');
-                }
-            });
+        // Set initial 5-star rating
+        starBtns.forEach((star, i) => {
+            if (i < 5) {
+                star.classList.add('text-yellow-400');
+                star.classList.remove('text-gray-300');
+            }
         });
-    });
-    
-    // Set initial 5-star rating
-    starBtns.forEach((star, i) => {
-        if (i < 5) {
-            star.classList.add('text-yellow-400');
-        }
-    });
-    
-    // Helpful button functionality
+    }
+
+    // Fix helpful button functionality with better error handling
     document.querySelectorAll('.helpful-btn').forEach(btn => {
         btn.onclick = async function(e) {
             e.preventDefault();
             
             @auth
                 const reviewId = this.getAttribute('data-review-id');
+                if (!reviewId) {
+                    console.warn('Review ID not found');
+                    return;
+                }
+                
                 const countSpan = this.querySelector('.helpful-count');
+                if (!countSpan) {
+                    console.warn('Helpful count span not found');
+                    return;
+                }
                 
                 try {
-                    const res = await fetch(`{{ url('/reviews') }}/${reviewId}/helpful`, {
+                    const res = await fetch(`/reviews/${reviewId}/helpful`, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -502,7 +600,7 @@
                     const data = await res.json();
                     
                     if (res.ok) {
-                        countSpan.textContent = `(${data.helpful_count})`;
+                        countSpan.textContent = `(${data.helpful_count || 0})`;
                         
                         if (data.action === 'added') {
                             this.classList.add('text-blue-600');
@@ -512,10 +610,11 @@
                             this.classList.add('text-gray-500');
                         }
                     } else {
+                        console.error('Helpful button error:', data);
                         alert(data.message || 'Failed to mark as helpful');
                     }
                 } catch (error) {
-                    console.error('Network error:', error);
+                    console.error('Helpful button network error:', error);
                     alert('Network error. Please try again.');
                 }
             @else

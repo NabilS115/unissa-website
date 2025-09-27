@@ -376,6 +376,16 @@
         let galleryData = @json($galleryImages ?? []);
         let vendorsData = @json($vendors ?? []);
         
+        // Add missing navigation function
+        function navigateToReview(productId) {
+            // Store the current page in session storage for back navigation
+            sessionStorage.setItem('previousPage', window.location.href);
+            sessionStorage.setItem('previousPageTitle', document.title);
+            
+            // Navigate to the review page
+            window.location.href = `/review/${productId}`;
+        }
+        
         console.log('Gallery data loaded:', galleryData); // Debug log
         
         // Map gallery data to the expected format
@@ -1181,7 +1191,7 @@
                         imagePreview.classList.remove('hidden');
                     };
                     reader.readAsDataURL(file);
-                }
+                               }
             });
             
             document.getElementById('vendor-form').addEventListener('submit', async (e) => {
