@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -16,13 +16,17 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
+        'is_active',
         'profile_photo_url',
+        'phone',
+        'department',
     ];
 
     /**
@@ -45,6 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -59,13 +64,40 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
-    public function isAdmin()
+    /**
+     * Get all reviews by this user
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    public function isUser()
+    /**
+     * Check if user is active
+     */
+    public function isActive(): bool
     {
-        return $this->role === 'user';
+        return $this->is_active === true;
+    }
+
+    /**
+     * Get profile photo URL or generate avatar
+     */
+    public function getProfilePhotoUrlAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=14b8a6&color=fff';
     }
 }
+

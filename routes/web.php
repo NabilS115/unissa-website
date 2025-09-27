@@ -72,48 +72,26 @@ Route::get('/company-history', function () {
     return view('company-history');
 });
 
-// Add these search routes
-Route::get('/search', [App\Http\Controllers\SearchController::class, 'search'])->name('search');
-Route::get('/search/suggestions', [App\Http\Controllers\SearchController::class, 'suggestions'])->name('search.suggestions');
-
-Route::view('/review', 'review');
-
-Route::get('/user/photo/{id}', function ($id) {
-    $user = User::findOrFail($id);
-    if ($user->photo) {
-        return Response::make($user->photo, 200, [
-            'Content-Type' => 'image/jpeg',
-            'Content-Disposition' => 'inline; filename="profile.jpg"'
-        ]);
-    }
-    abort(404);
-});
-
-Route::get('/image/{name}', function ($name) {
-    $image = Image::where('name', $name)->firstOrFail();
-    return Response::make($image->data, 200, [
-        'Content-Type' => $image->mime_type,
-        'Content-Disposition' => 'inline; filename="'.$image->name.'"'
-    ]);
-});
-
-// Admin routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    // User Management
-    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/users/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
-    Route::put('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+// Admin routes with proper middleware class
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/api', [App\Http\Controllers\Admin\UserController::class, 'api'])->name('users.api');
+    Route::get('/users/export', [App\Http\Controllers\Admin\UserController::class, 'export'])->name('users.export');
+    Route::get('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+    Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
     // Content Management (example for posts)
-    Route::get('/posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('admin.posts.index');
-    Route::get('/posts/{post}/edit', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('admin.posts.edit');
-    Route::put('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('admin.posts.update');
-    Route::delete('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('admin.posts.destroy');
+    Route::get('/posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('posts.index');
+    Route::get('/posts/{post}/edit', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('posts.destroy');
 
     // Site Settings (example)
-    Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
-    Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
 });
 
 // Admin Catalog routes
@@ -135,6 +113,28 @@ Route::get('/review/{id}', [ReviewController::class, 'show'])->name('review.show
 Route::post('/review/{id}/add', [ReviewController::class, 'add'])->name('review.add');
 Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('review.delete')->middleware('auth');
 Route::post('/reviews/{id}/helpful', [ReviewController::class, 'helpful'])->name('review.helpful');
+
+// Search routes
+Route::get('/search', [App\Http\Controllers\SearchController::class, 'search'])->name('search');
+Route::get('/search/suggestions', [App\Http\Controllers\SearchController::class, 'suggestions'])->name('search.suggestions');
+
+// Gallery routes (admin protected)
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/gallery', [App\Http\Controllers\GalleryController::class, 'index']);
+    Route::post('/gallery', [App\Http\Controllers\GalleryController::class, 'store']);
+    Route::put('/gallery/{gallery}', [App\Http\Controllers\GalleryController::class, 'update']);
+    Route::delete('/gallery/{gallery}', [App\Http\Controllers\GalleryController::class, 'destroy']);
+    Route::patch('/gallery/{gallery}/toggle-active', [App\Http\Controllers\GalleryController::class, 'toggleActive']);
+});
+
+// Vendor routes (admin protected)
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/vendors', [App\Http\Controllers\VendorController::class, 'index']);
+    Route::post('/vendors', [App\Http\Controllers\VendorController::class, 'store']);
+    Route::put('/vendors/{vendor}', [App\Http\Controllers\VendorController::class, 'update']);
+    Route::delete('/vendors/{vendor}', [App\Http\Controllers\VendorController::class, 'destroy']);
+    Route::patch('/vendors/{vendor}/toggle-active', [App\Http\Controllers\VendorController::class, 'toggleActive']);
+});
 
 // Gallery management routes (admin only)
 Route::middleware(['auth'])->group(function () {

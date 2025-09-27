@@ -54,7 +54,7 @@
     <div class="mb-8">
         <div class="font-bold text-lg mb-2">User Management</div>
         <div class="flex gap-4 mb-2">
-            <a href="#" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">View All Sellers</a>
+            <a href="/admin/users" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Manage Users</a>
             <a href="#" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">View All Buyers</a>
         </div>
         <div class="flex gap-4">
