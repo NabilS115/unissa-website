@@ -72,7 +72,10 @@ Route::get('/company-history', function () {
     return view('company-history');
 });
 
-Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+// Add these search routes
+Route::get('/search', [App\Http\Controllers\SearchController::class, 'search'])->name('search');
+Route::get('/search/suggestions', [App\Http\Controllers\SearchController::class, 'suggestions'])->name('search.suggestions');
+
 Route::view('/review', 'review');
 
 Route::get('/user/photo/{id}', function ($id) {

@@ -3,47 +3,180 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Review;
+use App\Models\User;
 
 class SearchController extends Controller
 {
-    public function index(Request $request)
+    public function suggestions(Request $request)
     {
-        $query = $request->input('search');
-        $results = [];
-        // Example: Search users by name or email
-        if ($query) {
-            $results['users'] = \App\Models\User::where('name', 'like', "%$query%")
-                ->orWhere('email', 'like', "%$query%")
-                ->get();
-            // Search foods from the static array in food-list.blade.php
-            $foods = [
-                ['name' => 'Margherita Pizza', 'desc' => 'Classic pizza with tomato, mozzarella, and basil.', 'tags' => ['Pizza', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Caesar Salad', 'desc' => 'Crisp romaine, parmesan, and creamy dressing.', 'tags' => ['Salad', 'Healthy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Beef Burger', 'desc' => 'Juicy beef patty with fresh toppings.', 'tags' => ['Burger', 'Meat'], 'img' => 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Sushi Platter', 'desc' => 'Assorted sushi rolls and sashimi.', 'tags' => ['Sushi', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Pad Thai', 'desc' => 'Stir-fried noodles with shrimp and peanuts.', 'tags' => ['Noodles', 'Thai'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Tacos', 'desc' => 'Corn tortillas filled with spiced meat.', 'tags' => ['Tacos', 'Mexican'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Falafel Wrap', 'desc' => 'Chickpea balls wrapped with veggies.', 'tags' => ['Wrap', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Grilled Salmon', 'desc' => 'Fresh salmon fillet grilled to perfection.', 'tags' => ['Fish', 'Healthy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Chicken Curry', 'desc' => 'Spicy chicken curry with rice.', 'tags' => ['Curry', 'Spicy'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Pasta Carbonara', 'desc' => 'Creamy pasta with bacon and cheese.', 'tags' => ['Pasta', 'Italian'], 'img' => 'https://images.unsplash.com/photo-1523987355523-c7b5b0723c6b?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Greek Salad', 'desc' => 'Tomatoes, cucumbers, feta, and olives.', 'tags' => ['Salad', 'Greek'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'BBQ Ribs', 'desc' => 'Tender ribs with smoky BBQ sauce.', 'tags' => ['BBQ', 'Meat'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Vegetable Stir Fry', 'desc' => 'Mixed veggies sautéed in soy sauce.', 'tags' => ['Vegetarian', 'Asian'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Lobster Bisque', 'desc' => 'Rich and creamy lobster soup.', 'tags' => ['Soup', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Eggs Benedict', 'desc' => 'Poached eggs on English muffin.', 'tags' => ['Breakfast', 'Eggs'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Chicken Shawarma', 'desc' => 'Spiced chicken wrapped in pita.', 'tags' => ['Wrap', 'Middle Eastern'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Veggie Pizza', 'desc' => 'Loaded with fresh vegetables.', 'tags' => ['Pizza', 'Vegetarian'], 'img' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Shrimp Paella', 'desc' => 'Spanish rice dish with shrimp.', 'tags' => ['Rice', 'Seafood'], 'img' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Chocolate Cake', 'desc' => 'Rich chocolate cake with ganache.', 'tags' => ['Dessert', 'Cake'], 'img' => 'https://images.unsplash.com/photo-1519864600265-abb224b9bfa5?auto=format&fit=crop&w=400&q=80'],
-                ['name' => 'Ice Cream Sundae', 'desc' => 'Vanilla ice cream with toppings.', 'tags' => ['Dessert', 'Ice Cream'], 'img' => 'https://images.unsplash.com/photo-1464306076886-debede1a7b8a?auto=format&fit=crop&w=400&q=80'],
-            ];
-            $results['foods'] = collect($foods)->filter(function($food) use ($query) {
-                return stripos($food['name'], $query) !== false || stripos($food['desc'], $query) !== false || collect($food['tags'])->contains(function($tag) use ($query) {
-                    return stripos($tag, $query) !== false;
-                });
-            });
+        $query = $request->get('q', '');
+        $scope = $request->get('scope', 'all');
+        
+        if (strlen($query) < 2) {
+            return response()->json([]);
         }
-        return view('search-results', compact('query', 'results'));
+        
+        $suggestions = [];
+        
+        switch ($scope) {
+            case 'products':
+                $suggestions = $this->getProductSuggestions($query);
+                break;
+            case 'reviews':
+                $suggestions = $this->getReviewSuggestions($query);
+                break;
+            case 'users':
+                if (auth()->check() && auth()->user()->role === 'admin') {
+                    $suggestions = $this->getUserSuggestions($query);
+                }
+                break;
+            case 'all':
+            default:
+                $suggestions = array_merge(
+                    $this->getProductSuggestions($query, 5),
+                    $this->getReviewSuggestions($query, 3)
+                );
+                if (auth()->check() && auth()->user()->role === 'admin') {
+                    $suggestions = array_merge($suggestions, $this->getUserSuggestions($query, 2));
+                }
+                break;
+        }
+        
+        return response()->json(array_slice($suggestions, 0, 10));
+    }
+    
+    public function search(Request $request)
+    {
+        $query = $request->get('search', '');
+        $scope = $request->get('scope', 'all');
+        $perPage = 12;
+        
+        $results = [
+            'query' => $query,
+            'scope' => $scope,
+            'products' => collect(),
+            'reviews' => collect(),
+            'users' => collect(),
+            'total' => 0,
+            'searchTerms' => $this->extractSearchTerms($query) // Add search terms for highlighting
+        ];
+        
+        if (strlen($query) >= 2) {
+            switch ($scope) {
+                case 'products':
+                    $results['products'] = $this->searchProducts($query)->paginate($perPage);
+                    $results['total'] = $results['products']->total();
+                    break;
+                case 'reviews':
+                    $results['reviews'] = $this->searchReviews($query)->paginate($perPage);
+                    $results['total'] = $results['reviews']->total();
+                    break;
+                case 'users':
+                    if (auth()->check() && auth()->user()->role === 'admin') {
+                        $results['users'] = $this->searchUsers($query)->paginate($perPage);
+                        $results['total'] = $results['users']->total();
+                    }
+                    break;
+                case 'all':
+                default:
+                    $results['products'] = $this->searchProducts($query)->paginate(8);
+                    $results['reviews'] = $this->searchReviews($query)->paginate(6);
+                    if (auth()->check() && auth()->user()->role === 'admin') {
+                        $results['users'] = $this->searchUsers($query)->paginate(4);
+                        $results['total'] = $results['products']->total() + $results['reviews']->total() + $results['users']->total();
+                    } else {
+                        $results['total'] = $results['products']->total() + $results['reviews']->total();
+                    }
+                    break;
+            }
+        }
+        
+        return view('search.results', $results);
+    }
+    
+    private function getProductSuggestions($query, $limit = 10)
+    {
+        return Product::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('category', 'LIKE', "%{$query}%")
+            ->orWhere('desc', 'LIKE', "%{$query}%")
+            ->limit($limit)
+            ->get()
+            ->map(function($product) {
+                return [
+                    'type' => 'product',
+                    'title' => $product->name,
+                    'subtitle' => $product->category,
+                    'url' => "/review/{$product->id}"
+                ];
+            })
+            ->toArray();
+    }
+    
+    private function getReviewSuggestions($query, $limit = 10)
+    {
+        return Review::with('product', 'user')
+            ->where('review', 'LIKE', "%{$query}%")
+            ->limit($limit)
+            ->get()
+            ->map(function($review) {
+                return [
+                    'type' => 'review',
+                    'title' => substr($review->review, 0, 50) . '...',
+                    'subtitle' => 'Review for ' . ($review->product->name ?? 'Unknown Product'),
+                    'url' => "/review/{$review->product_id}"
+                ];
+            })
+            ->toArray();
+    }
+    
+    private function getUserSuggestions($query, $limit = 10)
+    {
+        return User::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('email', 'LIKE', "%{$query}%")
+            ->limit($limit)
+            ->get()
+            ->map(function($user) {
+                return [
+                    'type' => 'user',
+                    'title' => $user->name,
+                    'subtitle' => $user->email,
+                    'url' => "#" // Could link to user profile if available
+                ];
+            })
+            ->toArray();
+    }
+    
+    private function searchProducts($query)
+    {
+        return Product::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('category', 'LIKE', "%{$query}%")
+            ->orWhere('desc', 'LIKE', "%{$query}%")
+            ->orderBy('name');
+    }
+    
+    private function searchReviews($query)
+    {
+        return Review::with('product', 'user')
+            ->where('review', 'LIKE', "%{$query}%")
+            ->orderBy('created_at', 'desc');
+    }
+    
+    private function searchUsers($query)
+    {
+        return User::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('email', 'LIKE', "%{$query}%")
+            ->orderBy('name');
+    }
+    
+    // Add method to extract search terms
+    private function extractSearchTerms($query)
+    {
+        // Split query into individual terms and clean them
+        $terms = preg_split('/\s+/', trim($query));
+        return array_filter($terms, function($term) {
+            return strlen($term) >= 2; // Only include terms with 2+ characters
+        });
     }
 }

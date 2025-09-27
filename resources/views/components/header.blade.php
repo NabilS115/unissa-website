@@ -20,109 +20,260 @@
                     <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="#008080" />
                 </svg>
             </button>
-            <form id="searchbar-dropdown" class="absolute right-0 top-full mt-2 w-96 flex bg-white rounded shadow transition-all duration-300 opacity-0 pointer-events-none z-50" action="{{ route('search') }}" method="GET">
-                <input type="text" name="search" id="main-search-input" placeholder="Search..." class="w-full px-4 py-2 rounded-l-md text-black focus:outline-none" autocomplete="off" />
-                <button type="submit" class="bg-white text-teal-600 px-4 py-2 rounded-r-md font-semibold">Search</button>
-                <div id="search-suggestions" class="absolute left-0 top-full w-full bg-white border border-teal-200 rounded-b shadow-lg z-50 hidden"></div>
+            <form id="searchbar-dropdown" class="absolute right-0 top-full mt-2 w-96 bg-white rounded shadow transition-all duration-300 opacity-0 pointer-events-none z-50" action="{{ route('search') }}" method="GET">
+                <div class="flex">
+                    <input type="text" name="search" id="main-search-input" placeholder="Search products, reviews..." class="flex-1 px-4 py-2 rounded-l-md text-black focus:outline-none" autocomplete="off" />
+                    <select name="scope" id="search-scope" class="px-3 py-2 border-l border-gray-300 text-black text-sm focus:outline-none">
+                        <option value="all">All</option>
+                        <option value="products">Products</option>
+                        <option value="reviews">Reviews</option>
+                        @if(auth()->check() && auth()->user()->role === 'admin')
+                            <option value="users">Users</option>
+                        @endif
+                    </select>
+                    <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded-r-md font-semibold hover:bg-teal-700 transition-colors">Search</button>
+                </div>
+                <div id="search-suggestions" class="w-full bg-white border-t border-gray-200 rounded-b shadow-lg z-50 hidden max-h-64 overflow-y-auto">
+                    <!-- Dynamic suggestions will be loaded here -->
+                </div>
             </form>
-            @php
-$foods = [
-    ['name' => 'Margherita Pizza'],
-    ['name' => 'Veggie Pizza'],
-    ['name' => 'Caesar Salad'],
-    ['name' => 'Greek Salad'],
-    ['name' => 'Beef Burger'],
-    ['name' => 'BBQ Ribs'],
-    ['name' => 'Chicken Curry'],
-    ['name' => 'Chicken Shawarma'],
-    ['name' => 'Sushi Platter'],
-    ['name' => 'Grilled Salmon'],
-    ['name' => 'Shrimp Paella'],
-    ['name' => 'Lobster Bisque'],
-    ['name' => 'Falafel Wrap'],
-    ['name' => 'Vegetable Stir Fry'],
-    ['name' => 'Pad Thai'],
-    ['name' => 'Chocolate Cake'],
-    ['name' => 'Ice Cream Sundae'],
-    ['name' => 'Eggs Benedict'],
-    ['name' => 'Tacos'],
-    ['name' => 'Pasta Carbonara'],
-];
-@endphp
+            
             <script>
-                const suggestions = @json(array_map(fn($f) => $f['name'], $foods));
+                let searchTimeout;
                 const searchInput = document.getElementById('main-search-input');
+                const searchScope = document.getElementById('search-scope');
                 const suggestionsBox = document.getElementById('search-suggestions');
-                searchInput.addEventListener('input', function() {
-                    const value = this.value.toLowerCase();
-                    if (!value) {
+                
+                // Function to highlight search terms
+                function highlightText(text, searchTerm) {
+                    if (!searchTerm || searchTerm.length < 2) return text;
+                    
+                    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                    return text.replace(regex, '<mark class="bg-yellow-200 text-gray-900 font-medium px-1 rounded">$1</mark>');
+                }
+                
+                // Function to fetch suggestions
+                async function fetchSuggestions(query, scope) {
+                    if (query.length < 2) {
                         suggestionsBox.style.display = 'none';
-                        suggestionsBox.innerHTML = '';
                         return;
                     }
-                    const filtered = suggestions.filter(s => s.toLowerCase().includes(value));
-                    if (filtered.length) {
-                        suggestionsBox.innerHTML = filtered.map(s => `<div class='px-4 py-2 cursor-pointer hover:bg-teal-50 text-gray-800'>${s}</div>`).join('');
-                        suggestionsBox.style.display = 'block';
-                    } else {
+                    
+                    try {
+                        const response = await fetch(`{{ route('search.suggestions') }}?q=${encodeURIComponent(query)}&scope=${scope}`);
+                        const suggestions = await response.json();
+                        
+                        if (suggestions.length > 0) {
+                            displaySuggestions(suggestions, query);
+                        } else {
+                            suggestionsBox.style.display = 'none';
+                        }
+                    } catch (error) {
+                        console.error('Error fetching suggestions:', error);
                         suggestionsBox.style.display = 'none';
-                        suggestionsBox.innerHTML = '';
                     }
-                });
-                suggestionsBox.addEventListener('mousedown', function(e) {
-                    if (e.target && e.target.textContent) {
-                        searchInput.value = e.target.textContent;
-                        suggestionsBox.style.display = 'none';
-                        suggestionsBox.innerHTML = '';
+                }
+                
+                // Function to display suggestions with highlighting
+                function displaySuggestions(suggestions, searchTerm) {
+                    const html = suggestions.map(suggestion => {
+                        const typeIcon = getTypeIcon(suggestion.type);
+                        const typeColor = getTypeColor(suggestion.type);
+                        
+                        // Highlight search terms in title and subtitle
+                        const highlightedTitle = highlightText(suggestion.title, searchTerm);
+                        const highlightedSubtitle = highlightText(suggestion.subtitle, searchTerm);
+                        
+                        return `
+                            <div class="suggestion-item px-4 py-3 cursor-pointer hover:bg-gray-50 border-b border-gray-100 last:border-b-0" 
+                                 data-url="${suggestion.url}">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex-shrink-0 w-6 h-6 ${typeColor} rounded-full flex items-center justify-center">
+                                        ${typeIcon}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-medium text-gray-900 truncate">${highlightedTitle}</div>
+                                        <div class="text-xs text-gray-500 truncate">${highlightedSubtitle}</div>
+                                    </div>
+                                    <div class="text-xs text-gray-400 capitalize">${suggestion.type}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    suggestionsBox.innerHTML = html;
+                    suggestionsBox.style.display = 'block';
+                    
+                    // Add click handlers to suggestions
+                    document.querySelectorAll('.suggestion-item').forEach(item => {
+                        item.addEventListener('mousedown', function(e) {
+                            e.preventDefault();
+                            const url = this.getAttribute('data-url');
+                            if (url && url !== '#') {
+                                window.location.href = url;
+                            }
+                        });
+                    });
+                }
+                
+                // Helper functions for suggestion display
+                function getTypeIcon(type) {
+                    switch(type) {
+                        case 'product':
+                            return '<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>';
+                        case 'review':
+                            return '<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>';
+                        case 'user':
+                            return '<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>';
+                        default:
+                            return '<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>';
                     }
-                });
+                }
+                
+                function getTypeColor(type) {
+                    switch(type) {
+                        case 'product': return 'bg-teal-500';
+                        case 'review': return 'bg-yellow-500';
+                        case 'user': return 'bg-blue-500';
+                        default: return 'bg-gray-500';
+                    }
+                }
+                
+                // Event listeners
+                if (searchInput && searchScope) {
+                    searchInput.addEventListener('input', function() {
+                        clearTimeout(searchTimeout);
+                        const query = this.value.trim();
+                        const scope = searchScope.value;
+                        
+                        searchTimeout = setTimeout(() => {
+                            fetchSuggestions(query, scope);
+                        }, 300);
+                    });
+                    
+                    searchScope.addEventListener('change', function() {
+                        const query = searchInput.value.trim();
+                        const scope = this.value;
+                        
+                        if (query.length >= 2) {
+                            fetchSuggestions(query, scope);
+                        }
+                    });
+                    
+                    searchInput.addEventListener('blur', function() {
+                        // Delay hiding suggestions to allow for clicks
+                        setTimeout(() => {
+                            if (suggestionsBox) {
+                                suggestionsBox.style.display = 'none';
+                            }
+                        }, 200);
+                    });
+                    
+                    searchInput.addEventListener('focus', function() {
+                        const query = this.value.trim();
+                        if (query.length >= 2) {
+                            const scope = searchScope.value;
+                            fetchSuggestions(query, scope);
+                        }
+                    });
+                }
             </script>
+            
             <style>
                 #searchbar-dropdown {
                     opacity: 0;
                     pointer-events: none;
+                    transition: all 0.3s ease;
                 }
                 #searchbar-group.active #searchbar-dropdown {
                     opacity: 1;
                     pointer-events: auto;
                 }
             </style>
+            
             <script>
-                document.addEventListener('click', function(e) {
-                    var searchIcon = document.getElementById('searchbar-icon');
-                    var searchGroup = document.getElementById('searchbar-group');
-                    var searchDropdown = document.getElementById('searchbar-dropdown');
-                    var profileIcon = document.getElementById('profileMenuButton');
-                    var profileGroup = document.getElementById('profile-group');
-                    var profileDropdown = document.getElementById('profileDropdown');
-                    // Search icon click
-                    if (searchIcon && searchGroup && searchIcon.contains(e.target)) {
-                        if (profileGroup) profileGroup.classList.remove('active');
-                        searchGroup.classList.toggle('active');
-                        e.stopPropagation();
-                        return;
+                document.addEventListener('DOMContentLoaded', function() {
+                    const searchIcon = document.getElementById('searchbar-icon');
+                    const searchGroup = document.getElementById('searchbar-group');
+                    const searchDropdown = document.getElementById('searchbar-dropdown');
+                    const profileIcon = document.getElementById('profileMenuButton');
+                    const profileGroup = document.getElementById('profile-group');
+                    const profileDropdown = document.getElementById('profileDropdown');
+                    
+                    // Search icon click handler
+                    if (searchIcon && searchGroup) {
+                        searchIcon.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            // Close profile dropdown if open
+                            if (profileGroup) {
+                                profileGroup.classList.remove('active');
+                            }
+                            // Toggle search dropdown
+                            searchGroup.classList.toggle('active');
+                            
+                            // Focus on search input when opened
+                            if (searchGroup.classList.contains('active')) {
+                                setTimeout(() => {
+                                    const searchInput = document.getElementById('main-search-input');
+                                    if (searchInput) {
+                                        searchInput.focus();
+                                    }
+                                }, 100);
+                            }
+                        });
                     }
-                    // Profile icon click
-                    if (profileIcon && profileGroup && profileIcon.contains(e.target)) {
-                        if (searchGroup) searchGroup.classList.remove('active');
-                        profileGroup.classList.toggle('active');
-                        e.stopPropagation();
-                        return;
+                    
+                    // Profile icon click handler
+                    if (profileIcon && profileGroup) {
+                        profileIcon.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            // Close search dropdown if open
+                            if (searchGroup) {
+                                searchGroup.classList.remove('active');
+                            }
+                            // Toggle profile dropdown
+                            profileGroup.classList.toggle('active');
+                        });
                     }
-                    // Click inside search dropdown
-                    if (searchDropdown && searchDropdown.contains(e.target)) {
-                        return;
+                    
+                    // Click outside to close dropdowns
+                    document.addEventListener('click', function(e) {
+                        // Check if click is inside search dropdown
+                        if (searchDropdown && searchDropdown.contains(e.target)) {
+                            return;
+                        }
+                        
+                        // Check if click is inside profile dropdown
+                        if (profileDropdown && profileDropdown.contains(e.target)) {
+                            return;
+                        }
+                        
+                        // Close both dropdowns if clicking outside
+                        if (searchGroup) {
+                            searchGroup.classList.remove('active');
+                        }
+                        if (profileGroup) {
+                            profileGroup.classList.remove('active');
+                        }
+                    });
+                    
+                    // Prevent search dropdown from closing when clicking inside it
+                    if (searchDropdown) {
+                        searchDropdown.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                        });
                     }
-                    // Click inside profile dropdown
-                    if (profileDropdown && profileDropdown.contains(e.target)) {
-                        return;
+                    
+                    // Prevent profile dropdown from closing when clicking inside it
+                    if (profileDropdown) {
+                        profileDropdown.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                        });
                     }
-                    // Click outside closes both
-                    if (searchGroup) searchGroup.classList.remove('active');
-                    if (profileGroup) profileGroup.classList.remove('active');
                 });
             </script>
         </div>
+        
         <div class="relative group" id="profile-group">
             <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden">
                 @if(Auth::check() && Auth::user()->profile_photo_url)
