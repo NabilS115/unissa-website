@@ -68,7 +68,6 @@
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !auth()->user()->hasVerifiedEmail())
                 <div class="mt-2">
                     <span class="text-sm text-yellow-600">Your email address is unverified.</span>
-                    <button type="button" formaction="{{ route('verification.send') }}" class="ml-2 text-sm text-teal-700 underline">Click here to re-send the verification email.</button>
                     @if (session('status') === 'verification-link-sent')
                         <span class="block mt-2 font-medium text-green-600">A new verification link has been sent to your email address.</span>
                     @endif
@@ -91,21 +90,21 @@
             <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
             <input name="current_password" id="current_password" type="password" required autocomplete="current-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 pr-12" />
             <button type="button" class="absolute right-2 top-8 text-gray-500 hover:text-teal-600" onclick="togglePassword('current_password', this)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
             </button>
         </div>
         <div class="relative">
             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
             <input name="password" id="password" type="password" required autocomplete="new-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 pr-12" />
             <button type="button" class="absolute right-2 top-8 text-gray-500 hover:text-teal-600" onclick="togglePassword('password', this)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
             </button>
         </div>
         <div class="relative">
             <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
             <input name="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 pr-12" />
             <button type="button" class="absolute right-2 top-8 text-gray-500 hover:text-teal-600" onclick="togglePassword('password_confirmation', this)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
             </button>
         </div>
         <div class="flex items-center gap-4 mt-6">
@@ -123,6 +122,152 @@
             }, 3000);
         </script>
     @endif
+    
+    <!-- User Reviews Section -->
+    <hr class="my-8">
+    <div class="mb-4 font-semibold text-lg">My Reviews ({{ Auth::user()->reviews->count() }})</div>
+    @if(Auth::user()->reviews->count() > 0)
+        <div class="relative flex items-center justify-center max-w-xl mx-auto">
+            <button onclick="moveReview(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-transparent border border-transparent text-teal-600 hover:bg-teal-600 hover:text-white w-10 h-10 flex items-center justify-center rounded-full z-10 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <div id="reviews-carousel" class="overflow-hidden w-full">
+                <div id="reviews-track" class="flex transition-transform duration-500 ease-in-out" style="width: {{ Auth::user()->reviews->count() * 100 }}%">
+                    @foreach(Auth::user()->reviews as $review)
+                        <div class="min-w-full px-4">
+                            <div class="bg-white rounded-xl shadow-lg p-6 border flex flex-col gap-2">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-yellow-400 text-2xl">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            {{ $i <= $review->rating ? '★' : '☆' }}
+                                        @endfor
+                                    </span>
+                                </div>
+                                
+                                <div class="text-gray-700 leading-relaxed mb-3 break-words">
+                                    @php
+                                        $reviewText = $review->review;
+                                        $isLongReview = strlen($reviewText) > 150;
+                                        $truncatedText = $isLongReview ? substr($reviewText, 0, 150) : $reviewText;
+                                    @endphp
+                                    
+                                    @if($isLongReview)
+                                        <div class="review-text-container">
+                                            <span class="review-text-{{ $review->id }} block">"{{ $truncatedText }}..."</span>
+                                            <span class="review-full-{{ $review->id }} hidden block whitespace-pre-wrap break-words">"{{ $reviewText }}"</span>
+                                            <button class="read-more-btn text-blue-600 hover:text-blue-800 font-medium text-sm mt-2 block" 
+                                                    data-review-id="{{ $review->id }}">Read more</button>
+                                        </div>
+                                    @else
+                                        <span class="block whitespace-pre-wrap break-words">"{{ $reviewText }}"</span>
+                                    @endif
+                                </div>
+                                
+                                <div class="text-gray-600 text-sm">Product: {{ $review->product->name ?? 'Product not found' }}</div>
+                                <div class="text-gray-500 text-xs">{{ $review->created_at->format('M d, Y') }}</div>
+                                <div class="flex gap-2 mt-2">
+                                    <a href="/review/{{ $review->product_id }}" class="text-teal-600 hover:text-teal-800 text-sm font-medium">View Product</a>
+                                    @if($review->helpful_count > 0)
+                                        <span class="text-gray-500 text-sm">• {{ $review->helpful_count }} found helpful</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            <button onclick="moveReview(1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent border border-transparent text-teal-600 hover:bg-teal-600 hover:text-white w-10 h-10 flex items-center justify-center rounded-full z-10 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </button>
+        </div>
+        
+        <!-- Review Navigation Dots -->
+        @if(Auth::user()->reviews->count() > 1)
+            <div class="flex justify-center mt-4 gap-2">
+                @foreach(Auth::user()->reviews as $index => $review)
+                    <button onclick="goToReview({{ $index }})" 
+                            class="review-dot w-2 h-2 rounded-full transition-colors {{ $index === 0 ? 'bg-teal-600' : 'bg-gray-300' }}"
+                            data-index="{{ $index }}"></button>
+                @endforeach
+            </div>
+        @endif
+        
+        <script>
+            let currentReview = 0;
+            const totalReviews = {{ Auth::user()->reviews->count() }};
+            
+            function moveReview(dir) {
+                if (totalReviews <= 1) return;
+                
+                const track = document.getElementById('reviews-track');
+                currentReview = (currentReview + dir + totalReviews) % totalReviews;
+                track.style.transform = `translateX(-${currentReview * 100}%)`;
+                updateReviewDots();
+            }
+            
+            function goToReview(index) {
+                if (totalReviews <= 1) return;
+                
+                const track = document.getElementById('reviews-track');
+                currentReview = index;
+                track.style.transform = `translateX(-${currentReview * 100}%)`;
+                updateReviewDots();
+            }
+            
+            function updateReviewDots() {
+                document.querySelectorAll('.review-dot').forEach((dot, index) => {
+                    if (index === currentReview) {
+                        dot.classList.add('bg-teal-600');
+                        dot.classList.remove('bg-gray-300');
+                    } else {
+                        dot.classList.remove('bg-teal-600');
+                        dot.classList.add('bg-gray-300');
+                    }
+                });
+            }
+            
+            // Read more functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.read-more-btn').forEach(btn => {
+                    btn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation(); // Prevent carousel movement
+                        
+                        const reviewId = this.getAttribute('data-review-id');
+                        const truncatedText = document.querySelector(`.review-text-${reviewId}`);
+                        const fullText = document.querySelector(`.review-full-${reviewId}`);
+                        
+                        if (this.textContent === 'Read more') {
+                            truncatedText.classList.add('hidden');
+                            fullText.classList.remove('hidden');
+                            this.textContent = 'Read less';
+                        } else {
+                            truncatedText.classList.remove('hidden');
+                            fullText.classList.add('hidden');
+                            this.textContent = 'Read more';
+                        }
+                    };
+                });
+            });
+        </script>
+    @else
+        <div class="text-center py-8 bg-gray-50 rounded-lg">
+            <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Reviews Yet</h3>
+            <p class="text-gray-600 mb-4">You haven't written any reviews yet. Share your experiences with products!</p>
+            <a href="/catalog" class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2M7 7h10"/>
+                </svg>
+                Browse Products
+            </a>
+        </div>
+    @endif
+
     <script>
     function togglePassword(id, btn) {
         const input = document.getElementById(id);
