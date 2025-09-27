@@ -386,13 +386,12 @@
             window.location.href = `/review/${productId}`;
         }
         
-        console.log('Gallery data loaded:', galleryData); // Debug log
+        console.log('Gallery data loaded:', galleryData);
         
         // Map gallery data to the expected format
         let eventImages = [];
         if (galleryData && galleryData.length > 0) {
             eventImages = galleryData.map(item => {
-                console.log('Processing gallery item:', item); // Debug log
                 return {
                     id: item.id,
                     image: item.image_url,
@@ -400,9 +399,7 @@
                     order: item.sort_order
                 };
             });
-            console.log('Mapped event images:', eventImages); // Debug log
         } else {
-            console.log('Using default images'); // Debug log
             // Default images if no database images exist
             eventImages = [
                 { id: null, image: "/images/nightSky.avif" },
@@ -420,24 +417,20 @@
         const dotsEl = document.getElementById('event-carousel-dots');
         let eventInterval = null;
 
+        // Carousel functions
         function renderEventBgCarousel() {
-            console.log('Rendering carousel with images:', eventImages); // Debug log
-            
             if (!eventImages || eventImages.length === 0) {
-                console.log('No images to display, hiding carousel'); // Debug log
                 document.querySelector('.bg-white.rounded-2xl').style.display = 'none';
                 return;
             }
 
             document.querySelector('.bg-white.rounded-2xl').style.display = 'block';
             
-            // Render slides with clones for infinite loop
             bgTrack.innerHTML = '';
             // Clone last slide to the beginning
             const firstClone = document.createElement('div');
             firstClone.className = "min-w-full h-full";
             const lastImageUrl = eventImages[eventImages.length - 1].image;
-            console.log('Setting background for first clone:', lastImageUrl); // Debug log
             firstClone.style.backgroundImage = `url('${lastImageUrl}')`;
             firstClone.style.backgroundSize = 'cover';
             firstClone.style.backgroundPosition = 'center';
@@ -448,17 +441,10 @@
             eventImages.forEach((item, index) => {
                 const slide = document.createElement('div');
                 slide.className = "min-w-full h-full";
-                console.log(`Setting background for slide ${index}:`, item.image); // Debug log
                 slide.style.backgroundImage = `url('${item.image}')`;
                 slide.style.backgroundSize = 'cover';
                 slide.style.backgroundPosition = 'center';
                 slide.style.backgroundRepeat = 'no-repeat';
-                
-                // Add error handling for failed image loads
-                slide.onerror = function() {
-                    console.error('Failed to load image:', item.image);
-                };
-                
                 bgTrack.appendChild(slide);
             });
 
@@ -466,17 +452,16 @@
             const lastClone = document.createElement('div');
             lastClone.className = "min-w-full h-full";
             const firstImageUrl = eventImages[0].image;
-            console.log('Setting background for last clone:', firstImageUrl); // Debug log
             lastClone.style.backgroundImage = `url('${firstImageUrl}')`;
             lastClone.style.backgroundSize = 'cover';
             lastClone.style.backgroundPosition = 'center';
             lastClone.style.backgroundRepeat = 'no-repeat';
             bgTrack.appendChild(lastClone);
 
-            // Set initial position (translateX(-100%))
+            // Set initial position
             bgTrack.style.transition = 'none';
             bgTrack.style.transform = `translateX(-${(currentEvent + 1) * 100}%)`;
-            void bgTrack.offsetWidth; // force reflow
+            void bgTrack.offsetWidth;
             bgTrack.style.transition = 'transform 0.7s';
 
             // Dots
@@ -547,362 +532,735 @@
             });
         }
 
-        prevBtn.onclick = function() {
+        if (prevBtn) prevBtn.onclick = function() {
             moveEventCarousel(-1);
             resetEventInterval();
         };
-        nextBtn.onclick = function() {
+        
+        if (nextBtn) nextBtn.onclick = function() {
             moveEventCarousel(1);
             resetEventInterval();
         };
 
-        @if(auth()->check() && auth()->user()->role === 'admin')
-        // Admin gallery management functions
-        document.getElementById('add-gallery-btn')?.addEventListener('click', () => {
-            showGalleryModal();
-        });
-
-        document.getElementById('manage-gallery-btn')?.addEventListener('click', () => {
-            showGalleryManagementModal();
-        });
-
-        document.getElementById('edit-current-gallery-btn')?.addEventListener('click', () => {
-            if (eventImages[currentEvent] && eventImages[currentEvent].id) {
-                showGalleryModal(eventImages[currentEvent]);
+        // Utility functions for image upload
+        function setupImageUpload(type) {
+            const prefix = type === 'gallery' ? '' : 'vendor-';
+            const dropZone = document.getElementById(`${prefix}drop-zone`);
+            const imageInput = document.getElementById(`${prefix}image-upload`);
+            const imagePreview = document.getElementById(`${prefix}image-preview`);
+            const previewImg = document.getElementById(`${prefix}preview-img`);
+            
+            if (!dropZone || !imageInput || !imagePreview || !previewImg) {
+                console.error('Required elements not found for image upload setup');
+                return;
             }
-        });
-
-        document.getElementById('delete-current-gallery-btn')?.addEventListener('click', () => {
-            if (eventImages[currentEvent] && eventImages[currentEvent].id) {
-                deleteGalleryImage(eventImages[currentEvent].id);
-            }
-        });
-
-        function showGalleryModal(gallery = null) {
-            const isEdit = gallery !== null;
-            
-            // Calculate next sort order for new images
-            let nextSortOrder = 0;
-            if (!isEdit && galleryData && galleryData.length > 0) {
-                const maxOrder = Math.max(...galleryData.map(item => item.sort_order || 0));
-                nextSortOrder = maxOrder + 1;
-            }
-            
-            const modalHtml = `
-                <div id="gallery-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative">
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-2xl font-bold text-gray-900">${isEdit ? 'Edit Gallery Image' : 'Add New Gallery Image'}</h3>
-                                <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            
-                            <form id="gallery-form" class="space-y-6" enctype="multipart/form-data">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gallery Image</label>
-                                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
-                                        <div class="space-y-1 text-center">
-                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                            <div class="flex text-sm text-gray-600">
-                                                <label for="image-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
-                                                    <span>${isEdit ? 'Change image' : 'Upload an image'}</span>
-                                                    <input id="image-upload" name="image" type="file" class="sr-only" accept="image/*" ${!isEdit ? 'required' : ''}>
-                                                </label>
-                                                <p class="pl-1">or drag and drop</p>
-                                            </div>
-                                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
-                                        </div>
-                                    </div>
-                                    <div id="image-preview" class="mt-4 hidden">
-                                        <img id="preview-img" class="h-32 w-full object-cover rounded-lg" />
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-                                        <input type="number" name="sort_order" value="${isEdit ? gallery.order : nextSortOrder}" min="0"
-                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                               placeholder="0 = first position">
-                                        <p class="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
-                                    </div>
-                                    
-                                    <div class="flex items-center pt-6">
-                                        <label class="flex items-center">
-                                            <input type="checkbox" name="is_active" ${isEdit ? (gallery.active ? 'checked' : '') : 'checked'}
-                                                   class="rounded border-gray-300 text-teal-600">
-                                            <span class="ml-2 text-sm text-gray-700">Active</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex gap-3 pt-4">
-                                    <button type="button" onclick="closeGalleryModal()" 
-                                            class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors">
-                                        Cancel
-                                    </button>
-                                    <button type="submit" 
-                                            class="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium transition-colors">
-                                        ${isEdit ? 'Update Image' : 'Add Image'}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
-            // Add image preview functionality
-            const imageInput = document.getElementById('image-upload');
-            const imagePreview = document.getElementById('image-preview');
-            const previewImg = document.getElementById('preview-img');
             
             imageInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
+                    handleImageFile(file, previewImg, imagePreview);
                 }
             });
             
-            document.getElementById('gallery-form').addEventListener('submit', async (e) => {
+            dropZone.addEventListener('click', function(e) {
+                // Only trigger file input if not clicking on the label itself
+                if (e.target === dropZone || e.target.closest('.space-y-1')) {
+                    imageInput.click();
+                }
+            });
+            
+            dropZone.addEventListener('dragover', function(e) {
                 e.preventDefault();
-                const formData = new FormData(e.target);
+                e.stopPropagation();
+                dropZone.classList.add('border-teal-500', 'bg-teal-50');
+            });
+            
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Only remove highlight if leaving the drop zone entirely
+                if (!dropZone.contains(e.relatedTarget)) {
+                    dropZone.classList.remove('border-teal-500', 'bg-teal-50');
+                }
+            });
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('border-teal-500', 'bg-teal-50');
                 
-                // Convert checkbox to boolean
-                formData.set('is_active', formData.get('is_active') ? '1' : '0');
-                
-                try {
-                    const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
-                    const method = 'POST';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
                     
-                    if (isEdit) {
-                        formData.append('_method', 'PUT');
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        alert('Please select an image file.');
+                        return;
                     }
                     
-                    const response = await fetch(url, {
-                        method: method,
+                    // Validate file size (2MB max)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('Image size must be less than 2MB.');
+                        return;
+                    }
+                    
+                    // Set the file to the input
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    imageInput.files = dataTransfer.files;
+                    
+                    // Show preview
+                    handleImageFile(file, previewImg, imagePreview);
+                }
+            });
+            
+            // Prevent default drag behaviors on the document
+            document.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('drop', function(e) {
+                e.preventDefault();
+            });
+        }
+        
+        function handleImageFile(file, previewImg, imagePreview) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+            };
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        @if(auth()->check() && auth()->user()->role === 'admin')
+            // Admin gallery management functions
+            document.getElementById('add-gallery-btn')?.addEventListener('click', () => {
+                showGalleryModal();
+            });
+
+            document.getElementById('manage-gallery-btn')?.addEventListener('click', () => {
+                showGalleryManagementModal();
+            });
+
+            document.getElementById('edit-current-gallery-btn')?.addEventListener('click', () => {
+                if (eventImages[currentEvent] && eventImages[currentEvent].id) {
+                    showGalleryModal(eventImages[currentEvent]);
+                }
+            });
+
+            document.getElementById('delete-current-gallery-btn')?.addEventListener('click', () => {
+                if (eventImages[currentEvent] && eventImages[currentEvent].id) {
+                    deleteGalleryImage(eventImages[currentEvent].id);
+                }
+            });
+
+            function showGalleryModal(gallery = null) {
+                const isEdit = gallery !== null;
+                
+                let nextSortOrder = 0;
+                if (!isEdit && galleryData && galleryData.length > 0) {
+                    const maxOrder = Math.max(...galleryData.map(item => item.sort_order || 0));
+                    nextSortOrder = maxOrder + 1;
+                }
+                
+                const modalHtml = `
+                    <div id="gallery-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-2xl font-bold text-gray-900">${isEdit ? 'Edit Gallery Image' : 'Add New Gallery Image'}</h3>
+                                    <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                
+                                <form id="gallery-form" class="space-y-6" enctype="multipart/form-data">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Gallery Image</label>
+                                        <div id="gallery-drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors cursor-pointer">
+                                            <div class="space-y-1 text-center">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                                <div class="flex text-sm text-gray-600">
+                                                    <label for="image-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500">
+                                                        <span>${isEdit ? 'Change image' : 'Upload an image'}</span>
+                                                        <input id="image-upload" name="image" type="file" class="sr-only" accept="image/*" ${!isEdit ? 'required' : ''}>
+                                                    </label>
+                                                    <p class="pl-1">or drag and drop</p>
+                                                </div>
+                                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                                            </div>
+                                        </div>
+                                        <div id="image-preview" class="mt-4 hidden">
+                                            <img id="preview-img" class="h-32 w-full object-cover rounded-lg" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
+                                            <input type="number" name="sort_order" value="${isEdit ? gallery.order : nextSortOrder}" min="0" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="0 = first position">
+                                        </div>
+                                        <div class="flex items-center pt-6">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" name="is_active" ${isEdit ? (gallery.active ? 'checked' : '') : 'checked'} class="rounded border-gray-300 text-teal-600">
+                                                <span class="ml-2 text-sm text-gray-700">Active</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-3 pt-4">
+                                        <button type="button" onclick="closeGalleryModal()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancel</button>
+                                        <button type="submit" class="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700">${isEdit ? 'Update Image' : 'Add Image'}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                setTimeout(() => {
+                    setupImageUpload('gallery');
+                }, 100);
+                
+                document.getElementById('gallery-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    formData.set('is_active', formData.get('is_active') ? '1' : '0');
+                    
+                    try {
+                        const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
+                        if (isEdit) formData.append('_method', 'PUT');
+                        
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: formData
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert(result.message);
+                            closeGalleryModal();
+                            window.location.reload();
+                        } else {
+                            alert(result.message || 'Failed to save image.');
+                        }
+                    } catch (error) {
+                        alert('Network error occurred.');
+                    }
+                });
+            }
+
+            function showGalleryManagementModal() {
+                const modalHtml = `
+                    <div id="manage-gallery-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-2xl font-bold text-gray-900">Manage Gallery Images</h3>
+                                    <button onclick="closeManageGalleryModal()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                
+                                <div id="gallery-list" class="space-y-4">
+                                    <div class="text-center py-8">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
+                                        <p class="text-gray-600 mt-2">Loading images...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                loadGalleryForManagement();
+            }
+
+            async function loadGalleryForManagement() {
+                try {
+                    const response = await fetch('/gallery', {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const galleries = await response.json();
+                        displayGalleryForManagement(galleries);
+                    } else {
+                        document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Failed to load images.</p>';
+                    }
+                } catch (error) {
+                    document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Network error occurred.</p>';
+                }
+            }
+
+            function displayGalleryForManagement(galleries) {
+                const listContainer = document.getElementById('gallery-list');
+                
+                if (galleries.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <p class="text-gray-600 mb-4">No images found.</p>
+                            <button onclick="closeManageGalleryModal(); showGalleryModal();" 
+                                    class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
+                                Add Your First Image
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const galleriesHtml = galleries.map(gallery => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start gap-4 flex-1">
+                                <img src="${gallery.image_url}" alt="Gallery image" class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="px-2 py-1 text-xs rounded-full ${gallery.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                            ${gallery.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                            Order: ${gallery.sort_order}
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-600 text-sm truncate">Uploaded image</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 ml-4">
+                                <button onclick="toggleGalleryActive(${gallery.id})" 
+                                        class="px-3 py-1 text-xs rounded ${gallery.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} transition-colors">
+                                    ${gallery.is_active ? 'Hide' : 'Show'}
+                                </button>
+                                <button onclick="closeManageGalleryModal(); showGalleryModal({id: ${gallery.id}, image: '${gallery.image_url}', active: ${gallery.is_active}, order: ${gallery.sort_order}})" 
+                                        class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors">
+                                    Edit
+                                </button>
+                                <button onclick="deleteGalleryFromManagement(${gallery.id})" 
+                                        class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                listContainer.innerHTML = galleriesHtml;
+            }
+
+            async function toggleGalleryActive(galleryId) {
+                try {
+                    const response = await fetch(`/gallery/${galleryId}/toggle-active`, {
+                        method: 'PATCH',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json'
-                        },
-                        body: formData
+                        }
                     });
 
                     const result = await response.json();
+
                     if (response.ok) {
-                        alert(result.message);
-                        closeGalleryModal();
-                        window.location.reload();
+                        loadGalleryForManagement(); // Refresh the list
                     } else {
-                        alert(result.message || 'Failed to save image.');
+                        alert(result.message || 'Failed to update gallery status.');
                     }
                 } catch (error) {
                     alert('Network error occurred.');
                 }
-            });
-        }
+            }
 
-        function showGalleryManagementModal() {
-            const modalHtml = `
-                <div id="manage-gallery-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-2xl font-bold text-gray-900">Manage Gallery Images</h3>
-                                <button onclick="closeManageGalleryModal()" class="text-gray-400 hover:text-gray-600">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            
-                            <div id="gallery-list" class="space-y-4">
-                                <div class="text-center py-8">
-                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
-                                    <p class="text-gray-600 mt-2">Loading images...</p>
+            async function deleteGalleryFromManagement(galleryId) {
+                if (!confirm('Are you sure you want to delete this image?')) return;
+                
+                try {
+                    const response = await fetch(`/gallery/${galleryId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        loadGalleryForManagement(); // Refresh the list
+                    } else {
+                        alert(result.message || 'Failed to delete image.');
+                    }
+                } catch (error) {
+                    alert('Network error occurred.');
+                }
+            }
+
+            async function deleteGalleryImage(galleryId) {
+                if (!confirm('Are you sure you want to delete this image?')) return;
+                
+                try {
+                    const response = await fetch(`/gallery/${galleryId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert('Image deleted successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Failed to delete image.');
+                    }
+                } catch (error) {
+                    alert('Network error occurred.');
+                }
+            }
+
+            function closeGalleryModal() {
+                const modal = document.getElementById('gallery-modal');
+                if (modal) modal.remove();
+            }
+
+            function closeManageGalleryModal() {
+                const modal = document.getElementById('manage-gallery-modal');
+                if (modal) modal.remove();
+            }
+
+            // Admin vendor management functions
+            document.getElementById('add-vendor-btn')?.addEventListener('click', () => {
+                showVendorModal();
+            });
+
+            document.getElementById('manage-vendors-btn')?.addEventListener('click', () => {
+                showVendorManagementModal();
+            });
+
+            function showVendorModal(vendor = null) {
+                const isEdit = vendor !== null;
+                
+                // Calculate next sort order for new vendors
+                let nextSortOrder = 0;
+                if (!isEdit && vendorsData && vendorsData.length > 0) {
+                    const maxOrder = Math.max(...vendorsData.map(item => item.sort_order || 0));
+                    nextSortOrder = maxOrder + 1;
+                }
+                
+                const modalHtml = `
+                    <div id="vendor-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-2xl font-bold text-gray-900">${isEdit ? 'Edit Vendor' : 'Add New Vendor'}</h3>
+                                    <button onclick="closeVendorModal()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
                                 </div>
+                                
+                                <form id="vendor-form" class="space-y-6" enctype="multipart/form-data">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Vendor Name</label>
+                                            <input type="text" name="name" value="${isEdit ? vendor.name : ''}" required
+                                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Business Type</label>
+                                            <input type="text" name="type" value="${isEdit ? vendor.type : ''}" required
+                                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                        <textarea name="description" rows="3" required
+                                                  class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">${isEdit ? vendor.description : ''}</textarea>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Vendor Image</label>
+                                        <div id="vendor-drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors cursor-pointer">
+                                            <div class="space-y-1 text-center">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                                <div class="flex text-sm text-gray-600">
+                                                    <label for="vendor-image-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500">
+                                                        <span>${isEdit ? 'Change image' : 'Upload an image'}</span>
+                                                        <input id="vendor-image-upload" name="image" type="file" class="sr-only" accept="image/*">
+                                                    </label>
+                                                    <p class="pl-1">or drag and drop</p>
+                                                </div>
+                                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                                            </div>
+                                        </div>
+                                        <div id="vendor-image-preview" class="mt-4 hidden">
+                                            <img id="vendor-preview-img" class="h-32 w-full object-cover rounded-lg" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
+                                            <input type="number" name="sort_order" value="${isEdit ? vendor.sort_order : nextSortOrder}" min="0" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="0 = first position">
+                                        </div>
+                                        
+                                        <div class="flex items-center pt-6">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" name="is_active" ${isEdit ? (vendor.is_active ? 'checked' : '') : 'checked'} class="rounded border-gray-300 text-teal-600">
+                                                <span class="ml-2 text-sm text-gray-700">Active</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-3 pt-4">
+                                        <button type="button" onclick="closeVendorModal()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancel</button>
+                                        <button type="submit" class="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700">${isEdit ? 'Update Vendor' : 'Add Vendor'}</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            loadGalleryForManagement();
-        }
-
-        async function loadGalleryForManagement() {
-            try {
-                const response = await fetch('/gallery', {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                if (response.ok) {
-                    const galleries = await response.json();
-                    displayGalleryForManagement(galleries);
-                } else {
-                    document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Failed to load images.</p>';
-                }
-            } catch (error) {
-                document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Network error occurred.</p>';
-            }
-        }
-
-        function displayGalleryForManagement(galleries) {
-            const listContainer = document.getElementById('gallery-list');
-            
-            if (galleries.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-8">
-                        <p class="text-gray-600 mb-4">No images found.</p>
-                        <button onclick="closeManageGalleryModal(); showGalleryModal();" 
-                                class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
-                            Add Your First Image
-                        </button>
                     </div>
                 `;
-                return;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                setTimeout(() => {
+                    setupImageUpload('vendor');
+                }, 100);
+                
+                document.getElementById('vendor-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    formData.set('is_active', formData.get('is_active') ? '1' : '0');
+                    
+                    try {
+                        const url = isEdit ? `/vendors/${vendor.id}` : '/vendors';
+                        if (isEdit) formData.append('_method', 'PUT');
+                        
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: formData
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert(result.message);
+                            closeVendorModal();
+                            window.location.reload();
+                        } else {
+                            alert(result.message || 'Failed to save vendor.');
+                        }
+                    } catch (error) {
+                        alert('Network error occurred.');
+                    }
+                });
             }
 
-            const galleriesHtml = galleries.map(gallery => `
-                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-4 flex-1">
-                            <img src="${gallery.image_url}" alt="Gallery image" class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <span class="px-2 py-1 text-xs rounded-full ${gallery.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                        ${gallery.is_active ? 'Active' : 'Inactive'}
-                                    </span>
-                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                        Order: ${gallery.sort_order}
-                                    </span>
+            function showVendorManagementModal() {
+                const modalHtml = `
+                    <div id="manage-vendor-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-2xl font-bold text-gray-900">Manage Vendors</h3>
+                                    <button onclick="closeManageVendorModal()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <p class="text-gray-600 text-sm truncate">Uploaded image</p>
+                                
+                                <div id="vendor-list" class="space-y-4">
+                                    <div class="text-center py-8">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
+                                        <p class="text-gray-600 mt-2">Loading vendors...</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 ml-4">
-                            <button onclick="toggleGalleryActive(${gallery.id})" 
-                                    class="px-3 py-1 text-xs rounded ${gallery.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} transition-colors">
-                                ${gallery.is_active ? 'Hide' : 'Show'}
-                            </button>
-                            <button onclick="closeManageGalleryModal(); showGalleryModal({id: ${gallery.id}, image: '${gallery.image_url}', active: ${gallery.is_active}, order: ${gallery.sort_order}})" 
-                                    class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors">
-                                Edit
-                            </button>
-                            <button onclick="deleteGalleryFromManagement(${gallery.id})" 
-                                    class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors">
-                                Delete
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                loadVendorsForManagement();
+            }
+
+            async function loadVendorsForManagement() {
+                try {
+                    const response = await fetch('/vendors', {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const vendors = await response.json();
+                        displayVendorsForManagement(vendors);
+                    } else {
+                        document.getElementById('vendor-list').innerHTML = '<p class="text-red-600 text-center">Failed to load vendors.</p>';
+                    }
+                } catch (error) {
+                    document.getElementById('vendor-list').innerHTML = '<p class="text-red-600 text-center">Network error occurred.</p>';
+                }
+            }
+
+            function displayVendorsForManagement(vendors) {
+                const listContainer = document.getElementById('vendor-list');
+                
+                if (vendors.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <p class="text-gray-600 mb-4">No vendors found.</p>
+                            <button onclick="closeManageVendorModal(); showVendorModal();" 
+                                    class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
+                                Add Your First Vendor
                             </button>
                         </div>
+                    `;
+                    return;
+                }
+
+                const vendorsHtml = vendors.map(vendor => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start gap-4 flex-1">
+                                <img src="${vendor.image_url}" alt="${vendor.name}" class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h4 class="font-semibold text-gray-900">${vendor.name}</h4>
+                                        <span class="px-2 py-1 text-xs rounded-full ${vendor.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                            ${vendor.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                            Order: ${vendor.sort_order}
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-600 text-sm">${vendor.type}</p>
+                                    <p class="text-gray-500 text-sm mt-1">${vendor.description}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 ml-4">
+                                <button onclick="toggleVendorActive(${vendor.id})" 
+                                        class="px-3 py-1 text-xs rounded ${vendor.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} transition-colors">
+                                    ${vendor.is_active ? 'Hide' : 'Show'}
+                                </button>
+                                <button onclick="closeManageVendorModal(); showVendorModal({id: ${vendor.id}, name: '${vendor.name}', type: '${vendor.type}', description: '${vendor.description}', image_url: '${vendor.image_url}', is_active: ${vendor.is_active}, sort_order: ${vendor.sort_order}})" 
+                                        class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors">
+                                    Edit
+                                </button>
+                                <button onclick="deleteVendorFromManagement(${vendor.id})" 
+                                        class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
-            
-            listContainer.innerHTML = galleriesHtml;
-        }
-
-        async function toggleGalleryActive(galleryId) {
-            try {
-                const response = await fetch(`/gallery/${galleryId}/toggle-active`, {
-                    method: 'PATCH',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    loadGalleryForManagement(); // Refresh the list
-                } else {
-                    alert(result.message || 'Failed to update gallery status.');
-                }
-            } catch (error) {
-                alert('Network error occurred.');
+                `).join('');
+                
+                listContainer.innerHTML = vendorsHtml;
             }
-        }
 
-        async function deleteGalleryFromManagement(galleryId) {
-            if (!confirm('Are you sure you want to delete this image?')) return;
-            
-            try {
-                const response = await fetch(`/gallery/${galleryId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
+            async function toggleVendorActive(vendorId) {
+                try {
+                    const response = await fetch(`/vendors/${vendorId}/toggle-active`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        loadVendorsForManagement(); // Refresh the list
+                    } else {
+                        alert(result.message || 'Failed to update vendor status.');
                     }
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    loadGalleryForManagement(); // Refresh the list
-                } else {
-                    alert(result.message || 'Failed to delete image.');
+                } catch (error) {
+                    alert('Network error occurred.');
                 }
-            } catch (error) {
-                alert('Network error occurred.');
             }
-        }
 
-        async function deleteGalleryImage(galleryId) {
-            if (!confirm('Are you sure you want to delete this image?')) return;
-            
-            try {
-                const response = await fetch(`/gallery/${galleryId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
+            async function deleteVendorFromManagement(vendorId) {
+                if (!confirm('Are you sure you want to delete this vendor?')) return;
+                
+                try {
+                    const response = await fetch(`/vendors/${vendorId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        loadVendorsForManagement(); // Refresh the list
+                    } else {
+                        alert(result.message || 'Failed to delete vendor.');
                     }
-                });
-
-                if (response.ok) {
-                    alert('Image deleted successfully!');
-                    window.location.reload();
-                } else {
-                    alert('Failed to delete image.');
+                } catch (error) {
+                    alert('Network error occurred.');
                 }
-            } catch (error) {
-                alert('Network error occurred.');
             }
-        }
 
-        window.closeGalleryModal = function() {
-            const modal = document.getElementById('gallery-modal');
-            if (modal) modal.remove();
-        }
+            window.closeGalleryModal = function() {
+                const modal = document.getElementById('gallery-modal');
+                if (modal) modal.remove();
+            }
 
-        window.closeManageGalleryModal = function() {
-            const modal = document.getElementById('manage-gallery-modal');
-            if (modal) modal.remove();
-        }
+            window.closeManageGalleryModal = function() {
+                const modal = document.getElementById('manage-gallery-modal');
+                if (modal) modal.remove();
+            }
+
+            window.closeVendorModal = function() {
+                const modal = document.getElementById('vendor-modal');
+                if (modal) modal.remove();
+            }
+
+            window.closeManageVendorModal = function() {
+                const modal = document.getElementById('manage-vendor-modal');
+                if (modal) modal.remove();
+            }
         @endif
 
         // Initialize carousel
         renderEventBgCarousel();
         resetEventInterval();
 
-        // Add missing vendors carousel functionality
+        // Vendors carousel functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Vendors Carousel (3 at a time)
             const vendors = vendorsData.length > 0 ? vendorsData : [
@@ -1064,343 +1422,9 @@
             renderVendorsCarousel();
             resetVendorInterval();
         });
-
-        @if(auth()->check() && auth()->user()->role === 'admin')
-        // Admin vendor management functions
-        document.getElementById('add-vendor-btn')?.addEventListener('click', () => {
-            showVendorModal();
-        });
-
-        document.getElementById('manage-vendors-btn')?.addEventListener('click', () => {
-            showVendorManagementModal();
-        });
-
-        function showVendorModal(vendor = null) {
-            const isEdit = vendor !== null;
-            
-            // Calculate next sort order for new vendors
-            let nextSortOrder = 0;
-            if (!isEdit && vendorsData && vendorsData.length > 0) {
-                const maxOrder = Math.max(...vendorsData.map(item => item.sort_order || 0));
-                nextSortOrder = maxOrder + 1;
-            }
-            
-            const modalHtml = `
-                <div id="vendor-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-2xl font-bold text-gray-900">${isEdit ? 'Edit Vendor' : 'Add New Vendor'}</h3>
-                                <button onclick="closeVendorModal()" class="text-gray-400 hover:text-gray-600">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            
-                            <form id="vendor-form" class="space-y-6" enctype="multipart/form-data">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Vendor Name</label>
-                                        <input type="text" name="name" value="${isEdit ? vendor.name : ''}" required
-                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Business Type</label>
-                                        <input type="text" name="type" value="${isEdit ? vendor.type : ''}" required
-                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                    <textarea name="description" rows="3" required
-                                              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">${isEdit ? vendor.description : ''}</textarea>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Vendor Image</label>
-                                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
-                                        <div class="space-y-1 text-center">
-                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                            <div class="flex text-sm text-gray-600">
-                                                <label for="vendor-image-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
-                                                    <span>${isEdit ? 'Change image' : 'Upload an image'}</span>
-                                                    <input id="vendor-image-upload" name="image" type="file" class="sr-only" accept="image/*">
-                                                </label>
-                                                <p class="pl-1">or drag and drop</p>
-                                            </div>
-                                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
-                                        </div>
-                                    </div>
-                                    <div id="vendor-image-preview" class="mt-4 hidden">
-                                        <img id="vendor-preview-img" class="h-32 w-full object-cover rounded-lg" />
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-                                        <input type="number" name="sort_order" value="${isEdit ? vendor.sort_order : nextSortOrder}" min="0"
-                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                               placeholder="0 = first position">
-                                        <p class="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
-                                    </div>
-                                    
-                                    <div class="flex items-center pt-6">
-                                        <label class="flex items-center">
-                                            <input type="checkbox" name="is_active" ${isEdit ? (vendor.is_active ? 'checked' : '') : 'checked'}
-                                                   class="rounded border-gray-300 text-teal-600">
-                                            <span class="ml-2 text-sm text-gray-700">Active</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex gap-3 pt-4">
-                                    <button type="button" onclick="closeVendorModal()" 
-                                            class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors">
-                                        Cancel
-                                    </button>
-                                    <button type="submit" 
-                                            class="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium transition-colors">
-                                        ${isEdit ? 'Update Vendor' : 'Add Vendor'}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
-            // Add image preview functionality
-            const imageInput = document.getElementById('vendor-image-upload');
-            const imagePreview = document.getElementById('vendor-image-preview');
-            const previewImg = document.getElementById('vendor-preview-img');
-            
-            imageInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                               }
-            });
-            
-            document.getElementById('vendor-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                
-                // Convert checkbox to boolean
-                formData.set('is_active', formData.get('is_active') ? '1' : '0');
-                
-                try {
-                    const url = isEdit ? `/vendors/${vendor.id}` : '/vendors';
-                    const method = 'POST';
-                    
-                    if (isEdit) {
-                        formData.append('_method', 'PUT');
-                    }
-                    
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    });
-
-                    const result = await response.json();
-                    if (response.ok) {
-                        alert(result.message);
-                        closeVendorModal();
-                        window.location.reload();
-                    } else {
-                        alert(result.message || 'Failed to save vendor.');
-                    }
-                } catch (error) {
-                    alert('Network error occurred.');
-                }
-            });
-        }
-
-        function showVendorManagementModal() {
-            const modalHtml = `
-                <div id="manage-vendors-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-2xl font-bold text-gray-900">Manage Vendors</h3>
-                                <button onclick="closeManageVendorsModal()" class="text-gray-400 hover:text-gray-600">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            
-                            <div id="vendors-list" class="space-y-4">
-                                <div class="text-center py-8">
-                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
-                                    <p class="text-gray-600 mt-2">Loading vendors...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            loadVendorsForManagement();
-        }
-
-        async function loadVendorsForManagement() {
-            try {
-                const response = await fetch('/vendors', {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                if (response.ok) {
-                    const vendors = await response.json();
-                    displayVendorsForManagement(vendors);
-                } else {
-                    document.getElementById('vendors-list').innerHTML = '<p class="text-red-600 text-center">Failed to load vendors.</p>';
-                }
-            } catch (error) {
-                document.getElementById('vendors-list').innerHTML = '<p class="text-red-600 text-center">Network error occurred.</p>';
-            }
-        }
-
-        function displayVendorsForManagement(vendors) {
-            const listContainer = document.getElementById('vendors-list');
-            
-            if (vendors.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-8">
-                        <p class="text-gray-600 mb-4">No vendors found.</p>
-                        <button onclick="closeManageVendorsModal(); showVendorModal();" 
-                                class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
-                            Add Your First Vendor
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-
-            const vendorsHtml = vendors.map(vendor => `
-                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-4 flex-1">
-                            <img src="${vendor.image_url}" alt="${vendor.name}" class="w-16 h-16 object-cover rounded-full flex-shrink-0">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <h4 class="font-semibold text-gray-900">${vendor.name}</h4>
-                                    <span class="px-2 py-1 text-xs rounded-full ${vendor.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                        ${vendor.is_active ? 'Active' : 'Inactive'}
-                                    </span>
-                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                        Order: ${vendor.sort_order}
-                                    </span>
-                                </div>
-                                <p class="text-sm text-gray-600 mb-1">${vendor.type}</p>
-                                <p class="text-gray-600 text-sm line-clamp-2">${vendor.description}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 ml-4">
-                            <button onclick="toggleVendorActive(${vendor.id})" 
-                                    class="px-3 py-1 text-xs rounded ${vendor.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} transition-colors">
-                                ${vendor.is_active ? 'Hide' : 'Show'}
-                            </button>
-                            <button onclick="closeManageVendorsModal(); showVendorModal({id: ${vendor.id}, name: '${vendor.name}', type: '${vendor.type}', description: '${vendor.description.replace(/'/g, "\\'")}', image_url: '${vendor.image_url}', is_active: ${vendor.is_active}, sort_order: ${vendor.sort_order}})" 
-                                    class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors">
-                                Edit
-                            </button>
-                            <button onclick="deleteVendorFromManagement(${vendor.id})" 
-                                    class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            listContainer.innerHTML = vendorsHtml;
-        }
-
-        async function toggleVendorActive(vendorId) {
-            try {
-                const response = await fetch(`/vendors/${vendorId}/toggle-active`, {
-                    method: 'PATCH',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    loadVendorsForManagement(); // Refresh the list
-                } else {
-                    alert(result.message || 'Failed to update vendor status.');
-                }
-            } catch (error) {
-                alert('Network error occurred.');
-            }
-        }
-
-        async function deleteVendorFromManagement(vendorId) {
-            if (!confirm('Are you sure you want to delete this vendor?')) return;
-            
-            try {
-                const response = await fetch(`/vendors/${vendorId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    loadVendorsForManagement(); // Refresh the list
-                } else {
-                    alert(result.message || 'Failed to delete vendor.');
-                }
-            } catch (error) {
-                alert('Network error occurred.');
-            }
-        }
-
-        window.closeVendorModal = function() {
-            const modal = document.getElementById('vendor-modal');
-            if (modal) modal.remove();
-        }
-
-        window.closeManageVendorsModal = function() {
-            const modal = document.getElementById('manage-vendors-modal');
-            if (modal) modal.remove();
-        }
-        @endif
-
-        // Initialize carousel
-        renderEventBgCarousel();
-        resetEventInterval();
     </script>
 
     <style>
-        /* Enhanced text clamping utilities */
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
