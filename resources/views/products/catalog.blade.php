@@ -185,11 +185,11 @@
             </div>
             <div class="flex items-center gap-2">
                 <label class="text-sm font-medium text-teal-700">Sort by:</label>
-                <div class="rounded-full border-2 border-teal-300 px-3 py-1 flex items-center bg-white shadow-sm hover:shadow-md transition-shadow">
+                <div class="rounded-md border-2 border-teal-300 px-3 py-1 flex items-center bg-white sort-dropdown-container">
                     <template x-if="tab === 'food'">
                         <select x-model="foodSort"
-                            class="bg-transparent outline-none px-2 py-1 rounded-full focus:ring-0 border-none text-teal-700 font-medium cursor-pointer"
-                            style="box-shadow:none;">
+                            class="bg-transparent outline-none px-2 py-1 rounded-md focus:ring-0 border-none text-teal-700 font-medium cursor-pointer focus:outline-none focus:shadow-none hover:shadow-none"
+                            style="box-shadow:none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important;">
                             <option value="">Default</option>
                             <option value="name">Name (A-Z)</option>
                             <option value="category">Category</option>
@@ -198,8 +198,8 @@
                     </template>
                     <template x-if="tab === 'merch'">
                         <select x-model="merchSort"
-                            class="bg-transparent outline-none px-2 py-1 rounded-full focus:ring-0 border-none text-teal-700 font-medium cursor-pointer"
-                            style="box-shadow:none;">
+                            class="bg-transparent outline-none px-2 py-1 rounded-md focus:ring-0 border-none text-teal-700 font-medium cursor-pointer focus:outline-none focus:shadow-none hover:shadow-none"
+                            style="box-shadow:none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important;">
                             <option value="">Default</option>
                             <option value="name">Name (A-Z)</option>
                             <option value="category">Category</option>
@@ -521,6 +521,46 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+        
+        /* Remove all shadows from select elements and their dropdown arrows */
+        select,
+        select:focus,
+        select:hover,
+        select:active {
+            box-shadow: none !important;
+            outline: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+        }
+        
+        /* Specifically target the sort dropdown container and select */
+        .sort-dropdown-container,
+        .sort-dropdown-container select,
+        .sort-dropdown-container select:focus,
+        .sort-dropdown-container select:hover,
+        .sort-dropdown-container select:active {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+        
+        /* Remove default dropdown arrow and add custom one */
+        .sort-dropdown-container select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        
+        /* Ensure no shadow on the container either */
+        .rounded-md.border-2.border-teal-300 {
+            box-shadow: none !important;
+        }
+        
+        .rounded-md.border-2.border-teal-300:hover {
+            box-shadow: none !important;
         }
     </style>
     <!-- Add Cropper.js CSS -->
