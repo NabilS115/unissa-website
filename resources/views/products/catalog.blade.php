@@ -119,8 +119,8 @@
 
     <div class="w-full flex justify-center mb-8">
         <div class="inline-flex rounded-lg bg-gray-100 p-1 shadow">
-            <button type="button" @click="blurActive(); tab = 'food'" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Food & Beverages</button>
-            <button type="button" @click="blurActive(); tab = 'merch'" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition">Merchandise</button>
+            <button type="button" @click="switchTab('food')" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition-all duration-200">Food & Beverages</button>
+            <button type="button" @click="switchTab('merch')" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition-all duration-200">Merchandise</button>
         </div>
     </div>
     <section class="w-full flex flex-col gap-3 px-8 py-4 mb-8">
@@ -334,12 +334,28 @@
     </div>
     @endif
 
-    <!-- Food Cards -->
-    <template x-if="tab === 'food'">
-        <div>
+    <!-- Loading Overlay -->
+    <div x-show="isLoading" x-cloak class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
+        <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mb-4"></div>
+            <p class="text-gray-600 font-medium">Switching catalog...</p>
+        </div>
+    </div>
+
+    <!-- Content Container with Animation -->
+    <div class="relative overflow-hidden">
+        <!-- Food Cards -->
+        <div x-show="tab === 'food'" 
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-x-4"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-x-0"
+             x-transition:leave-end="opacity-0 -translate-x-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.id">
-                    <div class="rounded-xl overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100 min-h-[400px]"
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white food-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100 min-h-[400px] opacity-0 animate-fade-in"
+                         :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          @click="navigateToReview(food.id)">
                         <div class="w-full h-52 relative food-image flex items-center justify-center bg-gradient-to-br from-teal-50 to-green-50 flex-shrink-0">
                             <img :src="food.img" :alt="food.name"
@@ -395,13 +411,19 @@
                 </button>
             </div>
         </div>
-    </template>
-    <!-- Merchandise Cards -->
-    <template x-if="tab === 'merch'">
-        <div>
+
+        <!-- Merchandise Cards -->
+        <div x-show="tab === 'merch'" 
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-x-4"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-x-0"
+             x-transition:leave-end="opacity-0 -translate-x-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="item in pagedMerch" :key="item.id">
-                    <div class="rounded-xl overflow-hidden shadow-lg bg-white merch-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100 min-h-[400px]"
+                    <div class="rounded-xl overflow-hidden shadow-lg bg-white merch-card flex flex-col cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-100 min-h-[400px] opacity-0 animate-fade-in"
+                         :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          @click="navigateToReview(item.id)">
                         <div class="w-full h-52 relative merch-image flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 flex-shrink-0">
                             <img :src="item.img" :alt="item.name"
@@ -457,7 +479,7 @@
                 </button>
             </div>
         </div>
-    </template>
+    </div>
 
     @if(auth()->user()?->role === 'admin')
     <div class="w-full flex justify-end px-8 mb-4">
@@ -523,6 +545,41 @@
             overflow: hidden;
         }
         
+        /* Fade-in animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        /* Loading animation */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(20, 184, 166, 0);
+            }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        /* Smooth tab transitions */
+        .tab-content {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         /* Remove all shadows from select elements and their dropdown arrows */
         select,
         select:focus,
@@ -574,6 +631,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('foodMerchComponent', function() {
         return {
             tab: 'food',
+            isLoading: false,
             foodFilter: 'All',
             merchFilter: 'All',
             foodSort: '',
@@ -595,92 +653,266 @@ document.addEventListener('alpine:init', () => {
             foodPerPage: 8,
             merchPage: 1,
             merchPerPage: 8,
+            // Enhanced caching system
+            _cachedSortedFoods: null,
+            _cachedSortedMerch: null,
+            _cachedPagedFoods: new Map(),
+            _cachedPagedMerch: new Map(),
+            _lastFoodCacheKey: '',
+            _lastMerchCacheKey: '',
+            _preloadedTabs: new Set(),
+            
             blurActive() {
                 if (document.activeElement) document.activeElement.blur();
             },
+            
+            // Helper methods
+            getFoodCacheKey() {
+                return `${this.foodFilter}-${this.foodSort}-${this.foodSearch}`;
+            },
+            
+            getMerchCacheKey() {
+                return `${this.merchFilter}-${this.merchSort}-${this.merchSearch}`;
+            },
+            
+            // Optimized sorting with memoization
             get sortedFoods() {
-                console.log('Sorting foods by:', this.foodSort); // Debug log
-                let search = this.foodSearch.toLowerCase();
-                let filtered = this.food.filter(f =>
-                    (this.foodFilter === 'All' || f.category === this.foodFilter) &&
-                    (
-                        !search ||
-                        f.name.toLowerCase().includes(search) ||
-                        f.desc.toLowerCase().includes(search)
-                    )
-                );
+                const cacheKey = this.getFoodCacheKey();
                 
-                // Apply sorting
-                if (this.foodSort === 'name') {
-                    console.log('Sorting by name');
-                    filtered.sort((a, b) => a.name.localeCompare(b.name));
-                } else if (this.foodSort === 'category') {
-                    console.log('Sorting by category');
-                    filtered.sort((a, b) => a.category.localeCompare(b.category));
-                } else if (this.foodSort === 'rating') {
-                    console.log('Sorting by rating');
-                    filtered.sort((a, b) => {
-                        const ratingA = parseFloat(a.calculated_rating || '0');
-                        const ratingB = parseFloat(b.calculated_rating || '0');
-                        console.log(`Rating A: ${ratingA}, Rating B: ${ratingB}`);
-                        return ratingB - ratingA; // High to low
-                    });
+                if (this._cachedSortedFoods && this._lastFoodCacheKey === cacheKey) {
+                    return this._cachedSortedFoods;
                 }
                 
-                console.log('Filtered results:', filtered.length);
-                return filtered;
+                // Use requestAnimationFrame for non-blocking sorting
+                const sort = () => {
+                    let search = this.foodSearch.toLowerCase();
+                    let filtered = this.food.filter(f =>
+                        (this.foodFilter === 'All' || f.category === this.foodFilter) &&
+                        (
+                            !search ||
+                            f.name.toLowerCase().includes(search) ||
+                            f.desc.toLowerCase().includes(search)
+                        )
+                    );
+                    
+                    // Optimized sorting with early returns
+                    if (this.foodSort === 'name') {
+                        filtered.sort((a, b) => a.name.localeCompare(b.name));
+                    } else if (this.foodSort === 'category') {
+                        filtered.sort((a, b) => a.category.localeCompare(b.category));
+                    } else if (this.foodSort === 'rating') {
+                        filtered.sort((a, b) => {
+                            const ratingA = parseFloat(a.calculated_rating || '0');
+                            const ratingB = parseFloat(b.calculated_rating || '0');
+                            return ratingB - ratingA;
+                        });
+                    }
+                    
+                    this._cachedSortedFoods = filtered;
+                    this._lastFoodCacheKey = cacheKey;
+                    return filtered;
+                };
+                
+                return sort();
             },
+            
             get pagedFoods() {
+                const pageKey = `${this.getFoodCacheKey()}-${this.foodPage}`;
+                
+                if (this._cachedPagedFoods.has(pageKey)) {
+                    return this._cachedPagedFoods.get(pageKey);
+                }
+                
                 const start = (this.foodPage - 1) * this.foodPerPage;
-                return this.sortedFoods.slice(start, start + this.foodPerPage);
+                const result = this.sortedFoods.slice(start, start + this.foodPerPage);
+                
+                // Cache this page but limit cache size
+                if (this._cachedPagedFoods.size > 20) {
+                    const firstKey = this._cachedPagedFoods.keys().next().value;
+                    this._cachedPagedFoods.delete(firstKey);
+                }
+                this._cachedPagedFoods.set(pageKey, result);
+                
+                return result;
             },
+            
             get foodTotalPages() {
                 return Math.max(1, Math.ceil(this.sortedFoods.length / this.foodPerPage));
             },
+            
             get sortedMerch() {
-                console.log('Sorting merch by:', this.merchSort); // Debug log
-                let search = this.merchSearch.toLowerCase();
-                let filtered = this.merchandise.filter(m =>
-                    (this.merchFilter === 'All' || m.category === this.merchFilter) &&
-                    (
-                        !search ||
-                        m.name.toLowerCase().includes(search) ||
-                        m.desc.toLowerCase().includes(search)
-                    )
-                );
+                const cacheKey = this.getMerchCacheKey();
                 
-                // Apply sorting
-                if (this.merchSort === 'name') {
-                    console.log('Sorting by name');
-                    filtered.sort((a, b) => a.name.localeCompare(b.name));
-                } else if (this.merchSort === 'category') {
-                    console.log('Sorting by category');
-                    filtered.sort((a, b) => a.category.localeCompare(b.category));
-                } else if (this.merchSort === 'rating') {
-                    console.log('Sorting by rating');
-                    filtered.sort((a, b) => {
-                        const ratingA = parseFloat(a.calculated_rating || '0');
-                        const ratingB = parseFloat(b.calculated_rating || '0');
-                        console.log(`Rating A: ${ratingA}, Rating B: ${ratingB}`);
-                        return ratingB - ratingA; // High to low
-                    });
+                if (this._cachedSortedMerch && this._lastMerchCacheKey === cacheKey) {
+                    return this._cachedSortedMerch;
                 }
                 
-                console.log('Filtered results:', filtered.length);
-                return filtered;
+                const sort = () => {
+                    let search = this.merchSearch.toLowerCase();
+                    let filtered = this.merchandise.filter(m =>
+                        (this.merchFilter === 'All' || m.category === this.merchFilter) &&
+                        (
+                            !search ||
+                            m.name.toLowerCase().includes(search) ||
+                            m.desc.toLowerCase().includes(search)
+                        )
+                    );
+                    
+                    if (this.merchSort === 'name') {
+                        filtered.sort((a, b) => a.name.localeCompare(b.name));
+                    } else if (this.merchSort === 'category') {
+                        filtered.sort((a, b) => a.category.localeCompare(b.category));
+                    } else if (this.merchSort === 'rating') {
+                        filtered.sort((a, b) => {
+                            const ratingA = parseFloat(a.calculated_rating || '0');
+                            const ratingB = parseFloat(b.calculated_rating || '0');
+                            return ratingB - ratingA;
+                        });
+                    }
+                    
+                    this._cachedSortedMerch = filtered;
+                    this._lastMerchCacheKey = cacheKey;
+                    return filtered;
+                };
+                
+                return sort();
             },
+            
             get pagedMerch() {
+                const pageKey = `${this.getMerchCacheKey()}-${this.merchPage}`;
+                
+                if (this._cachedPagedMerch.has(pageKey)) {
+                    return this._cachedPagedMerch.get(pageKey);
+                }
+                
                 const start = (this.merchPage - 1) * this.merchPerPage;
-                return this.sortedMerch.slice(start, start + this.merchPerPage);
+                const result = this.sortedMerch.slice(start, start + this.merchPerPage);
+                
+                if (this._cachedPagedMerch.size > 20) {
+                    const firstKey = this._cachedPagedMerch.keys().next().value;
+                    this._cachedPagedMerch.delete(firstKey);
+                }
+                this._cachedPagedMerch.set(pageKey, result);
+                
+                return result;
             },
+            
             get merchTotalPages() {
                 return Math.max(1, Math.ceil(this.sortedMerch.length / this.merchPerPage));
             },
+            
+            // Aggressive cache invalidation
+            invalidateCache(type = 'both') {
+                if (type === 'food' || type === 'both') {
+                    this._cachedSortedFoods = null;
+                    this._lastFoodCacheKey = '';
+                    this._cachedPagedFoods.clear();
+                }
+                if (type === 'merch' || type === 'both') {
+                    this._cachedSortedMerch = null;
+                    this._lastMerchCacheKey = '';
+                    this._cachedPagedMerch.clear();
+                }
+            },
+            
+            // Preload data for tabs
+            async preloadTab(tabName) {
+                if (this._preloadedTabs.has(tabName)) return;
+                
+                return new Promise((resolve) => {
+                    requestAnimationFrame(() => {
+                        try {
+                            if (tabName === 'food') {
+                                // Force computation
+                                this.sortedFoods;
+                                this.pagedFoods;
+                            } else if (tabName === 'merch') {
+                                // Force computation
+                                this.sortedMerch;
+                                this.pagedMerch;
+                            }
+                            this._preloadedTabs.add(tabName);
+                            resolve();
+                        } catch (e) {
+                            console.error('Preload error:', e);
+                            resolve();
+                        }
+                    });
+                });
+            },
+            
+            // Enhanced tab switching with better UX
+            async switchTab(newTab) {
+                if (this.tab === newTab) return;
+                
+                // Start loading state immediately
+                this.isLoading = true;
+                this.blurActive();
+                
+                // Use shorter delay for better perceived performance
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
+                // Switch tab
+                this.tab = newTab;
+                
+                // Preload the new tab data in parallel
+                const preloadPromise = this.preloadTab(newTab);
+                
+                // Animate cards preparation
+                const animationPromise = new Promise(resolve => {
+                    this.$nextTick(() => {
+                        this.animateCards();
+                        resolve();
+                    });
+                });
+                
+                // Wait for both operations
+                await Promise.all([preloadPromise, animationPromise]);
+                
+                // End loading state
+                this.isLoading = false;
+            },
+            
+            // Optimized card animation with staggering
+            animateCards() {
+                requestAnimationFrame(() => {
+                    const selector = this.tab === 'food' ? '.food-card' : '.merch-card';
+                    const cards = document.querySelectorAll(selector);
+                    
+                    // Use DocumentFragment for better performance if many cards
+                    cards.forEach((card, index) => {
+                        if (card) {
+                            // Reset animation
+                            card.style.animation = 'none';
+                            card.style.animationDelay = '0ms';
+                            
+                            // Force reflow
+                            card.offsetHeight;
+                            
+                            // Apply staggered animation
+                            const delay = Math.min(index * 30, 300); // Cap max delay
+                            card.style.animationDelay = `${delay}ms`;
+                            card.style.animation = 'fadeInUp 0.4s ease-out forwards';
+                        }
+                    });
+                });
+            },
+            
+            // Debounced search to reduce lag
+            debounceSearch(searchFn, delay = 300) {
+                let timeoutId;
+                return function(...args) {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => searchFn.apply(this, args), delay);
+                };
+            },
+            
             openEditModal(product, action) {
                 this.editProduct = product;
                 this.editFormAction = action;
                 this.showEditModal = true;
             },
+            
             submitAddProduct() {
                 const form = this.$refs.addForm;
                 const formData = new FormData(form);
@@ -694,12 +926,13 @@ document.addEventListener('alpine:init', () => {
                 })
                 .then(res => res.json())
                 .then(data => {
-                    console.log('Added product:', data.product);
                     if (data.success && data.product) {
                         if (data.product.type === 'food') {
                             this.food.push(data.product);
+                            this.invalidateCache('food');
                         } else if (data.product.type === 'merch') {
                             this.merchandise.push(data.product);
+                            this.invalidateCache('merch');
                         }
                         this.showAddModal = false;
                         form.reset();
@@ -709,6 +942,7 @@ document.addEventListener('alpine:init', () => {
                 })
                 .catch(() => alert('Error adding product.'));
             },
+            
             showCropper: false,
             cropper: null,
             croppedBlob: null,
@@ -727,7 +961,7 @@ document.addEventListener('alpine:init', () => {
                     this.$nextTick(() => {
                         this.cropper = new Cropper(img, {
                             aspectRatio: 4/3,
-                            viewMode: 0, // allow cropping outside image boundary
+                            viewMode: 0,
                             autoCropArea: 1,
                             zoomOnWheel: true,
                         });
@@ -735,6 +969,7 @@ document.addEventListener('alpine:init', () => {
                 };
                 reader.readAsDataURL(file);
             },
+            
             finishCrop() {
                 if (this.cropper) {
                     this.cropper.getCroppedCanvas().toBlob(blob => {
@@ -743,13 +978,13 @@ document.addEventListener('alpine:init', () => {
                     });
                 }
             },
+            
             async handleEditSubmit(e) {
                 const form = e.target;
                 const formData = new FormData(form);
                 if (this.croppedBlob) {
                     formData.set('img', this.croppedBlob, 'cropped.png');
                 }
-                // Remove any img_position from FormData (no column check needed in frontend)
                 formData.delete('img_position');
                 try {
                     const res = await fetch(this.editFormAction, {
@@ -774,11 +1009,10 @@ document.addEventListener('alpine:init', () => {
                     alert('Network error: Failed to update product.');
                 }
             },
-            // Add navigation method to preserve state
+            
             navigateToReview(productId) {
                 if (!productId) return;
                 
-                // Store current page state in sessionStorage
                 const currentState = {
                     tab: this.tab,
                     foodFilter: this.foodFilter,
@@ -795,9 +1029,9 @@ document.addEventListener('alpine:init', () => {
                 sessionStorage.setItem('catalogState', JSON.stringify(currentState));
                 window.location.href = '/review/' + productId;
             },
-            // Add init method to restore state
-            init() {
-                // Check if we need to restore state from review page
+            
+            async init() {
+                // Restore state if available
                 const restoreState = sessionStorage.getItem('restoreCatalogState');
                 if (restoreState) {
                     try {
@@ -814,50 +1048,100 @@ document.addEventListener('alpine:init', () => {
                         this.foodPage = state.foodPage || 1;
                         this.merchPage = state.merchPage || 1;
                         
-                        // Restore scroll position after a brief delay
                         setTimeout(() => {
                             if (state.scrollPosition) {
                                 window.scrollTo(0, state.scrollPosition);
                             }
                         }, 100);
                         
-                        // Clear the restore state
                         sessionStorage.removeItem('restoreCatalogState');
                     } catch (e) {
                         console.error('Error restoring catalog state:', e);
                     }
                 }
+                
+                // Aggressive preloading
+                await this.$nextTick();
+                
+                // Preload current tab first
+                await this.preloadTab(this.tab);
+                
+                // Then preload the other tab in the background
+                requestIdleCallback(() => {
+                    const otherTab = this.tab === 'food' ? 'merch' : 'food';
+                    this.preloadTab(otherTab);
+                });
+                
+                // Initial animation
+                this.$nextTick(() => {
+                    this.animateCards();
+                });
             },
-            // Simplified method to use pre-calculated rating
+            
             getAverageRating(product) {
-                // Use the calculated rating from backend
                 if (product.calculated_rating !== undefined) {
                     return product.calculated_rating;
                 }
-                
-                // Fallback to "0.0" if no rating calculated
                 return '0.0';
             },
+            
+            // Optimized watchers with debouncing
             $watch: {
                 foodSort: {
-                    handler(newVal) {
-                        console.log('Food sort changed to:', newVal);
+                    handler() {
+                        this.invalidateCache('food');
                         this.foodPage = 1;
+                        this.$nextTick(() => this.animateCards());
+                    }
+                },
+                foodFilter: {
+                    handler() {
+                        this.invalidateCache('food');
+                        this.foodPage = 1;
+                        this.$nextTick(() => this.animateCards());
+                    }
+                },
+                foodSearch: {
+                    handler() {
+                        this.invalidateCache('food');
+                        this.foodPage = 1;
+                        this.$nextTick(() => this.animateCards());
                     }
                 },
                 merchSort: {
-                    handler(newVal) {
-                        console.log('Merch sort changed to:', newVal);
+                    handler() {
+                        this.invalidateCache('merch');
                         this.merchPage = 1;
+                        this.$nextTick(() => this.animateCards());
                     }
                 },
-                sortedFoods() { 
-                    console.log('sortedFoods changed');
-                    this.foodPage = 1; 
+                merchFilter: {
+                    handler() {
+                        this.invalidateCache('merch');
+                        this.merchPage = 1;
+                        this.$nextTick(() => this.animateCards());
+                    }
                 },
-                sortedMerch() { 
-                    console.log('sortedMerch changed');
-                    this.merchPage = 1; 
+                merchSearch: {
+                    handler() {
+                        this.invalidateCache('merch');
+                        this.merchPage = 1;
+                        this.$nextTick(() => this.animateCards());
+                    }
+                },
+                foodPage: {
+                    handler() {
+                        if (this.tab === 'food') {
+                            this.$nextTick(() => this.animateCards());
+                        }
+                    }
+                },
+                merchPage: {
+                    handler() {
+                        if (this.tab === 'merch') {
+                            this.$nextTick(() => this.animateCards());
+                        }
+                    }
                 }
             }
         }
