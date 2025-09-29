@@ -545,7 +545,8 @@
         // Utility functions for image upload
         function setupImageUpload(type) {
             const prefix = type === 'gallery' ? '' : 'vendor-';
-            const dropZone = document.getElementById(`${prefix}drop-zone`);
+            const dropZoneId = type === 'gallery' ? 'gallery-drop-zone' : 'vendor-drop-zone';
+            const dropZone = document.getElementById(dropZoneId);
             const imageInput = document.getElementById(`${prefix}image-upload`);
             const imagePreview = document.getElementById(`${prefix}image-preview`);
             const previewImg = document.getElementById(`${prefix}preview-img`);
