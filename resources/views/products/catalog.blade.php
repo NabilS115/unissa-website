@@ -32,8 +32,16 @@
     
     // Calculate average ratings for each product using the same logic as review page
     foreach ($food as &$foodItem) {
-        if ((is_object($foodItem) || is_array($foodItem)) && isset($foodItem->id)) {
-            $productId = is_object($foodItem) ? $foodItem->id : $foodItem['id'];
+        $productId = null;
+        
+        // Get product ID properly from both arrays and objects
+        if (is_object($foodItem) && isset($foodItem->id)) {
+            $productId = $foodItem->id;
+        } elseif (is_array($foodItem) && isset($foodItem['id'])) {
+            $productId = $foodItem['id'];
+        }
+        
+        if ($productId) {
             $reviews = \App\Models\Review::where('product_id', $productId)->get();
             $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
             
@@ -55,17 +63,28 @@
                 $averageRating = $weightedSum / $totalRatings;
             }
             
+            // Set the calculated rating
             if (is_object($foodItem)) {
                 $foodItem->calculated_rating = number_format($averageRating, 1);
             } else {
                 $foodItem['calculated_rating'] = number_format($averageRating, 1);
+                // Convert array to object to ensure consistent structure
+                $foodItem = (object)$foodItem;
             }
         }
     }
     
     foreach ($merchandise as &$merchItem) {
-        if ((is_object($merchItem) || is_array($merchItem)) && (isset($merchItem->id) || isset($merchItem['id']))) {
-            $productId = is_object($merchItem) ? $merchItem->id : $merchItem['id'];
+        $productId = null;
+        
+        // Get product ID properly from both arrays and objects
+        if (is_object($merchItem) && isset($merchItem->id)) {
+            $productId = $merchItem->id;
+        } elseif (is_array($merchItem) && isset($merchItem['id'])) {
+            $productId = $merchItem['id'];
+        }
+        
+        if ($productId) {
             $reviews = \App\Models\Review::where('product_id', $productId)->get();
             $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
             
@@ -87,11 +106,12 @@
                 $averageRating = $weightedSum / $totalRatings;
             }
             
+            // Set the calculated rating
             if (is_object($merchItem)) {
                 $merchItem->calculated_rating = number_format($averageRating, 1);
             } else {
                 $merchItem['calculated_rating'] = number_format($averageRating, 1);
-                // Convert to object after adding calculated_rating
+                // Convert array to object to ensure consistent structure
                 $merchItem = (object)$merchItem;
             }
         }
