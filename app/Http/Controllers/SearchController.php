@@ -170,6 +170,83 @@ class SearchController extends Controller
             ->orderBy('name');
     }
     
+    public function catalogSearch(Request $request)
+    {
+        $query = $request->get('query', '');
+        $type = $request->get('type', 'all');
+        $category = $request->get('category', 'All');
+        $sort = $request->get('sort', '');
+        $page = (int) $request->get('page', 1);
+        $perPage = (int) $request->get('per_page', 8);
+        
+        $productsQuery = Product::query();
+        
+        // Filter by type (food/merch)
+        if ($type !== 'all') {
+            $productsQuery->where('type', $type);
+        }
+        
+        // Filter by category
+        if ($category !== 'All') {
+            $productsQuery->where('category', $category);
+        }
+        
+        // Filter by search query
+        if (!empty($query)) {
+            $productsQuery->where(function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('desc', 'LIKE', "%{$query}%");
+            });
+        }
+        
+        // Apply sorting
+        switch ($sort) {
+            case 'name':
+                $productsQuery->orderBy('name');
+                break;
+            case 'category':
+                $productsQuery->orderBy('category');
+                break;
+            case 'rating':
+                // For now, just order by name. Rating sorting would require joins
+                $productsQuery->orderBy('name');
+                break;
+            default:
+                $productsQuery->orderBy('created_at', 'desc');
+                break;
+        }
+        
+        // Paginate
+        $products = $productsQuery->paginate($perPage, ['*'], 'page', $page);
+        
+        return response()->json([
+            'products' => $products->items(),
+            'pagination' => [
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total()
+            ]
+        ]);
+    }
+    
+    public function getFilters(Request $request)
+    {
+        $type = $request->get('type', 'all');
+        
+        $categoriesQuery = Product::query();
+        
+        if ($type !== 'all') {
+            $categoriesQuery->where('type', $type);
+        }
+        
+        $categories = $categoriesQuery->pluck('category')->unique()->values()->all();
+        
+        return response()->json([
+            'categories' => $categories
+        ]);
+    }
+    
     // Add method to extract search terms
     private function extractSearchTerms($query)
     {

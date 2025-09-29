@@ -7,7 +7,18 @@
     $food = $food ?? [];
     $merchandise = $merchandise ?? [];
     
-    // Convert merchandise to objects if they're arrays
+    // Convert both food and merchandise to consistent objects format
+    if ($food instanceof \Illuminate\Support\Collection) {
+        $food = $food->map(function($item) { 
+            return is_array($item) ? (object)$item : $item; 
+        })->toArray();
+    } else {
+        // Handle regular arrays
+        $food = array_map(function($item) {
+            return is_array($item) ? (object)$item : $item;
+        }, $food);
+    }
+    
     if ($merchandise instanceof \Illuminate\Support\Collection) {
         $merchandise = $merchandise->map(function($item) { 
             return is_array($item) ? (object)$item : $item; 
@@ -127,19 +138,27 @@
         <div class="flex flex-col sm:flex-row gap-3 items-center justify-between w-full">
             <div class="w-full sm:w-1/3 relative">
                 <div class="relative">
-                    <input type="text" :placeholder="tab === 'food' ? 'Search food...' : 'Search merchandise...'" x-model="tab === 'food' ? foodSearchInput : merchSearchInput" @focus="tab === 'food' ? showFoodPredictions = true : showMerchPredictions = true" @blur="setTimeout(() => { showFoodPredictions = false; showMerchPredictions = false; }, 100)" class="w-full border border-teal-300 rounded-full px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-400" />
-                    <button @click="tab === 'food' ? foodSearch = foodSearchInput : merchSearch = merchSearchInput" class="absolute right-8 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:28px;width:28px;">
+                    <!-- Food search input -->
+                    <input x-show="tab === 'food'" type="text" placeholder="Search food..." x-model="foodSearchInput" @focus="showFoodPredictions = true" @input="showFoodPredictions = foodSearchInput.length > 0" @blur="setTimeout(() => { showFoodPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-teal-300 rounded-full px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-400" />
+                    <!-- Merch search input -->
+                    <input x-show="tab === 'merch'" type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @input="showMerchPredictions = merchSearchInput.length > 0" @blur="setTimeout(() => { showMerchPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-teal-300 rounded-full px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-400" />
+                    <button @click="performSearch()" class="absolute right-8 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:28px;width:28px;">
                         <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     </button>
-                    <button @click="tab === 'food' ? (foodSearchInput = '', foodSearch = '') : (merchSearchInput = '', merchSearch = '')" x-show="tab === 'food' ? (foodSearch || foodSearchInput) : (merchSearch || merchSearchInput)" class="absolute right-1 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:24px;width:24px;" title="Clear search">
+                    <!-- Clear button for food tab -->
+                    <button x-show="tab === 'food' && (foodSearch || foodSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:24px;width:24px;" title="Clear search">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                    <!-- Clear button for merch tab -->
+                    <button x-show="tab === 'merch' && (merchSearch || merchSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:24px;width:24px;" title="Clear search">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                 </div>
                 <template x-if="tab === 'food' && foodSearchInput && showFoodPredictions">
                     <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
-                        <template x-for="food in food" :key="food.id">
-                            <template x-if="food.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
-                                <li @mousedown.prevent="foodSearchInput = food.name; showFoodPredictions = false" class="px-4 py-2 hover:bg-teal-100 cursor-pointer text-sm" x-text="food.name"></li>
+                        <template x-for="foodItem in food" :key="foodItem.id">
+                            <template x-if="foodItem.name && foodItem.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
+                                <li @mousedown.prevent="foodSearchInput = foodItem.name; showFoodPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-100 cursor-pointer text-sm" x-text="foodItem.name"></li>
                             </template>
                         </template>
                     </ul>
@@ -148,7 +167,7 @@
                     <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
                         <template x-for="item in merchandise" :key="item.id">
                             <template x-if="item.name.toLowerCase().includes(merchSearchInput.toLowerCase())">
-                                <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-sm" x-text="item.name"></li>
+                                <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false; performSearch()" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-sm" x-text="item.name"></li>
                             </template>
                         </template>
                     </ul>
@@ -653,6 +672,8 @@ document.addEventListener('alpine:init', () => {
             foodPerPage: 8,
             merchPage: 1,
             merchPerPage: 8,
+            // Force refresh trigger
+            refreshTrigger: 0,
             // Enhanced caching system
             _cachedSortedFoods: null,
             _cachedSortedMerch: null,
@@ -661,6 +682,8 @@ document.addEventListener('alpine:init', () => {
             _lastFoodCacheKey: '',
             _lastMerchCacheKey: '',
             _preloadedTabs: new Set(),
+            useBackendSearch: false, // Toggle for backend vs frontend search
+            isSearching: false,
             
             blurActive() {
                 if (document.activeElement) document.activeElement.blur();
@@ -683,19 +706,17 @@ document.addEventListener('alpine:init', () => {
                     return this._cachedSortedFoods;
                 }
                 
-                // Use requestAnimationFrame for non-blocking sorting
                 const sort = () => {
                     let search = this.foodSearch.toLowerCase();
-                    let filtered = this.food.filter(f =>
-                        (this.foodFilter === 'All' || f.category === this.foodFilter) &&
-                        (
-                            !search ||
-                            f.name.toLowerCase().includes(search) ||
-                            f.desc.toLowerCase().includes(search)
-                        )
-                    );
+                    let filtered = this.food.filter(f => {
+                        const categoryMatch = this.foodFilter === 'All' || f.category === this.foodFilter;
+                        const searchMatch = !search || 
+                            f.name.toLowerCase().includes(search) || 
+                            f.desc.toLowerCase().includes(search);
+                        
+                        return categoryMatch && searchMatch;
+                    });
                     
-                    // Optimized sorting with early returns
                     if (this.foodSort === 'name') {
                         filtered.sort((a, b) => a.name.localeCompare(b.name));
                     } else if (this.foodSort === 'category') {
@@ -749,14 +770,14 @@ document.addEventListener('alpine:init', () => {
                 
                 const sort = () => {
                     let search = this.merchSearch.toLowerCase();
-                    let filtered = this.merchandise.filter(m =>
-                        (this.merchFilter === 'All' || m.category === this.merchFilter) &&
-                        (
-                            !search ||
-                            m.name.toLowerCase().includes(search) ||
-                            m.desc.toLowerCase().includes(search)
-                        )
-                    );
+                    let filtered = this.merchandise.filter(m => {
+                        const categoryMatch = this.merchFilter === 'All' || m.category === this.merchFilter;
+                        const searchMatch = !search || 
+                            m.name.toLowerCase().includes(search) || 
+                            m.desc.toLowerCase().includes(search);
+                        
+                        return categoryMatch && searchMatch;
+                    });
                     
                     if (this.merchSort === 'name') {
                         filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -1084,6 +1105,180 @@ document.addEventListener('alpine:init', () => {
                 }
                 return '0.0';
             },
+
+            // Debug method - call this from browser console: window.debugCatalog()
+            debugState() {
+                return {
+                    tab: this.tab,
+                    foodDataLength: this.food?.length || 0,
+                    merchDataLength: this.merchandise?.length || 0,
+                    foodSearchInput: this.foodSearchInput,
+                    foodSearch: this.foodSearch,
+                    showFoodPredictions: this.showFoodPredictions,
+                    sortedFoodsLength: this.sortedFoods?.length || 0,
+                    pagedFoodsLength: this.pagedFoods?.length || 0
+                };
+            },
+            
+            // Enhanced search method with backend option
+            async performSearch() {
+                // Always use frontend search for now to prevent reload issues
+                this.performFrontendSearch();
+            },
+            
+            // Original frontend search (existing implementation)
+            performFrontendSearch() {
+                if (this.tab === 'food') {
+                    this.invalidateCache('food');
+                    this.foodSearch = this.foodSearchInput.trim();
+                    this.foodPage = 1;
+                    
+                    this.$nextTick(() => {
+                        this.animateCards();
+                    });
+                } else {
+                    this.invalidateCache('merch');
+                    this.merchSearch = this.merchSearchInput.trim();
+                    this.merchPage = 1;
+                    
+                    this.$nextTick(() => {
+                        this.animateCards();
+                    });
+                }
+                
+                this.showFoodPredictions = false;
+                this.showMerchPredictions = false;
+            },
+            
+            // New backend search implementation
+            async performBackendSearch() {
+                this.isSearching = true;
+                
+                try {
+                    const searchParams = new URLSearchParams({
+                        query: this.tab === 'food' ? this.foodSearchInput.trim() : this.merchSearchInput.trim(),
+                        type: this.tab === 'food' ? 'food' : 'merch',
+                        category: this.tab === 'food' ? this.foodFilter : this.merchFilter,
+                        sort: this.tab === 'food' ? this.foodSort : this.merchSort,
+                        page: 1,
+                        per_page: this.tab === 'food' ? this.foodPerPage : this.merchPerPage
+                    });
+                    
+                    const response = await fetch(`/search/catalog?${searchParams}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Update the data
+                        if (this.tab === 'food') {
+                            this.food = data.products;
+                            this.foodSearch = this.foodSearchInput.trim();
+                            this.foodPage = data.pagination.current_page;
+                        } else {
+                            this.merchandise = data.products;
+                            this.merchSearch = this.merchSearchInput.trim();
+                            this.merchPage = data.pagination.current_page;
+                        }
+                        
+                        // Clear caches since we have new data
+                        this.invalidateCache();
+                        
+                        console.log('Backend search completed:', data.products.length, 'results');
+                        
+                        this.$nextTick(() => {
+                            this.animateCards();
+                        });
+                    } else {
+                        console.error('Backend search failed:', response.status);
+                        // Fallback to frontend search
+                        this.performFrontendSearch();
+                    }
+                } catch (error) {
+                    console.error('Backend search error:', error);
+                    // Fallback to frontend search
+                    this.performFrontendSearch();
+                } finally {
+                    this.isSearching = false;
+                    this.showFoodPredictions = false;
+                    this.showMerchPredictions = false;
+                }
+            },
+            
+            // Enhanced clear search with backend support
+            async clearSearch() {
+                console.log('=== CLEAR SEARCH ===');
+                console.log('Current tab:', this.tab);
+                
+                if (this.tab === 'food') {
+                    this.foodSearchInput = '';
+                    this.foodSearch = '';
+                    this.foodPage = 1;
+                } else {
+                    this.merchSearchInput = '';
+                    this.merchSearch = '';
+                    this.merchPage = 1;
+                }
+                
+                // If we were using backend search, reload the original data
+                if (this.useBackendSearch) {
+                    await this.loadOriginalData();
+                } else {
+                    this.invalidateCache();
+                    this.$nextTick(() => {
+                        this.animateCards();
+                    });
+                }
+                
+                this.showFoodPredictions = false;
+                this.showMerchPredictions = false;
+            },
+            
+            // Load original data from backend
+            async loadOriginalData() {
+                this.isSearching = true;
+                
+                try {
+                    const response = await fetch('/catalog/data', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.food = data.food || [];
+                        this.merchandise = data.merchandise || [];
+                        this.invalidateCache();
+                        
+                        this.$nextTick(() => {
+                            this.animateCards();
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to load original data:', error);
+                } finally {
+                    this.isSearching = false;
+                }
+            },
+            
+            // Method to toggle between frontend and backend search
+            toggleSearchMode() {
+                this.useBackendSearch = !this.useBackendSearch;
+                console.log('Search mode:', this.useBackendSearch ? 'Backend' : 'Frontend');
+            },
+
+            // Expose debug method globally
+            init() {
+                window.debugCatalog = () => this.debugState();
+            },
             
             // Optimized watchers with debouncing
             $watch: {
@@ -1148,5 +1343,24 @@ document.addEventListener('alpine:init', () => {
     });
 });
 </script>
+
+<!-- Add search mode indicator for admins -->
+@if(auth()->check() && auth()->user()->role === 'admin')
+    <div class="fixed bottom-4 left-4 z-40">
+        <button @click="toggleSearchMode()" 
+                :class="useBackendSearch ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-600 hover:bg-gray-700'"
+                class="px-3 py-2 text-white text-xs rounded-lg shadow-lg transition-colors">
+            <span x-text="useBackendSearch ? 'Backend Search' : 'Frontend Search'"></span>
+        </button>
+    </div>
+@endif
+
+<!-- Loading overlay for backend search -->
+<div x-show="isSearching" x-cloak class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
+    <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mb-4"></div>
+        <p class="text-gray-600 font-medium">Searching...</p>
+    </div>
+</div>
 
 

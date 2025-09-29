@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Support\Facades\Log;
 
 class CatalogController extends Controller
@@ -194,6 +195,9 @@ class CatalogController extends Controller
         $merchandise = \App\Models\Product::where('type', 'merch')->get();
         $food = \App\Models\Product::where('type', 'food')->get();
         $categories = \App\Models\Product::pluck('category')->unique()->values()->all();
+        
+
+        
         return view('products.catalog', compact('food', 'merchandise', 'categories'));
     }
 
@@ -206,5 +210,58 @@ class CatalogController extends Controller
         $product = Product::findOrFail($id);
         $product->delete();
         return redirect()->route('products.catalog')->with('success', 'Product deleted!');
+    }
+
+    /**
+     * Get catalog data as JSON (for AJAX requests)
+     */
+    public function getData()
+    {
+        $food = Product::where('type', 'food')->get();
+        $merchandise = Product::where('type', 'merch')->get();
+        
+        // Calculate ratings for each product
+        foreach ($food as $product) {
+            $this->calculateProductRating($product);
+        }
+        
+        foreach ($merchandise as $product) {
+            $this->calculateProductRating($product);
+        }
+        
+        return response()->json([
+            'food' => $food,
+            'merchandise' => $merchandise
+        ]);
+    }
+
+    /**
+     * Calculate average rating for a product
+     */
+    private function calculateProductRating($product)
+    {
+        $reviews = Review::where('product_id', $product->id)->get();
+        $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+        
+        foreach ($reviews as $review) {
+            $rating = (int) $review->rating;
+            if ($rating >= 1 && $rating <= 5) {
+                $ratings[$rating]++;
+            }
+        }
+        
+        $totalRatings = array_sum($ratings);
+        $averageRating = 0;
+        
+        if ($totalRatings > 0) {
+            $weightedSum = 0;
+            foreach ($ratings as $star => $count) {
+                $weightedSum += $star * $count;
+            }
+            $averageRating = $weightedSum / $totalRatings;
+        }
+        
+        $product->calculated_rating = number_format($averageRating, 1);
+        $product->review_count = $totalRatings;
     }
 }

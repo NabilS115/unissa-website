@@ -11,6 +11,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\SearchController;
 
 // contact routes
 Route::get('/contact', function () {
@@ -67,6 +68,9 @@ Route::put('/catalog/edit/{id}', [\App\Http\Controllers\CatalogController::class
 Route::post('/catalog/upload', [CatalogController::class, 'upload'])->name('catalog.upload');
 Route::delete('/catalog/delete/{id}', [\App\Http\Controllers\CatalogController::class, 'destroy'])->name('catalog.delete');
 
+// Catalog data endpoint
+Route::get('/catalog/data', [CatalogController::class, 'getData'])->name('catalog.data');
+
 // about routes
 Route::get('/company-history', function () {
     return view('company-history');
@@ -115,8 +119,10 @@ Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('revi
 Route::post('/reviews/{id}/helpful', [ReviewController::class, 'helpful'])->name('review.helpful');
 
 // Search routes
-Route::get('/search', [App\Http\Controllers\SearchController::class, 'search'])->name('search');
-Route::get('/search/suggestions', [App\Http\Controllers\SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::get('/search/catalog', [SearchController::class, 'catalogSearch'])->name('search.catalog');
+Route::get('/search/filters', [SearchController::class, 'getFilters'])->name('search.filters');
 
 // Gallery routes (admin protected)
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
