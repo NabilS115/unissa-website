@@ -170,26 +170,6 @@ class CatalogController extends Controller
         return redirect()->route('products.catalog')->with('success', 'Product updated!');
     }
 
-    public function upload(\Illuminate\Http\Request $request)
-    {
-        // Only allow admin
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
-            abort(403, 'Unauthorized');
-        }
-
-        $request->validate([
-            'image' => 'required|image|max:2048',
-            'type' => 'required|in:food,merch',
-        ]);
-        $path = $request->file('image')->store('catalog', 'public');
-        // Example: Save image path and type to your model/table
-        // ProductImage::create([
-        //     'img' => '/storage/' . $path,
-        //     'type' => $request->type,
-        // ]);
-        return back()->with('success', 'Image uploaded!');
-    }
-
     public function index()
     {
         $merchandise = \App\Models\Product::where('type', 'merch')->get();
