@@ -320,11 +320,27 @@
                     return;
                 }
                 
-                // Otherwise, go back to catalog with restored state
+                // If coming from catalog, restore the exact state
+                if (state.source === 'catalog' || state.sourcePage === '/catalog') {
+                    // Set restoration flag with the state
+                    sessionStorage.setItem('restoreCatalogState', savedState);
+                    window.location.href = '/catalog';
+                    return;
+                }
+                
+                // For other sources, try to go to the source page
+                if (state.sourcePage) {
+                    sessionStorage.setItem('restoreCatalogState', savedState);
+                    window.location.href = state.sourcePage;
+                    return;
+                }
+                
+                // Fallback to catalog with state restoration
                 sessionStorage.setItem('restoreCatalogState', savedState);
                 window.location.href = '/catalog';
             } catch (e) {
                 // If parsing fails, fallback to catalog
+                console.error('Error parsing catalog state:', e);
                 window.location.href = '/catalog';
             }
         } else if (document.referrer && document.referrer !== window.location.href) {
@@ -362,6 +378,15 @@
                 const state = JSON.parse(savedState);
                 if (state.source === 'homepage') {
                     backButtonText.textContent = 'Back to Homepage';
+                } else if (state.source === 'catalog') {
+                    // Show which tab they'll return to
+                    const tabName = state.tab === 'food' ? 'Food' : 'Merchandise';
+                    backButtonText.textContent = `Back to ${tabName} Catalog`;
+                } else if (state.sourcePage) {
+                    // Generic back to source page
+                    backButtonText.textContent = 'Back to Catalog';
+                } else {
+                    backButtonText.textContent = 'Back to Catalog';
                 }
             } catch (e) {
                 console.error('Error parsing saved state:', e);

@@ -618,8 +618,21 @@
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('foodMerchComponent', function() {
+        // Check for restore state to set initial tab
+        let initialTab = 'food';
+        try {
+            const restoreState = sessionStorage.getItem('restoreCatalogState');
+            if (restoreState) {
+                const state = JSON.parse(restoreState);
+                initialTab = state.tab || 'food';
+                console.log('Setting initial tab from restore state:', initialTab);
+            }
+        } catch (e) {
+            console.error('Error reading restore state for initial tab:', e);
+        }
+        
         return {
-            tab: 'food',
+            tab: initialTab,
             isLoading: false,
             foodFilter: 'All',
             merchFilter: 'All',
@@ -1004,6 +1017,8 @@ document.addEventListener('alpine:init', () => {
                 if (!productId) return;
                 
                 const currentState = {
+                    source: 'catalog',
+                    sourcePage: '/catalog',
                     tab: this.tab,
                     foodFilter: this.foodFilter,
                     merchFilter: this.merchFilter,
@@ -1013,7 +1028,8 @@ document.addEventListener('alpine:init', () => {
                     merchSearch: this.merchSearch,
                     foodPage: this.foodPage,
                     merchPage: this.merchPage,
-                    scrollPosition: window.scrollY
+                    scrollPosition: window.scrollY,
+                    timestamp: Date.now()
                 };
                 
                 sessionStorage.setItem('catalogState', JSON.stringify(currentState));
@@ -1021,12 +1037,17 @@ document.addEventListener('alpine:init', () => {
             },
             
             async init() {
-                // Restore state if available
+                // Check for state restoration first, before any other initialization
                 const restoreState = sessionStorage.getItem('restoreCatalogState');
                 if (restoreState) {
                     try {
                         const state = JSON.parse(restoreState);
+                        console.log('Restoring catalog state:', state);
+                        
+                        // Set tab first, before other properties
                         this.tab = state.tab || 'food';
+                        console.log('Setting tab to:', this.tab);
+                        
                         this.foodFilter = state.foodFilter || 'All';
                         this.merchFilter = state.merchFilter || 'All';
                         this.foodSort = state.foodSort || '';
@@ -1038,13 +1059,18 @@ document.addEventListener('alpine:init', () => {
                         this.foodPage = state.foodPage || 1;
                         this.merchPage = state.merchPage || 1;
                         
+                        // Force a DOM update to ensure tab change is applied
+                        await this.$nextTick();
+                        
+                        // Restore scroll position after a longer delay
                         setTimeout(() => {
                             if (state.scrollPosition) {
                                 window.scrollTo(0, state.scrollPosition);
                             }
-                        }, 100);
+                        }, 300);
                         
                         sessionStorage.removeItem('restoreCatalogState');
+                        console.log('State restoration completed. Current tab:', this.tab);
                     } catch (e) {
                         console.error('Error restoring catalog state:', e);
                     }
