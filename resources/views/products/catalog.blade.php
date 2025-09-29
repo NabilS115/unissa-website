@@ -389,7 +389,7 @@
                                 <form method="POST" :action="'/catalog/delete/' + food.id" onsubmit="event.stopPropagation(); return confirm('Delete this product?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-red-700 transition-colors backdrop-blur-sm bg-opacity-90">
+                                    <button type="submit" @click.stop class="bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-red-700 transition-colors backdrop-blur-sm bg-opacity-90">
                                         Delete
                                     </button>
                                 </form>
@@ -457,7 +457,7 @@
                                 <form method="POST" :action="'/catalog/delete/' + item.id" onsubmit="event.stopPropagation(); return confirm('Delete this product?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-red-700 transition-colors backdrop-blur-sm bg-opacity-90">
+                                    <button type="submit" @click.stop class="bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-md text-xs font-semibold hover:bg-red-700 transition-colors backdrop-blur-sm bg-opacity-90">
                                         Delete
                                     </button>
                                 </form>
