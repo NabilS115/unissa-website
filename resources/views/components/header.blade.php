@@ -192,13 +192,29 @@
             </style>
             
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
+                function initializeHeaderInteractions() {
                     const searchIcon = document.getElementById('searchbar-icon');
                     const searchGroup = document.getElementById('searchbar-group');
                     const searchDropdown = document.getElementById('searchbar-dropdown');
                     const profileIcon = document.getElementById('profileMenuButton');
                     const profileGroup = document.getElementById('profile-group');
                     const profileDropdown = document.getElementById('profileDropdown');
+
+                    // Check if elements exist before proceeding
+                    if (!searchIcon || !profileIcon) {
+                        console.log('Header elements not ready, retrying...');
+                        setTimeout(initializeHeaderInteractions, 100);
+                        return;
+                    }
+
+                    // Prevent double initialization
+                    if (searchIcon.hasAttribute('data-initialized') || profileIcon.hasAttribute('data-initialized')) {
+                        return;
+                    }
+
+                    // Mark as initialized
+                    searchIcon.setAttribute('data-initialized', 'true');
+                    profileIcon.setAttribute('data-initialized', 'true');
                     
                     // Search icon click handler
                     if (searchIcon && searchGroup) {
@@ -270,16 +286,29 @@
                             e.stopPropagation();
                         });
                     }
-                });
+
+                    console.log('Header interactions initialized successfully');
+                }
+
+                // Initialize on DOM ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initializeHeaderInteractions);
+                } else {
+                    // DOM is already loaded
+                    initializeHeaderInteractions();
+                }
+
+                // Also initialize after a short delay to handle dynamic loading
+                setTimeout(initializeHeaderInteractions, 500);
             </script>
         </div>
         
         <div class="relative group" id="profile-group">
             <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden">
                 @if(Auth::check() && Auth::user()->profile_photo_url)
-                    <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover">
+                    <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover pointer-events-none">
                 @else
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="24" height="24" class="">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="24" height="24" class="pointer-events-none">
                         <circle cx="20" cy="20" r="18" fill="#fff" stroke="#0d9488" stroke-width="2" />
                         <circle cx="20" cy="16" r="5" fill="none" stroke="#0d9488" stroke-width="2" />
                         <path d="M12 30c0-4 8-4 8-4s8 0 8 4" fill="none" stroke="#0d9488" stroke-width="2" />
