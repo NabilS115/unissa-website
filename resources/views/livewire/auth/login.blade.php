@@ -11,7 +11,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+new #[Layout('components.layouts.auth', ['title' => 'Login'])] class extends Component {
     #[Validate('required|string|email')]
     public string $email = '';
 
@@ -19,6 +19,14 @@ new #[Layout('components.layouts.auth')] class extends Component {
     public string $password = '';
 
     public bool $remember = false;
+
+    /**
+     * Get the page title.
+     */
+    public function title(): string
+    {
+        return 'Login - ' . config('app.name', 'Laravel');
+    }
 
     /**
      * Handle an incoming authentication request.

@@ -387,8 +387,8 @@
                     </div>
                 </div>
                 
-                <button id="vendors-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8249;</button>
-                <button id="vendors-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8250;</button>
+                <button id="vendors-prev" class="absolute left-1/4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8249;</button>
+                <button id="vendors-next" class="absolute right-1/4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8250;</button>
                 
                 <div id="vendors-dots" class="flex justify-center gap-2 mt-6"></div>
             </div>
@@ -396,9 +396,163 @@
     </section>
 
     <script>
+        // Track authentication state to handle login/logout
+        let currentAuthState = @json(auth()->check());
+        let currentUserRole = @json(auth()->check() ? auth()->user()->role : null);
+
+        // Function to refresh all carousels after DOM changes
+        let isRefreshing = false;
+        let refreshTimeout = null;
+        
+        function refreshAllCarousels() {
+            // Clean, simple refresh without triggers that cause loops
+            console.log('Refreshing carousels...');
+            
+            try {
+                // Reset carousel positions to starting state
+                const bgTrack = document.getElementById('event-bg-track');
+                const vendorsTrack = document.getElementById('vendors-track');
+                
+                if (bgTrack) {
+                    bgTrack.style.transform = '';
+                    bgTrack.style.transition = 'none';
+                }
+                
+                if (vendorsTrack) {
+                    vendorsTrack.style.transform = '';
+                    vendorsTrack.style.transition = 'none';
+                }
+                
+                // Reset current positions
+                if (typeof currentEvent !== 'undefined') {
+                    currentEvent = 0;
+                }
+                if (typeof currentVendor !== 'undefined') {
+                    currentVendor = 0;
+                }
+                
+                // Re-render carousels without triggering events
+                if (typeof renderEventBgCarousel === 'function') {
+                    renderEventBgCarousel();
+                }
+                
+                if (typeof resetEventInterval === 'function') {
+                    resetEventInterval();
+                }
+                
+                if (typeof renderVendorsCarousel === 'function') {
+                    renderVendorsCarousel();
+                }
+                
+                if (typeof resetVendorInterval === 'function') {
+                    resetVendorInterval();
+                }
+                
+                console.log('Carousels refreshed successfully');
+                
+                // Force recalculation of container dimensions  
+                const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
+                if (galleryContainer) {
+                    galleryContainer.style.width = '';
+                    galleryContainer.style.height = '';
+                    void galleryContainer.offsetHeight; // Trigger reflow
+                }
+                
+            } catch (error) {
+                console.log('Error in carousel refresh:', error);
+            }
+        }
+
+        // Simplified authentication handling - no automatic monitoring
+        function checkAuthStateChange() {
+            // Disabled to prevent infinite loops
+            console.log('Auth state check disabled to prevent loops');
+        }
+
+        // Smart authentication state monitoring - only check when needed
+        let lastAuthCheck = Date.now();
+        
+        function checkAndRefreshOnAuthChange() {
+            // Only check every 30 seconds to avoid spam
+            if (Date.now() - lastAuthCheck < 30000) {
+                return;
+            }
+            lastAuthCheck = Date.now();
+            
+            fetch('/api/auth-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.authenticated !== currentAuthState || data.role !== currentUserRole) {
+                        console.log('Authentication state changed, refreshing carousels...');
+                        currentAuthState = data.authenticated;
+                        currentUserRole = data.role;
+                        
+                        // Use clean refresh without problematic triggers
+                        setTimeout(refreshAllCarousels, 100);
+                    }
+                })
+                .catch(error => {
+                    // Ignore errors silently
+                });
+        }
+        
+        // Only check auth state on user interaction (not automatically)
+        document.addEventListener('click', checkAndRefreshOnAuthChange);
+        document.addEventListener('focus', checkAndRefreshOnAuthChange);
+
+        // Force page reload if user logs in/out during the session
+        // This ensures DOM matches the authentication state
+        let loginFormSubmitted = false;
+        
+        // Monitor login/logout form submissions specifically
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.action && (form.action.includes('/login') || form.action.includes('/logout'))) {
+                // After login/logout form submission, check auth state and refresh
+                setTimeout(() => {
+                    console.log('Login/logout form submitted, checking auth state...');
+                    checkAndRefreshOnAuthChange();
+                }, 1000);
+            }
+        });
+
+        // DOM observer disabled to prevent infinite refresh loops
+        // const observer = new MutationObserver(...) - DISABLED
+        
+        // DOM observation disabled to prevent loops
+        // observer.observe(...) - DISABLED
+
+        // Resize event listener DISABLED to prevent infinite loops
+        // let resizeTimeout;
+        // window.addEventListener('resize', ...) - DISABLED
+
+        // Header observation disabled to prevent infinite loops
+        // All automatic monitoring is disabled
+
+        // Automatic admin element checking disabled to prevent loops
+
         // Enhanced gallery data from database or default
         let galleryData = @json($galleryImages ?? []);
         let vendorsData = @json($vendors ?? []);
+        
+        // Debug backend data loading
+        console.log('=== BACKEND DATA DEBUG ===');
+        console.log('Raw galleryData:', galleryData);
+        console.log('Raw vendorsData:', vendorsData);
+        console.log('Gallery count:', galleryData ? galleryData.length : 0);
+        console.log('Vendors count:', vendorsData ? vendorsData.length : 0);
+        
+        // Test function to debug vendors
+        window.testVendorsCarousel = function() {
+            console.log('TEST: Vendors data:', vendorsData);
+            console.log('TEST: Vendors track element:', document.getElementById('vendors-track'));
+            console.log('TEST: renderVendorsCarousel function exists:', typeof renderVendorsCarousel);
+            
+            if (typeof renderVendorsCarousel === 'function') {
+                console.log('TEST: Calling renderVendorsCarousel...');
+                renderVendorsCarousel();
+            }
+        };
         
         // Add missing navigation function
         function navigateToReview(productId) {
@@ -434,14 +588,30 @@
 
         // Carousel functions
         function renderEventBgCarousel() {
+            console.log('Running renderEventBgCarousel...');
             const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
+            const bgTrack = document.getElementById('event-bg-track');
+            
+            console.log('Gallery render check:', {
+                galleryContainer: !!galleryContainer,
+                bgTrack: !!bgTrack,
+                eventImages: eventImages ? eventImages.length : 'no eventImages'
+            });
+            
+            if (!galleryContainer || !bgTrack) {
+                console.error('Gallery elements missing for rendering');
+                return;
+            }
             
             if (!eventImages || eventImages.length === 0) {
+                console.log('No gallery images, showing empty state');
                 // Show empty state instead of hiding
                 galleryContainer.style.display = 'block';
                 showGalleryEmptyState();
                 return;
             }
+            
+            console.log('Rendering gallery with', eventImages.length, 'images');
 
             galleryContainer.style.display = 'block';
             hideGalleryEmptyState();
@@ -1304,22 +1474,282 @@
             }
         @endif
 
-        // Initialize carousel
-        renderEventBgCarousel();
-        resetEventInterval();
-
-        // Vendors carousel functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Vendors Carousel (3 at a time)
-            const vendors = vendorsData;
-
-            let currentVendor = 0;
-            const vendorsTrack = document.getElementById('vendors-track');
+        // Initialize gallery carousel with proper timing
+        window.initializeGalleryCarousel = function() {
+            console.log('Initializing gallery carousel...');
+            
+            // Check if required elements exist
+            const bgTrack = document.getElementById('event-bg-track');
+            const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
+            
+            console.log('Gallery elements check:', {
+                bgTrack: !!bgTrack,
+                galleryContainer: !!galleryContainer,
+                eventImages: eventImages ? eventImages.length : 'undefined',
+                galleryData: galleryData ? galleryData.length : 'undefined'
+            });
+            
+            if (!bgTrack || !galleryContainer) {
+                console.error('Gallery carousel elements not found!');
+                return;
+            }
+            
+            if (typeof renderEventBgCarousel === 'function') {
+                renderEventBgCarousel();
+            } else {
+                console.error('renderEventBgCarousel function not defined');
+            }
+            
+            if (typeof resetEventInterval === 'function') {
+                resetEventInterval();
+            } else {
+                console.error('resetEventInterval function not defined');
+            }
+        };
+        
+        // Vendors carousel functionality - Global scope variables
+        let currentVendor = 0;
+        let vendorInterval = null;
+        const vendorsPerSlide = 1;
+        
+        // Initialize vendors carousel - Global function
+        window.initializeVendorsCarousel = function() {
+            console.log('Initializing vendors carousel...');
+            
+            // Check if required elements exist
+            const vendorsTrackElement = document.getElementById('vendors-track');
+            const vendorsContainer = document.querySelector('#vendors-track')?.parentNode;
+            
+            console.log('Vendors elements check:', {
+                vendorsTrack: !!vendorsTrackElement,
+                vendorsContainer: !!vendorsContainer,
+                vendorsData: vendorsData ? vendorsData.length : 'undefined'
+            });
+            
+            if (!vendorsTrackElement) {
+                console.error('Vendors carousel elements not found!');
+                return;
+            }
+            
+            if (typeof renderVendorsCarousel === 'function') {
+                renderVendorsCarousel();
+            } else {
+                console.error('renderVendorsCarousel function not defined');
+            }
+            
+            if (typeof resetVendorInterval === 'function') {
+                resetVendorInterval();
+            } else {
+                console.error('resetVendorInterval function not defined');
+            }
+            
+            // Set up navigation event handlers
             const vendorsPrev = document.getElementById('vendors-prev');
             const vendorsNext = document.getElementById('vendors-next');
+            
+            if (vendorsPrev && vendorsNext) {
+                // Remove any existing event listeners to avoid duplicates
+                vendorsPrev.replaceWith(vendorsPrev.cloneNode(true));
+                vendorsNext.replaceWith(vendorsNext.cloneNode(true));
+                
+                // Get the new elements after cloning
+                const newVendorsPrev = document.getElementById('vendors-prev');
+                const newVendorsNext = document.getElementById('vendors-next');
+                
+                newVendorsPrev.addEventListener('click', function() {
+                    moveVendorCarousel(-1);
+                    resetVendorInterval();
+                });
+                
+                newVendorsNext.addEventListener('click', function() {
+                    moveVendorCarousel(1);
+                    resetVendorInterval();
+                });
+                
+                console.log('Vendors navigation handlers attached successfully');
+            } else {
+                console.error('Vendors navigation buttons not found');
+            }
+        };
+        
+        // Initialize immediately and also on DOM ready
+        window.initializeGalleryCarousel();
+        window.initializeVendorsCarousel();
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                window.initializeGalleryCarousel();
+                window.initializeVendorsCarousel();
+            });
+        }
+
+        // Global vendors carousel functions
+        function renderVendorsCarousel() {
+            console.log('=== RENDERING VENDORS CAROUSEL ===');
+            const vendors = vendorsData; // Use the global vendorsData
+            console.log('Vendors data for rendering:', vendors);
+            const vendorsTrack = document.getElementById('vendors-track');
             const vendorsDots = document.getElementById('vendors-dots');
-            let vendorInterval = null;
-            const vendorsPerSlide = 3;
+            
+            if (!vendorsTrack || !vendors || vendors.length === 0) {
+                console.log('Cannot render vendors carousel - missing elements or data');
+                return;
+            }
+            
+            vendorsTrack.innerHTML = '';
+            // Calculate number of slides
+            const totalSlides = Math.ceil(vendors.length / vendorsPerSlide);
+            
+            // Clone last slide to the beginning
+            const lastVendors = vendors.slice(-vendorsPerSlide);
+            vendorsTrack.appendChild(vendorSlideHTML(lastVendors));
+            
+            // Real slides
+            for (let i = 0; i < totalSlides; i++) {
+                const slideVendors = vendors.slice(i * vendorsPerSlide, (i + 1) * vendorsPerSlide);
+                vendorsTrack.appendChild(vendorSlideHTML(slideVendors));
+            }
+            
+            // Clone first slide to the end
+            const firstVendors = vendors.slice(0, vendorsPerSlide);
+            vendorsTrack.appendChild(vendorSlideHTML(firstVendors));
+            
+            // Set initial position
+            vendorsTrack.style.transition = 'none';
+            vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+            void vendorsTrack.offsetWidth;
+            vendorsTrack.style.transition = 'transform 0.7s';
+            
+            // Dots
+            if (vendorsDots) {
+                vendorsDots.innerHTML = '';
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('w-3', 'h-3', 'rounded-full', 'cursor-pointer', 'transition-colors');
+                    if (i === currentVendor) {
+                        dot.classList.add('bg-teal-600');
+                    } else {
+                        dot.classList.add('bg-gray-300');
+                    }
+                    dot.addEventListener('click', () => goToVendor(i));
+                    vendorsDots.appendChild(dot);
+                }
+            }
+        }
+        
+        // Global vendor helper functions
+        function vendorSlideHTML(vendorArr) {
+            const slide = document.createElement('div');
+            slide.className = "min-w-full flex justify-center items-center";
+            slide.innerHTML = vendorArr.map(v => `
+                <div class="bg-teal-50 rounded-xl shadow-lg border p-8 w-80 h-96 flex flex-col items-center justify-between">
+                    <div class="flex flex-col items-center gap-4 flex-grow">
+                        <img src="${v.image_url}" alt="${v.name}" class="w-24 h-24 rounded-full object-cover">
+                        <div class="text-center flex-grow flex flex-col justify-center gap-2">
+                            <span class="font-bold text-teal-700 text-lg line-clamp-2">${v.name}</span>
+                            <span class="text-gray-600 text-base font-medium">${v.type}</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 text-center text-sm leading-relaxed line-clamp-3 mt-4">${v.description}</p>
+                </div>
+            `).join('');
+            return slide;
+        }
+        
+        function goToVendor(idx) {
+            currentVendor = idx;
+            const vendorsTrack = document.getElementById('vendors-track');
+            if (vendorsTrack) {
+                vendorsTrack.style.transition = 'transform 0.7s';
+                vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                updateVendorDots();
+            }
+        }
+        
+        function updateVendorDots() {
+            const vendorsDots = document.getElementById('vendors-dots');
+            if (!vendorsDots) return;
+            
+            const dots = vendorsDots.querySelectorAll('div');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('bg-teal-600', 'bg-gray-300');
+                if (index === currentVendor) {
+                    dot.classList.add('bg-teal-600');
+                } else {
+                    dot.classList.add('bg-gray-300');
+                }
+            });
+        }
+        
+        function resetVendorInterval() {
+            if (vendorInterval) {
+                clearInterval(vendorInterval);
+                vendorInterval = null;
+            }
+        }
+        
+        function moveVendorCarousel(direction) {
+            const vendors = vendorsData;
+            if (!vendors || vendors.length === 0) return;
+            
+            const vendorsTrack = document.getElementById('vendors-track');
+            if (!vendorsTrack) return;
+            
+            const totalSlides = Math.ceil(vendors.length / vendorsPerSlide);
+            
+            if (direction === 1) {
+                currentVendor++;
+                if (currentVendor >= totalSlides) {
+                    currentVendor = 0;
+                    vendorsTrack.style.transition = 'none';
+                    vendorsTrack.style.transform = `translateX(-${totalSlides * 100}%)`;
+                    setTimeout(() => {
+                        vendorsTrack.style.transition = 'transform 0.7s';
+                        vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                        updateVendorDots();
+                    }, 10);
+                } else {
+                    vendorsTrack.style.transition = 'transform 0.7s';
+                    vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                    updateVendorDots();
+                }
+            } else {
+                currentVendor--;
+                if (currentVendor < 0) {
+                    currentVendor = totalSlides - 1;
+                    vendorsTrack.style.transition = 'none';
+                    vendorsTrack.style.transform = `translateX(0%)`;
+                    setTimeout(() => {
+                        vendorsTrack.style.transition = 'transform 0.7s';
+                        vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                        updateVendorDots();
+                    }, 10);
+                } else {
+                    vendorsTrack.style.transition = 'transform 0.7s';
+                    vendorsTrack.style.transform = `translateX(-${(currentVendor + 1) * 100}%)`;
+                    updateVendorDots();
+                }
+            }
+        }
+        
+        // Vendors carousel initialization function moved to earlier in the file
+        
+        // Add vendors navigation event handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            const vendorsPrev = document.getElementById('vendors-prev');
+            const vendorsNext = document.getElementById('vendors-next');
+            
+            if (vendorsPrev && vendorsNext) {
+                vendorsPrev.addEventListener('click', function() {
+                    moveVendorCarousel(-1);
+                    resetVendorInterval();
+                });
+                
+                vendorsNext.addEventListener('click', function() {
+                    moveVendorCarousel(1);
+                    resetVendorInterval();
+                });
+            }
             
             function renderVendorsCarousel() {
                 vendorsTrack.innerHTML = '';
@@ -1422,11 +1852,50 @@
                 });
             }
             
-            vendorsPrev.onclick = function() { moveVendorCarousel(-1); resetVendorInterval(); };
-            vendorsNext.onclick = function() { moveVendorCarousel(1); resetVendorInterval(); };
-            renderVendorsCarousel();
-            resetVendorInterval();
-        });
+            // Event handlers moved to global initialization functions
+            // Vendors carousel initialization function moved to global scope above
+            
+            // Vendors carousel initialized globally above
+            
+            // Make refresh function globally available
+            window.refreshAllCarousels = refreshAllCarousels;
+            
+            // Add global event listener for manual carousel refresh
+            document.addEventListener('refreshCarousels', refreshAllCarousels);
+            
+            // Add manual trigger that can be called from anywhere
+            window.triggerCarouselRefresh = function() {
+                console.log('Manual carousel refresh triggered');
+                refreshAllCarousels();
+            };
+            
+                // Add a safe auth state refresh trigger
+                window.refreshAfterLogin = function() {
+                    console.log('Post-login carousel refresh');
+                    setTimeout(() => {
+                        currentAuthState = true; // Assume logged in
+                        refreshAllCarousels();
+                    }, 200);
+                };
+            });
+            
+            // Safe initialization backup - only runs once without loops
+            let carouselInitialized = false;
+            window.addEventListener('load', function() {
+                if (!carouselInitialized) {
+                    carouselInitialized = true;
+                    console.log('Ensuring carousels are properly initialized...');
+                    
+                    setTimeout(() => {
+                        if (typeof window.initializeGalleryCarousel === 'function') {
+                            window.initializeGalleryCarousel();
+                        }
+                        if (typeof window.initializeVendorsCarousel === 'function') {
+                            window.initializeVendorsCarousel();
+                        }
+                    }, 100);
+                }
+            });        // Safety net disabled - all automatic refresh disabled
     </script>
 
     <style>

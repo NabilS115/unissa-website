@@ -159,4 +159,12 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/vendors/{vendor}/toggle-active', [VendorController::class, 'toggleActive'])->name('vendors.toggle-active');
 });
 
+// API endpoint to check authentication status
+Route::get('/api/auth-status', function () {
+    return response()->json([
+        'authenticated' => auth()->check(),
+        'role' => auth()->check() ? auth()->user()->role : null
+    ]);
+});
+
 require __DIR__.'/auth.php';

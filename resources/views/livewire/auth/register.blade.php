@@ -8,12 +8,20 @@ use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+new #[Layout('components.layouts.auth', ['title' => 'Register'])] class extends Component {
     public string $name = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
     public string $role = 'user'; // keep this default
+
+    /**
+     * Get the page title.
+     */
+    public function title(): string
+    {
+        return 'Register - ' . config('app.name', 'Laravel');
+    }
 
     /**
      * Handle an incoming registration request.
