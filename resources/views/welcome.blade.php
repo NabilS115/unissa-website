@@ -65,6 +65,34 @@
                 </div>
             @endif
             
+            <!-- Empty State for Gallery -->
+            <div id="gallery-empty-state" class="hidden w-full h-full items-center justify-center p-8" style="min-height: 420px;">
+                <div class="text-center max-w-md mx-auto">
+                    <div class="mb-6">
+                        <svg class="w-20 h-20 mx-auto text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3">Gallery Coming Soon</h3>
+                    <p class="text-gray-500 mb-6">This is where beautiful images will be showcased to give visitors a glimpse of our offerings.</p>
+                    @if(auth()->check() && auth()->user()->role === 'admin')
+                        <button onclick="document.getElementById('add-gallery-btn').click()" class="inline-flex items-center px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium transition-colors">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add Your First Image
+                        </button>
+                    @else
+                        <div class="inline-flex items-center px-4 py-2 bg-teal-50 text-teal-600 rounded-lg">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Images will appear here soon
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
                 <!-- Carousel Controls (right) -->
                 <button id="event-carousel-next"
@@ -395,15 +423,6 @@
                     order: item.sort_order
                 };
             });
-        } else {
-            // Default images if no database images exist
-            eventImages = [
-                { id: null, image: "/images/nightSky.avif" },
-                { id: null, image: "/images/foods.avif" },
-                { id: null, image: "/images/mountains.avif" },
-                { id: null, image: "/images/mountainSunset.avif" },
-                { id: null, image: "/images/chair.avif" }
-            ];
         }
         
         let currentEvent = 0;
@@ -415,12 +434,17 @@
 
         // Carousel functions
         function renderEventBgCarousel() {
+            const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
+            
             if (!eventImages || eventImages.length === 0) {
-                document.querySelector('.bg-white.rounded-2xl').style.display = 'none';
+                // Show empty state instead of hiding
+                galleryContainer.style.display = 'block';
+                showGalleryEmptyState();
                 return;
             }
 
-            document.querySelector('.bg-white.rounded-2xl').style.display = 'block';
+            galleryContainer.style.display = 'block';
+            hideGalleryEmptyState();
             
             bgTrack.innerHTML = '';
             // Clone last slide to the beginning
@@ -513,6 +537,33 @@
                     updateEventBgDots();
                 }
             }
+        }
+
+        // Gallery empty state functions
+        function showGalleryEmptyState() {
+            const emptyState = document.getElementById('gallery-empty-state');
+            const carouselContent = document.querySelector('#event-bg-carousel').parentNode.querySelector('.w-full.flex.items-center');
+            const carouselBg = document.getElementById('event-bg-carousel');
+            
+            if (emptyState) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            }
+            if (carouselContent) carouselContent.style.display = 'none';
+            if (carouselBg) carouselBg.style.display = 'none';
+        }
+
+        function hideGalleryEmptyState() {
+            const emptyState = document.getElementById('gallery-empty-state');
+            const carouselContent = document.querySelector('#event-bg-carousel').parentNode.querySelector('.w-full.flex.items-center');
+            const carouselBg = document.getElementById('event-bg-carousel');
+            
+            if (emptyState) {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+            if (carouselContent) carouselContent.style.display = 'flex';
+            if (carouselBg) carouselBg.style.display = 'block';
         }
 
         function resetEventInterval() {
@@ -1260,50 +1311,7 @@
         // Vendors carousel functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Vendors Carousel (3 at a time)
-            const vendors = vendorsData.length > 0 ? vendorsData : [
-                {
-                    id: null,
-                    name: "Ahmad's Bakery",
-                    type: "Baked Goods",
-                    description: "Freshly baked breads, cakes, and pastries every day.",
-                    image_url: "https://randomuser.me/api/portraits/men/21.jpg"
-                },
-                {
-                    id: null,
-                    name: "Siti's Organics",
-                    type: "Organic Produce",
-                    description: "Locally grown organic fruits and vegetables.",
-                    image_url: "https://randomuser.me/api/portraits/women/22.jpg"
-                },
-                {
-                    id: null,
-                    name: "Joe's Grill",
-                    type: "Grilled Specialties",
-                    description: "Delicious grilled meats and seafood, cooked to perfection.",
-                    image_url: "https://randomuser.me/api/portraits/men/23.jpg"
-                },
-                {
-                    id: null,
-                    name: "Maya's Sweets",
-                    type: "Desserts",
-                    description: "Handmade cakes, cookies, and sweet treats.",
-                    image_url: "https://randomuser.me/api/portraits/women/24.jpg"
-                },
-                {
-                    id: null,
-                    name: "Ali's Seafood",
-                    type: "Seafood",
-                    description: "Fresh seafood delivered daily from the coast.",
-                    image_url: "https://randomuser.me/api/portraits/men/25.jpg"
-                },
-                {
-                    id: null,
-                    name: "Lina's Juice Bar",
-                    type: "Beverages",
-                    description: "Freshly squeezed juices and smoothies made to order.",
-                    image_url: "https://randomuser.me/api/portraits/women/30.jpg"
-                }
-            ];
+            const vendors = vendorsData;
 
             let currentVendor = 0;
             const vendorsTrack = document.getElementById('vendors-track');
