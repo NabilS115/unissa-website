@@ -3,6 +3,131 @@
 @section('title', 'Product Management')
 
 @section('content')
+<!-- Essential JavaScript functions - loaded immediately -->
+<script>
+// Define critical functions in global scope immediately
+window.testJS = function() {
+    alert('JavaScript is working! Delete function should work now.');
+};
+
+window.deleteProductSimple = function(productId) {
+    if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        const form = document.querySelector('.delete-form-' + productId);
+        if (form) {
+            form.submit();
+        } else {
+            alert('Could not find delete form. Please refresh the page and try again.');
+        }
+    }
+};
+
+window.deleteProduct = function(productId) {
+    console.log('Delete function called with productId:', productId);
+    
+    if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        console.log('Delete cancelled by user');
+        return;
+    }
+    
+    console.log('Delete confirmed, proceeding...');
+    
+    // Get CSRF token with fallback
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '{{ csrf_token() }}';
+    
+    if (!csrfToken) {
+        console.error('CSRF token not found!');
+        alert('Security token not found. Please refresh the page and try again.');
+        return;
+    }
+    
+    console.log('CSRF token found:', csrfToken ? 'Yes' : 'No');
+    
+    // Show loading state
+    const deleteButton = document.querySelector('.delete-btn-' + productId);
+    const row = deleteButton ? deleteButton.closest('tr') : null;
+    
+    console.log('Delete button found:', deleteButton ? 'Yes' : 'No');
+    console.log('Row found:', row ? 'Yes' : 'No');
+    
+    if (deleteButton) {
+        deleteButton.disabled = true;
+        deleteButton.textContent = 'Deleting...';
+        deleteButton.classList.add('delete-loading');
+    }
+    
+    if (row) {
+        row.classList.add('row-deleting');
+    }
+    
+    console.log('Sending delete request to:', '/admin/products/' + productId);
+    
+    // Use fetch for the delete request
+    fetch('/admin/products/' + productId, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response received:', response.status, response.statusText);
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            alert(data.message || 'Product deleted successfully!');
+            
+            // Animate row removal
+            if (row) {
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(-100%)';
+                setTimeout(function() {
+                    row.remove();
+                    // Check if this was the last row
+                    const remainingRows = document.querySelectorAll('tbody tr').length;
+                    if (remainingRows === 0) {
+                        location.reload();
+                    }
+                }, 500);
+            } else {
+                location.reload();
+            }
+        } else {
+            throw new Error(data.message || 'Failed to delete product');
+        }
+    })
+    .catch(error => {
+        console.error('Delete error:', error);
+        alert(error.message || 'Failed to delete product');
+        
+        // If AJAX fails, fallback to form submission
+        console.log('AJAX failed, trying form submission fallback...');
+        const form = document.querySelector('.delete-form-' + productId);
+        if (form && confirm('AJAX failed. Try traditional form submission?')) {
+            form.submit();
+            return;
+        }
+        
+        // Reset button state
+        if (deleteButton) {
+            deleteButton.disabled = false;
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.remove('delete-loading');
+        }
+        
+        if (row) {
+            row.classList.remove('row-deleting');
+        }
+    });
+};
+</script>
+
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Page Header -->
@@ -13,6 +138,9 @@
                     <p class="text-gray-600 mt-2">Manage inventory, stock levels, and product availability</p>
                 </div>
                 <div class="flex items-center gap-4">
+                    <button onclick="testJS()" class="inline-flex items-center gap-2 px-3 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700 transition-colors">
+                        Test JS
+                    </button>
                     <a href="{{ route('admin.products.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
@@ -236,9 +364,22 @@
                                             <a href="{{ route('admin.products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
                                                 Edit
                                             </a>
-                                            <button onclick="deleteProduct({{ $product->id }})" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                                                Delete
-                                            </button>
+                                            <form method="POST" action="{{ route('admin.products.destroy', $product) }}" class="inline-block delete-form-{{ $product->id }}" onsubmit="return confirm('Are you sure you want to delete this product?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" 
+                                                        class="text-red-600 hover:text-red-800 text-sm font-medium delete-btn delete-btn-{{ $product->id }}"
+                                                        data-product-id="{{ $product->id }}"
+                                                        onclick="window.deleteProduct && window.deleteProduct({{ $product->id }}) || window.deleteProductSimple({{ $product->id }})"
+                                                        title="Click to delete product">
+                                                    Delete
+                                                </button>
+                                                <noscript>
+                                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                                        Delete (No JS)
+                                                    </button>
+                                                </noscript>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -296,27 +437,201 @@
     </div>
 </div>
 
+@push('styles')
+<style>
+.delete-loading {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.row-deleting {
+    opacity: 0.5;
+    transition: opacity 0.5s ease;
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
+// Functions are now defined at the top of the page for immediate availability
+
+// Additional page functionality starts here
+    
+    console.log('Delete confirmed, proceeding...');
+    
+    // Get CSRF token with fallback
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '{{ csrf_token() }}';
+    
+    if (!csrfToken) {
+        console.error('CSRF token not found!');
+        alert('Security token not found. Please refresh the page and try again.');
+        return;
+    }
+    
+    console.log('CSRF token found:', csrfToken ? 'Yes' : 'No');
+    
+    // Show loading state
+    const deleteButton = document.querySelector('.delete-btn-' + productId);
+    const row = deleteButton ? deleteButton.closest('tr') : null;
+    
+    console.log('Delete button found:', deleteButton ? 'Yes' : 'No');
+    console.log('Row found:', row ? 'Yes' : 'No');
+    
+    if (deleteButton) {
+        deleteButton.disabled = true;
+        deleteButton.textContent = 'Deleting...';
+        deleteButton.classList.add('delete-loading');
+    }
+    
+    if (row) {
+        row.classList.add('row-deleting');
+    }
+    
+    console.log('Sending delete request to:', '/admin/products/' + productId);
+    
+    // Use fetch for the delete request
+    fetch('/admin/products/' + productId, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(function(response) {
+        console.log('Response received:', response.status, response.statusText);
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+    })
+    .then(function(data) {
+        console.log('Response data:', data);
+        if (data.success) {
+            alert('Product deleted successfully!');
+            // Animate row removal
+            if (row) {
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(-100%)';
+                setTimeout(function() {
+                    row.remove();
+                    // Check if this was the last row
+                    const remainingRows = document.querySelectorAll('tbody tr').length;
+                    if (remainingRows === 0) {
+                        location.reload();
+                    }
+                }, 500);
+            } else {
+                location.reload();
+            }
+        } else {
+            throw new Error(data.message || 'Failed to delete product');
+        }
+    })
+    .catch(function(error) {
+        console.error('Delete error:', error);
+        alert('Error: ' + (error.message || 'Failed to delete product'));
+        
+        // If AJAX fails, fallback to form submission
+        console.log('AJAX failed, trying form submission fallback...');
+        const form = document.querySelector('.delete-form-' + productId);
+        if (form && confirm('AJAX failed. Try traditional form submission?')) {
+            form.submit();
+            return;
+        }
+        
+        // Reset button state
+        if (deleteButton) {
+            deleteButton.disabled = false;
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.remove('delete-loading');
+        }
+        
+        if (row) {
+            row.classList.remove('row-deleting');
+        }
+    });
+};
+
 let currentProductId = null;
 
-// Bulk actions
-document.getElementById('select-all').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.product-checkbox');
-    checkboxes.forEach(cb => cb.checked = this.checked);
-    updateBulkActions();
+// Initialize all event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing event listeners...');
+    
+    // Delete button event listeners
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            deleteProduct(productId);
+        });
+        
+        // Double-click fallback
+        button.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            const form = document.querySelector(`.delete-form-${productId}`);
+            if (form && confirm('Are you sure you want to delete this product? (Form submission)')) {
+                form.submit();
+            }
+        });
+    });
+    
+    // Bulk actions
+    const selectAll = document.getElementById('select-all');
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.product-checkbox');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            updateBulkActions();
+        });
+    }
+
+    document.querySelectorAll('.product-checkbox').forEach(cb => {
+        cb.addEventListener('change', updateBulkActions);
+    });
+
+    // Bulk action selector
+    const bulkAction = document.getElementById('bulk-action');
+    if (bulkAction) {
+        bulkAction.addEventListener('change', function() {
+            const statusSelect = document.getElementById('bulk-status');
+            if (statusSelect) {
+                statusSelect.classList.toggle('hidden', this.value !== 'update_status');
+            }
+        });
+    }
+
+    // Apply bulk action
+    const applyBulk = document.getElementById('apply-bulk');
+    if (applyBulk) {
+        applyBulk.addEventListener('click', applyBulkAction);
+    }
+
+    // Cancel bulk action
+    const cancelBulk = document.getElementById('cancel-bulk');
+    if (cancelBulk) {
+        cancelBulk.addEventListener('click', function() {
+            const bulkActions = document.getElementById('bulk-actions');
+            if (bulkActions) {
+                bulkActions.classList.add('hidden');
+            }
+            const selectAllBox = document.getElementById('select-all');
+            if (selectAllBox) {
+                selectAllBox.checked = false;
+            }
+            document.querySelectorAll('.product-checkbox').forEach(cb => cb.checked = false);
+        });
+    }
 });
 
-document.querySelectorAll('.product-checkbox').forEach(cb => {
-    cb.addEventListener('change', updateBulkActions);
-});
+// Global functions (accessible from anywhere)
+function testJS() {
+    alert('JavaScript is working! Delete function should work now.');
+}
 
-document.getElementById('bulk-action').addEventListener('change', function() {
-    const statusSelect = document.getElementById('bulk-status');
-    statusSelect.classList.toggle('hidden', this.value !== 'update_status');
-});
-
-function updateBulkActions() {
+window.updateBulkActions = function() {
     const checked = document.querySelectorAll('.product-checkbox:checked');
     const bulkActions = document.getElementById('bulk-actions');
     const selectedCount = document.getElementById('selected-count');
@@ -405,30 +720,57 @@ async function toggleStatus(productId) {
     }
 }
 
-// Delete product
-async function deleteProduct(productId) {
-    if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+
+
+// Bulk actions
+async function applyBulkAction() {
+    const selectedIds = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(cb => cb.value);
+    const action = document.getElementById('bulk-action').value;
+    const status = document.getElementById('bulk-status').value;
+
+    if (selectedIds.length === 0) {
+        showNotification('Please select at least one product', 'error');
         return;
     }
-    
+
+    if (!action) {
+        showNotification('Please select an action', 'error');
+        return;
+    }
+
+    if (action === 'delete' && !confirm(`Are you sure you want to delete ${selectedIds.length} product(s)? This action cannot be undone.`)) {
+        return;
+    }
+
     try {
-        const response = await fetch(`/admin/products/${productId}`, {
-            method: 'DELETE',
+        const response = await fetch('/admin/products/bulk-update', {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 'Accept': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                product_ids: selectedIds,
+                action: action,
+                status: status
+            })
         });
 
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            location.reload();
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                showNotification(data.message, 'success');
+                location.reload();
+            } else {
+                showNotification(data.message || 'Bulk action failed', 'error');
+            }
         } else {
-            showNotification(data.message || 'Failed to delete product', 'error');
+            const errorData = await response.json().catch(() => ({}));
+            showNotification(errorData.message || `Error: ${response.status} ${response.statusText}`, 'error');
         }
     } catch (error) {
+        console.error('Bulk action error:', error);
         showNotification('Network error occurred', 'error');
     }
 }

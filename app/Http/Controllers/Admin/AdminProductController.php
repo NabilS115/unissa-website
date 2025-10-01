@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdminProductController extends Controller
 {
@@ -173,23 +174,62 @@ class AdminProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Delete image file
-        if ($product->img && Storage::disk('public')->exists(str_replace('/storage/', '', $product->img))) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $product->img));
+        try {
+            // Check if product has associated orders or reviews
+            $hasOrders = $product->orders()->exists();
+            $hasReviews = $product->reviews()->exists();
+
+            if ($hasOrders || $hasReviews) {
+                $message = 'Cannot delete product with existing ';
+                $items = [];
+                if ($hasOrders) $items[] = 'orders';
+                if ($hasReviews) $items[] = 'reviews';
+                $message .= implode(' and ', $items) . '. Consider deactivating instead.';
+
+                if (request()->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $message
+                    ], 400);
+                }
+
+                return redirect()->route('admin.products.index')
+                                ->with('error', $message);
+            }
+
+            // Delete image file
+            if ($product->img && Storage::disk('public')->exists(str_replace('/storage/', '', $product->img))) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $product->img));
+            }
+
+            $product->delete();
+
+            // Return JSON response for AJAX requests
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Product deleted successfully!'
+                ]);
+            }
+
+            return redirect()->route('admin.products.index')
+                            ->with('success', 'Product deleted successfully!');
+
+        } catch (\Exception $e) {
+            Log::error('Product deletion failed: ' . $e->getMessage());
+            
+            $errorMessage = 'Failed to delete product. Please try again.';
+            
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage
+                ], 500);
+            }
+
+            return redirect()->route('admin.products.index')
+                            ->with('error', $errorMessage);
         }
-
-        $product->delete();
-
-        // Return JSON response for AJAX requests
-        if (request()->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Product deleted successfully!'
-            ]);
-        }
-
-        return redirect()->route('admin.products.index')
-                        ->with('success', 'Product deleted successfully!');
     }
 
     /**
@@ -282,14 +322,34 @@ class AdminProductController extends Controller
                 $message = 'Product statuses updated successfully!';
                 break;
             case 'delete':
-                // Delete images
-                foreach ($products->get() as $product) {
+                $productsToDelete = $products->get();
+                $cannotDelete = [];
+                $deletedCount = 0;
+
+                foreach ($productsToDelete as $product) {
+                    // Check if product has associated orders or reviews
+                    $hasOrders = $product->orders()->exists();
+                    $hasReviews = $product->reviews()->exists();
+
+                    if ($hasOrders || $hasReviews) {
+                        $cannotDelete[] = $product->name;
+                        continue;
+                    }
+
+                    // Delete image file
                     if ($product->img && Storage::disk('public')->exists(str_replace('/storage/', '', $product->img))) {
                         Storage::disk('public')->delete(str_replace('/storage/', '', $product->img));
                     }
+
+                    $product->delete();
+                    $deletedCount++;
                 }
-                $products->delete();
-                $message = 'Products deleted successfully!';
+
+                if (count($cannotDelete) > 0) {
+                    $message = "Deleted {$deletedCount} product(s). Cannot delete products with existing orders/reviews: " . implode(', ', $cannotDelete);
+                } else {
+                    $message = "All {$deletedCount} product(s) deleted successfully!";
+                }
                 break;
         }
 

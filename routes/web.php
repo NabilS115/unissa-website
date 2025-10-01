@@ -20,6 +20,35 @@ Route::get('/contact', function () {
 //homepage routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Test route for delete functionality
+Route::get('/test-delete', function () {
+    return view('test-delete');
+});
+
+// Debug route to test product deletion without frontend
+Route::get('/debug-delete/{product}', function (App\Models\Product $product) {
+    try {
+        $hasOrders = $product->orders()->exists();
+        $hasReviews = $product->reviews()->exists();
+        
+        return response()->json([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'has_orders' => $hasOrders,
+            'orders_count' => $product->orders()->count(),
+            'has_reviews' => $hasReviews,
+            'reviews_count' => $product->reviews()->count(),
+            'can_delete' => !$hasOrders && !$hasReviews,
+            'message' => 'Product analysis complete'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+});
+
 // Featured products overview (Admin only)
 Route::middleware('auth')->group(function () {
     Route::get('/admin/featured', [HomeController::class, 'manageFeatured'])->name('featured.manage');
