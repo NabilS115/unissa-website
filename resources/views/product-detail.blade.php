@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product Review')
+@section('title', 'Product Details')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
@@ -436,7 +436,7 @@
             
             try {
                 // Use the correct route URL format
-                const response = await fetch(`/review/{{ $product->id }}/add`, {
+                const response = await fetch(`/product/{{ $product->id }}/add-review`, {
                     method: "POST",
                     headers: {
                         "X-CSRF-TOKEN": "{{ csrf_token() }}",

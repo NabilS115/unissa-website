@@ -108,7 +108,7 @@ class SearchController extends Controller
                     'type' => 'product',
                     'title' => $product->name,
                     'subtitle' => $product->category,
-                    'url' => "/review/{$product->id}"
+                    'url' => "/product/{$product->id}"
                 ];
             })
             ->toArray();
@@ -125,7 +125,7 @@ class SearchController extends Controller
                     'type' => 'review',
                     'title' => substr($review->review, 0, 50) . '...',
                     'subtitle' => 'Review for ' . ($review->product->name ?? 'Unknown Product'),
-                    'url' => "/review/{$review->product_id}"
+                    'url' => "/product/{$review->product_id}"
                 ];
             })
             ->toArray();

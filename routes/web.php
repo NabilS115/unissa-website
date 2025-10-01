@@ -111,8 +111,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/featured/order', [HomeController::class, 'updateFeaturedOrder'])->name('featured.order');
 });
 
-Route::get('/review/{id}', [ReviewController::class, 'show'])->name('review.show');
-Route::post('/review/{id}/add', [ReviewController::class, 'add'])->name('review.add');
+Route::get('/product/{id}', [ReviewController::class, 'show'])->name('product.detail');
+Route::post('/product/{id}/add-review', [ReviewController::class, 'add'])->name('product.add-review');
 Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('review.delete')->middleware('auth');
 Route::post('/reviews/{id}/helpful', [ReviewController::class, 'helpful'])->name('review.helpful');
 

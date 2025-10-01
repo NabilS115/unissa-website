@@ -339,7 +339,7 @@
                             <p class="text-gray-500 text-sm">
                                 Product: 
                                 @if($review->product)
-                                    <a href="{{ route('review.show', $review->product->id) }}" class="text-teal-600 hover:text-teal-700 font-medium">
+                                    <a href="{{ route('product.detail', $review->product->id) }}" class="text-teal-600 hover:text-teal-700 font-medium">
                                         {{ $review->product->name }}
                                     </a>
                                 @else
@@ -568,7 +568,7 @@
             sessionStorage.setItem('previousPageTitle', document.title);
             
             // Navigate to the review page
-            window.location.href = `/review/${productId}`;
+            window.location.href = `/product/${productId}`;
         }
         
         console.log('Gallery data loaded:', galleryData);

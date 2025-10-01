@@ -51,7 +51,7 @@
     </div>
     
     <div class="flex items-center justify-between pt-3 border-t border-gray-200">
-        <a href="/review/{{ $review->product_id }}" 
+        <a href="/product/{{ $review->product_id }}" 
            class="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-medium text-sm transition-colors hover:underline">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

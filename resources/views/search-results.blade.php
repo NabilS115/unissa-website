@@ -34,7 +34,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     @foreach($results['products'] as $product)
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-                             onclick="window.location.href='/review/{{ $product->id }}'">
+                             onclick="window.location.href='/product/{{ $product->id }}'">
                             <div class="h-48 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                                 <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
                             </div>
@@ -88,7 +88,7 @@
                                     </div>
                                     <p class="text-gray-700 mb-3">{{ Str::limit($review->review, 200) }}</p>
                                     @if($review->product)
-                                        <a href="/review/{{ $review->product->id }}" class="inline-flex items-center text-teal-600 hover:text-teal-700 text-sm font-medium">
+                                        <a href="/product/{{ $review->product->id }}" class="inline-flex items-center text-teal-600 hover:text-teal-700 text-sm font-medium">
                                             View Product: {{ $review->product->name }}
                                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

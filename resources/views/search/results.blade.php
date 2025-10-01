@@ -54,7 +54,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         @foreach($products as $product)
                             <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer"
-                                 onclick="window.location.href='/review/{{ $product->id }}'">
+                                 onclick="window.location.href='/product/{{ $product->id }}'">
                                 <div class="aspect-w-16 aspect-h-9">
                                     <img src="{{ $product->img }}" alt="{{ $product->name }}" 
                                          class="w-full h-48 object-cover rounded-t-lg">
@@ -100,7 +100,7 @@
                                         </div>
                                         <p class="text-gray-700 mb-2">{!! $highlightText(Str::limit($review->review, 200), $searchTerms ?? []) !!}</p>
                                         @if($review->product)
-                                            <a href="/review/{{ $review->product->id }}" class="text-teal-600 hover:text-teal-700 text-sm font-medium">
+                                            <a href="/product/{{ $review->product->id }}" class="text-teal-600 hover:text-teal-700 text-sm font-medium">
                                                 View product: {!! $highlightText($review->product->name, $searchTerms ?? []) !!}
                                             </a>
                                         @endif

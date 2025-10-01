@@ -1053,7 +1053,7 @@ document.addEventListener('alpine:init', () => {
                 };
                 
                 sessionStorage.setItem('catalogState', JSON.stringify(currentState));
-                window.location.href = '/review/' + productId;
+                window.location.href = '/product/' + productId;
             },
             
             async init() {

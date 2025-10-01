@@ -17,7 +17,7 @@ class ReviewController extends Controller
             ->with('user') // eager load user for each review
             ->latest()
             ->get();
-        return view('review', compact('product', 'reviews'));
+        return view('product-detail', compact('product', 'reviews'));
     }
 
     public function add(Request $request, $id)
