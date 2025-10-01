@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Suppor\Response;
 use App\Models\User;
 use App\Models\Image;
 use App\Http\Controllers\CatalogController;
@@ -10,7 +10,6 @@ use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\VendorController;
 use App\Http\Controllers\SearchController;
 
 // contact routes
@@ -132,14 +131,6 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
     Route::patch('/gallery/{gallery}/toggle-active', [App\Http\Controllers\GalleryController::class, 'toggleActive']);
 });
 
-// Vendor routes (admin protected)
-Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
-    Route::get('/vendors', [App\Http\Controllers\VendorController::class, 'index']);
-    Route::post('/vendors', [App\Http\Controllers\VendorController::class, 'store']);
-    Route::put('/vendors/{vendor}', [App\Http\Controllers\VendorController::class, 'update']);
-    Route::delete('/vendors/{vendor}', [App\Http\Controllers\VendorController::class, 'destroy']);
-    Route::patch('/vendors/{vendor}/toggle-active', [App\Http\Controllers\VendorController::class, 'toggleActive']);
-});
 
 // Gallery management routes (admin only)
 Route::middleware(['auth'])->group(function () {
@@ -150,14 +141,6 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/gallery/{gallery}/toggle-active', [GalleryController::class, 'toggleActive'])->name('gallery.toggle-active');
 });
 
-// Vendor management routes (admin only)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
-    Route::post('/vendors', [VendorController::class, 'store'])->name('vendors.store');
-    Route::put('/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
-    Route::delete('/vendors/{vendor}', [VendorController::class, 'destroy'])->name('vendors.destroy');
-    Route::patch('/vendors/{vendor}/toggle-active', [VendorController::class, 'toggleActive'])->name('vendors.toggle-active');
-});
 
 // API endpoint to check authentication status
 Route::get('/api/auth-status', function () {

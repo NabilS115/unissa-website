@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Review;
-use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -24,7 +23,6 @@ class AdminController extends Controller
             'total_users' => User::count(),
             'total_products' => Product::count(),
             'total_reviews' => Review::count(),
-            'total_vendors' => Vendor::count(),
             'pending_reports' => 0, // You can add a reports table later
             'resolved_reports' => 0, // You can add a reports table later
         ];

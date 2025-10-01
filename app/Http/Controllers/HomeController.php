@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Gallery;
-use App\Models\Vendor;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -32,24 +31,6 @@ class HomeController extends Controller
             $galleryImages = collect([]);
         }
 
-        // Get active vendors with error handling
-        try {
-            $vendors = Vendor::active()->ordered()->get()->map(function ($vendor) {
-                return [
-                    'id' => $vendor->id,
-                    'name' => $vendor->name,
-                    'type' => $vendor->type,
-                    'description' => $vendor->description,
-                    'image_url' => $vendor->getImageUrlAttribute(),
-                    'is_active' => $vendor->is_active,
-                    'sort_order' => $vendor->sort_order,
-                ];
-            });
-        } catch (\Exception $e) {
-            // Fallback to empty collection if Vendor table doesn't exist yet
-            $vendors = collect([]);
-        }
-
         // Get featured customer reviews (highest rated reviews) with proper error handling
         try {
             $featuredReviews = Review::with(['user', 'product'])
@@ -72,7 +53,7 @@ class HomeController extends Controller
             $featuredReviews = collect([]);
         }
 
-        return view('welcome', compact('featuredFood', 'featuredMerch', 'galleryImages', 'featuredReviews', 'vendors'));
+        return view('welcome', compact('featuredFood', 'featuredMerch', 'galleryImages', 'featuredReviews'));
     }
 
     private function getFeaturedProductsByRating($type, $limit = 3)

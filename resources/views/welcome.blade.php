@@ -434,45 +434,6 @@
         </div>
     </section>
 
-    <!-- Vendors Section -->
-    <section class="w-full py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-teal-700 mb-4">Our Trusted Partners</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Meet the exceptional vendors who make our culinary journey possible</p>
-                @if(auth()->check() && auth()->user()->role === 'admin')
-                    <div class="flex gap-2 justify-center mt-6">
-                        <button id="add-vendor-btn" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Add Vendor
-                        </button>
-                        <button id="manage-vendors-btn" class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1"/>
-                            </svg>
-                            Manage Vendors
-                        </button>
-                    </div>
-                @endif
-            </div>
-            
-            <div class="relative">
-                <div class="overflow-hidden">
-                    <div id="vendors-track" class="flex transition-transform duration-700">
-                        <!-- Vendor slides will be rendered by JS -->
-                    </div>
-                </div>
-                
-                <button id="vendors-prev" class="absolute left-1/4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8249;</button>
-                <button id="vendors-next" class="absolute right-1/4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none">&#8250;</button>
-                
-                <div id="vendors-dots" class="flex justify-center gap-2 mt-6"></div>
-            </div>
-        </div>
-    </section>
-
     <script>
         // Track authentication state to handle login/logout
         let currentAuthState = @json(auth()->check());
@@ -489,24 +450,15 @@
             try {
                 // Reset carousel positions to starting state
                 const bgTrack = document.getElementById('event-bg-track');
-                const vendorsTrack = document.getElementById('vendors-track');
                 
                 if (bgTrack) {
                     bgTrack.style.transform = '';
                     bgTrack.style.transition = 'none';
                 }
                 
-                if (vendorsTrack) {
-                    vendorsTrack.style.transform = '';
-                    vendorsTrack.style.transition = 'none';
-                }
-                
                 // Reset current positions
                 if (typeof currentEvent !== 'undefined') {
                     currentEvent = 0;
-                }
-                if (typeof currentVendor !== 'undefined') {
-                    currentVendor = 0;
                 }
                 
                 // Re-render carousels without triggering events
@@ -516,14 +468,6 @@
                 
                 if (typeof resetEventInterval === 'function') {
                     resetEventInterval();
-                }
-                
-                if (typeof renderVendorsCarousel === 'function') {
-                    renderVendorsCarousel();
-                }
-                
-                if (typeof resetVendorInterval === 'function') {
-                    resetVendorInterval();
                 }
                 
                 console.log('Carousels refreshed successfully');
@@ -611,26 +555,11 @@
 
         // Enhanced gallery data from database or default
         let galleryData = @json($galleryImages ?? []);
-        let vendorsData = @json($vendors ?? []);
         
         // Debug backend data loading
         console.log('=== BACKEND DATA DEBUG ===');
         console.log('Raw galleryData:', galleryData);
-        console.log('Raw vendorsData:', vendorsData);
         console.log('Gallery count:', galleryData ? galleryData.length : 0);
-        console.log('Vendors count:', vendorsData ? vendorsData.length : 0);
-        
-        // Test function to debug vendors
-        window.testVendorsCarousel = function() {
-            console.log('TEST: Vendors data:', vendorsData);
-            console.log('TEST: Vendors track element:', document.getElementById('vendors-track'));
-            console.log('TEST: renderVendorsCarousel function exists:', typeof renderVendorsCarousel);
-            
-            if (typeof renderVendorsCarousel === 'function') {
-                console.log('TEST: Calling renderVendorsCarousel...');
-                renderVendorsCarousel();
-            }
-        };
         
         // Add missing navigation function
         function navigateToReview(productId) {
@@ -839,8 +768,8 @@
 
         // Utility functions for image upload
         function setupImageUpload(type) {
-            const prefix = type === 'gallery' ? '' : 'vendor-';
-            const dropZoneId = type === 'gallery' ? 'gallery-drop-zone' : 'vendor-drop-zone';
+            const prefix = '';
+            const dropZoneId = 'gallery-drop-zone';
             const dropZone = document.getElementById(dropZoneId);
             const imageInput = document.getElementById(`${prefix}image-upload`);
             const imagePreview = document.getElementById(`${prefix}image-preview`);
@@ -1243,14 +1172,7 @@
                 if (modal) modal.remove();
             }
 
-            // Admin vendor management functions
-            document.getElementById('add-vendor-btn')?.addEventListener('click', () => {
-                showVendorModal();
-            });
-
-            document.getElementById('manage-vendors-btn')?.addEventListener('click', () => {
-                showVendorManagementModal();
-            });
+            // Admin gallery management functions
 
             function showVendorModal(vendor = null) {
                 const isEdit = vendor !== null;
