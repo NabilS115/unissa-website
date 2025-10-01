@@ -215,7 +215,7 @@
                                     </label>
                                     <input type="tel" id="customer_phone" name="customer_phone" value="{{ Auth::user()->phone ?? '' }}" required
                                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                                           placeholder="e.g., +1 (555) 123-4567">
+                                           placeholder="e.g., +673 1234567">
                                 </div>
                             </div>
                         </div>
