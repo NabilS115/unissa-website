@@ -16,10 +16,9 @@
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6">
                         <!-- Profile Picture -->
                         <div class="relative">
-                            <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" 
-                                 alt="Profile Picture" 
-                                 class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
-                            <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-sm"></div>
+                       <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" 
+                           alt="Profile Picture" 
+                           class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
                         </div>
                         
                         <!-- Profile Info -->

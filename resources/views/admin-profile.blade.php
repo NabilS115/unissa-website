@@ -19,11 +19,6 @@
                             <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" 
                                  alt="Admin Profile" 
                                  class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
-                            <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-purple-500 rounded-full border-4 border-white shadow-sm flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M9.243 3.03a1 1 0 01.727 1.213L9.53 6h2.94l.56-2.243a1 1 0 111.94.486L14.53 6H17a1 1 0 110 2h-2.97l-1 4H15a1 1 0 110 2h-2.47l-.56 2.242a1 1 0 11-1.94-.485L10.47 14H7.53l-.56 2.242a1 1 0 11-1.94-.485L5.47 14H3a1 1 0 110-2h2.97l1-4H5a1 1 0 110-2h2.47l.56-2.243a1 1 0 011.213-.727zM9.03 8l-1 4h2.94l1-4H9.03z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
                         </div>
                         
                         <!-- Admin Info -->
@@ -82,10 +77,7 @@
                             <div class="text-lg text-gray-900 font-medium">{{ Auth::user()->phone ?? '+673 xxxx xxxx' }}</div>
                         </div>
                         
-                        <div class="border-l-4 border-blue-400 pl-6 py-4">
-                            <div class="text-sm font-medium text-gray-500 mb-2">Admin Level</div>
-                            <div class="text-lg text-gray-900 font-medium">Super Administrator</div>
-                        </div>
+                        <!-- Admin Level removed: controlled via admin-levels management -->
                         
                         <div class="border-l-4 border-green-400 pl-6 py-4">
                             <div class="text-sm font-medium text-gray-500 mb-2">Last Login</div>
