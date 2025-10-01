@@ -16,13 +16,20 @@ class Product extends Model
         'desc',
         'category',
         'img',
-        'type'
+        'type',
+        'price'
     ];
 
     // Relationship with Review model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    // Relationship with Order model
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }
 

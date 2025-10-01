@@ -6,7 +6,7 @@ use Illuminate\Suppor\Response;
 use App\Models\User;
 use App\Models\Image;
 use App\Http\Controllers\CatalogController;
-use App\Http\Controllers\AdminCatalogController;
+// use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GalleryController;
@@ -85,23 +85,31 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
     Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
-    // Content Management (example for posts)
-    Route::get('/posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('posts.index');
-    Route::get('/posts/{post}/edit', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('posts.edit');
-    Route::put('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('posts.update');
-    Route::delete('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('posts.destroy');
+    // Content Management (example for posts) - Commented out until PostController is created
+    // Route::get('/posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('posts.index');
+    // Route::get('/posts/{post}/edit', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('posts.edit');
+    // Route::put('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('posts.update');
+    // Route::delete('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('posts.destroy');
 
-    // Site Settings (example)
-    Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
-    Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+    // Site Settings (example) - Commented out until SettingsController is created
+    // Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+    // Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+
+    // Order Management
+    Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [\App\Http\Controllers\Admin\AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::post('/orders/bulk-update', [\App\Http\Controllers\Admin\AdminOrderController::class, 'bulkUpdate'])->name('orders.bulk-update');
+    Route::get('/orders/statistics', [\App\Http\Controllers\Admin\AdminOrderController::class, 'statistics'])->name('orders.statistics');
+    Route::get('/orders/export', [\App\Http\Controllers\Admin\AdminOrderController::class, 'export'])->name('orders.export');
 });
 
-// Admin Catalog routes
-Route::middleware(['auth'])->prefix('admin/catalog')->group(function () {
-    Route::post('/add', [AdminCatalogController::class, 'add'])->name('admin.catalog.add');
-    Route::post('/edit/{id}', [AdminCatalogController::class, 'edit'])->name('admin.catalog.edit');
-    Route::post('/upload', [AdminCatalogController::class, 'upload'])->name('admin.catalog.upload');
-});
+// Admin Catalog routes - Commented out until AdminCatalogController is created
+// Route::middleware(['auth'])->prefix('admin/catalog')->group(function () {
+//     Route::post('/add', [AdminCatalogController::class, 'add'])->name('admin.catalog.add');
+//     Route::post('/edit/{id}', [AdminCatalogController::class, 'edit'])->name('admin.catalog.edit');
+//     Route::post('/upload', [AdminCatalogController::class, 'upload'])->name('admin.catalog.upload');
+// });
 
 // Featured products management (Admin only)
 Route::middleware('auth')->group(function () {
@@ -141,6 +149,13 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/gallery/{gallery}/toggle-active', [GalleryController::class, 'toggleActive'])->name('gallery.toggle-active');
 });
 
+// Order routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders', [App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{order}', [App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('orders.cancel');
+});
 
 // API endpoint to check authentication status
 Route::get('/api/auth-status', function () {

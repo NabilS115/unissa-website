@@ -64,7 +64,7 @@ class HomeController extends Controller
             ->leftJoin('reviews', 'products.id', '=', 'reviews.product_id')
             ->selectRaw('AVG(reviews.rating) as avg_rating')
             ->selectRaw('COUNT(reviews.id) as review_count')
-            ->groupBy('products.id', 'products.name', 'products.desc', 'products.category', 'products.img', 'products.type', 'products.created_at', 'products.updated_at')
+            ->groupBy('products.id', 'products.name', 'products.desc', 'products.category', 'products.img', 'products.type', 'products.price', 'products.created_at', 'products.updated_at')
             ->havingRaw('COUNT(reviews.id) > 0') // Only products with reviews
             ->orderByDesc('avg_rating')
             ->orderByDesc('review_count') // Secondary sort by review count

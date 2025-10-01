@@ -98,5 +98,13 @@ class User extends Authenticatable
         
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=14b8a6&color=fff';
     }
+
+    /**
+     * Get all orders by this user
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
 
