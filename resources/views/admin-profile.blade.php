@@ -2,6 +2,23 @@
 
 @section('title', 'Admin Profile')
 
+@push('styles')
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
+@endpush
+
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,7 +48,7 @@
                                     </svg>
                                 </a>
                             </div>
-                            <div class="flex items-center gap-4 text-gray-600 mb-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 mb-3">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
@@ -52,9 +69,9 @@
         </div>
 
         <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column: Administrator Details Only -->
-            <div class="lg:col-span-1">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            <!-- Left Column: Administrator Details -->
+            <div class="xl:col-span-1">
                 <!-- Administrator Details -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <div class="flex items-center gap-3 mb-8">
@@ -88,15 +105,15 @@
             </div>
 
             <!-- Right Column: Admin Actions Cards & Statistics -->
-            <div class="lg:col-span-2 space-y-8">
+            <div class="xl:col-span-3 space-y-8">
                 <!-- Admin Actions Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
                     <!-- Manage Users Card -->
                     <a href="/admin/users" class="group block">
-                        <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-purple-200 h-full">
-                            <div class="flex items-center justify-between mb-6">
-                                <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-300">
-                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-purple-200 h-full">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-300">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
                                     </svg>
                                 </div>
@@ -108,20 +125,20 @@
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300">Manage Users</h3>
-                                <p class="text-gray-600 mb-4">View, edit, and manage all registered users in the system. Control user permissions and access levels.</p>
-                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300 line-clamp-2">Manage Users</h3>
+                                <p class="text-gray-600 mb-3 text-xs leading-relaxed line-clamp-3">View, edit, and manage all registered users in the system. Control user permissions and access levels.</p>
+                                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
                                         </svg>
-                                        <span>User Management</span>
+                                        <span>Users</span>
                                     </div>
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                                         </svg>
-                                        <span>Access Control</span>
+                                        <span>Control</span>
                                     </div>
                                 </div>
                             </div>
@@ -130,10 +147,10 @@
 
                     <!-- View Catalog Card -->
                     <a href="/catalog" class="group block">
-                        <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-indigo-200 h-full">
-                            <div class="flex items-center justify-between mb-6">
-                                <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center group-hover:bg-indigo-200 transition-colors duration-300">
-                                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-indigo-200 h-full">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center group-hover:bg-indigo-200 transition-colors duration-300">
+                                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2M7 7h10"/>
                                     </svg>
                                 </div>
@@ -145,20 +162,20 @@
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-900 transition-colors duration-300">View Catalog</h3>
-                                <p class="text-gray-600 mb-4">Browse all products in the catalog. Add, edit, or remove items from the food and merchandise collections.</p>
-                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <h3 class="text-base font-bold text-gray-900 mb-2 group-hover:text-indigo-900 transition-colors duration-300 line-clamp-2">View Catalog</h3>
+                                <p class="text-gray-600 mb-3 text-xs leading-relaxed line-clamp-3">Browse all products in the catalog. Add, edit, or remove items from the food and merchandise collections.</p>
+                                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                                         </svg>
-                                        <span>Product Management</span>
+                                        <span>Products</span>
                                     </div>
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
                                         </svg>
-                                        <span>Reviews & Ratings</span>
+                                        <span>Reviews</span>
                                     </div>
                                 </div>
                             </div>
@@ -167,10 +184,10 @@
 
                     <!-- Order Management Card -->
                     <a href="{{ route('admin.orders.index') }}" class="group block">
-                        <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-orange-200 h-full">
-                            <div class="flex items-center justify-between mb-6">
-                                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center group-hover:bg-orange-200 transition-colors duration-300">
-                                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-orange-200 h-full">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors duration-300">
+                                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                     </svg>
                                 </div>
@@ -182,20 +199,20 @@
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-orange-900 transition-colors duration-300">Manage Orders</h3>
-                                <p class="text-gray-600 mb-4">View, process, and manage customer orders. Track order status, update fulfillment, and handle customer requests.</p>
-                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <h3 class="text-base font-bold text-gray-900 mb-2 group-hover:text-orange-900 transition-colors duration-300 line-clamp-2">Manage Orders</h3>
+                                <p class="text-gray-600 mb-3 text-xs leading-relaxed line-clamp-3">View, process, and manage customer orders. Track order status, update fulfillment, and handle customer requests.</p>
+                                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                                         </svg>
-                                        <span>Order Processing</span>
+                                        <span>Orders</span>
                                     </div>
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
-                                        <span>Status Tracking</span>
+                                        <span>Status</span>
                                     </div>
                                 </div>
                             </div>
@@ -204,10 +221,10 @@
 
                     <!-- Product Management Card -->
                     <a href="{{ route('admin.products.index') }}" class="group block">
-                        <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-purple-200 h-full">
-                            <div class="flex items-center justify-between mb-6">
-                                <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-300">
-                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-purple-200 h-full">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-300">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 1L5 3l4 2 4-2-4-2zM1 13l4 2 4-2-4-2-4 2zm0 0l4 2v4l-4-2v-4zm16 0l4 2v4l-4-2v-4z"/>
                                     </svg>
                                 </div>
@@ -219,20 +236,20 @@
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300">Product Inventory</h3>
-                                <p class="text-gray-600 mb-4">Manage stock levels, product availability, and pricing. Control what's available for customers to order.</p>
-                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <h3 class="text-base font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300 line-clamp-2">Product Inventory</h3>
+                                <p class="text-gray-600 mb-3 text-xs leading-relaxed line-clamp-3">Manage stock levels, product availability, and pricing. Control what's available for customers to order.</p>
+                                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M5 4a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V5a1 1 0 00-1-1H5zM5 8a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V9a1 1 0 00-1-1H5zM5 12a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1v-1a1 1 0 00-1-1H5zM9 4a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V5a1 1 0 00-1-1H9zM9 8a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V9a1 1 0 00-1-1H9zM9 12a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1v-1a1 1 0 00-1-1H9zM13 4a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V5a1 1 0 00-1-1h-1zM13 8a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V9a1 1 0 00-1-1h-1zM13 12a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1v-1a1 1 0 00-1-1h-1z"/>
                                         </svg>
-                                        <span>Stock Management</span>
+                                        <span>Stock</span>
                                     </div>
                                     <div class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
-                                        <span>Availability Control</span>
+                                        <span>Control</span>
                                     </div>
                                 </div>
                             </div>
