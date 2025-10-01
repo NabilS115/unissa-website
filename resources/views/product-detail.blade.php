@@ -65,9 +65,29 @@
                                     <p class="text-gray-600 text-sm mt-1">Fill in your details to place an order</p>
                                 </div>
                             </div>
-                            <div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-green-200">
-                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-sm font-medium text-gray-700">Available Now</span>
+                            <div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border 
+                                @if($product->isAvailable()) border-green-200
+                                @elseif($product->status === 'out_of_stock') border-red-200
+                                @elseif($product->status === 'inactive') border-gray-200
+                                @else border-yellow-200
+                                @endif">
+                                <div class="w-2 h-2 rounded-full
+                                    @if($product->isAvailable()) bg-green-500 animate-pulse
+                                    @elseif($product->status === 'out_of_stock') bg-red-500
+                                    @elseif($product->status === 'inactive') bg-gray-500
+                                    @else bg-yellow-500
+                                    @endif"></div>
+                                <span class="text-sm font-medium
+                                    @if($product->isAvailable()) text-green-700
+                                    @elseif($product->status === 'out_of_stock') text-red-700
+                                    @elseif($product->status === 'inactive') text-gray-700
+                                    @else text-yellow-700
+                                    @endif">
+                                    {{ $product->availability_status }}
+                                    @if($product->track_stock && $product->isInStock())
+                                        ({{ $product->stock_quantity }} left)
+                                    @endif
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -122,16 +142,25 @@
                                     <label for="quantity" class="block text-sm font-medium text-gray-700">Select Quantity</label>
                                     <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
                                         <div class="flex items-center justify-center gap-4">
-                                            <button type="button" id="decrease-qty" class="w-12 h-12 rounded-xl border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:border-green-500 hover:bg-green-50 hover:text-green-600 transition-all duration-200 font-bold">
+                                            <button type="button" id="decrease-qty" 
+                                                {{ !$product->isAvailable() ? 'disabled' : '' }}
+                                                class="w-12 h-12 rounded-xl border-2 flex items-center justify-center font-bold transition-all duration-200
+                                                {{ $product->isAvailable() ? 'border-gray-300 text-gray-600 hover:border-green-500 hover:bg-green-50 hover:text-green-600' : 'border-gray-200 text-gray-400 cursor-not-allowed' }}">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/>
                                                 </svg>
                                             </button>
                                             <div class="flex-1 max-w-24">
-                                                <input type="number" id="quantity" name="quantity" value="1" min="1" max="100" 
-                                                       class="w-full text-center text-2xl font-bold border-2 border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
+                                                <input type="number" id="quantity" name="quantity" value="1" min="1" 
+                                                       max="{{ $product->track_stock ? $product->stock_quantity : 100 }}"
+                                                       {{ !$product->isAvailable() ? 'disabled' : '' }}
+                                                       class="w-full text-center text-2xl font-bold border-2 rounded-xl px-4 py-3 transition-all
+                                                       {{ $product->isAvailable() ? 'border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500' : 'border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed' }}">
                                             </div>
-                                            <button type="button" id="increase-qty" class="w-12 h-12 rounded-xl border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:border-green-500 hover:bg-green-50 hover:text-green-600 transition-all duration-200 font-bold">
+                                            <button type="button" id="increase-qty" 
+                                                {{ !$product->isAvailable() ? 'disabled' : '' }}
+                                                class="w-12 h-12 rounded-xl border-2 flex items-center justify-center font-bold transition-all duration-200
+                                                {{ $product->isAvailable() ? 'border-gray-300 text-gray-600 hover:border-green-500 hover:bg-green-50 hover:text-green-600' : 'border-gray-200 text-gray-400 cursor-not-allowed' }}">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                                                 </svg>
@@ -220,15 +249,34 @@
                         
                         <!-- Submit Button -->
                         <div class="border-t border-gray-200 pt-8">
-                            <button type="submit" class="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 text-white font-bold py-4 px-8 rounded-xl hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 text-lg">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
-                                </svg>
-                                <span>Place Order Now</span>
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                                </svg>
-                            </button>
+                            @if($product->isAvailable())
+                                <button type="submit" class="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 text-white font-bold py-4 px-8 rounded-xl hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 text-lg">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                                    </svg>
+                                    <span>Place Order Now</span>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                </button>
+                            @else
+                                <div class="w-full bg-gray-400 text-white font-bold py-4 px-8 rounded-xl cursor-not-allowed flex items-center justify-center gap-3 text-lg opacity-60">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"/>
+                                    </svg>
+                                    <span>
+                                        @if($product->status === 'out_of_stock')
+                                            Currently Out of Stock
+                                        @elseif($product->status === 'inactive')
+                                            Product Not Available
+                                        @elseif($product->status === 'discontinued')
+                                            Product Discontinued
+                                        @else
+                                            Not Available for Order
+                                        @endif
+                                    </span>
+                                </div>
+                            @endif
                             <p class="text-center text-sm text-gray-500 mt-3">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>

@@ -9,9 +9,10 @@ class ProductController extends Controller
 {
     public function catalog()
     {
-        $food = Product::where('type', 'food')->get();
-        $merchandise = Product::where('type', 'merch')->get();
-        $categories = Product::pluck('category')->unique()->values()->all();
+        // Only show available products to customers
+        $food = Product::available()->where('type', 'food')->get();
+        $merchandise = Product::available()->where('type', 'merch')->get();
+        $categories = Product::active()->pluck('category')->unique()->values()->all();
         return view('products.catalog', compact('food', 'merchandise', 'categories'));
     }
 
@@ -59,6 +60,37 @@ class ProductController extends Controller
             }
             throw $e;
         }
+    }
+
+    /**
+     * Show product details with availability check
+     */
+    public function show(Product $product)
+    {
+        // Show product even if not available, but indicate status
+        $product->load('reviews');
+        return view('product-detail', compact('product'));
+    }
+
+    /**
+     * Admin catalog view (shows all products regardless of status)
+     */
+    public function adminCatalog()
+    {
+        $food = Product::where('type', 'food')->get();
+        $merchandise = Product::where('type', 'merch')->get();
+        $categories = Product::pluck('category')->unique()->values()->all();
+        
+        // Add statistics
+        $stats = [
+            'total_products' => Product::count(),
+            'active_products' => Product::active()->count(),
+            'out_of_stock' => Product::outOfStock()->count(),
+            'low_stock' => Product::lowStock()->count(),
+            'discontinued' => Product::where('status', Product::STATUS_DISCONTINUED)->count(),
+        ];
+
+        return view('admin.products.catalog', compact('food', 'merchandise', 'categories', 'stats'));
     }
 
     // ...other controller methods...

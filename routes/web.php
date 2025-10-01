@@ -102,6 +102,13 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
     Route::post('/orders/bulk-update', [\App\Http\Controllers\Admin\AdminOrderController::class, 'bulkUpdate'])->name('orders.bulk-update');
     Route::get('/orders/statistics', [\App\Http\Controllers\Admin\AdminOrderController::class, 'statistics'])->name('orders.statistics');
     Route::get('/orders/export', [\App\Http\Controllers\Admin\AdminOrderController::class, 'export'])->name('orders.export');
+
+    // Product Management
+    Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);
+    Route::patch('/products/{product}/toggle-status', [\App\Http\Controllers\Admin\AdminProductController::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::patch('/products/{product}/stock', [\App\Http\Controllers\Admin\AdminProductController::class, 'updateStock'])->name('products.update-stock');
+    Route::post('/products/bulk-update', [\App\Http\Controllers\Admin\AdminProductController::class, 'bulkUpdate'])->name('products.bulk-update');
+    Route::get('/products/export', [\App\Http\Controllers\Admin\AdminProductController::class, 'export'])->name('products.export');
 });
 
 // Admin Catalog routes - Commented out until AdminCatalogController is created

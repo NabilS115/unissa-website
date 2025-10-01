@@ -40,8 +40,25 @@ class OrderController extends Controller
 
         $product = Product::findOrFail($validated['product_id']);
         
+        // Check if product is available for ordering
+        if (!$product->isAvailable()) {
+            return back()->withErrors(['product_id' => 'This product is currently not available for ordering.']);
+        }
+        
+        // Check stock availability if tracking stock
+        if ($product->track_stock && $product->stock_quantity < $validated['quantity']) {
+            return back()->withErrors(['quantity' => "Only {$product->stock_quantity} items available in stock."]);
+        }
+        
         $unitPrice = $product->price;
         $totalPrice = $unitPrice * $validated['quantity'];
+        
+        // Reduce stock if tracking
+        if ($product->track_stock) {
+            if (!$product->reduceStock($validated['quantity'])) {
+                return back()->withErrors(['quantity' => 'Insufficient stock available.']);
+            }
+        }
 
         $order = Order::create([
             'user_id' => Auth::id(),
