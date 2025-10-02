@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Http\Controllers\CatalogController;
 // use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\ReviewController;
+
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\SearchController;
@@ -150,13 +151,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
 //     Route::post('/upload', [AdminCatalogController::class, 'upload'])->name('admin.catalog.upload');
 // });
 
-// Featured products management (Admin only)
-Route::middleware('auth')->group(function () {
-    Route::get('/admin/featured', [HomeController::class, 'manageFeatured'])->name('featured.manage');
-    Route::post('/admin/featured', [HomeController::class, 'addFeatured'])->name('featured.add');
-    Route::delete('/admin/featured/{id}', [HomeController::class, 'removeFeatured'])->name('featured.remove');
-    Route::post('/admin/featured/order', [HomeController::class, 'updateFeaturedOrder'])->name('featured.order');
-});
+
 
 Route::get('/product/{id}', [ReviewController::class, 'show'])->name('product.detail');
 Route::post('/product/{id}/add-review', [ReviewController::class, 'add'])->name('product.add-review');

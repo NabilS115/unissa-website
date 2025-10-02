@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        Schema::create('review_helpful', function (Blueprint $table) {
+        Schema::create('review_helpfuls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('review_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -18,8 +21,11 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('review_helpful');
+        Schema::dropIfExists('review_helpfuls');
     }
 };

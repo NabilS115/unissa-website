@@ -12,10 +12,6 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Get featured products based on average ratings
-        $featuredFood = $this->getFeaturedProductsByRating('food', 3);
-        $featuredMerch = $this->getFeaturedProductsByRating('merch', 3);
-        
         // Get active gallery images with error handling
         try {
             $galleryImages = Gallery::active()->ordered()->get()->map(function ($gallery) {
@@ -31,34 +27,13 @@ class HomeController extends Controller
             $galleryImages = collect([]);
         }
 
-        // Get featured customer reviews (highest rated reviews) with proper error handling
-        try {
-            $featuredReviews = Review::with(['user', 'product'])
-                ->where('rating', '>=', 4) // Only 4-5 star reviews
-                ->whereHas('user') // Make sure user exists
-                ->whereHas('product') // Make sure product exists
-                ->select('reviews.*')
-                ->join('users', 'reviews.user_id', '=', 'users.id')
-                ->orderBy('rating', 'desc')
-                ->orderBy('reviews.created_at', 'desc')
-                ->limit(10) // Get more reviews to have variety
-                ->get()
-                ->groupBy('user_id') // Group by user to ensure different users
-                ->map(function($userReviews) {
-                    return $userReviews->first(); // Take the best review from each user
-                })
-                ->take(6); // Take up to 6 different users
-        } catch (\Exception $e) {
-            // Fallback to empty collection if there's an error
-            $featuredReviews = collect([]);
-        }
-
-        return view('welcome', compact('featuredFood', 'featuredMerch', 'galleryImages', 'featuredReviews'));
+        // Only pass gallery images to homepage (featured products and reviews removed from display)
+        return view('welcome', compact('galleryImages'));
     }
 
     private function getFeaturedProductsByRating($type, $limit = 3)
     {
-        // Get products with their average ratings
+        // Get products with their average ratings (keep this for admin features)
         $products = Product::where('type', $type)
             ->select('products.*')
             ->leftJoin('reviews', 'products.id', '=', 'reviews.product_id')
@@ -133,5 +108,6 @@ class HomeController extends Controller
 
         return view('admin.featured', compact('featuredFood', 'featuredMerch', 'allFood', 'allMerch'));
     }
+
 }
 

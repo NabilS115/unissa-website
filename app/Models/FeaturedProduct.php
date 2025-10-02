@@ -2,18 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FeaturedProduct extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'product_id',
-        'section',
-        'order',
-        'is_active',
+        'type',
+        'sort_order'
     ];
 
     public function product()
