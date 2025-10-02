@@ -122,40 +122,29 @@
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
 @endphp
 
+<div x-data="foodMerchComponent()" x-cloak>
 <!-- Catalog Header -->
 <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- First Row: Logo, Navigation, and Admin Actions -->
         <div class="flex justify-between items-center h-16">
             <!-- Left: Catalog Logo/Title -->
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <h1 class="text-2xl font-bold text-teal-600">UNISSA Catalog</h1>
+                    <h1 class="text-xl font-bold text-teal-600">UNISSA Catalog</h1>
                 </div>
-                <nav class="hidden md:ml-8 md:flex md:space-x-8">
-                    <a href="{{ route('home') }}" class="text-gray-500 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
-                    <a href="{{ route('products.catalog') }}" class="text-teal-600 px-3 py-2 text-sm font-medium border-b-2 border-teal-600">Catalog</a>
-                    <a href="{{ route('gallery.index') }}" class="text-gray-500 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Gallery</a>
+                <nav class="hidden md:ml-6 md:flex md:space-x-6">
+                    <a href="{{ route('home') }}" class="text-gray-500 hover:text-teal-600 px-2 py-2 text-sm font-medium transition-colors">Home</a>
+                    <a href="{{ route('products.catalog') }}" class="text-teal-600 px-2 py-2 text-sm font-medium border-b-2 border-teal-600">Catalog</a>
+                    <a href="{{ route('gallery.index') }}" class="text-gray-500 hover:text-teal-600 px-2 py-2 text-sm font-medium transition-colors">Gallery</a>
                 </nav>
             </div>
 
-            <!-- Center: Search Bar -->
-            <div class="flex-1 max-w-lg mx-8">
-                <div class="relative">
-                    <input type="text" placeholder="Search products..." 
-                           class="w-full px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
             <!-- Right: User Actions -->
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-3">
                 @if(auth()->user()?->role === 'admin')
-                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 transition-colors">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button @click="showAddModal = true" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 transition-colors">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     Add Product
@@ -170,10 +159,102 @@
                 </button>
             </div>
         </div>
+
+        <!-- Second Row: Search, Filters, and Controls -->
+        <div class="border-t border-gray-100 py-3">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <!-- Left: Tab Switcher -->
+                <div class="flex-shrink-0">
+                    <div class="inline-flex rounded-lg bg-gray-100 p-1 shadow-sm">
+                        <button type="button" @click="switchTab('food')" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Food</button>
+                        <button type="button" @click="switchTab('merch')" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Merch</button>
+                    </div>
+                </div>
+
+                <!-- Center: Search Bar -->
+                <div class="flex-1 max-w-md relative">
+                    <div class="relative">
+                        <input x-show="tab === 'food'" type="text" placeholder="Search food..." x-model="foodSearchInput" @focus="showFoodPredictions = true" @input="showFoodPredictions = foodSearchInput.length > 0" @blur="setTimeout(() => { showFoodPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-gray-300 rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" />
+                        <input x-show="tab === 'merch'" type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @input="showMerchPredictions = merchSearchInput.length > 0" @blur="setTimeout(() => { showMerchPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-gray-300 rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" />
+                        <button @click="performSearch()" class="absolute right-8 top-1/2 -translate-y-1/2 p-1">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </button>
+                        <button x-show="tab === 'food' && (foodSearch || foodSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-1" title="Clear search">
+                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                        <button x-show="tab === 'merch' && (merchSearch || merchSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-1" title="Clear search">
+                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                    <!-- Search Predictions -->
+                    <template x-if="tab === 'food' && foodSearchInput && showFoodPredictions">
+                        <ul class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                            <template x-for="foodItem in food" :key="foodItem.id">
+                                <template x-if="foodItem.name && foodItem.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
+                                    <li @mousedown.prevent="foodSearchInput = foodItem.name; showFoodPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm" x-text="foodItem.name"></li>
+                                </template>
+                            </template>
+                        </ul>
+                    </template>
+                    <template x-if="tab === 'merch' && merchSearchInput && showMerchPredictions">
+                        <ul class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                            <template x-for="item in merchandise" :key="item.id">
+                                <template x-if="item.name.toLowerCase().includes(merchSearchInput.toLowerCase())">
+                                    <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm" x-text="item.name"></li>
+                                </template>
+                            </template>
+                        </ul>
+                    </template>
+                </div>
+
+                <!-- Right: Sort Dropdown -->
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <label class="text-sm font-medium text-teal-700">Sort:</label>
+                    <div class="rounded border border-gray-300 px-3 py-1.5 bg-white">
+                        <template x-if="tab === 'food'">
+                            <select x-model="foodSort" class="bg-transparent outline-none border-none text-teal-700 font-medium text-sm cursor-pointer">
+                                <option value="">Default</option>
+                                <option value="name">Name (A-Z)</option>
+                                <option value="category">Category</option>
+                                <option value="rating">Rating</option>
+                            </select>
+                        </template>
+                        <template x-if="tab === 'merch'">
+                            <select x-model="merchSort" class="bg-transparent outline-none border-none text-teal-700 font-medium text-sm cursor-pointer">
+                                <option value="">Default</option>
+                                <option value="name">Name (A-Z)</option>
+                                <option value="category">Category</option>
+                                <option value="rating">Rating</option>
+                            </select>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Third Row: Category Filters -->
+            <div class="mt-3 pt-3 border-t border-gray-100">
+                <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                    <template x-if="tab === 'food'">
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" @click="foodFilter = 'All'" :class="foodFilter === 'All' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">All</button>
+                            @foreach ($foodCategories as $cat)
+                            <button type="button" @click="foodFilter = '{{ $cat }}'" :class="foodFilter === '{{ $cat }}' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">{{ $cat }}</button>
+                            @endforeach
+                        </div>
+                    </template>
+                    <template x-if="tab === 'merch'">
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" @click="merchFilter = 'All'" :class="merchFilter === 'All' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">All</button>
+                            @foreach ($merchCategories as $cat)
+                            <button type="button" @click="merchFilter = '{{ $cat }}'" :class="merchFilter === '{{ $cat }}' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">{{ $cat }}</button>
+                            @endforeach
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
     </div>
 </header>
-
-<div x-data="foodMerchComponent()" x-cloak>
     <!-- Hero Section -->
     <section class="w-full h-80 flex flex-col items-center justify-center mb-12 relative overflow-hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -339,107 +420,8 @@
         </div>
     </div>
 
-    <div class="w-full flex justify-center mb-8">
-        <div class="inline-flex rounded-lg bg-gray-100 p-1 shadow">
-            <button type="button" @click="switchTab('food')" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition-all duration-200">Food & Beverages</button>
-            <button type="button" @click="switchTab('merch')" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-6 py-2 rounded-lg font-semibold focus:outline-none transition-all duration-200">Merchandise</button>
-        </div>
-    </div>
-    <section class="w-full flex flex-col gap-3 px-8 py-4 mb-8">
-        <div class="flex flex-col sm:flex-row gap-3 items-center justify-between w-full">
-            <div class="w-full sm:w-1/3 relative">
-                <div class="relative">
-                    <!-- Food search input -->
-                    <input x-show="tab === 'food'" type="text" placeholder="Search food..." x-model="foodSearchInput" @focus="showFoodPredictions = true" @input="showFoodPredictions = foodSearchInput.length > 0" @blur="setTimeout(() => { showFoodPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-teal-300 rounded-full px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-400" />
-                    <!-- Merch search input -->
-                    <input x-show="tab === 'merch'" type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @input="showMerchPredictions = merchSearchInput.length > 0" @blur="setTimeout(() => { showMerchPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-teal-300 rounded-full px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-400" />
-                    <button @click="performSearch()" class="absolute right-8 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:28px;width:28px;">
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </button>
-                    <!-- Clear button for food tab -->
-                    <button x-show="tab === 'food' && (foodSearch || foodSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:24px;width:24px;" title="Clear search">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                    <!-- Clear button for merch tab -->
-                    <button x-show="tab === 'merch' && (merchSearch || merchSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-0 m-0 bg-transparent border-none outline-none flex items-center justify-center" style="height:24px;width:24px;" title="Clear search">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                </div>
-                <template x-if="tab === 'food' && foodSearchInput && showFoodPredictions">
-                    <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
-                        <template x-for="foodItem in food" :key="foodItem.id">
-                            <template x-if="foodItem.name && foodItem.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
-                                <li @mousedown.prevent="foodSearchInput = foodItem.name; showFoodPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-100 cursor-pointer text-sm" x-text="foodItem.name"></li>
-                            </template>
-                        </template>
-                    </ul>
-                </template>
-                <template x-if="tab === 'merch' && merchSearchInput && showMerchPredictions">
-                    <ul class="absolute left-0 right-0 mt-2 bg-white border border-teal-200 rounded-b-lg shadow z-20 max-h-48 overflow-y-auto">
-                        <template x-for="item in merchandise" :key="item.id">
-                            <template x-if="item.name.toLowerCase().includes(merchSearchInput.toLowerCase())">
-                                <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false; performSearch()" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-sm" x-text="item.name"></li>
-                            </template>
-                        </template>
-                    </ul>
-                </template>
-            </div>
-            <div class="flex-1 flex flex-wrap gap-2 items-center justify-center sm:justify-start overflow-x-auto py-1">
-                {{-- Category filter buttons, separated by tab --}}
-                <template x-if="tab === 'food'">
-                    <div>
-                        <!-- Move "All" button to the left -->
-                        <button type="button" @click="foodFilter = 'All'"
-                            :class="foodFilter === 'All' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'"
-                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-teal-100 transition">All</button>
-                        @foreach ($foodCategories as $cat)
-                        <button type="button" @click="foodFilter = '{{ $cat }}'"
-                            :class="foodFilter === '{{ $cat }}' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'"
-                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-teal-100 transition">{{ $cat }}</button>
-                        @endforeach
-                    </div>
-                </template>
-                <template x-if="tab === 'merch'">
-                    <div>
-                        <!-- Move "All" button to the left -->
-                        <button type="button" @click="merchFilter = 'All'"
-                            :class="merchFilter === 'All' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-teal-700'"
-                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-indigo-100 transition">All</button>
-                        @foreach ($merchCategories as $cat)
-                        <button type="button" @click="merchFilter = '{{ $cat }}'"
-                            :class="merchFilter === '{{ $cat }}' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-teal-700'"
-                            class="px-4 py-1 rounded-full font-semibold text-sm hover:bg-indigo-100 transition">{{ $cat }}</button>
-                        @endforeach
-                    </div>
-                </template>
-            </div>
-            <div class="flex items-center gap-2">
-                <label class="text-sm font-medium text-teal-700">Sort by:</label>
-                <div class="rounded-md border-2 border-teal-300 px-3 py-1 flex items-center bg-white sort-dropdown-container">
-                    <template x-if="tab === 'food'">
-                        <select x-model="foodSort"
-                            class="bg-transparent outline-none px-2 py-1 rounded-md focus:ring-0 border-none text-teal-700 font-medium cursor-pointer focus:outline-none focus:shadow-none hover:shadow-none"
-                            style="box-shadow:none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important;">
-                            <option value="">Default</option>
-                            <option value="name">Name (A-Z)</option>
-                            <option value="category">Category</option>
-                            <option value="rating">Rating (High to Low)</option>
-                        </select>
-                    </template>
-                    <template x-if="tab === 'merch'">
-                        <select x-model="merchSort"
-                            class="bg-transparent outline-none px-2 py-1 rounded-md focus:ring-0 border-none text-teal-700 font-medium cursor-pointer focus:outline-none focus:shadow-none hover:shadow-none"
-                            style="box-shadow:none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important;">
-                            <option value="">Default</option>
-                            <option value="name">Name (A-Z)</option>
-                            <option value="category">Category</option>
-                            <option value="rating">Rating (High to Low)</option>
-                        </select>
-                    </template>
-                </div>
-            </div>
-        </div>
-    </section>
+
+
     {{-- Admin features --}}
     @if(auth()->check() && auth()->user()->role === 'admin')
     <!-- Add Product Button -->
