@@ -93,4 +93,34 @@ class ReviewController extends Controller
 
         return view('product-detail', compact('product', 'reviews', 'ratings', 'averageRating', 'totalRatings'));
     }
+
+    public function helpful(Request $request, $id)
+    {
+        $review = Review::findOrFail($id);
+        return $this->markHelpful($request, $review);
+    }
+
+    public function destroy($id)
+    {
+        $review = Review::findOrFail($id);
+        
+        // Check if the authenticated user is the review owner or an admin
+        if (auth()->id() !== $review->user_id && auth()->user()->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized to delete this review.'
+            ], 403);
+        }
+
+        // Delete all helpful votes for this review first
+        $review->helpfulVotes()->delete();
+        
+        // Delete the review
+        $review->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Review deleted successfully.'
+        ]);
+    }
 }

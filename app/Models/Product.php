@@ -67,6 +67,12 @@ class Product extends Model
         return $this->hasMany(Order::class);
     }
 
+    // Relationship with FeaturedProduct model
+    public function featuredProduct()
+    {
+        return $this->hasOne(FeaturedProduct::class);
+    }
+
     /**
      * Scope for active products
      */

@@ -28,4 +28,13 @@ class Review extends Model
     {
         return $this->hasMany(ReviewHelpful::class);
     }
+
+    public function isHelpfulBy($userId)
+    {
+        if (!$userId) {
+            return false;
+        }
+        
+        return $this->helpfulVotes()->where('user_id', $userId)->exists();
+    }
 }
