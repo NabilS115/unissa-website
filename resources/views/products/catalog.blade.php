@@ -122,6 +122,57 @@
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
 @endphp
 
+<!-- Catalog Header -->
+<header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Left: Catalog Logo/Title -->
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h1 class="text-2xl font-bold text-teal-600">UNISSA Catalog</h1>
+                </div>
+                <nav class="hidden md:ml-8 md:flex md:space-x-8">
+                    <a href="{{ route('home') }}" class="text-gray-500 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                    <a href="{{ route('products.catalog') }}" class="text-teal-600 px-3 py-2 text-sm font-medium border-b-2 border-teal-600">Catalog</a>
+                    <a href="{{ route('gallery.index') }}" class="text-gray-500 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Gallery</a>
+                </nav>
+            </div>
+
+            <!-- Center: Search Bar -->
+            <div class="flex-1 max-w-lg mx-8">
+                <div class="relative">
+                    <input type="text" placeholder="Search products..." 
+                           class="w-full px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: User Actions -->
+            <div class="flex items-center space-x-4">
+                @if(auth()->user()?->role === 'admin')
+                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Product
+                </button>
+                @endif
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-teal-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
 <div x-data="foodMerchComponent()" x-cloak>
     <!-- Hero Section -->
     <section class="w-full h-80 flex flex-col items-center justify-center mb-12 relative overflow-hidden">
