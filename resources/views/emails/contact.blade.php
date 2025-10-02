@@ -64,19 +64,19 @@
     <div class="content">
         <div class="field">
             <div class="field-label">From:</div>
-            <div class="field-value">{{ $name }} ({{ $email }})</div>
+            <div class="field-value">{{ $contactName }} ({{ $contactEmail }})</div>
         </div>
 
-        @if($subject)
+        @if($contactSubject)
         <div class="field">
             <div class="field-label">Subject:</div>
-            <div class="field-value">{{ $subject }}</div>
+            <div class="field-value">{{ $contactSubject }}</div>
         </div>
         @endif
 
         <div class="field">
             <div class="field-label">Message:</div>
-            <div class="message-box">{{ $message }}</div>
+            <div class="message-box">{{ $contactMessage }}</div>
         </div>
 
         <div class="field">
@@ -87,7 +87,7 @@
 
     <div class="footer">
         <p>This message was sent from the UNISSA website contact form.</p>
-        <p>You can reply directly to this email to respond to {{ $name }}.</p>
+        <p>You can reply directly to this email to respond to {{ $contactName }}.</p>
     </div>
 </body>
 </html>

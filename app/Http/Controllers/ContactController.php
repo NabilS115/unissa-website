@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Mail\ContactFormMail;
 
 class ContactController extends Controller
 {
@@ -47,12 +48,7 @@ class ContactController extends Controller
     private function sendContactEmail($data)
     {
         $adminEmail = config('mail.admin_email', 'admin@unissa.com');
-        $subject = $data['subject'] ? $data['subject'] : 'New Contact Form Message';
-
-        Mail::send('emails.contact', $data, function ($message) use ($adminEmail, $subject, $data) {
-            $message->to($adminEmail)
-                    ->subject($subject)
-                    ->replyTo($data['email'], $data['name']);
-        });
+        
+        Mail::to($adminEmail)->send(new ContactFormMail($data));
     }
 }
