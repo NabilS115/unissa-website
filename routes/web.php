@@ -99,6 +99,10 @@ Route::delete('/catalog/delete/{id}', [\App\Http\Controllers\CatalogController::
 Route::get('/catalog/data', [CatalogController::class, 'getData'])->name('catalog.data');
 
 // about routes
+Route::get('/about', function () {
+    return view('company-history');
+});
+
 Route::get('/company-history', function () {
     return view('company-history');
 });

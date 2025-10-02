@@ -8,8 +8,8 @@
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
         <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80" alt="Food Banner" class="absolute inset-0 w-full h-full object-cover">
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">Taste the World, One Bite at a Time</h1>
-            <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">Discover flavors, savor moments, and enjoy every meal.</p>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">Business with Barakah</h1>
+            <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">Promoting halal, ethical, and impactful entrepreneurship through UNISSA’s Tijarah Co.</p>
             <a href="/catalog" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors shadow-lg">
                 Explore Catalog
                 <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -124,11 +124,11 @@
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h2 class="text-3xl font-bold text-teal-700">About UNISSA</h2>
+                        <h2 class="text-3xl font-bold text-teal-700">About Tijarah Co</h2>
                     </div>
                     
                     <p class="text-gray-700 text-lg leading-relaxed mb-6">
-                        Welcome to Tijarah Co Sdn Bhd, where culinary excellence meets authentic flavors. We are passionate about bringing you the finest selection of foods and beverages, carefully curated to satisfy your taste buds and create memorable dining experiences.
+                        Welcome to Tijarah Co Sdn Bhd, established under UNISSA, is dedicated to fostering entrepreneurship, innovation, and halal trade. We provide a platform for students, alumni, and the community to develop businesses, showcase products, and grow sustainably in line with Islamic values.
                     </p>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
