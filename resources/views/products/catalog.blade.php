@@ -1,8 +1,32 @@
-@extends('layouts.app')
-
-@section('title', 'Catalog')
-
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>UNISSA Catalog</title>
+    <meta name="theme-color" content="#0d9488">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #fdfdfc;
+            color: #1b1b18;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1 0 auto;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
 @php
     $food = $food ?? [];
     $merchandise = $merchandise ?? [];
@@ -704,8 +728,7 @@
     {{-- <pre>{{ print_r($merchandise, true) }}</pre> --}}
     {{-- Remove after confirming data is present --}}
 </div>
-{{-- End section content --}}
-@endsection
+{{-- End catalog content --}}
 
 <head>
     <!-- ...existing code... -->
@@ -1550,5 +1573,9 @@ document.addEventListener('alpine:init', () => {
         <p class="text-gray-600 font-medium">Searching...</p>
     </div>
 </div>
+
+@include('components.footer')
+</body>
+</html>
 
 
