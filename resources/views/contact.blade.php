@@ -7,17 +7,52 @@
     <div class="w-full max-w-5xl mx-auto">
         <h2 class="text-3xl font-bold text-teal-700 mb-2 text-center">Contact Us</h2>
         <p class="text-lg text-gray-600 mb-8 text-center">Have questions? We're here to help.</p>
+        <!-- Success/Error Messages -->
+        @if(session('success'))
+            <div class="max-w-5xl mx-auto mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="max-w-5xl mx-auto mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <!-- Contact Form -->
-            <form class="bg-white rounded-lg shadow p-8 flex flex-col gap-4" action="#" method="POST">
+            <form class="bg-white rounded-lg shadow p-8 flex flex-col gap-4" action="{{ route('contact.store') }}" method="POST">
+                @csrf
+                
                 <label class="font-semibold">Name</label>
-                <input type="text" name="name" class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400" required>
+                <input type="text" name="name" value="{{ old('name') }}" 
+                       class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('name') border-red-500 @enderror" required>
+                @error('name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+
                 <label class="font-semibold">Email</label>
-                <input type="email" name="email" class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400" required>
+                <input type="email" name="email" value="{{ old('email') }}" 
+                       class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('email') border-red-500 @enderror" required>
+                @error('email')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+
                 <label class="font-semibold">Subject</label>
-                <input type="text" name="subject" class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <input type="text" name="subject" value="{{ old('subject') }}" 
+                       class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('subject') border-red-500 @enderror">
+                @error('subject')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+
                 <label class="font-semibold">Message</label>
-                <textarea name="message" rows="4" class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400" required></textarea>
+                <textarea name="message" rows="4" 
+                          class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('message') border-red-500 @enderror" required>{{ old('message') }}</textarea>
+                @error('message')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+
                 <button type="submit" class="bg-teal-600 text-white font-semibold py-2 px-4 rounded hover:bg-teal-700 transition mt-2">Send Message</button>
             </form>
             <!-- Contact Info -->
