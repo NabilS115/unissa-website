@@ -182,8 +182,15 @@
                         </template>
                     </div>
 
-                    <!-- Right: Sort Dropdown -->
-                    <div class="flex items-center gap-2 flex-shrink-0">
+                    <!-- Right: Admin Controls & Sort Dropdown -->
+                    <div class="flex items-center gap-4 flex-shrink-0">
+                        @if(auth()->user()?->role === 'admin')
+                        <button @click="showAddModal = true" class="bg-white text-teal-600 px-4 py-2 rounded-lg font-semibold shadow hover:bg-gray-50 transition-colors">
+                            Add Product
+                        </button>
+                        @endif
+                        
+                        <div class="flex items-center gap-2">
                         <label class="text-sm font-medium text-white">Sort:</label>
                         <div class="rounded border border-white px-3 py-1.5 bg-white">
                             <template x-if="tab === 'food'">
@@ -202,6 +209,7 @@
                                     <option value="rating">Rating</option>
                                 </select>
                             </template>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -473,6 +481,12 @@ function foodMerchComponent() {
         isLoading: false,
         showAddModal: false,
         showEditModal: false,
+        
+        init() {
+            // Ensure modals are closed on component initialization
+            this.showAddModal = false;
+            this.showEditModal = false;
+        },
         
         get pagedFoods() {
             let filtered = this.filteredFood;

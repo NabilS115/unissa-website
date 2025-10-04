@@ -56,6 +56,10 @@
             display: flex;
             flex-direction: column;
         }
+        /* Alpine.js x-cloak directive */
+        [x-cloak] {
+            display: none !important;
+        }
         .main-content {
             flex: 1 0 auto;
             display: flex;
