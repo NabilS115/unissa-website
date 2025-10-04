@@ -148,31 +148,253 @@
 
 <div x-data="foodMerchComponent()" x-cloak>
 <!-- Catalog Header -->
-<header class="w-full bg-teal-600 text-white py-4 flex items-center justify-between px-6 sticky top-0 z-50 shadow-lg">
-    <div class="flex items-center gap-4">
+<header class="w-full bg-teal-600 text-white py-4 flex items-center justify-between px-6 header-fallback sticky top-0 z-50">
+    <div class="flex items-center gap-4 logo-section">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">Tijarah Co Sdn Bhd</h1>
     </div>
     <div class="flex items-center gap-6 ml-12">
         <nav>
-            <ul class="flex gap-4">
-                <li><a href="{{ route('home') }}" class="text-white hover:underline">Home</a></li>
-                <li><a href="{{ route('products.catalog') }}" class="text-white hover:underline font-semibold underline">Catalog</a></li>
-                <li><a href="{{ route('gallery.index') }}" class="text-white hover:underline">Gallery</a></li>
-                <li><a href="/contact" class="text-white hover:underline">Contact Us</a></li>
+            <ul class="flex gap-4 nav-list">
+                <li><a href="/" class="text-white hover:underline nav-link">Home</a></li>
+                <li><a href="{{ route('products.catalog') }}" class="text-white hover:underline nav-link font-semibold underline">Catalog</a></li>
+                <li><a href="/company-history" class="text-white hover:underline nav-link">About</a></li>
+                <li><a href="/contact" class="text-white hover:underline nav-link">Contact Us</a></li>
             </ul>
         </nav>
-        <div class="flex items-center gap-4">
-            @if(auth()->user()?->role === 'admin')
+        <div class="relative group" id="searchbar-group">
+            <button id="searchbar-icon" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow" style="width:40px;height:40px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-6 h-6">
+                    <circle cx="11" cy="11" r="8" stroke-width="2" stroke="#008080" fill="none"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="#008080" />
+                </svg>
+            </button>
+            <form id="searchbar-dropdown" class="absolute right-0 top-full mt-2 w-96 bg-white rounded shadow transition-all duration-300 opacity-0 pointer-events-none z-50" action="{{ route('search') }}" method="GET">
+                <div class="flex">
+                    <input type="text" name="search" id="main-search-input" placeholder="Search products, reviews..." class="flex-1 px-4 py-2 rounded-l-md text-black focus:outline-none" autocomplete="off" />
+                    <select name="scope" id="search-scope" class="px-3 py-2 border-l border-gray-300 text-black text-sm focus:outline-none">
+                        <option value="all">All</option>
+                        <option value="products">Products</option>
+                        <option value="reviews">Reviews</option>
+                        @if(auth()->check() && auth()->user()->role === 'admin')
+                            <option value="users">Users</option>
+                        @endif
+                    </select>
+                    <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded-r-md font-semibold hover:bg-teal-700 transition-colors">Search</button>
+                </div>
+                <div id="search-suggestions" class="w-full bg-white border-t border-gray-200 rounded-b shadow-lg z-50 hidden max-h-64 overflow-y-auto">
+                    <!-- Dynamic suggestions will be loaded here -->
+                </div>
+            </form>
+            
+            <style>
+                #searchbar-dropdown {
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: all 0.3s ease;
+                }
+                #searchbar-group.active #searchbar-dropdown {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            </style>
+        </div>
+        
+        @if(auth()->user()?->role === 'admin')
+        <div class="relative">
             <button @click="showAddModal = true" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow" style="width:40px;height:40px;" title="Add Product">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
             </button>
-            @endif
+        </div>
+        @endif
+        
+        <div class="relative group" id="profile-group">
+            <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden">
+                @if(Auth::check() && Auth::user()->profile_photo_url)
+                    <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover pointer-events-none">
+                @else
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="24" height="24" class="pointer-events-none">
+                        <circle cx="20" cy="20" r="18" fill="#fff" stroke="#0d9488" stroke-width="2" />
+                        <circle cx="20" cy="16" r="5" fill="none" stroke="#0d9488" stroke-width="2" />
+                        <path d="M12 30c0-4 8-4 8-4s8 0 8 4" fill="none" stroke="#0d9488" stroke-width="2" />
+                    </svg>
+                @endif
+            </button>
+            <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 opacity-0 pointer-events-none z-50">
+                @auth
+                    <div class="px-4 py-2 text-black">
+                        <div class="font-bold">{{ Auth::user()->name }}</div>
+                        <div class="text-sm text-gray-600">{{ Auth::user()->email }}</div>
+                    </div>
+                    <hr class="my-2">
+                    <a href="/profile" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Profile</a>
+                    <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">My Orders</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">Logout</button>
+                    </form>
+                @else
+                    <a href="/login" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Login</a>
+                    <a href="/register" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Register</a>
+                @endauth
+            </div>
+            <style>
+                #profileDropdown {
+                    opacity: 0;
+                    pointer-events: none;
+                }
+                #profile-group.active #profileDropdown {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            </style>
         </div>
     </div>
 </header>
+
+<script>
+    function initializeHeaderInteractions() {
+        const searchIcon = document.getElementById('searchbar-icon');
+        const searchGroup = document.getElementById('searchbar-group');
+        const searchDropdown = document.getElementById('searchbar-dropdown');
+        const profileIcon = document.getElementById('profileMenuButton');
+        const profileGroup = document.getElementById('profile-group');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (!searchIcon || !profileIcon) {
+            return;
+        }
+
+        if (searchIcon.hasAttribute('data-initialized') || profileIcon.hasAttribute('data-initialized')) {
+            return;
+        }
+
+        searchIcon.setAttribute('data-initialized', 'true');
+        profileIcon.setAttribute('data-initialized', 'true');
+
+        // Search icon click handler
+        searchIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Close profile dropdown if open
+            if (profileGroup) {
+                profileGroup.classList.remove('active');
+            }
+            
+            if (searchGroup) {
+                searchGroup.classList.toggle('active');
+                if (searchGroup.classList.contains('active')) {
+                    setTimeout(() => {
+                        const searchInput = document.getElementById('main-search-input');
+                        if (searchInput) {
+                            searchInput.focus();
+                        }
+                    }, 100);
+                }
+            }
+        });
+
+        // Profile icon click handler
+        if (profileIcon && profileGroup) {
+            profileIcon.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Close search dropdown if open
+                if (searchGroup) {
+                    searchGroup.classList.remove('active');
+                }
+                
+                profileGroup.classList.toggle('active');
+            });
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (searchGroup && !searchGroup.contains(e.target)) {
+                searchGroup.classList.remove('active');
+            }
+            if (profileGroup && !profileGroup.contains(e.target)) {
+                profileGroup.classList.remove('active');
+            }
+        });
+
+        // Initialize search functionality
+        const searchInput = document.getElementById('main-search-input');
+        const searchScope = document.getElementById('search-scope');
+        const suggestionsBox = document.getElementById('search-suggestions');
+
+        if (searchInput && searchScope) {
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                const scope = searchScope.value;
+                
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    fetchSuggestions(query, scope);
+                }, 300);
+            });
+            
+            searchScope.addEventListener('change', function() {
+                const query = searchInput.value.trim();
+                const scope = this.value;
+                
+                if (query.length >= 2) {
+                    fetchSuggestions(query, scope);
+                }
+            });
+            
+            searchInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    if (suggestionsBox) {
+                        suggestionsBox.style.display = 'none';
+                    }
+                }, 200);
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                const query = this.value.trim();
+                if (query.length >= 2) {
+                    const scope = searchScope.value;
+                    fetchSuggestions(query, scope);
+                }
+            });
+        }
+
+        async function fetchSuggestions(query, scope) {
+            if (query.length < 2) {
+                if (suggestionsBox) {
+                    suggestionsBox.style.display = 'none';
+                }
+                return;
+            }
+            
+            try {
+                // You might need to implement this route or modify as needed
+                // const response = await fetch(`/search/suggestions?q=${encodeURIComponent(query)}&scope=${scope}`);
+                // const suggestions = await response.json();
+                // displaySuggestions(suggestions, query);
+            } catch (error) {
+                console.log('Search suggestions not implemented yet');
+            }
+        }
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeHeaderInteractions);
+    } else {
+        initializeHeaderInteractions();
+    }
+
+    // Also initialize after a short delay to handle dynamic loading
+    setTimeout(initializeHeaderInteractions, 500);
+</script>
 
 <!-- Catalog Controls Header -->
 <div class="w-full bg-teal-600 text-white sticky top-[72px] z-40 border-t border-teal-500">
