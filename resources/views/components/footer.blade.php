@@ -16,15 +16,29 @@
     <div class="flex items-center gap-4">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <div class="flex flex-col">
-            <span class="font-bold text-lg">Tijarah Co Sdn Bhd</span>
+            <span class="font-bold text-lg">
+                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
+                    Unissa Cafe
+                @else
+                    Tijarah Co Sdn Bhd
+                @endif
+            </span>
         </div>
     </div>
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
-            <a href="/" class="text-white mb-2 hover:underline">Home</a>
-            <a href="/catalog" class="text-white mb-2 hover:underline">Catalog</a>
-            <a href="/company-history" class="text-white mb-2 hover:underline">About</a>
-            <a href="/contact" class="text-white hover:underline">Contact Us</a>
+            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
+                <!-- Unissa Cafe Footer Navigation -->
+                <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
+                <a href="{{ route('unissa-cafe.menu') }}" class="text-white mb-2 hover:underline">Catalog</a>
+                <a href="/" class="text-white hover:underline">← Back to Tijarah</a>
+            @else
+                <!-- Tijarah Footer Navigation -->
+                <a href="/" class="text-white mb-2 hover:underline">Home</a>
+                <a href="/catalog" class="text-white mb-2 hover:underline">Catalog</a>
+                <a href="/company-history" class="text-white mb-2 hover:underline">About</a>
+                <a href="/contact" class="text-white hover:underline">Contact Us</a>
+            @endif
         </div>
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col items-center min-w-[200px]">
             <span class="font-bold mb-2">Follow Us</span>

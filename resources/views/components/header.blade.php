@@ -2,15 +2,28 @@
 <header class="w-full bg-teal-600 text-white py-4 flex items-center justify-between px-6 header-fallback sticky top-0 z-50">
     <div class="flex items-center gap-4 logo-section">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
-        <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">Tijarah Co Sdn Bhd</h1>
+        <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">
+            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
+                Unissa Cafe
+            @else
+                Tijarah Co Sdn Bhd
+            @endif
+        </h1>
     </div>
     <div class="flex items-center gap-6 ml-12">
         <nav>
             <ul class="flex gap-4 nav-list">
-                <li><a href="/" class="text-white hover:underline nav-link {{ request()->is('/') ? 'font-semibold underline' : '' }}">Home</a></li>
-                <li><a href="/unissa-cafe" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') ? 'font-semibold underline' : '' }}">Unissa Cafe</a></li>
-                <li><a href="/company-history" class="text-white hover:underline nav-link {{ request()->is('company-history') ? 'font-semibold underline' : '' }}">About</a></li>
-                <li><a href="/contact" class="text-white hover:underline nav-link {{ request()->is('contact') ? 'font-semibold underline' : '' }}">Contact Us</a></li>
+                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
+                    <!-- Unissa Cafe Navigation -->
+                    <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Homepage</a></li>
+                    <li><a href="{{ route('unissa-cafe.menu') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/menu') ? 'font-semibold underline' : '' }}">Catalog</a></li>
+                    <li><a href="/" class="text-white hover:underline nav-link border-l border-teal-400 pl-4 ml-2">← Back to Tijarah</a></li>
+                @else
+                    <!-- Tijarah Navigation -->
+                    <li><a href="/" class="text-white hover:underline nav-link {{ request()->is('/') ? 'font-semibold underline' : '' }}">Home</a></li>
+                    <li><a href="/company-history" class="text-white hover:underline nav-link {{ request()->is('company-history') ? 'font-semibold underline' : '' }}">About</a></li>
+                    <li><a href="/contact" class="text-white hover:underline nav-link {{ request()->is('contact') ? 'font-semibold underline' : '' }}">Contact Us</a></li>
+                @endif
             </ul>
         </nav>
         <div class="relative group" id="searchbar-group">

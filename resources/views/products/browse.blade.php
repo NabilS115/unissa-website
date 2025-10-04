@@ -118,22 +118,8 @@
 
 <div x-data="foodMerchComponent()" x-cloak>
 
-    <!-- Cafe Navigation -->
-    <div class="w-full bg-teal-600 text-white sticky top-[72px] z-40 border-t border-teal-500">
-        <div class="max-w-7xl mx-auto px-6 py-3">
-            <div class="flex justify-center gap-6">
-                <a href="{{ route('unissa-cafe.homepage') }}" class="px-4 py-2 rounded-lg font-semibold bg-teal-700 text-white hover:bg-white hover:text-teal-700 transition-colors">
-                    Homepage
-                </a>
-                <a href="{{ route('unissa-cafe.menu') }}" class="px-4 py-2 rounded-lg font-semibold bg-white text-teal-700 transition-colors">
-                    Catalog
-                </a>
-            </div>
-        </div>
-    </div>
-
     <!-- Menu Controls Header -->
-    <div class="w-full bg-teal-600 text-white sticky top-[128px] z-40 border-t border-teal-500">
+    <div class="w-full bg-teal-600 text-white sticky top-[72px] z-40 border-t border-teal-500">
         <div class="max-w-7xl mx-auto px-6">
             <!-- Second Row: Search, Filters, and Controls -->
             <div class="py-3">

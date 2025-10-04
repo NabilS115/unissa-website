@@ -5,19 +5,7 @@
 @section('content')
 <div class="container mx-auto px-6 py-8">
 
-    <!-- Cafe Navigation -->
-    <div class="w-full bg-teal-600 text-white mb-8 py-3">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-center gap-6">
-                <a href="{{ route('unissa-cafe.homepage') }}" class="px-4 py-2 rounded-lg font-semibold bg-white text-teal-700">
-                    Homepage
-                </a>
-                <a href="{{ route('unissa-cafe.menu') }}" class="px-4 py-2 rounded-lg font-semibold hover:bg-teal-700">
-                    Catalog
-                </a>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Hero Section -->
     <div class="bg-gradient-to-br from-teal-50 to-teal-100 py-16 mb-8 rounded-lg">
