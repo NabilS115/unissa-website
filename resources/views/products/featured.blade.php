@@ -192,10 +192,10 @@
     <div class="bg-teal-600 text-white py-12 rounded-lg text-center">
         <h2 class="text-3xl font-bold mb-4">Ready to Experience Unissa Cafe?</h2>
         <p class="text-lg mb-6">
-            Browse our full menu and discover what makes us special.
+            Browse our full catalog and discover what makes us special.
         </p>
         <a href="{{ route('unissa-cafe.catalog') }}" class="bg-white text-teal-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors inline-block">
-            Explore Full Menu
+            Explore Full Catalog
         </a>
     </div>
 </div>
