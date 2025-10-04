@@ -30,7 +30,7 @@
             @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
                 <!-- Unissa Cafe Footer Navigation -->
                 <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
-                <a href="{{ route('unissa-cafe.menu') }}" class="text-white mb-2 hover:underline">Catalog</a>
+                <a href="{{ route('unissa-cafe.catalog') }}" class="text-white mb-2 hover:underline">Catalog</a>
                 <a href="/" class="text-white hover:underline">← Back to Tijarah</a>
             @else
                 <!-- Tijarah Footer Navigation -->

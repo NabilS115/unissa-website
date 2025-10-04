@@ -146,7 +146,7 @@
                     </a>
 
                     <!-- View Catalog Card -->
-                    <a href="/catalog" class="group block">
+                    <a href="{{ route('unissa-cafe.catalog') }}" class="group block">
                         <div class="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group-hover:border-indigo-200 h-full">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center group-hover:bg-indigo-200 transition-colors duration-300">
@@ -522,7 +522,7 @@
                                         </svg>
                                         View all users
                                     </a>
-                                    <a href="/catalog" class="flex items-center gap-2 text-sm text-gray-600 hover:text-teal-600 transition-colors">
+                                    <a href="{{ route('unissa-cafe.catalog') }}" class="flex items-center gap-2 text-sm text-gray-600 hover:text-teal-600 transition-colors">
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                                         </svg>

@@ -15,10 +15,10 @@
                 Discover our carefully curated selection of delicious food and premium merchandise.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('unissa-cafe.menu') }}?tab=food" class="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                <a href="{{ route('unissa-cafe.catalog') }}?tab=food" class="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
                     Browse Food Menu
                 </a>
-                <a href="{{ route('unissa-cafe.menu') }}?tab=merch" class="border-2 border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                <a href="{{ route('unissa-cafe.catalog') }}?tab=merch" class="border-2 border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white px-8 py-3 rounded-lg font-semibold transition-colors">
                     Shop Merchandise
                 </a>
             </div>
@@ -46,13 +46,13 @@
                         unforgettable experience that combines great taste with premium quality.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{{ route('unissa-cafe.menu') }}?tab=food" class="inline-flex items-center justify-center px-6 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+                        <a href="{{ route('unissa-cafe.catalog') }}?tab=food" class="inline-flex items-center justify-center px-6 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
                             Browse Food Menu
                             <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
                         </a>
-                        <a href="{{ route('unissa-cafe.menu') }}?tab=merch" class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-teal-600 transition-colors">
+                        <a href="{{ route('unissa-cafe.catalog') }}?tab=merch" class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-teal-600 transition-colors">
                             Shop Merchandise
                         </a>
                     </div>
@@ -160,7 +160,7 @@
         <p class="text-lg mb-6">
             Browse our full menu and discover what makes us special.
         </p>
-        <a href="{{ route('unissa-cafe.menu') }}" class="bg-white text-teal-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors inline-block">
+        <a href="{{ route('unissa-cafe.catalog') }}" class="bg-white text-teal-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors inline-block">
             Explore Full Menu
         </a>
     </div>

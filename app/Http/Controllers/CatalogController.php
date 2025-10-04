@@ -101,7 +101,7 @@ class CatalogController extends Controller
                 if ($request->expectsJson()) {
                     return response()->json(['success' => true, 'product' => $newProduct]);
                 }
-                return redirect()->route('unissa-cafe.menu')->with('success', 'Product added!');
+                return redirect()->route('unissa-cafe.catalog')->with('success', 'Product added!');
             } else {
                 \Log::error('Product save failed', [
                     'validated' => $validated,
@@ -167,7 +167,7 @@ class CatalogController extends Controller
             return response()->json(['success' => true, 'message' => 'Product updated successfully']);
         }
 
-        return redirect()->route('unissa-cafe.menu')->with('success', 'Product updated!');
+        return redirect()->route('unissa-cafe.catalog')->with('success', 'Product updated!');
     }
 
     public function index()
@@ -211,7 +211,7 @@ class CatalogController extends Controller
                 return response()->json(['success' => true, 'message' => 'Product deleted successfully!']);
             }
             
-            return redirect()->route('unissa-cafe.menu')->with('success', 'Product deleted!');
+            return redirect()->route('unissa-cafe.catalog')->with('success', 'Product deleted!');
         } catch (\Exception $e) {
             if (request()->expectsJson()) {
                 return response()->json(['success' => false, 'message' => 'Error deleting product: ' . $e->getMessage()], 500);

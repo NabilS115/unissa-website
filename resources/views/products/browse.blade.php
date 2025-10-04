@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Unissa Cafe - Menu')
+@section('title', 'Unissa Cafe - Catalog')
 
 @section('content')
 @php

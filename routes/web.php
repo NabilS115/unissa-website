@@ -100,8 +100,8 @@ Route::get('/unissa-cafe/homepage', [\App\Http\Controllers\CatalogController::cl
 // Legacy featured products route for backward compatibility
 Route::get('/products/featured', [\App\Http\Controllers\CatalogController::class, 'featured'])->name('products.featured');
 
-// Unissa Cafe menu page (browse all products with tabs, search, filters)
-Route::get('/unissa-cafe/menu', [\App\Http\Controllers\CatalogController::class, 'browse'])->name('unissa-cafe.menu');
+// Unissa Cafe catalog page (browse all products with tabs, search, filters)
+Route::get('/unissa-cafe/catalog', [\App\Http\Controllers\CatalogController::class, 'browse'])->name('unissa-cafe.catalog');
 
 // Legacy browse route for backward compatibility
 Route::get('/products/browse', [\App\Http\Controllers\CatalogController::class, 'browse'])->name('products.browse');
