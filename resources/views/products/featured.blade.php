@@ -94,9 +94,10 @@
                 
                 <!-- Image -->
                 <div class="relative h-64 lg:h-full">
-                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?auto=format&fit=crop&w=800&q=80" 
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80" 
                          alt="Unissa Cafe - Delicious Food & Premium Merchandise" 
-                         class="w-full h-full object-cover">
+                         class="w-full h-full object-cover"
+                         onerror="this.src='https://via.placeholder.com/800x400/0d9488/ffffff?text=Unissa+Cafe+Food'; this.onerror=null;">
                     <div class="absolute inset-0 bg-gradient-to-l from-transparent to-teal-600/20"></div>
                 </div>
             </div>
