@@ -42,7 +42,7 @@ class ProductController extends Controller
             if ($request->expectsJson()) {
                 return response()->json(['success' => true, 'product' => $product]);
             }
-            return redirect()->route('products.catalog')->with('success', 'Product added!');
+            return redirect()->route('unissa-cafe.homepage')->with('success', 'Product added!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->expectsJson()) {
                 return response()->json([

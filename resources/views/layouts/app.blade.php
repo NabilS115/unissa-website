@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Food Catalog')</title>
+    <title>@yield('title', 'Unissa Cafe')</title>
     <meta name="theme-color" content="#0d9488">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>

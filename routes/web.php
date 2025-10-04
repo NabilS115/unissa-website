@@ -83,19 +83,48 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
-// catalog routes
-// Make sure your form uses method="POST" and enctype="multipart/form-data"
-// Example form:
-// <form action="{{ route('catalog.add') }}" method="POST" enctype="multipart/form-data">
-//     @csrf
-//     <!-- fields -->
-// </form>
-Route::get('/catalog', [\App\Http\Controllers\CatalogController::class, 'index'])->name('products.catalog');
-Route::post('/catalog/add', [CatalogController::class, 'add'])->name('catalog.add');
-Route::put('/catalog/edit/{id}', [\App\Http\Controllers\CatalogController::class, 'edit'])->name('catalog.edit');
+// unissa cafe routes
+// Main unissa-cafe route redirects to homepage
+Route::get('/unissa-cafe', function() {
+    return redirect()->route('unissa-cafe.homepage');
+})->name('unissa-cafe.main');
+
+// Legacy catalog route redirect for backward compatibility
+Route::get('/catalog', function() {
+    return redirect()->route('unissa-cafe.homepage');
+})->name('products.catalog');
+
+// Unissa Cafe homepage (formerly featured products)
+Route::get('/unissa-cafe/homepage', [\App\Http\Controllers\CatalogController::class, 'featured'])->name('unissa-cafe.homepage');
+
+// Legacy featured products route for backward compatibility
+Route::get('/products/featured', [\App\Http\Controllers\CatalogController::class, 'featured'])->name('products.featured');
+
+// Unissa Cafe menu page (browse all products with tabs, search, filters)
+Route::get('/unissa-cafe/menu', [\App\Http\Controllers\CatalogController::class, 'browse'])->name('unissa-cafe.menu');
+
+// Legacy browse route for backward compatibility
+Route::get('/products/browse', [\App\Http\Controllers\CatalogController::class, 'browse'])->name('products.browse');
+
+// Product management routes
+Route::post('/unissa-cafe/products', [CatalogController::class, 'store'])->name('unissa-cafe.products.store');
+Route::put('/unissa-cafe/products/{id}', [\App\Http\Controllers\CatalogController::class, 'update'])->name('unissa-cafe.products.update');
+Route::delete('/unissa-cafe/products/{id}', [\App\Http\Controllers\CatalogController::class, 'destroy'])->name('unissa-cafe.products.destroy');
+
+// Legacy product management routes for backward compatibility
+Route::post('/products', [CatalogController::class, 'store'])->name('products.store');
+Route::put('/products/{id}', [\App\Http\Controllers\CatalogController::class, 'update'])->name('products.update');
+Route::delete('/products/{id}', [\App\Http\Controllers\CatalogController::class, 'destroy'])->name('products.destroy');
+
+// Legacy catalog routes for backward compatibility
+Route::post('/catalog/add', [CatalogController::class, 'store'])->name('catalog.add');
+Route::put('/catalog/edit/{id}', [\App\Http\Controllers\CatalogController::class, 'update'])->name('catalog.edit');
 Route::delete('/catalog/delete/{id}', [\App\Http\Controllers\CatalogController::class, 'destroy'])->name('catalog.delete');
 
-// Catalog data endpoint
+// Unissa Cafe data endpoint
+Route::get('/unissa-cafe/data', [CatalogController::class, 'getData'])->name('unissa-cafe.data');
+
+// Legacy catalog data endpoint
 Route::get('/catalog/data', [CatalogController::class, 'getData'])->name('catalog.data');
 
 // about routes

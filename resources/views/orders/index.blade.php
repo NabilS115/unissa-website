@@ -12,7 +12,7 @@
                     <h1 class="text-3xl font-bold text-gray-900">My Orders</h1>
                     <p class="text-gray-600 mt-2">Track and manage your product orders</p>
                 </div>
-                <a href="{{ route('products.catalog') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors">
+                <a href="{{ route('unissa-cafe.homepage') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                     </svg>
@@ -110,7 +110,7 @@
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">No Orders Yet</h3>
                 <p class="text-gray-600 mb-8 max-w-md mx-auto">You haven't placed any orders yet. Explore our catalog and find something you love!</p>
-                <a href="{{ route('products.catalog') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors">
+                <a href="{{ route('unissa-cafe.homepage') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                     </svg>

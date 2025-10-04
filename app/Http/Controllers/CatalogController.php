@@ -101,7 +101,7 @@ class CatalogController extends Controller
                 if ($request->expectsJson()) {
                     return response()->json(['success' => true, 'product' => $newProduct]);
                 }
-                return redirect()->route('products.catalog')->with('success', 'Product added!');
+                return redirect()->route('unissa-cafe.homepage')->with('success', 'Product added!');
             } else {
                 \Log::error('Product save failed', [
                     'validated' => $validated,
@@ -167,18 +167,30 @@ class CatalogController extends Controller
             return response()->json(['success' => true, 'message' => 'Product updated successfully']);
         }
 
-        return redirect()->route('products.catalog')->with('success', 'Product updated!');
+        return redirect()->route('unissa-cafe.homepage')->with('success', 'Product updated!');
     }
 
     public function index()
+    {
+        // Redirect to featured products (legacy support)
+        return redirect()->route('products.featured');
+    }
+
+    public function featured()
+    {
+        $merchandise = \App\Models\Product::where('type', 'merch')->latest()->get();
+        $food = \App\Models\Product::where('type', 'food')->latest()->get();
+        
+        return view('products.featured', compact('food', 'merchandise'));
+    }
+
+    public function browse()
     {
         $merchandise = \App\Models\Product::where('type', 'merch')->get();
         $food = \App\Models\Product::where('type', 'food')->get();
         $categories = \App\Models\Product::pluck('category')->unique()->values()->all();
         
-
-        
-        return view('products.catalog', compact('food', 'merchandise', 'categories'));
+        return view('products.browse', compact('food', 'merchandise', 'categories'));
     }
 
     public function destroy($id)
@@ -189,7 +201,7 @@ class CatalogController extends Controller
         }
         $product = Product::findOrFail($id);
         $product->delete();
-        return redirect()->route('products.catalog')->with('success', 'Product deleted!');
+        return redirect()->route('unissa-cafe.homepage')->with('success', 'Product deleted!');
     }
 
     /**
@@ -243,5 +255,15 @@ class CatalogController extends Controller
         
         $product->calculated_rating = number_format($averageRating, 1);
         $product->review_count = $totalRatings;
+    }
+
+    public function store(Request $request)
+    {
+        return $this->add($request);
+    }
+
+    public function update(Request $request, $id)
+    {
+        return $this->edit($request, $id);
     }
 }

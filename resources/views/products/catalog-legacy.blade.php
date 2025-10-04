@@ -1,10 +1,23 @@
+{{--
+    LEGACY FILE - ARCHIVED
+    
+    This is the original monolithic catalog page (1,797 lines) that was used before 
+    the catalog was restructured into separate pages:
+    - featured.blade.php (now unissa-cafe/homepage)  
+    - browse.blade.php (now unissa-cafe/menu)
+    
+    This file is kept for reference but is no longer used in the application.
+    All routes now redirect to the new structure.
+    
+    Date archived: October 4, 2025
+--}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>UNISSA Catalog</title>
+    <title>UNISSA Catalog - LEGACY</title>
     <meta name="theme-color" content="#0d9488">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>

@@ -7,10 +7,10 @@
     <div class="flex items-center gap-6 ml-12">
         <nav>
             <ul class="flex gap-4 nav-list">
-                <li><a href="/" class="text-white hover:underline nav-link">Home</a></li>
-                <li><a href="/catalog" class="text-white hover:underline nav-link">Catalog</a></li>
-                <li><a href="/company-history" class="text-white hover:underline nav-link">About</a></li>
-                <li><a href="/contact" class="text-white hover:underline nav-link">Contact Us</a></li>
+                <li><a href="/" class="text-white hover:underline nav-link {{ request()->is('/') ? 'font-semibold underline' : '' }}">Home</a></li>
+                <li><a href="/unissa-cafe" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') ? 'font-semibold underline' : '' }}">Unissa Cafe</a></li>
+                <li><a href="/company-history" class="text-white hover:underline nav-link {{ request()->is('company-history') ? 'font-semibold underline' : '' }}">About</a></li>
+                <li><a href="/contact" class="text-white hover:underline nav-link {{ request()->is('contact') ? 'font-semibold underline' : '' }}">Contact Us</a></li>
             </ul>
         </nav>
         <div class="relative group" id="searchbar-group">
