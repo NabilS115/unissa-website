@@ -3,7 +3,7 @@
     <div class="flex items-center gap-4 logo-section">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">
-            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
+            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
                 Unissa Cafe
             @else
                 Tijarah Co Sdn Bhd
@@ -13,7 +13,7 @@
     <div class="flex items-center gap-6 ml-12">
         <nav>
             <ul class="flex gap-4 nav-list">
-                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
+                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
                     <!-- Unissa Cafe Navigation -->
                     <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Home</a></li>
                     <li><a href="{{ route('unissa-cafe.catalog') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/catalog') ? 'font-semibold underline' : '' }}">Catalog</a></li>
