@@ -101,7 +101,7 @@ class CatalogController extends Controller
                 if ($request->expectsJson()) {
                     return response()->json(['success' => true, 'product' => $newProduct]);
                 }
-                return redirect()->route('unissa-cafe.homepage')->with('success', 'Product added!');
+                return redirect()->route('unissa-cafe.menu')->with('success', 'Product added!');
             } else {
                 \Log::error('Product save failed', [
                     'validated' => $validated,
@@ -167,7 +167,7 @@ class CatalogController extends Controller
             return response()->json(['success' => true, 'message' => 'Product updated successfully']);
         }
 
-        return redirect()->route('unissa-cafe.homepage')->with('success', 'Product updated!');
+        return redirect()->route('unissa-cafe.menu')->with('success', 'Product updated!');
     }
 
     public function index()
@@ -197,11 +197,28 @@ class CatalogController extends Controller
     {
         // Only allow admin
         if (!auth()->check() || auth()->user()->role !== 'admin') {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
             abort(403, 'Unauthorized');
         }
-        $product = Product::findOrFail($id);
-        $product->delete();
-        return redirect()->route('unissa-cafe.homepage')->with('success', 'Product deleted!');
+        
+        try {
+            $product = Product::findOrFail($id);
+            $product->delete();
+            
+            if (request()->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Product deleted successfully!']);
+            }
+            
+            return redirect()->route('unissa-cafe.menu')->with('success', 'Product deleted!');
+        } catch (\Exception $e) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Error deleting product: ' . $e->getMessage()], 500);
+            }
+            
+            return redirect()->back()->withErrors(['error' => 'Error deleting product: ' . $e->getMessage()]);
+        }
     }
 
     /**

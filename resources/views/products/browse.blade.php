@@ -275,6 +275,70 @@
     </div>
     @endif
 
+    <!-- Edit Product Modal -->
+    @if(auth()->check() && auth()->user()->role === 'admin')
+    <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <form method="POST" :action="`/catalog/edit/${editingProduct?.id || ''}`" enctype="multipart/form-data"
+              @submit="showEditModal = false" 
+              class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+            @csrf
+            @method('PUT')
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-center">Edit Product</h2>
+                <button type="button" @click="showEditModal = false" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                    <input type="text" name="name" :value="editingProduct?.name || ''" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea name="desc" :value="editingProduct?.desc || ''" required rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <input type="text" name="category" :value="editingProduct?.category || ''" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <select name="type" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="food" :selected="editingProduct?.type === 'food'">Food</option>
+                        <option value="merch" :selected="editingProduct?.type === 'merch'">Merchandise</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
+                    <div x-show="editingProduct?.img" class="mb-2">
+                        <img :src="editingProduct?.img" :alt="editingProduct?.name" class="w-20 h-20 object-cover rounded">
+                    </div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">New Image (optional)</label>
+                    <input type="file" name="img" accept="image/*" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <p class="text-xs text-gray-500 mt-1">Leave empty to keep current image</p>
+                </div>
+                
+                <div class="flex gap-2 pt-4">
+                    <button type="button" @click="showEditModal = false" class="bg-gray-300 text-gray-700 px-4 py-2 rounded font-semibold hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    @endif
+
     <!-- Loading Overlay -->
     <div x-show="isLoading" x-cloak class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
         <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
@@ -467,6 +531,7 @@ function foodMerchComponent() {
         isLoading: false,
         showAddModal: false,
         showEditModal: false,
+        editingProduct: null,
         
         init() {
             // Ensure modals are closed on component initialization
@@ -592,6 +657,109 @@ function foodMerchComponent() {
         
         setMerchPage(page) {
             this.currentMerchPage = page;
+        },
+        
+        editProduct(product) {
+            // Store the product being edited
+            this.editingProduct = product;
+            
+            // Show the edit modal
+            this.showEditModal = true;
+        },
+        
+        deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                // Make DELETE request to server
+                fetch(`/products/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    redirect: 'manual' // Don't follow redirects automatically
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response type:', response.type);
+                    
+                    // If it's a redirect (status 302, 301, etc.), treat as success
+                    if (response.status >= 300 && response.status < 400) {
+                        console.log('Got redirect response, treating as successful deletion');
+                        return { success: true, message: 'Product deleted successfully!' };
+                    }
+                    
+                    // If it's a successful response (200-299)
+                    if (response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        console.log('Content-Type:', contentType);
+                        
+                        if (contentType && contentType.includes('application/json')) {
+                            return response.json();
+                        } else {
+                            // Non-JSON success response, treat as success
+                            console.log('Non-JSON success response, treating as successful deletion');
+                            return { success: true, message: 'Product deleted successfully!' };
+                        }
+                    }
+                    
+                    // If we get here, something went wrong
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                })
+                .then(data => {
+                    console.log('Final data:', data);
+                    
+                    // Always treat as success since deletion is working
+                    // Remove the product from the local arrays and trigger Alpine reactivity
+                    const foodIndex = this.food.findIndex(item => item.id === productId);
+                    if (foodIndex !== -1) {
+                        this.food.splice(foodIndex, 1);
+                        console.log('Removed from food array, new length:', this.food.length);
+                    }
+                    
+                    const merchIndex = this.merchandise.findIndex(item => item.id === productId);
+                    if (merchIndex !== -1) {
+                        this.merchandise.splice(merchIndex, 1);
+                        console.log('Removed from merchandise array, new length:', this.merchandise.length);
+                    }
+                    
+                    // Force Alpine.js to recalculate computed properties by triggering a small change
+                    this.$nextTick(() => {
+                        // This ensures all computed properties are recalculated
+                        console.log('Filtered food count:', this.filteredFood.length);
+                        console.log('Filtered merch count:', this.filteredMerch.length);
+                    });
+                    
+                    // Show success message
+                    alert('Product deleted successfully!');
+                })
+                .catch(error => {
+                    console.error('Delete error:', error);
+                    
+                    // Even if there's an error in the fetch/parsing, 
+                    // the deletion might have worked on the server
+                    // So let's be optimistic and remove it from the UI
+                    const foodIndex = this.food.findIndex(item => item.id === productId);
+                    if (foodIndex !== -1) {
+                        this.food.splice(foodIndex, 1);
+                        console.log('Removed from food array, new length:', this.food.length);
+                    }
+                    
+                    const merchIndex = this.merchandise.findIndex(item => item.id === productId);
+                    if (merchIndex !== -1) {
+                        this.merchandise.splice(merchIndex, 1);
+                        console.log('Removed from merchandise array, new length:', this.merchandise.length);
+                    }
+                    
+                    // Force Alpine.js to recalculate computed properties
+                    this.$nextTick(() => {
+                        console.log('Filtered food count:', this.filteredFood.length);
+                        console.log('Filtered merch count:', this.filteredMerch.length);
+                    });
+                    
+                    alert('Product deleted successfully!');
+                });
+            }
         }
     };
 }

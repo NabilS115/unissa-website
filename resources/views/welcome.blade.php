@@ -112,50 +112,7 @@
         </div>
     </section>
 
-    <!-- Unissa Cafe Section -->
-    <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div class="bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl shadow-lg overflow-hidden text-white">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <!-- Content -->
-                <div class="p-8 lg:p-12">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                            </svg>
-                        </div>
-                        <h2 class="text-3xl font-bold">Unissa Cafe</h2>
-                    </div>
-                    <h3 class="text-2xl font-semibold mb-4">Delicious Food & Premium Merchandise</h3>
-                    <p class="text-teal-100 mb-8 leading-relaxed">
-                        Discover our carefully curated selection of mouth-watering food and high-quality merchandise. 
-                        From artisan pizzas and fresh salads to exclusive branded items, Unissa Cafe offers an 
-                        unforgettable experience that combines great taste with premium quality.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{{ route('unissa-cafe.homepage') }}" class="inline-flex items-center justify-center px-6 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
-                            Browse Featured Items
-                            <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                            </svg>
-                        </a>
-                        <a href="{{ route('unissa-cafe.menu') }}" class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-teal-600 transition-colors">
-                            View Full Catalog
-                        </a>
-                    </div>
-                </div>
-                <!-- Image -->
-                <div class="p-8 lg:p-12">
-                    <div class="relative">
-                        <div class="absolute inset-0 bg-white bg-opacity-10 rounded-2xl transform rotate-3"></div>
-                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?auto=format&fit=crop&w=800&q=80" 
-                             alt="Unissa Cafe Food" 
-                             class="relative w-full h-64 lg:h-80 object-cover rounded-2xl shadow-xl">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- About Summary Section -->
     <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">

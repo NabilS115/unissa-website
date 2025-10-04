@@ -15,7 +15,7 @@
             <ul class="flex gap-4 nav-list">
                 @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
                     <!-- Unissa Cafe Navigation -->
-                    <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Homepage</a></li>
+                    <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Home</a></li>
                     <li><a href="{{ route('unissa-cafe.menu') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/menu') ? 'font-semibold underline' : '' }}">Catalog</a></li>
                     <li><a href="/" class="text-white hover:underline nav-link border-l border-teal-400 pl-4 ml-2">← Back to Tijarah</a></li>
                 @else
