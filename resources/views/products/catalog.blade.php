@@ -148,66 +148,59 @@
 
 <div x-data="foodMerchComponent()" x-cloak>
 <!-- Catalog Header -->
-<header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- First Row: Logo, Navigation, and Admin Actions -->
-        <div class="flex justify-between items-center h-16">
-            <!-- Left: Catalog Logo/Title -->
-            <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <h1 class="text-xl font-bold text-teal-600">UNISSA Catalog</h1>
-                </div>
-                <nav class="hidden md:ml-6 md:flex md:space-x-6">
-                    <a href="{{ route('home') }}" class="text-gray-500 hover:text-teal-600 px-2 py-2 text-sm font-medium transition-colors">Home</a>
-                    <a href="{{ route('products.catalog') }}" class="text-teal-600 px-2 py-2 text-sm font-medium border-b-2 border-teal-600">Catalog</a>
-                    <a href="{{ route('gallery.index') }}" class="text-gray-500 hover:text-teal-600 px-2 py-2 text-sm font-medium transition-colors">Gallery</a>
-                </nav>
-            </div>
-
-            <!-- Right: User Actions -->
-            <div class="flex items-center space-x-3">
-                @if(auth()->user()?->role === 'admin')
-                <button @click="showAddModal = true" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 transition-colors">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    Add Product
-                </button>
-                @endif
-                
-                <!-- Mobile menu button -->
-                <button class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-teal-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-            </div>
+<header class="w-full bg-teal-600 text-white py-4 flex items-center justify-between px-6 sticky top-0 z-50 shadow-lg">
+    <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
+        <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">Tijarah Co Sdn Bhd</h1>
+    </div>
+    <div class="flex items-center gap-6 ml-12">
+        <nav>
+            <ul class="flex gap-4">
+                <li><a href="{{ route('home') }}" class="text-white hover:underline">Home</a></li>
+                <li><a href="{{ route('products.catalog') }}" class="text-white hover:underline font-semibold underline">Catalog</a></li>
+                <li><a href="{{ route('gallery.index') }}" class="text-white hover:underline">Gallery</a></li>
+                <li><a href="/contact" class="text-white hover:underline">Contact Us</a></li>
+            </ul>
+        </nav>
+        <div class="flex items-center gap-4">
+            @if(auth()->user()?->role === 'admin')
+            <button @click="showAddModal = true" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow" style="width:40px;height:40px;" title="Add Product">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+            </button>
+            @endif
         </div>
+    </div>
+</header>
 
+<!-- Catalog Controls Header -->
+<div class="w-full bg-teal-600 text-white sticky top-[72px] z-40 border-t border-teal-500">
+    <div class="max-w-7xl mx-auto px-6">
         <!-- Second Row: Search, Filters, and Controls -->
-        <div class="border-t border-gray-100 py-3">
+        <div class="border-t border-teal-500 py-3">
             <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <!-- Left: Tab Switcher -->
                 <div class="flex-shrink-0">
-                    <div class="inline-flex rounded-lg bg-gray-100 p-1 shadow-sm">
-                        <button type="button" @click="switchTab('food')" :class="tab === 'food' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Food</button>
-                        <button type="button" @click="switchTab('merch')" :class="tab === 'merch' ? 'bg-teal-600 text-white' : 'bg-transparent text-teal-700'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Merch</button>
+                    <div class="inline-flex rounded-lg bg-teal-700 p-1 shadow-sm">
+                        <button type="button" @click="switchTab('food')" :class="tab === 'food' ? 'bg-white text-teal-700' : 'bg-transparent text-white'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Food</button>
+                        <button type="button" @click="switchTab('merch')" :class="tab === 'merch' ? 'bg-white text-teal-700' : 'bg-transparent text-white'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Merch</button>
                     </div>
                 </div>
 
                 <!-- Center: Search Bar -->
                 <div class="flex-1 max-w-md relative">
                     <div class="relative">
-                        <input x-show="tab === 'food'" type="text" placeholder="Search food..." x-model="foodSearchInput" @focus="showFoodPredictions = true" @input="showFoodPredictions = foodSearchInput.length > 0" @blur="setTimeout(() => { showFoodPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-gray-300 rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" />
-                        <input x-show="tab === 'merch'" type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @input="showMerchPredictions = merchSearchInput.length > 0" @blur="setTimeout(() => { showMerchPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-gray-300 rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" />
+                        <input x-show="tab === 'food'" type="text" placeholder="Search food..." x-model="foodSearchInput" @focus="showFoodPredictions = true" @input="showFoodPredictions = foodSearchInput.length > 0" @blur="setTimeout(() => { showFoodPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-white rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-white text-sm bg-white text-teal-700" />
+                        <input x-show="tab === 'merch'" type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @input="showMerchPredictions = merchSearchInput.length > 0" @blur="setTimeout(() => { showMerchPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-white rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-white text-sm bg-white text-teal-700" />
                         <button @click="performSearch()" class="absolute right-8 top-1/2 -translate-y-1/2 p-1">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         </button>
                         <button x-show="tab === 'food' && (foodSearch || foodSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-1" title="Clear search">
-                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                         <button x-show="tab === 'merch' && (merchSearch || merchSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-1" title="Clear search">
-                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                     </div>
                     <!-- Search Predictions -->
@@ -215,7 +208,7 @@
                         <ul class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
                             <template x-for="foodItem in food" :key="foodItem.id">
                                 <template x-if="foodItem.name && foodItem.name.toLowerCase().includes(foodSearchInput.toLowerCase())">
-                                    <li @mousedown.prevent="foodSearchInput = foodItem.name; showFoodPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm" x-text="foodItem.name"></li>
+                                    <li @mousedown.prevent="foodSearchInput = foodItem.name; showFoodPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm text-teal-700" x-text="foodItem.name"></li>
                                 </template>
                             </template>
                         </ul>
@@ -224,7 +217,7 @@
                         <ul class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
                             <template x-for="item in merchandise" :key="item.id">
                                 <template x-if="item.name.toLowerCase().includes(merchSearchInput.toLowerCase())">
-                                    <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm" x-text="item.name"></li>
+                                    <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm text-teal-700" x-text="item.name"></li>
                                 </template>
                             </template>
                         </ul>
@@ -233,8 +226,8 @@
 
                 <!-- Right: Sort Dropdown -->
                 <div class="flex items-center gap-2 flex-shrink-0">
-                    <label class="text-sm font-medium text-teal-700">Sort:</label>
-                    <div class="rounded border border-gray-300 px-3 py-1.5 bg-white">
+                    <label class="text-sm font-medium text-white">Sort:</label>
+                    <div class="rounded border border-white px-3 py-1.5 bg-white">
                         <template x-if="tab === 'food'">
                             <select x-model="foodSort" class="bg-transparent outline-none border-none text-teal-700 font-medium text-sm cursor-pointer">
                                 <option value="">Default</option>
@@ -256,21 +249,21 @@
             </div>
 
             <!-- Third Row: Category Filters -->
-            <div class="mt-3 pt-3 border-t border-gray-100">
+            <div class="mt-3 pt-3 border-t border-teal-500">
                 <div class="flex flex-wrap gap-2 justify-center md:justify-start">
                     <template x-if="tab === 'food'">
                         <div class="flex flex-wrap gap-2">
-                            <button type="button" @click="foodFilter = 'All'" :class="foodFilter === 'All' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">All</button>
+                            <button type="button" @click="foodFilter = 'All'" :class="foodFilter === 'All' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">All</button>
                             @foreach ($foodCategories as $cat)
-                            <button type="button" @click="foodFilter = '{{ $cat }}'" :class="foodFilter === '{{ $cat }}' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">{{ $cat }}</button>
+                            <button type="button" @click="foodFilter = '{{ $cat }}'" :class="foodFilter === '{{ $cat }}' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">{{ $cat }}</button>
                             @endforeach
                         </div>
                     </template>
                     <template x-if="tab === 'merch'">
                         <div class="flex flex-wrap gap-2">
-                            <button type="button" @click="merchFilter = 'All'" :class="merchFilter === 'All' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">All</button>
+                            <button type="button" @click="merchFilter = 'All'" :class="merchFilter === 'All' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">All</button>
                             @foreach ($merchCategories as $cat)
-                            <button type="button" @click="merchFilter = '{{ $cat }}'" :class="merchFilter === '{{ $cat }}' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-teal-700'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-teal-100 transition">{{ $cat }}</button>
+                            <button type="button" @click="merchFilter = '{{ $cat }}'" :class="merchFilter === '{{ $cat }}' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">{{ $cat }}</button>
                             @endforeach
                         </div>
                     </template>
@@ -278,13 +271,13 @@
             </div>
         </div>
     </div>
-</header>
+</div>
     <!-- Hero Section -->
     <section class="w-full h-80 flex flex-col items-center justify-center mb-12 relative overflow-hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
         <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80" alt="Catalog Banner" class="absolute inset-0 w-full h-full object-cover">
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">UNISSA Catalog</h1>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">Product Catalog</h1>
             <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">Discover halal, ethical, and quality products through UNISSA's Tijarah Co.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <button @click="switchTab('food')" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors shadow-lg">
