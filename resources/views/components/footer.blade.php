@@ -17,7 +17,7 @@
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <div class="flex flex-col">
             <span class="font-bold text-lg">
-                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
+                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
                     Unissa Cafe
                 @else
                     Tijarah Co Sdn Bhd
@@ -27,7 +27,7 @@
     </div>
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
-            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*'))
+            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
                 <!-- Unissa Cafe Footer Navigation -->
                 <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
                 <a href="{{ route('unissa-cafe.catalog') }}" class="text-white mb-2 hover:underline">Catalog</a>
