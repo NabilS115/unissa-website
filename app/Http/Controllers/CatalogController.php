@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CatalogController extends Controller
 {
@@ -31,7 +32,8 @@ class CatalogController extends Controller
                 'name' => 'required|string|max:255',
                 'desc' => 'required|string',
                 'category' => 'required|string|max:255',
-                'img' => 'required|image|max:20480',
+                'img' => 'nullable|image|max:20480',
+                'cropped_image' => 'nullable|string',
                 'type' => 'required|in:food,merch',
             ], [
                 'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
@@ -45,17 +47,41 @@ class CatalogController extends Controller
         }
 
         try {
-            if (!$request->hasFile('img')) {
-                \Log::error('No image file found in request');
-                if ($request->expectsJson()) {
-                    return response()->json(['success' => false, 'error' => 'Image file is required'], 422);
+            // Handle cropped image data
+            if ($request->filled('cropped_image')) {
+                $croppedData = $request->input('cropped_image');
+                
+                // Remove data:image/jpeg;base64, prefix
+                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $croppedData);
+                $imageData = base64_decode($imageData);
+                
+                if ($imageData === false) {
+                    \Log::error('Failed to decode base64 image data');
+                    if ($request->expectsJson()) {
+                        return response()->json(['success' => false, 'error' => 'Invalid image data'], 422);
+                    }
+                    return back()->withErrors(['img' => 'Invalid image data'])->withInput();
                 }
-                return back()->withErrors(['img' => 'Image file is required'])->withInput();
+                
+                // Generate unique filename
+                $filename = uniqid('catalog_') . '.jpg';
+                $path = 'catalog/' . $filename;
+                
+                // Save the file
+                \Storage::disk('public')->put($path, $imageData);
+                
+                $validated['img'] = '/storage/' . $path;
+            } elseif ($request->hasFile('img')) {
+                // Handle regular file upload as fallback
+                $path = $request->file('img')->store('catalog', 'public');
+                $validated['img'] = '/storage/' . $path;
+            } else {
+                \Log::error('No image data provided');
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'error' => 'Image is required'], 422);
+                }
+                return back()->withErrors(['img' => 'Image is required'])->withInput();
             }
-
-            $path = $request->file('img')->store('catalog', 'public');
-            $imgPath = '/storage/' . $path;
-            $validated['img'] = $imgPath;
 
             \Log::info('Validated data before create', $validated);
 
@@ -136,7 +162,7 @@ class CatalogController extends Controller
             'category' => 'required|string|max:255',
             'type' => 'required|in:food,merch',
             'img' => 'nullable|image|max:20480',
-            'crop_img' => 'nullable',
+            'cropped_image' => 'nullable|string',
         ], [
             'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
         ]);
@@ -146,19 +172,28 @@ class CatalogController extends Controller
         $product->category = $validated['category'];
         $product->type = $validated['type'];
 
-        if ($request->hasFile('img')) {
-            $imgFile = $request->file('img');
-            if ($request->has('crop_img')) {
-                // Crop image to square (center) using Intervention Image
-                $image = \Intervention\Image\Facades\Image::make($imgFile)->fit(400, 400);
-                $filename = uniqid('catalog_') . '.' . $imgFile->getClientOriginalExtension();
-                $path = storage_path('app/public/catalog/' . $filename);
-                $image->save($path);
-                $product->img = '/storage/catalog/' . $filename;
-            } else {
-                $path = $imgFile->store('catalog', 'public');
+        // Handle image update
+        if ($request->filled('cropped_image')) {
+            $croppedData = $request->input('cropped_image');
+            
+            // Remove data:image/jpeg;base64, prefix
+            $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $croppedData);
+            $imageData = base64_decode($imageData);
+            
+            if ($imageData !== false) {
+                // Generate unique filename
+                $filename = uniqid('catalog_') . '.jpg';
+                $path = 'catalog/' . $filename;
+                
+                // Save the file
+                Storage::disk('public')->put($path, $imageData);
+                
                 $product->img = '/storage/' . $path;
             }
+        } elseif ($request->hasFile('img')) {
+            // Handle regular file upload as fallback
+            $path = $request->file('img')->store('catalog', 'public');
+            $product->img = '/storage/' . $path;
         }
 
         $product->save();
@@ -167,7 +202,14 @@ class CatalogController extends Controller
             return response()->json(['success' => true, 'message' => 'Product updated successfully']);
         }
 
-        return redirect()->route('unissa-cafe.catalog')->with('success', 'Product updated!');
+        // Redirect back to the appropriate tab and highlight the updated product
+        $returnTab = $request->input('return_tab', $product->type);
+        $productId = $product->id;
+        
+        return redirect()->route('unissa-cafe.catalog')
+            ->with('success', 'Product updated!')
+            ->with('active_tab', $returnTab)
+            ->with('highlight_product', $productId);
     }
 
     public function index()

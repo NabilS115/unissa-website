@@ -7,6 +7,9 @@
     <title>@yield('title', 'Unissa Cafe')</title>
     <meta name="theme-color" content="#0d9488">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cropper.js CSS and JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <style>
         /* Fallback styles in case Tailwind doesn't load */
         .header-fallback {

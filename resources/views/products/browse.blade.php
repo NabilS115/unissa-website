@@ -265,7 +265,44 @@
                 <div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium mb-2">Image</label>
-                        <input type="file" name="img" required class="border rounded px-3 py-2 w-full" accept="image/*" />
+                        <input type="file" id="add-image-input" class="border rounded px-3 py-2 w-full mb-2" accept="image/*" 
+                               x-on:change="initAddCropper($event)" />
+                        
+                        <!-- Image Cropper Container -->
+                        <div id="add-cropper-container" class="hidden mb-4">
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+                                <div class="cropper-wrapper" style="max-height: 400px; overflow: hidden;">
+                                    <img id="add-cropper-image" class="max-w-full block mx-auto" style="max-height: 350px;">
+                                </div>
+                            </div>
+                            <div class="flex justify-between mt-3">
+                                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600 transition-colors" 
+                                        onclick="resetAddCropper()">Reset</button>
+                                <button type="button" class="bg-teal-600 text-white px-4 py-2 rounded text-sm hover:bg-teal-700 transition-colors" 
+                                        onclick="applyCrop('add')">Apply Crop</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Preview Container -->
+                        <div id="add-preview-container" class="hidden mb-4">
+                            <label class="block text-sm font-medium mb-2">Preview as Product Card:</label>
+                            <!-- Mini Product Card Preview -->
+                            <div class="w-48 bg-white rounded-xl shadow-md overflow-hidden border">
+                                <div class="relative overflow-hidden">
+                                    <img id="add-cropped-preview" class="w-full h-36 object-cover">
+                                    <div class="absolute top-2 left-2">
+                                        <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Preview</span>
+                                    </div>
+                                </div>
+                                <div class="p-3">
+                                    <h3 class="text-sm font-bold text-gray-800 mb-1">New Product</h3>
+                                    <p class="text-xs text-gray-600">This is how your product will appear in the catalog</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden input for cropped image data -->
+                        <input type="hidden" name="cropped_image" id="add-cropped-data">
                     </div>
                     <div class="flex justify-end mt-8">
                         <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">Add</button>
@@ -284,6 +321,9 @@
               class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
             @csrf
             @method('PUT')
+            <!-- Hidden inputs to remember state -->
+            <input type="hidden" name="return_tab" :value="editingProduct?.type || 'food'">
+            <input type="hidden" name="product_id" :value="editingProduct?.id || ''">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-center">Edit Product</h2>
                 <button type="button" @click="showEditModal = false" class="text-gray-500 hover:text-gray-700">
@@ -326,8 +366,46 @@
                         <img :src="editingProduct?.img" :alt="editingProduct?.name" class="w-20 h-20 object-cover rounded">
                     </div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">New Image (optional)</label>
-                    <input type="file" name="img" accept="image/*" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <input type="file" id="edit-image-input" accept="image/*" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2"
+                           x-on:change="initEditCropper($event)">
+                    
+                    <!-- Image Cropper Container -->
+                    <div id="edit-cropper-container" class="hidden mb-4">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+                            <div class="cropper-wrapper" style="max-height: 400px; overflow: hidden;">
+                                <img id="edit-cropper-image" class="max-w-full block mx-auto" style="max-height: 350px;">
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-3">
+                            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600 transition-colors" 
+                                    onclick="resetEditCropper()">Reset</button>
+                            <button type="button" class="bg-teal-600 text-white px-4 py-2 rounded text-sm hover:bg-teal-700 transition-colors" 
+                                    onclick="applyCrop('edit')">Apply Crop</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Container -->
+                    <div id="edit-preview-container" class="hidden mb-4">
+                        <label class="block text-sm font-medium mb-2">Preview as Product Card:</label>
+                        <!-- Mini Product Card Preview -->
+                        <div class="w-48 bg-white rounded-xl shadow-md overflow-hidden border">
+                            <div class="relative overflow-hidden">
+                                <img id="edit-cropped-preview" class="w-full h-36 object-cover">
+                                <div class="absolute top-2 left-2">
+                                    <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">Updated</span>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-bold text-gray-800 mb-1" x-text="editingProduct?.name || 'Product Name'">Product Name</h3>
+                                <p class="text-xs text-gray-600">Updated product preview</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden input for cropped image data -->
+                    <input type="hidden" name="cropped_image" id="edit-cropped-data">
+                    
                     <p class="text-xs text-gray-500 mt-1">Leave empty to keep current image</p>
                 </div>
                 
@@ -362,6 +440,7 @@
                 <template x-for="food in pagedFoods" :key="food.id">
                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer food-card"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
+                         :data-product-id="food.id"
                          @click="navigateToReview(food.id)">
                         <div class="relative overflow-hidden">
                             <img :src="food.img" :alt="food.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
@@ -440,6 +519,7 @@
                 <template x-for="merch in pagedMerch" :key="merch.id">
                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer merch-card"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
+                         :data-product-id="merch.id"
                          @click="navigateToReview(merch.id)">
                         <div class="relative overflow-hidden">
                             <img :src="merch.img" :alt="merch.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
@@ -538,6 +618,17 @@ function foodMerchComponent() {
             // Ensure modals are closed on component initialization
             this.showAddModal = false;
             this.showEditModal = false;
+            
+            // Handle session data for tab switching and product highlighting
+            @if(session('active_tab'))
+                this.tab = '{{ session('active_tab') }}';
+            @endif
+            
+            @if(session('highlight_product'))
+                this.$nextTick(() => {
+                    this.highlightProduct({{ session('highlight_product') }});
+                });
+            @endif
         },
         
         get pagedFoods() {
@@ -652,6 +743,27 @@ function foodMerchComponent() {
             window.location.href = `/product/${id}`;
         },
         
+        highlightProduct(productId) {
+            setTimeout(() => {
+                const productCard = document.querySelector(`[data-product-id="${productId}"]`);
+                if (productCard) {
+                    // Scroll to the product
+                    productCard.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    
+                    // Add highlight effect
+                    productCard.classList.add('ring-4', 'ring-teal-500', 'ring-opacity-50');
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        productCard.classList.remove('ring-4', 'ring-teal-500', 'ring-opacity-50');
+                    }, 3000);
+                }
+            }, 500); // Wait for tab switching animation
+        },
+        
         setFoodPage(page) {
             this.currentFoodPage = page;
         },
@@ -764,5 +876,186 @@ function foodMerchComponent() {
         }
     };
 }
+
+// Image Cropping Functionality
+let addCropper = null;
+let editCropper = null;
+
+function initAddCropper(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const image = document.getElementById('add-cropper-image');
+        image.src = e.target.result;
+        
+        // Destroy existing cropper if any
+        if (addCropper) {
+            addCropper.destroy();
+        }
+        
+        // Show cropper container
+        document.getElementById('add-cropper-container').classList.remove('hidden');
+        
+        // Initialize new cropper - aspect ratio matches product cards (4:3 ratio for w-full h-48)
+        addCropper = new Cropper(image, {
+            aspectRatio: 4/3, // Matches product card aspect ratio (w-full h-48)
+            viewMode: 1, // Restrict the crop box to not exceed the size of the canvas
+            dragMode: 'move',
+            autoCropArea: 0.8,
+            restore: false,
+            modal: true,
+            guides: true,
+            center: true,
+            highlight: true,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+            responsive: true,
+            checkOrientation: false,
+            zoomable: true,
+            wheelZoomRatio: 0.1,
+            background: false,
+        });
+    };
+    reader.readAsDataURL(file);
+}
+
+function initEditCropper(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const image = document.getElementById('edit-cropper-image');
+        image.src = e.target.result;
+        
+        // Destroy existing cropper if any
+        if (editCropper) {
+            editCropper.destroy();
+        }
+        
+        // Show cropper container
+        document.getElementById('edit-cropper-container').classList.remove('hidden');
+        
+        // Initialize new cropper - aspect ratio matches product cards (4:3 ratio for w-full h-48)
+        editCropper = new Cropper(image, {
+            aspectRatio: 4/3, // Matches product card aspect ratio (w-full h-48)
+            viewMode: 1, // Restrict the crop box to not exceed the size of the canvas
+            dragMode: 'move',
+            autoCropArea: 0.8,
+            restore: false,
+            modal: true,
+            guides: true,
+            center: true,
+            highlight: true,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+            responsive: true,
+            checkOrientation: false,
+            zoomable: true,
+            wheelZoomRatio: 0.1,
+            background: false,
+        });
+    };
+    reader.readAsDataURL(file);
+}
+
+function applyCrop(type) {
+    const cropper = type === 'add' ? addCropper : editCropper;
+    if (!cropper) return;
+    
+    // Get cropped canvas - dimensions match product card image slot (4:3 ratio)
+    const canvas = cropper.getCroppedCanvas({
+        width: 384, // 4:3 ratio - wider than tall to match card layout
+        height: 288, // Maintains 4:3 aspect ratio (384/288 = 4/3)
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high',
+        fillColor: '#ffffff', // White background for areas outside the image
+        minWidth: 384,
+        minHeight: 288,
+        maxWidth: 768,
+        maxHeight: 576,
+    });
+    
+    // Convert to blob and display preview
+    canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const previewImg = document.getElementById(`${type}-cropped-preview`);
+        const previewContainer = document.getElementById(`${type}-preview-container`);
+        const hiddenInput = document.getElementById(`${type}-cropped-data`);
+        
+        previewImg.src = url;
+        previewContainer.classList.remove('hidden');
+        
+        // Convert to base64 for form submission
+        const reader = new FileReader();
+        reader.onload = function() {
+            hiddenInput.value = reader.result;
+        };
+        reader.readAsDataURL(blob);
+        
+        // Hide cropper
+        document.getElementById(`${type}-cropper-container`).classList.add('hidden');
+    }, 'image/jpeg', 0.9);
+}
+
+function resetAddCropper() {
+    if (addCropper) {
+        addCropper.reset();
+    }
+}
+
+function resetEditCropper() {
+    if (editCropper) {
+        editCropper.reset();
+    }
+}
+
+// Add Alpine.js methods to the component
+window.initAddCropper = initAddCropper;
+window.initEditCropper = initEditCropper;
 </script>
+
+<style>
+/* Custom Cropper.js styling */
+.cropper-wrapper .cropper-container {
+    max-height: 350px !important;
+}
+
+.cropper-wrapper .cropper-canvas {
+    max-height: 350px !important;
+}
+
+.cropper-view-box {
+    outline: 2px solid #0d9488 !important;
+    outline-color: rgba(13, 148, 136, 0.7) !important;
+}
+
+.cropper-face {
+    background-color: rgba(13, 148, 136, 0.1) !important;
+}
+
+.cropper-line,
+.cropper-point {
+    background-color: #0d9488 !important;
+}
+
+.cropper-point {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    border: 2px solid #ffffff !important;
+}
+
+.cropper-dashed {
+    border-color: rgba(13, 148, 136, 0.5) !important;
+}
+
+.cropper-modal {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+}
+</style>
 @endsection
