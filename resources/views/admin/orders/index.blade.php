@@ -3,6 +3,222 @@
 @section('title', 'Order Management')
 
 @section('content')
+<!-- Essential JavaScript functions - loaded immediately -->
+<script>
+// Define critical functions in global scope immediately
+window.getStatusColorClass = function(status) {
+    const colors = {
+        'pending': 'text-yellow-700 bg-yellow-50',
+        'confirmed': 'text-blue-700 bg-blue-50',
+        'processing': 'text-purple-700 bg-purple-50',
+        'completed': 'text-green-700 bg-green-50',
+        'cancelled': 'text-red-700 bg-red-50'
+    };
+    return colors[status] || 'text-gray-700 bg-gray-50';
+};
+
+window.showNotification = function(message, type) {
+    console.log('showNotification:', { message, type });
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+};
+
+// Test function - you can call this from browser console
+window.testOrderManagementFunctions = function() {
+    console.log('Testing order management functionality...');
+    showNotification('Order management functions are loaded!', 'success');
+    return 'Order management functions are available';
+};
+
+// Initialize status select handlers and bulk actions when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing order management functions...');
+    
+    // Status update handling
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', async function() {
+            const orderId = this.dataset.orderId;
+            const newStatus = this.value;
+            const originalValue = this.getAttribute('data-original') || this.value;
+            
+            console.log('Status change:', { orderId, newStatus, originalValue });
+            
+            try {
+                // Use absolute URL to prevent any redirection issues
+                const baseUrl = window.location.origin;
+                const updateUrl = `${baseUrl}/admin/orders/${orderId}/status`;
+                console.log('Order ID:', orderId);
+                console.log('Base URL:', baseUrl);
+                console.log('Update URL:', updateUrl);
+                console.log('About to make PATCH request...');
+                
+                const response = await fetch(updateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ 
+                        status: newStatus,
+                        _method: 'PATCH'
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                const data = await response.json();
+                console.log('Response data:', data);
+                console.log('data.success:', data.success);
+                
+                // Check for successful response (200 status AND data.success)
+                if (response.ok && data.success) {
+                    console.log('Success! Updating visual elements...');
+                    
+                    // Ensure the dropdown value is set to the new status
+                    this.value = newStatus;
+                    console.log('Dropdown value updated to:', this.value);
+                    
+                    // Update the select styling based on new status
+                    console.log('Current className before update:', this.className);
+                    this.className = this.className.replace(/text-\w+-700 bg-\w+-50/g, '');
+                    const colorClass = getStatusColorClass(newStatus);
+                    this.className += ` ${colorClass}`;
+                    console.log('New className after update:', this.className);
+                    
+                    // Show success message
+                    showNotification(data.message || 'Order status updated successfully', 'success');
+                    
+                    // Update the stored original value
+                    this.setAttribute('data-original', newStatus);
+                    console.log('Visual update complete!');
+                } else {
+                    console.log('Error path taken - response not ok or success not true');
+                    console.log('response.ok:', response.ok, 'data.success:', data.success);
+                    
+                    // Revert to original value
+                    this.value = originalValue;
+                    showNotification(data.message || 'Failed to update status', 'error');
+                }
+            } catch (error) {
+                console.error('Catch block executed - Status update error:', error);
+                console.log('Reverting dropdown to original value:', originalValue);
+                
+                // Revert to original value
+                this.value = originalValue;
+                showNotification('Network error occurred', 'error');
+            }
+        });
+        
+        // Store original value
+        select.setAttribute('data-original', select.value);
+    });
+
+    // Bulk actions initialization
+    const selectAll = document.getElementById('select-all');
+    const orderCheckboxes = document.querySelectorAll('.order-checkbox');
+    const bulkActions = document.getElementById('bulk-actions');
+    const selectedCount = document.getElementById('selected-count');
+    const bulkStatus = document.getElementById('bulk-status');
+    const applyBulk = document.getElementById('apply-bulk');
+    const cancelBulk = document.getElementById('cancel-bulk');
+
+    if (selectAll && orderCheckboxes.length > 0) {
+        console.log('Initializing bulk actions...');
+        
+        function updateBulkActions() {
+            const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
+            const count = checkedBoxes.length;
+            
+            if (count > 0) {
+                bulkActions.classList.remove('hidden');
+                selectedCount.textContent = `${count} order${count > 1 ? 's' : ''} selected`;
+            } else {
+                bulkActions.classList.add('hidden');
+            }
+        }
+
+        selectAll.addEventListener('change', function() {
+            orderCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBulkActions();
+        });
+
+        orderCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkActions);
+        });
+
+        if (applyBulk) {
+            applyBulk.addEventListener('click', async function() {
+                const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
+                const orderIds = Array.from(checkedBoxes).map(cb => cb.value);
+                const status = bulkStatus.value;
+
+                if (!status) {
+                    showNotification('Please select an action', 'error');
+                    return;
+                }
+
+                if (orderIds.length === 0) {
+                    showNotification('Please select at least one order', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('{{ route('admin.orders.bulk-update') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            order_ids: orderIds,
+                            status: status 
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success || response.ok) {
+                        showNotification(data.message || 'Orders updated successfully', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(data.message || 'Bulk action failed', 'error');
+                    }
+                } catch (error) {
+                    console.error('Bulk update error:', error);
+                    showNotification('Network error occurred', 'error');
+                }
+            });
+        }
+
+        if (cancelBulk) {
+            cancelBulk.addEventListener('click', function() {
+                orderCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                selectAll.checked = false;
+                updateBulkActions();
+            });
+        }
+    }
+    
+    console.log('Order management functions initialized successfully');
+});
+</script>
+
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Page Header -->
@@ -226,16 +442,13 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Status update handling
-    document.querySelectorAll('.status-select').forEach(select => {
-        select.addEventListener('change', async function() {
-            const orderId = this.dataset.orderId;
-            const newStatus = this.value;
-            const originalValue = this.querySelector(`option[value="${this.getAttribute('data-original')}"]`)?.value || this.value;
-            
-            try {
-                const response = await fetch(`/admin/orders/${orderId}/status`, {
+// All order management JavaScript functions have been moved to inline script at the top of the page for immediate loading
+// The functions include:
+// - Status update handling for individual orders
+// - Bulk actions functionality
+// - Notification system
+// - Status color management
+// All duplicate JavaScript has been removed - functions are now in the inline script above
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -367,9 +580,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove after 3 seconds
         setTimeout(() => {
             notification.remove();
-        }, 3000);
-    }
-});
 </script>
 @endpush
 @endsection

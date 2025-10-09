@@ -437,6 +437,109 @@ window.deleteProduct = function(productId) {
     </div>
 </div>
 
+<!-- Essential Stock Management Functions - Loaded Immediately -->
+<script>
+// Global variables
+let currentProductId = null;
+
+// Stock management functions
+async function updateStock(productId, action, quantity) {
+    console.log('updateStock called:', { productId, action, quantity });
+    
+    try {
+        // Add visual feedback
+        const button = event?.target?.closest('button');
+        if (button) {
+            button.disabled = true;
+            button.style.opacity = '0.5';
+        }
+        
+        const url = `/admin/products/${productId}/stock`;
+        console.log('Sending request to:', url);
+        
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ action, quantity })
+        });
+
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+        if (data.success) {
+            showNotification(data.message, 'success');
+            location.reload();
+        } else {
+            showNotification(data.message || 'Failed to update stock', 'error');
+        }
+    } catch (error) {
+        console.error('Stock update error:', error);
+        showNotification(`Error: ${error.message}`, 'error');
+    }
+}
+
+function showStockModal(productId, currentStock) {
+    console.log('showStockModal called:', { productId, currentStock });
+    currentProductId = productId;
+    document.getElementById('current-stock').textContent = currentStock || '0';
+    document.getElementById('stock-quantity').value = '';
+    document.getElementById('stock-action').value = 'set';
+    document.getElementById('stock-modal').classList.remove('hidden');
+}
+
+function closeStockModal() {
+    document.getElementById('stock-modal').classList.add('hidden');
+    currentProductId = null;
+}
+
+async function applyStockUpdate() {
+    const action = document.getElementById('stock-action').value;
+    const quantity = parseInt(document.getElementById('stock-quantity').value);
+    
+    if (!quantity || quantity < 0) {
+        showNotification('Please enter a valid quantity', 'error');
+        return;
+    }
+    
+    await updateStock(currentProductId, action, quantity);
+    closeStockModal();
+}
+
+function showNotification(message, type) {
+    console.log('showNotification:', { message, type });
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Test function - you can call this from browser console
+function testStockButtons() {
+    console.log('Testing stock button functionality...');
+    showNotification('Stock buttons JavaScript is loaded!', 'success');
+    return 'Stock button functions are available';
+}
+
+console.log('Stock management functions loaded successfully');
+</script>
+
 @push('styles')
 <style>
 .delete-loading {
@@ -644,56 +747,7 @@ window.updateBulkActions = function() {
     }
 }
 
-// Stock management
-function showStockModal(productId, currentStock) {
-    currentProductId = productId;
-    document.getElementById('current-stock').textContent = currentStock;
-    document.getElementById('stock-quantity').value = '';
-    document.getElementById('stock-modal').classList.remove('hidden');
-}
-
-function closeStockModal() {
-    document.getElementById('stock-modal').classList.add('hidden');
-    currentProductId = null;
-}
-
-async function updateStock(productId, action, quantity) {
-    try {
-        const response = await fetch(`/admin/products/${productId}/stock`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ action, quantity })
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            location.reload();
-        } else {
-            showNotification(data.message || 'Failed to update stock', 'error');
-        }
-    } catch (error) {
-        showNotification('Network error occurred', 'error');
-    }
-}
-
-async function applyStockUpdate() {
-    const action = document.getElementById('stock-action').value;
-    const quantity = parseInt(document.getElementById('stock-quantity').value);
-    
-    if (!quantity || quantity < 0) {
-        showNotification('Please enter a valid quantity', 'error');
-        return;
-    }
-    
-    await updateStock(currentProductId, action, quantity);
-    closeStockModal();
-}
+// Stock management functions are now defined at the top of the page
 
 // Toggle status
 async function toggleStatus(productId) {
@@ -775,19 +829,7 @@ async function applyBulkAction() {
     }
 }
 
-function showNotification(message, type) {
-    const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
-        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-    }`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
+// All JavaScript functions have been moved to the inline script at the top of the page for immediate loading
 </script>
 @endpush
 @endsection
