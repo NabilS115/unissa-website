@@ -901,7 +901,7 @@ function initAddCropper(event) {
         // Initialize new cropper - aspect ratio matches product cards (4:3 ratio for w-full h-48)
         addCropper = new Cropper(image, {
             aspectRatio: 4/3, // Matches product card aspect ratio (w-full h-48)
-            viewMode: 1, // Restrict the crop box to not exceed the size of the canvas
+            viewMode: 0, // Allow cropping beyond image boundaries
             dragMode: 'move',
             autoCropArea: 0.8,
             restore: false,
@@ -916,7 +916,7 @@ function initAddCropper(event) {
             checkOrientation: false,
             zoomable: true,
             wheelZoomRatio: 0.1,
-            background: false,
+            background: true,
         });
     };
     reader.readAsDataURL(file);
@@ -942,7 +942,7 @@ function initEditCropper(event) {
         // Initialize new cropper - aspect ratio matches product cards (4:3 ratio for w-full h-48)
         editCropper = new Cropper(image, {
             aspectRatio: 4/3, // Matches product card aspect ratio (w-full h-48)
-            viewMode: 1, // Restrict the crop box to not exceed the size of the canvas
+            viewMode: 0, // Allow cropping beyond image boundaries
             dragMode: 'move',
             autoCropArea: 0.8,
             restore: false,
@@ -957,7 +957,7 @@ function initEditCropper(event) {
             checkOrientation: false,
             zoomable: true,
             wheelZoomRatio: 0.1,
-            background: false,
+            background: true,
         });
     };
     reader.readAsDataURL(file);
