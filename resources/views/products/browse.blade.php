@@ -119,7 +119,8 @@
 <div x-data="foodMerchComponent()" x-cloak>
 
     <!-- Menu Controls Header -->
-    <div class="w-full bg-teal-600 text-white sticky top-[72px] z-40 border-t border-teal-500">
+                    <!-- Menu Controls Header -->
+                <div class="w-full bg-teal-600 text-white sticky top-0 z-40 border-t border-teal-500">
         <div class="max-w-7xl mx-auto px-6">
             <!-- Second Row: Search, Filters, and Controls -->
             <div class="py-3">
