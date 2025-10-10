@@ -56,12 +56,14 @@ class AdminOrderController extends Controller
             'pending_orders' => Order::where('status', Order::STATUS_PENDING)->count(),
             'confirmed_orders' => Order::where('status', Order::STATUS_CONFIRMED)->count(),
             'processing_orders' => Order::where('status', Order::STATUS_PROCESSING)->count(),
-            'completed_orders' => Order::where('status', Order::STATUS_COMPLETED)->count(),
+            'ready_for_pickup_orders' => Order::where('status', Order::STATUS_READY_FOR_PICKUP)->count(),
+            'picked_up_orders' => Order::where('status', Order::STATUS_PICKED_UP)->count(),
             'cancelled_orders' => Order::where('status', Order::STATUS_CANCELLED)->count(),
             'total_revenue' => Order::whereIn('status', [
                 Order::STATUS_CONFIRMED, 
                 Order::STATUS_PROCESSING, 
-                Order::STATUS_COMPLETED
+                Order::STATUS_READY_FOR_PICKUP,
+                Order::STATUS_PICKED_UP
             ])->sum('total_price'),
             'recent_orders' => Order::where('created_at', '>=', now()->subDays(7))->count(),
         ];
@@ -164,7 +166,7 @@ class AdminOrderController extends Controller
                 DB::raw('sum(total_price) as revenue'),
                 DB::raw('count(*) as order_count')
             )
-                ->whereIn('status', [Order::STATUS_CONFIRMED, Order::STATUS_PROCESSING, Order::STATUS_COMPLETED])
+                ->whereIn('status', [Order::STATUS_CONFIRMED, Order::STATUS_PROCESSING, Order::STATUS_READY_FOR_PICKUP, Order::STATUS_PICKED_UP])
                 ->where('created_at', '>=', now()->subMonths(12))
                 ->groupBy('year', 'month')
                 ->orderBy('year', 'desc')

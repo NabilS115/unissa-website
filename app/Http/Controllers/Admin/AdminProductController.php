@@ -81,34 +81,112 @@ class AdminProductController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'desc' => 'required|string',
-            'category' => 'required|string|max:255',
-            'type' => 'required|in:food,merch',
-            'price' => 'required|numeric|min:0',
-            'img' => 'required|image|max:2048',
-            'is_active' => 'boolean',
-            'status' => 'required|in:active,inactive,out_of_stock,discontinued',
-            'track_stock' => 'boolean',
-            'stock_quantity' => 'nullable|integer|min:0',
-            'low_stock_threshold' => 'required|integer|min:0',
-        ]);
-
-        // Handle image upload
-        if ($request->hasFile('img')) {
-            $imgPath = $request->file('img')->store('products', 'public');
-            $validated['img'] = '/storage/' . $imgPath;
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'desc' => 'required|string',
+                'category' => 'required|string|max:255',
+                'type' => 'required|in:food,merch',
+                'price' => 'required|numeric|min:0',
+                'img' => 'nullable|image|max:20480', // Increased to 20MB like catalog
+                'cropped_image' => 'nullable|string',
+                'is_active' => 'boolean',
+                'status' => 'required|in:active,inactive,out_of_stock,discontinued',
+                'track_stock' => 'boolean',
+                'stock_quantity' => 'nullable|integer|min:0',
+                'low_stock_threshold' => 'required|integer|min:0',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Admin Product Creation - Validation failed', ['errors' => $e->errors()]);
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+            }
+            return back()->withErrors($e->errors())->withInput();
         }
 
-        // Set defaults
-        $validated['is_active'] = $request->has('is_active');
-        $validated['track_stock'] = $request->has('track_stock');
+        try {
+            // Handle cropped image data first
+            if ($request->filled('cropped_image')) {
+                $croppedData = $request->input('cropped_image');
+                
+                // Remove data:image/jpeg;base64, prefix
+                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $croppedData);
+                $imageData = base64_decode($imageData);
+                
+                if ($imageData === false) {
+                    \Log::error('Admin Product Creation - Failed to decode base64 image data');
+                    if ($request->expectsJson()) {
+                        return response()->json(['success' => false, 'error' => 'Invalid image data'], 422);
+                    }
+                    return back()->withErrors(['img' => 'Invalid image data'])->withInput();
+                }
+                
+                // Generate unique filename
+                $filename = uniqid('product_') . '.jpg';
+                $path = 'products/' . $filename;
+                
+                // Save the file
+                \Storage::disk('public')->put($path, $imageData);
+                
+                $validated['img'] = '/storage/' . $path;
+            } elseif ($request->hasFile('img')) {
+                // Handle regular file upload as fallback
+                $path = $request->file('img')->store('products', 'public');
+                $validated['img'] = '/storage/' . $path;
+            } else {
+                \Log::error('Admin Product Creation - No image data provided');
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'error' => 'Product image is required'], 422);
+                }
+                return back()->withErrors(['img' => 'Product image is required'])->withInput();
+            }
 
-        Product::create($validated);
+            // Set defaults
+            $validated['is_active'] = $request->has('is_active');
+            $validated['track_stock'] = true; // Always enable stock tracking for new products
+            
+            // Set default stock quantity if no quantity provided
+            if (!isset($validated['stock_quantity']) || $validated['stock_quantity'] === null) {
+                $validated['stock_quantity'] = 0; // Start with 0 stock by default
+            }
 
-        return redirect()->route('admin.products.index')
-                        ->with('success', 'Product created successfully!');
+            $product = Product::create($validated);
+
+            // Immediately update stock status based on quantity (as requested)
+            $product->updateStockStatus();
+            
+            \Log::info('Admin Product Creation - Product created successfully with automatic stock status', [
+                'product_id' => $product->id,
+                'name' => $product->name,
+                'stock_quantity' => $product->stock_quantity,
+                'auto_status' => $product->status
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Product created successfully!',
+                    'product' => $product->load('images'), // Load any relationships if needed
+                    'redirect_url' => route('admin.products.index')
+                ]);
+            }
+
+            return redirect()->route('admin.products.index')
+                            ->with('success', 'Product created successfully!');
+
+        } catch (\Exception $e) {
+            \Log::error('Admin Product Creation - Failed to create product', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'error' => 'Failed to create product. Please try again.'], 500);
+            }
+
+            return back()->withErrors(['general' => 'Failed to create product. Please try again.'])->withInput();
+        }
     }
 
     /**
@@ -235,18 +313,42 @@ class AdminProductController extends Controller
     /**
      * Toggle product status.
      */
-    public function toggleStatus(Product $product)
+    public function updateStatus(Request $request, Product $product)
     {
-        $product->update([
-            'is_active' => !$product->is_active
+        $request->validate([
+            'status' => 'required|in:' . implode(',', array_keys(Product::getStatuses()))
         ]);
 
-        $status = $product->is_active ? 'activated' : 'deactivated';
+        $oldStatus = $product->status;
+        $newStatus = $request->status;
+
+        // For stock-tracked products, prevent conflicting manual changes
+        if ($product->track_stock) {
+            // Don't allow manual "Out of Stock" when there's actually stock
+            if ($newStatus === Product::STATUS_OUT_OF_STOCK && $product->stock_quantity > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot manually set to "Out of Stock" when stock is available. Status is automatically managed based on inventory levels.'
+                ], 400);
+            }
+
+            // Don't allow manual "Available" when there's no stock
+            if ($newStatus === Product::STATUS_ACTIVE && $product->stock_quantity <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot set to "Available" when stock is 0. Please restock the product first.'
+                ], 400);
+            }
+        }
+
+        $product->update([
+            'status' => $newStatus
+        ]);
         
         return response()->json([
             'success' => true,
-            'message' => "Product {$status} successfully!",
-            'is_active' => $product->is_active
+            'message' => "Product status updated from {$oldStatus} to {$newStatus}!",
+            'status' => $newStatus
         ]);
     }
 
@@ -278,9 +380,8 @@ class AdminProductController extends Controller
                 break;
             case 'set':
                 $product->update(['stock_quantity' => $validated['quantity']]);
-                if ($validated['quantity'] > 0 && $product->status === Product::STATUS_OUT_OF_STOCK) {
-                    $product->update(['status' => Product::STATUS_ACTIVE]);
-                }
+                // Auto-update status based on new stock level
+                $product->updateStockStatus();
                 break;
         }
 
@@ -307,12 +408,12 @@ class AdminProductController extends Controller
 
         switch ($validated['action']) {
             case 'activate':
-                $products->update(['is_active' => true]);
-                $message = 'Products activated successfully!';
+                $products->update(['status' => Product::STATUS_ACTIVE]);
+                $message = 'Products set to available successfully!';
                 break;
             case 'deactivate':
-                $products->update(['is_active' => false]);
-                $message = 'Products deactivated successfully!';
+                $products->update(['status' => Product::STATUS_INACTIVE]);
+                $message = 'Products set to inactive successfully!';
                 break;
             case 'update_status':
                 if (!$validated['status']) {
@@ -396,7 +497,7 @@ class AdminProductController extends Controller
             // Add CSV headers
             fputcsv($file, [
                 'ID', 'Name', 'Description', 'Category', 'Type', 'Price', 
-                'Status', 'Active', 'Track Stock', 'Stock Quantity', 
+                'Status', 'Availability', 'Track Stock', 'Stock Quantity', 
                 'Low Stock Threshold', 'Created At', 'Updated At'
             ]);
 
@@ -410,7 +511,7 @@ class AdminProductController extends Controller
                     $product->type,
                     $product->price,
                     $product->status,
-                    $product->is_active ? 'Yes' : 'No',
+                    $product->availability_status,
                     $product->track_stock ? 'Yes' : 'No',
                     $product->stock_quantity,
                     $product->low_stock_threshold,
@@ -432,9 +533,9 @@ class AdminProductController extends Controller
     {
         return [
             'total_products' => Product::count(),
-            'active_products' => Product::active()->count(),
-            'inactive_products' => Product::where('is_active', false)->count(),
-            'out_of_stock' => Product::outOfStock()->count(),
+            'available_products' => Product::where('status', Product::STATUS_ACTIVE)->count(),
+            'inactive_products' => Product::where('status', Product::STATUS_INACTIVE)->count(),
+            'out_of_stock' => Product::where('status', Product::STATUS_OUT_OF_STOCK)->count(),
             'low_stock' => Product::lowStock()->count(),
             'discontinued' => Product::where('status', Product::STATUS_DISCONTINUED)->count(),
             'recent_products' => Product::where('created_at', '>=', now()->subDays(7))->count(),

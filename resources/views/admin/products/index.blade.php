@@ -126,6 +126,48 @@ window.deleteProduct = function(productId) {
         }
     });
 };
+
+// Update product status function
+window.updateProductStatus = async function(productId, newStatus) {
+    try {
+        const response = await fetch(`/admin/products/${productId}/update-status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification(data.message, 'success');
+            location.reload();
+        } else {
+            showNotification(data.message || 'Failed to update status', 'error');
+        }
+    } catch (error) {
+        console.error('Update status error:', error);
+        showNotification('Error updating status', 'error');
+    }
+};
+
+// Notification function
+window.showNotification = function(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+};
 </script>
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -136,6 +178,14 @@ window.deleteProduct = function(productId) {
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">Product Management</h1>
                     <p class="text-gray-600 mt-2">Manage inventory, stock levels, and product availability</p>
+                    <div class="flex items-center gap-2 mt-3">
+                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <p class="text-sm text-blue-600">
+                            <strong>Smart Status:</strong> Products with stock tracking automatically manage "Available" ↔ "Out of Stock" status. You can still manually set "Inactive" or "Discontinued" as needed.
+                        </p>
+                    </div>
                 </div>
                 <div class="flex items-center gap-4">
                     <button onclick="testJS()" class="inline-flex items-center gap-2 px-3 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700 transition-colors">
@@ -163,8 +213,8 @@ window.deleteProduct = function(productId) {
                     <div class="text-sm text-blue-600">Total Products</div>
                 </div>
                 <div class="bg-green-50 rounded-xl p-4 border border-green-200">
-                    <div class="text-2xl font-bold text-green-700">{{ $stats['active_products'] }}</div>
-                    <div class="text-sm text-green-600">Active</div>
+                    <div class="text-2xl font-bold text-green-700">{{ $stats['available_products'] }}</div>
+                    <div class="text-sm text-green-600">Available</div>
                 </div>
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                     <div class="text-2xl font-bold text-gray-700">{{ $stats['inactive_products'] }}</div>
@@ -341,19 +391,45 @@ window.deleteProduct = function(productId) {
                                         @endif
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                {{ $product->status_color === 'green' ? 'bg-green-100 text-green-800' : 
-                                                   ($product->status_color === 'red' ? 'bg-red-100 text-red-800' : 
-                                                   ($product->status_color === 'yellow' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
-                                                {{ $product->availability_status }}
-                                            </span>
-                                            <button onclick="toggleStatus({{ $product->id }})" 
-                                                    class="text-{{ $product->is_active ? 'green' : 'gray' }}-600 hover:text-{{ $product->is_active ? 'green' : 'gray' }}-700">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                                </svg>
-                                            </button>
+                                        <div class="flex items-center gap-1">
+                                            <select onchange="updateProductStatus({{ $product->id }}, this.value)" 
+                                                    class="text-xs px-2 py-1 rounded border-0 font-medium focus:ring-2 focus:ring-blue-500
+                                                    @if($product->status === 'active' && $product->isInStock()) bg-green-100 text-green-800
+                                                    @elseif($product->status === 'out_of_stock' || ($product->status === 'active' && !$product->isInStock())) bg-red-100 text-red-800
+                                                    @elseif($product->status === 'inactive') bg-gray-100 text-gray-800
+                                                    @elseif($product->status === 'discontinued') bg-red-100 text-red-800
+                                                    @endif">
+                                                @foreach(\App\Models\Product::getStatuses() as $value => $label)
+                                                    @php
+                                                        $isDisabled = false;
+                                                        $tooltip = '';
+                                                        
+                                                        // For stock-tracked products, disable conflicting options
+                                                        if ($product->track_stock) {
+                                                            if ($value === 'out_of_stock' && $product->stock_quantity > 0) {
+                                                                $isDisabled = true;
+                                                                $tooltip = 'Auto-managed based on stock levels';
+                                                            } elseif ($value === 'active' && $product->stock_quantity <= 0) {
+                                                                $isDisabled = true;
+                                                                $tooltip = 'Stock required to set as available';
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    <option value="{{ $value }}" 
+                                                            {{ $product->status == $value ? 'selected' : '' }}
+                                                            {{ $isDisabled ? 'disabled' : '' }}
+                                                            title="{{ $tooltip }}">
+                                                        {{ $label }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @if($product->track_stock)
+                                                <span class="text-xs text-blue-600" title="Available/Out of Stock status is automatically managed based on inventory levels. You can still set Inactive or Discontinued manually.">
+                                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </span>
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
@@ -748,32 +824,6 @@ window.updateBulkActions = function() {
 }
 
 // Stock management functions are now defined at the top of the page
-
-// Toggle status
-async function toggleStatus(productId) {
-    try {
-        const response = await fetch(`/admin/products/${productId}/toggle-status`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            location.reload();
-        } else {
-            showNotification(data.message || 'Failed to toggle status', 'error');
-        }
-    } catch (error) {
-        showNotification('Network error occurred', 'error');
-    }
-}
-
 
 
 // Bulk actions

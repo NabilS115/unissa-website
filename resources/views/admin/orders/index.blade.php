@@ -11,7 +11,8 @@ window.getStatusColorClass = function(status) {
         'pending': 'text-yellow-700 bg-yellow-50',
         'confirmed': 'text-blue-700 bg-blue-50',
         'processing': 'text-purple-700 bg-purple-50',
-        'completed': 'text-green-700 bg-green-50',
+        'ready_for_pickup': 'text-orange-700 bg-orange-50',
+        'picked_up': 'text-green-700 bg-green-50',
         'cancelled': 'text-red-700 bg-red-50'
     };
     return colors[status] || 'text-gray-700 bg-gray-50';
@@ -256,9 +257,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="text-2xl font-bold text-purple-700">{{ $stats['processing_orders'] }}</div>
                     <div class="text-sm text-purple-600">Processing</div>
                 </div>
+                <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                    <div class="text-2xl font-bold text-orange-700">{{ $stats['ready_for_pickup_orders'] }}</div>
+                    <div class="text-sm text-orange-600">Ready for Pickup</div>
+                </div>
                 <div class="bg-green-50 rounded-xl p-4 border border-green-200">
-                    <div class="text-2xl font-bold text-green-700">{{ $stats['completed_orders'] }}</div>
-                    <div class="text-sm text-green-600">Completed</div>
+                    <div class="text-2xl font-bold text-green-700">{{ $stats['picked_up_orders'] }}</div>
+                    <div class="text-sm text-green-600">Picked Up</div>
                 </div>
                 <div class="bg-red-50 rounded-xl p-4 border border-red-200">
                     <div class="text-2xl font-bold text-red-700">{{ $stats['cancelled_orders'] }}</div>
@@ -395,7 +400,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                             @if($order->status === 'pending') text-yellow-700 bg-yellow-50
                                             @elseif($order->status === 'confirmed') text-blue-700 bg-blue-50
                                             @elseif($order->status === 'processing') text-purple-700 bg-purple-50
-                                            @elseif($order->status === 'completed') text-green-700 bg-green-50
+                                            @elseif($order->status === 'ready_for_pickup') text-orange-700 bg-orange-50
+                                            @elseif($order->status === 'picked_up') text-green-700 bg-green-50
                                             @elseif($order->status === 'cancelled') text-red-700 bg-red-50
                                             @endif" 
                                             data-order-id="{{ $order->id }}">
@@ -561,7 +567,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'pending': 'text-yellow-700 bg-yellow-50',
             'confirmed': 'text-blue-700 bg-blue-50',
             'processing': 'text-purple-700 bg-purple-50',
-            'completed': 'text-green-700 bg-green-50',
+            'ready_for_pickup': 'text-orange-700 bg-orange-50',
+            'picked_up': 'text-green-700 bg-green-50',
             'cancelled': 'text-red-700 bg-red-50'
         };
         return colors[status] || 'text-gray-700 bg-gray-50';

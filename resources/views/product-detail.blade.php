@@ -303,28 +303,59 @@ input[type="number"]::-ms-clear {
                             </div>
                         </div>
 
-                        <!-- Delivery Information Section -->
+                        <!-- Pickup Information Section -->
                         <div class="mb-8">
                             <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                 </svg>
-                                Delivery Information
+                                Pickup Information
                             </h3>
                             
                             <div class="space-y-6">
+                                <!-- Pickup Location Info -->
+                                <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                                    <h4 class="font-semibold text-green-800 mb-2 flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                        Pickup Location
+                                    </h4>
+                                    <p class="text-green-700 text-sm">
+                                        <strong>Unissa Café</strong><br>
+                                        123 Main Street<br>
+                                        City Center, State 12345<br>
+                                        <span class="text-green-600 font-medium">📞 Phone: (555) 123-4567</span>
+                                    </p>
+                                </div>
+
+                                <!-- Pickup Hours -->
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                    <h4 class="font-semibold text-blue-800 mb-2 flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Pickup Hours
+                                    </h4>
+                                    <div class="text-blue-700 text-sm space-y-1">
+                                        <p><strong>Monday - Friday:</strong> 8:00 AM - 8:00 PM</p>
+                                        <p><strong>Saturday - Sunday:</strong> 9:00 AM - 6:00 PM</p>
+                                        <p class="text-blue-600 font-medium mt-2">⏰ Orders ready for pickup within 30-60 minutes</p>
+                                    </div>
+                                </div>
+                                
                                 <div class="space-y-2">
-                                    <label for="delivery_address" class="block text-sm font-medium text-gray-700">Complete Delivery Address</label>
-                                    <textarea id="delivery_address" name="delivery_address" rows="4" required
-                                              placeholder="Please provide your complete address including:&#10;• Street address or apartment number&#10;• City, State/Province&#10;• Postal/ZIP code&#10;• Country (if applicable)"
+                                    <label for="pickup_notes" class="block text-sm font-medium text-gray-700">Pickup Notes <span class="text-gray-500 font-normal">(Optional)</span></label>
+                                    <textarea id="pickup_notes" name="pickup_notes" rows="3"
+                                              placeholder="Any special pickup instructions or preferred pickup time..."
                                               class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none transition-all"></textarea>
                                 </div>
                                 
                                 <div class="space-y-2">
-                                    <label for="notes" class="block text-sm font-medium text-gray-700">Special Instructions <span class="text-gray-500 font-normal">(Optional)</span></label>
+                                    <label for="notes" class="block text-sm font-medium text-gray-700">Order Notes <span class="text-gray-500 font-normal">(Optional)</span></label>
                                     <textarea id="notes" name="notes" rows="2"
-                                              placeholder="Any special delivery instructions, preferred time, or additional requests..."
+                                              placeholder="Any special requests for your order preparation..."
                                               class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none transition-all"></textarea>
                                 </div>
                             </div>

@@ -34,7 +34,7 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
-            'delivery_address' => 'required|string|max:1000',
+            'pickup_notes' => 'nullable|string|max:1000',
             'notes' => 'nullable|string|max:1000',
         ]);
 
@@ -69,7 +69,7 @@ class OrderController extends Controller
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
             'customer_phone' => $validated['customer_phone'],
-            'delivery_address' => $validated['delivery_address'],
+            'pickup_notes' => $validated['pickup_notes'],
             'notes' => $validated['notes'],
             'status' => Order::STATUS_PENDING,
         ]);

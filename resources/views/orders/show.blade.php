@@ -139,18 +139,36 @@
                 <!-- Delivery Information -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                         </svg>
-                        Delivery Information
+                        Pickup Information
                     </h2>
 
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
-                            <p class="text-gray-900 whitespace-pre-line">{{ $order->delivery_address }}</p>
+                        <!-- Pickup Location -->
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                            <h3 class="font-semibold text-green-800 mb-2 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Pickup Location
+                            </h3>
+                            <p class="text-green-700 text-sm">
+                                <strong>Unissa Café</strong><br>
+                                123 Main Street<br>
+                                City Center, State 12345<br>
+                                <span class="text-green-600 font-medium">📞 Phone: (555) 123-4567</span>
+                            </p>
                         </div>
+
+                        @if($order->pickup_notes)
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Pickup Notes</label>
+                                <p class="text-gray-900 whitespace-pre-line">{{ $order->pickup_notes }}</p>
+                            </div>
+                        @endif
                         @if($order->notes)
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Special Instructions</label>

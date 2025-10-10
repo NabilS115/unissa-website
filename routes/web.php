@@ -167,7 +167,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
 
     // Product Management
     Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);
-    Route::patch('/products/{product}/toggle-status', [\App\Http\Controllers\Admin\AdminProductController::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::patch('/products/{product}/update-status', [\App\Http\Controllers\Admin\AdminProductController::class, 'updateStatus'])->name('products.update-status');
     Route::patch('/products/{product}/stock', [\App\Http\Controllers\Admin\AdminProductController::class, 'updateStock'])->name('products.update-stock');
     Route::post('/products/bulk-update', [\App\Http\Controllers\Admin\AdminProductController::class, 'bulkUpdate'])->name('products.bulk-update');
     Route::get('/products/export', [\App\Http\Controllers\Admin\AdminProductController::class, 'export'])->name('products.export');

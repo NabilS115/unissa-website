@@ -20,7 +20,7 @@ class Order extends Model
         'customer_name',
         'customer_email',
         'customer_phone',
-        'delivery_address',
+        'pickup_notes',
         'notes',
     ];
 
@@ -30,7 +30,8 @@ class Order extends Model
     const STATUS_PENDING = 'pending';
     const STATUS_CONFIRMED = 'confirmed';
     const STATUS_PROCESSING = 'processing';
-    const STATUS_COMPLETED = 'completed';
+    const STATUS_READY_FOR_PICKUP = 'ready_for_pickup';
+    const STATUS_PICKED_UP = 'picked_up';
     const STATUS_CANCELLED = 'cancelled';
 
     /**
@@ -42,7 +43,8 @@ class Order extends Model
             self::STATUS_PENDING => 'Pending',
             self::STATUS_CONFIRMED => 'Confirmed',
             self::STATUS_PROCESSING => 'Processing',
-            self::STATUS_COMPLETED => 'Completed',
+            self::STATUS_READY_FOR_PICKUP => 'Ready for Pickup',
+            self::STATUS_PICKED_UP => 'Picked Up',
             self::STATUS_CANCELLED => 'Cancelled',
         ];
     }
@@ -72,7 +74,8 @@ class Order extends Model
             self::STATUS_PENDING => 'yellow',
             self::STATUS_CONFIRMED => 'blue',
             self::STATUS_PROCESSING => 'purple',
-            self::STATUS_COMPLETED => 'green',
+            self::STATUS_READY_FOR_PICKUP => 'orange',
+            self::STATUS_PICKED_UP => 'green',
             self::STATUS_CANCELLED => 'red',
             default => 'gray',
         };
@@ -83,6 +86,6 @@ class Order extends Model
      */
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED]);
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED, self::STATUS_PROCESSING]);
     }
 }

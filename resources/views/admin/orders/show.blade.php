@@ -99,10 +99,11 @@ window.testOrderStatusFunctions = function() {
                         @if($order->status === 'pending') bg-yellow-100 text-yellow-800
                         @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
                         @elseif($order->status === 'processing') bg-purple-100 text-purple-800
-                        @elseif($order->status === 'completed') bg-green-100 text-green-800
+                        @elseif($order->status === 'ready_for_pickup') bg-orange-100 text-orange-800
+                        @elseif($order->status === 'picked_up') bg-green-100 text-green-800
                         @elseif($order->status === 'cancelled') bg-red-100 text-red-800
                         @endif">
-                        {{ ucfirst($order->status) }}
+                        {{ str_replace('_', ' ', ucwords($order->status, '_')) }}
                     </span>
                 </div>
             </div>
@@ -231,8 +232,8 @@ window.testOrderStatusFunctions = function() {
                             </p>
                         </div>
                         <div>
-                            <span class="text-sm text-gray-500">Delivery Address:</span>
-                            <p class="font-medium text-sm">{{ $order->delivery_address }}</p>
+                            <span class="text-sm text-gray-500">Pickup Notes:</span>
+                            <p class="font-medium text-sm">{{ $order->pickup_notes ?: 'No special pickup instructions' }}</p>
                         </div>
                         @if($order->notes)
                             <div>

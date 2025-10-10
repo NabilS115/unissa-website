@@ -46,6 +46,11 @@ class CatalogController extends Controller
             return back()->withErrors($e->errors())->withInput();
         }
 
+        // Set default stock management values for catalog products (consistent with admin panel)
+        $validated['track_stock'] = true;
+        $validated['stock_quantity'] = 0; // Start with 0 stock, will be auto-updated to "out_of_stock"
+        $validated['low_stock_threshold'] = 5;
+
         try {
             // Handle cropped image data
             if ($request->filled('cropped_image')) {
@@ -103,6 +108,11 @@ class CatalogController extends Controller
 
             try {
                 $newProduct = Product::create($validated);
+                
+                // Immediately update stock status based on quantity (consistent with admin panel)
+                if ($newProduct && $newProduct->id) {
+                    $newProduct->updateStockStatus();
+                }
             } catch (\Exception $e) {
                 \Log::error('SQL/Product::create error', ['error' => $e->getMessage()]);
                 if ($request->expectsJson()) {
@@ -111,10 +121,12 @@ class CatalogController extends Controller
                 return back()->withErrors(['error' => 'SQL error: ' . $e->getMessage()])->withInput();
             }
 
-            \Log::info('Product::create result', [
-                'newProduct' => $newProduct ? $newProduct->toArray() : null,
+            \Log::info('Catalog Product Creation - Product created successfully with automatic stock status', [
+                'product_id' => $newProduct ? $newProduct->id : null,
+                'name' => $newProduct ? $newProduct->name : null,
+                'stock_quantity' => $newProduct ? $newProduct->stock_quantity : null,
+                'auto_status' => $newProduct ? $newProduct->status : null,
                 'exists' => $newProduct ? $newProduct->exists : false,
-                'id' => $newProduct ? $newProduct->id : null,
             ]);
 
             $check = Product::where('name', $validated['name'])->first();

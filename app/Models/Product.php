@@ -35,6 +35,22 @@ class Product extends Model
     ];
 
     /**
+     * Boot method to add model events
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Automatically update status when stock quantity changes
+        static::updated(function ($product) {
+            // Check if stock_quantity was changed
+            if ($product->isDirty('stock_quantity') && $product->track_stock) {
+                $product->updateStockStatus();
+            }
+        });
+    }
+
+    /**
      * Product status constants
      */
     const STATUS_ACTIVE = 'active';
@@ -48,7 +64,7 @@ class Product extends Model
     public static function getStatuses(): array
     {
         return [
-            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_ACTIVE => 'Available',
             self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_OUT_OF_STOCK => 'Out of Stock',
             self::STATUS_DISCONTINUED => 'Discontinued',
@@ -78,7 +94,7 @@ class Product extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true)->where('status', self::STATUS_ACTIVE);
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 
     /**
@@ -120,7 +136,7 @@ class Product extends Model
      */
     public function isAvailable(): bool
     {
-        if (!$this->is_active || $this->status !== self::STATUS_ACTIVE) {
+        if ($this->status !== self::STATUS_ACTIVE) {
             return false;
         }
 
@@ -160,14 +176,10 @@ class Product extends Model
      */
     public function getAvailabilityStatusAttribute(): string
     {
-        if (!$this->is_active) {
-            return 'Inactive';
-        }
-
         return match($this->status) {
             self::STATUS_ACTIVE => $this->track_stock ? 
-                ($this->stock_quantity > 0 ? 'In Stock' : 'Out of Stock') : 'Available',
-            self::STATUS_INACTIVE => 'Inactive',
+                ($this->stock_quantity > 0 ? 'Available' : 'Out of Stock') : 'Available',
+            self::STATUS_INACTIVE => 'Inactive', 
             self::STATUS_OUT_OF_STOCK => 'Out of Stock',
             self::STATUS_DISCONTINUED => 'Discontinued',
             default => 'Unknown',
@@ -179,10 +191,6 @@ class Product extends Model
      */
     public function getStatusColorAttribute(): string
     {
-        if (!$this->is_active) {
-            return 'gray';
-        }
-
         return match($this->status) {
             self::STATUS_ACTIVE => $this->isInStock() ? 'green' : 'red',
             self::STATUS_INACTIVE => 'gray',
@@ -207,10 +215,8 @@ class Product extends Model
 
         $this->decrement('stock_quantity', $quantity);
 
-        // Auto-update status if out of stock
-        if ($this->fresh()->stock_quantity <= 0) {
-            $this->update(['status' => self::STATUS_OUT_OF_STOCK]);
-        }
+        // Auto-update status based on new stock level
+        $this->updateStockStatus();
 
         return true;
     }
@@ -225,9 +231,36 @@ class Product extends Model
         // Update restock timestamp
         $this->update(['last_restocked_at' => now()]);
 
-        // Reactivate if it was out of stock
-        if ($this->status === self::STATUS_OUT_OF_STOCK) {
-            $this->update(['status' => self::STATUS_ACTIVE]);
+        // Auto-update status based on new stock level
+        $this->updateStockStatus();
+    }
+
+    /**
+     * Automatically update product status based on stock levels
+     */
+    public function updateStockStatus(): void
+    {
+        // Only auto-manage status for products that track stock
+        if (!$this->track_stock) {
+            return;
+        }
+
+        // Don't override discontinued products
+        if ($this->status === self::STATUS_DISCONTINUED) {
+            return;
+        }
+
+        // Auto-update status based on stock level
+        if ($this->stock_quantity <= 0) {
+            // Set to out of stock if no inventory
+            if ($this->status !== self::STATUS_OUT_OF_STOCK) {
+                $this->update(['status' => self::STATUS_OUT_OF_STOCK]);
+            }
+        } else {
+            // Set to available if back in stock (but was previously out of stock)
+            if ($this->status === self::STATUS_OUT_OF_STOCK) {
+                $this->update(['status' => self::STATUS_ACTIVE]);
+            }
         }
     }
 }

@@ -67,8 +67,8 @@
 
                             <div class="flex items-center justify-between pt-4 border-t border-gray-200">
                                 <div class="text-sm text-gray-600">
-                                    <span class="font-medium">Delivery to:</span> 
-                                    {{ Str::limit($order->delivery_address, 50) }}
+                                    <span class="font-medium">Pickup at:</span> 
+                                    Unissa Café - {{ $order->pickup_notes ? Str::limit($order->pickup_notes, 40) : 'Standard pickup' }}
                                 </div>
                                 <div class="flex items-center gap-3">
                                     @if($order->canBeCancelled())
