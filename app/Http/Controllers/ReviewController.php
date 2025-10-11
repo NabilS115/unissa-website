@@ -33,6 +33,32 @@ class ReviewController extends Controller
         ]);
     }
 
+    public function add(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:1000',
+        ]);
+
+        // Check if user already reviewed this product
+        $existingReview = Review::where('product_id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($existingReview) {
+            return back()->with('error', 'You have already reviewed this product.');
+        }
+
+        $review = Review::create([
+            'product_id' => $id,
+            'user_id' => Auth::id(),
+            'rating' => $request->rating,
+            'review' => $request->review,
+        ]);
+
+        return back()->with('success', 'Your review has been submitted successfully!');
+    }
+
     public function markHelpful(Request $request, Review $review)
     {
         $userId = Auth::id();

@@ -814,35 +814,29 @@ input[type="number"]::-ms-clear {
             submitBtn.disabled = true;
             
             try {
-                // Use the correct route URL format
+                // Create form data for submission
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('rating', parseInt(rating));
+                formData.append('review', reviewText.trim());
+                
                 const response = await fetch(`/product/{{ $product->id }}/add-review`, {
                     method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        rating: parseInt(rating),
-                        review: reviewText.trim(),
-                        product_id: {{ $product->id }}
-                    })
+                    body: formData
                 });
                 
-                const data = await response.json();
-                
                 if (response.ok) {
-                    alert('Review submitted successfully!');
-                    // Close the modal first
+                    // If response is successful, close modal and reload page
                     const modal = document.getElementById('review-modal');
                     if (modal) {
                         modal.classList.add('hidden');
                     }
-                    // Then reload the page
                     window.location.reload();
                 } else {
-                    console.error('Server response:', data);
-                    alert(data.message || "Failed to submit review. Please try again.");
+                    // Try to get error message from response
+                    const text = await response.text();
+                    console.error('Server response:', text);
+                    alert("Failed to submit review. Please try again.");
                 }
             } catch (error) {
                 console.error('Network error:', error);
@@ -1105,6 +1099,73 @@ input[type="number"]::-ms-clear {
             // Ensure that it is a number and stop the keypress
             if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
                 e.preventDefault();
+            }
+        });
+    }
+
+    // Order form validation and submission enhancement
+    const orderForm = document.getElementById('order-form');
+    if (orderForm) {
+        orderForm.addEventListener('submit', function(e) {
+            const customerName = document.getElementById('customer_name');
+            const customerEmail = document.getElementById('customer_email');
+            const customerPhone = document.getElementById('customer_phone');
+            const quantity = document.getElementById('quantity');
+
+            // Basic validation
+            if (!customerName.value.trim()) {
+                e.preventDefault();
+                alert('Please enter your full name.');
+                customerName.focus();
+                return;
+            }
+
+            if (!customerEmail.value.trim()) {
+                e.preventDefault();
+                alert('Please enter your email address.');
+                customerEmail.focus();
+                return;
+            }
+
+            if (!customerPhone.value.trim()) {
+                e.preventDefault();
+                alert('Please enter your phone number.');
+                customerPhone.focus();
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(customerEmail.value)) {
+                e.preventDefault();
+                alert('Please enter a valid email address.');
+                customerEmail.focus();
+                return;
+            }
+
+            // Quantity validation
+            const qty = parseInt(quantity.value);
+            if (qty < 1 || qty > 100) {
+                e.preventDefault();
+                alert('Quantity must be between 1 and 100.');
+                quantity.focus();
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<svg class="animate-spin w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Processing Order...';
+                submitBtn.disabled = true;
+                
+                // Re-enable if form submission fails for some reason
+                setTimeout(() => {
+                    if (submitBtn.disabled) {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                }, 10000);
             }
         });
     }
