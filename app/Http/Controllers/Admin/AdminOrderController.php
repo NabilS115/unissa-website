@@ -135,6 +135,36 @@ class AdminOrderController extends Controller
     }
 
     /**
+     * Update payment status.
+     */
+    public function updatePaymentStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'payment_status' => 'required|in:' . implode(',', array_keys(Order::getPaymentStatuses()))
+        ]);
+
+        $oldPaymentStatus = $order->payment_status;
+        $newPaymentStatus = $request->payment_status;
+
+        $order->update([
+            'payment_status' => $newPaymentStatus
+        ]);
+
+        // Log payment status change
+        \Log::info("Order {$order->id} payment status changed from {$oldPaymentStatus} to {$newPaymentStatus} by admin " . auth()->user()->id);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Payment status updated to " . ucfirst($newPaymentStatus),
+                'payment_status' => $newPaymentStatus
+            ]);
+        }
+
+        return back()->with('success', "Payment status updated to " . ucfirst($newPaymentStatus));
+    }
+
+    /**
      * Get order statistics for dashboard.
      */
     public function statistics()

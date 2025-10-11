@@ -36,6 +36,7 @@ class OrderController extends Controller
             'customer_phone' => 'required|string|max:20',
             'pickup_notes' => 'nullable|string|max:1000',
             'notes' => 'nullable|string|max:1000',
+            'payment_method' => 'required|in:cash,online',
         ]);
 
         $product = Product::findOrFail($validated['product_id']);
@@ -60,6 +61,11 @@ class OrderController extends Controller
             }
         }
 
+        // Set payment status based on payment method
+        $paymentStatus = $validated['payment_method'] === 'cash' 
+            ? Order::PAYMENT_STATUS_PENDING  // Cash will be paid on pickup
+            : Order::PAYMENT_STATUS_PENDING; // Online payments start as pending
+
         $order = Order::create([
             'user_id' => Auth::id(),
             'product_id' => $validated['product_id'],
@@ -72,6 +78,8 @@ class OrderController extends Controller
             'pickup_notes' => $validated['pickup_notes'],
             'notes' => $validated['notes'],
             'status' => Order::STATUS_PENDING,
+            'payment_method' => $validated['payment_method'],
+            'payment_status' => $paymentStatus,
         ]);
 
         return redirect()->route('orders.show', $order)

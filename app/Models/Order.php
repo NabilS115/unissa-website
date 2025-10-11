@@ -22,6 +22,8 @@ class Order extends Model
         'customer_phone',
         'pickup_notes',
         'notes',
+        'payment_method',
+        'payment_status',
     ];
 
     /**
@@ -35,6 +37,19 @@ class Order extends Model
     const STATUS_CANCELLED = 'cancelled';
 
     /**
+     * Payment method constants
+     */
+    const PAYMENT_METHOD_CASH = 'cash';
+    const PAYMENT_METHOD_ONLINE = 'online';
+
+    /**
+     * Payment status constants
+     */
+    const PAYMENT_STATUS_PENDING = 'pending';
+    const PAYMENT_STATUS_PAID = 'paid';
+    const PAYMENT_STATUS_FAILED = 'failed';
+
+    /**
      * Get all possible order statuses
      */
     public static function getStatuses(): array
@@ -46,6 +61,29 @@ class Order extends Model
             self::STATUS_READY_FOR_PICKUP => 'Ready for Pickup',
             self::STATUS_PICKED_UP => 'Picked Up',
             self::STATUS_CANCELLED => 'Cancelled',
+        ];
+    }
+
+    /**
+     * Get all possible payment methods
+     */
+    public static function getPaymentMethods(): array
+    {
+        return [
+            self::PAYMENT_METHOD_CASH => 'Cash',
+            self::PAYMENT_METHOD_ONLINE => 'Online',
+        ];
+    }
+
+    /**
+     * Get all possible payment statuses
+     */
+    public static function getPaymentStatuses(): array
+    {
+        return [
+            self::PAYMENT_STATUS_PENDING => 'Pending',
+            self::PAYMENT_STATUS_PAID => 'Paid',
+            self::PAYMENT_STATUS_FAILED => 'Failed',
         ];
     }
 

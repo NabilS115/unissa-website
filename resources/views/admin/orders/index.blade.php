@@ -443,6 +443,7 @@ document.addEventListener('click', function(event) {
                                 <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Customer</th>
                                 <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Product</th>
                                 <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Amount</th>
+                                <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Payment</th>
                                 <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Status</th>
                                 <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Date</th>
                                 <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Actions</th>
@@ -482,6 +483,34 @@ document.addEventListener('click', function(event) {
                                         <div>
                                             <div class="font-medium text-gray-900">${{ number_format($order->total_price, 2) }}</div>
                                             <div class="text-sm text-gray-500">${{ number_format($order->unit_price, 2) }} each</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div>
+                                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                                @if($order->payment_method === 'cash') text-green-700 bg-green-50
+                                                @else text-blue-700 bg-blue-50
+                                                @endif">
+                                                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    @if($order->payment_method === 'cash')
+                                                        <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 2v3H9V6h7z"/>
+                                                        <path d="M7 10v3H4v-3h3z"/>
+                                                    @else
+                                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                                    @endif
+                                                </svg>
+                                                {{ ucfirst($order->payment_method) }}
+                                            </div>
+                                            <div class="text-sm text-gray-500 mt-1">
+                                                Status: 
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                                    @if($order->payment_status === 'paid') text-green-700 bg-green-100
+                                                    @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
+                                                    @else text-red-700 bg-red-100
+                                                    @endif">
+                                                    {{ ucfirst($order->payment_status) }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">

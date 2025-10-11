@@ -360,6 +360,95 @@ input[type="number"]::-ms-clear {
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Payment Method Section -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                                Payment Method
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Payment Method Selection -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Cash Payment Option -->
+                                    <label class="relative cursor-pointer">
+                                        <input type="radio" name="payment_method" value="cash" checked 
+                                               class="sr-only peer" onclick="updatePaymentMethod()">
+                                        <div class="w-full p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-green-300 peer-checked:border-green-500 peer-checked:bg-green-50 transition-all duration-200">
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h4 class="font-semibold text-gray-900">Pay with Cash</h4>
+                                                    <p class="text-sm text-gray-600 mt-1">Pay when you pick up your order</p>
+                                                    <div class="flex items-center gap-1 mt-2">
+                                                        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                        </svg>
+                                                        <span class="text-xs text-green-600 font-medium">Recommended</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <!-- Online Payment Option (Future) -->
+                                    <label class="relative cursor-pointer opacity-60">
+                                        <input type="radio" name="payment_method" value="online" disabled 
+                                               class="sr-only peer">
+                                        <div class="w-full p-6 bg-gray-50 border-2 border-gray-200 rounded-xl">
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h4 class="font-semibold text-gray-500">Pay Online</h4>
+                                                    <p class="text-sm text-gray-400 mt-1">Credit/Debit Card, PayPal</p>
+                                                    <div class="flex items-center gap-1 mt-2">
+                                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                                        </svg>
+                                                        <span class="text-xs text-gray-400">Coming Soon</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- Cash Payment Info -->
+                                <div id="cash-payment-info" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex-shrink-0 mt-0.5">
+                                            <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-amber-800 mb-1">Cash Payment Instructions</h4>
+                                            <ul class="text-sm text-amber-700 space-y-1">
+                                                <li>• Please bring exact change when possible</li>
+                                                <li>• Payment is due upon pickup</li>
+                                                <li>• We accept bills and coins</li>
+                                                <li>• Your order will be confirmed immediately</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- Submit Button -->
                         <div class="border-t border-gray-200 pt-8">
@@ -1169,5 +1258,29 @@ input[type="number"]::-ms-clear {
             }
         });
     }
+
+    // Payment method handling
+    function updatePaymentMethod() {
+        const cashPaymentInfo = document.getElementById('cash-payment-info');
+        const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+        
+        // For future use when online payment is implemented
+        paymentMethods.forEach(method => {
+            if (method.checked && method.value === 'cash') {
+                if (cashPaymentInfo) {
+                    cashPaymentInfo.style.display = 'block';
+                }
+            } else if (method.checked && method.value === 'online') {
+                if (cashPaymentInfo) {
+                    cashPaymentInfo.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // Initialize payment method display
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePaymentMethod();
+    });
 </script>
 @endsection

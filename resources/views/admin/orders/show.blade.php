@@ -69,6 +69,47 @@ window.showNotification = function(message, type) {
     }, 3000);
 };
 
+// Payment status update function
+window.updatePaymentStatus = async function() {
+    const paymentStatusSelect = document.getElementById('payment-status-select');
+    const newPaymentStatus = paymentStatusSelect.value;
+    
+    console.log('updatePaymentStatus called with status:', newPaymentStatus);
+    
+    try {
+        const updateUrl = '{{ route('admin.orders.update-payment-status', $order->id) }}';
+        console.log('Payment status update URL:', updateUrl);
+        
+        const response = await fetch(updateUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ 
+                payment_status: newPaymentStatus,
+                _method: 'PATCH'
+            })
+        });
+
+        console.log('Payment status response status:', response.status);
+        const data = await response.json();
+        console.log('Payment status response data:', data);
+        
+        if (response.ok && data.success) {
+            showNotification(data.message || 'Payment status updated successfully', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification(data.message || 'Failed to update payment status', 'error');
+        }
+    } catch (error) {
+        console.error('Payment status update error:', error);
+        showNotification('Network error occurred', 'error');
+    }
+};
+
 // Test function - you can call this from browser console
 window.testOrderStatusFunctions = function() {
     console.log('Testing order status functionality...');
@@ -235,6 +276,53 @@ window.testOrderStatusFunctions = function() {
                             <span class="text-sm text-gray-500">Pickup Notes:</span>
                             <p class="font-medium text-sm">{{ $order->pickup_notes ?: 'No special pickup instructions' }}</p>
                         </div>
+                        <div>
+                            <span class="text-sm text-gray-500">Payment Method:</span>
+                            <div class="flex items-center mt-1">
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                    @if($order->payment_method === 'cash') text-green-700 bg-green-50
+                                    @else text-blue-700 bg-blue-50
+                                    @endif">
+                                    <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                        @if($order->payment_method === 'cash')
+                                            <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 2v3H9V6h7z"/>
+                                            <path d="M7 10v3H4v-3h3z"/>
+                                        @else
+                                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                        @endif
+                                    </svg>
+                                    {{ ucfirst($order->payment_method) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-500">Payment Status:</span>
+                            <div class="mt-1">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                    @if($order->payment_status === 'paid') text-green-700 bg-green-100
+                                    @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
+                                    @else text-red-700 bg-red-100
+                                    @endif">
+                                    @if($order->payment_status === 'paid')
+                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                    @elseif($order->payment_status === 'pending')
+                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                        </svg>
+                                    @endif
+                                    {{ ucfirst($order->payment_status) }}
+                                </span>
+                                @if($order->payment_method === 'cash' && $order->payment_status === 'pending')
+                                    <p class="text-xs text-gray-500 mt-1">Payment due on pickup</p>
+                                @endif
+                            </div>
+                        </div>
                         @if($order->notes)
                             <div>
                                 <span class="text-sm text-gray-500">Order Notes:</span>
@@ -279,6 +367,47 @@ window.testOrderStatusFunctions = function() {
                         </div>
                     </div>
                 </div>
+
+                <!-- Payment Management -->
+                @if($order->payment_method === 'cash')
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Payment Management</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-600">Current Status:</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                    @if($order->payment_status === 'paid') text-green-700 bg-green-100
+                                    @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
+                                    @else text-red-700 bg-red-100
+                                    @endif">
+                                    {{ ucfirst($order->payment_status) }}
+                                </span>
+                            </div>
+                            @if($order->payment_status === 'pending')
+                                <p class="text-xs text-gray-500">Customer will pay on pickup</p>
+                            @endif
+                        </div>
+                        
+                        @if($order->payment_status !== 'paid')
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-700">Update Payment Status:</label>
+                            <select id="payment-status-select" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                @foreach(App\Models\Order::getPaymentStatuses() as $value => $label)
+                                    <option value="{{ $value }}" {{ $order->payment_status == $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <button onclick="updatePaymentStatus()" 
+                                    class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                                Update Payment Status
+                            </button>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
 
                 <!-- Actions -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
