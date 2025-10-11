@@ -218,6 +218,72 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Order management functions initialized successfully');
 });
+
+// Dropdown functions
+window.toggleDropdown = function(id) {
+    const dropdown = document.getElementById(id);
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+}
+
+// Import modal functions
+window.openImportModal = function(type) {
+    document.getElementById('importType').value = type;
+    document.getElementById('modalTitle').textContent = `Import ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+    document.getElementById('importModal').classList.remove('hidden');
+}
+
+window.closeImportModal = function() {
+    document.getElementById('importModal').classList.add('hidden');
+    document.getElementById('importForm').reset();
+}
+
+window.handleImport = async function() {
+    const form = document.getElementById('importForm');
+    const fileInput = document.getElementById('importFile');
+    const type = document.getElementById('importType').value;
+    
+    if (!fileInput.files[0]) {
+        showNotification('Please select a CSV file', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('csv_file', fileInput.files[0]);
+    formData.append('_token', '{{ csrf_token() }}');
+    
+    try {
+        const response = await fetch(`/admin/${type}/import`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showNotification(result.message || 'Import completed successfully', 'success');
+            closeImportModal();
+            // Reload the page to show imported data
+            window.location.reload();
+        } else {
+            showNotification(result.message || 'Import failed', 'error');
+        }
+    } catch (error) {
+        console.error('Import error:', error);
+        showNotification('Import failed. Please try again.', 'error');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('dropdown-menu-orders');
+    const button = event.target.closest('[onclick*="toggleDropdown"]');
+    
+    if (!button && dropdown && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
 </script>
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -230,12 +296,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="text-gray-600 mt-2">Manage and track customer orders</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('admin.orders.export', request()->query()) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-                        </svg>
-                        Export CSV
-                    </a>
+                    <!-- Import/Export Dropdown -->
+                    <div class="relative">
+                        <button onclick="toggleDropdown('dropdown-menu-orders')" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            </svg>
+                            Import/Export
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        
+                        <div id="dropdown-menu-orders" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                            <div class="py-2">
+                                <a href="{{ route('admin.orders.export', request()->query()) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3"/>
+                                    </svg>
+                                    Export Orders CSV
+                                </a>
+                                <button onclick="openImportModal('orders')" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l3-3m-3 3l-3-3"/>
+                                    </svg>
+                                    Import Orders CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -587,6 +676,60 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove after 3 seconds
         setTimeout(() => {
             notification.remove();
+        }, 3000);
+    }
+
+    // Import functionality handled by inline script functions above
 </script>
 @endpush
+
+<!-- Import Modal -->
+<div id="importModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="modalTitle" class="text-lg font-medium text-gray-900">Import Data</h3>
+                <button onclick="closeImportModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="importForm" class="space-y-4">
+                <input type="hidden" id="importType" value="">
+                
+                <div>
+                    <label for="importFile" class="block text-sm font-medium text-gray-700 mb-2">
+                        Select CSV File
+                    </label>
+                    <input type="file" id="importFile" accept=".csv" required
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p class="text-sm text-blue-700">
+                        <strong>CSV Format Requirements:</strong><br>
+                        • First row should contain column headers<br>
+                        • Use comma (,) as field separator<br>
+                        • Enclose text fields in quotes if they contain commas<br>
+                        • Maximum file size: 10MB
+                    </p>
+                </div>
+                
+                <div class="flex items-center justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeImportModal()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="handleImport()" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Import CSV
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection

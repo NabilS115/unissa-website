@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminOrderController extends Controller
 {
@@ -182,6 +183,8 @@ class AdminOrderController extends Controller
      */
     public function export(Request $request)
     {
+        Log::info('Order export accessed', ['request' => $request->all()]);
+        
         $query = Order::with(['user', 'product']);
 
         // Apply same filters as index
@@ -225,9 +228,115 @@ class AdminOrderController extends Controller
             fclose($file);
         };
 
-        return response()->stream($callback, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        try {
+            return response()->stream($callback, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Order export failed', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Export failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Import orders from CSV.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:10240', // 10MB max
         ]);
+
+        Log::info('Order import started', ['file' => $request->file('csv_file')->getClientOriginalName()]);
+
+        try {
+            $file = $request->file('csv_file');
+            $path = $file->getRealPath();
+            
+            $csv = array_map('str_getcsv', file($path));
+            $header = array_shift($csv);
+            
+            $imported = 0;
+            $errors = [];
+            
+            foreach ($csv as $index => $row) {
+                try {
+                    if (count($row) !== count($header)) {
+                        $errors[] = "Row " . ($index + 2) . ": Column count mismatch";
+                        continue;
+                    }
+                    
+                    $data = array_combine($header, $row);
+                    
+                    // Map CSV columns to database fields
+                    $orderData = [
+                        'customer_name' => $data['Customer Name'] ?? $data['customer_name'] ?? '',
+                        'customer_email' => $data['Customer Email'] ?? $data['customer_email'] ?? '',
+                        'quantity' => intval($data['Quantity'] ?? $data['quantity'] ?? 1),
+                        'unit_price' => floatval($data['Unit Price'] ?? $data['unit_price'] ?? 0),
+                        'total_price' => floatval($data['Total Price'] ?? $data['total_price'] ?? 0),
+                        'status' => $data['Status'] ?? $data['status'] ?? 'pending',
+                    ];
+                    
+                    // Validate required fields
+                    if (empty($orderData['customer_name']) || empty($orderData['customer_email'])) {
+                        $errors[] = "Row " . ($index + 2) . ": Customer name and email are required";
+                        continue;
+                    }
+                    
+                    // Find product by name
+                    $productName = $data['Product Name'] ?? $data['product_name'] ?? '';
+                    if (empty($productName)) {
+                        $errors[] = "Row " . ($index + 2) . ": Product name is required";
+                        continue;
+                    }
+                    
+                    $product = Product::where('name', $productName)->first();
+                    if (!$product) {
+                        $errors[] = "Row " . ($index + 2) . ": Product '{$productName}' not found";
+                        continue;
+                    }
+                    
+                    $orderData['product_id'] = $product->id;
+                    
+                    // Calculate total price if not provided
+                    if ($orderData['total_price'] == 0) {
+                        $orderData['total_price'] = $orderData['unit_price'] * $orderData['quantity'];
+                    }
+                    
+                    // Create new order
+                    Order::create($orderData);
+                    $imported++;
+                    
+                } catch (\Exception $e) {
+                    $errors[] = "Row " . ($index + 2) . ": " . $e->getMessage();
+                }
+            }
+            
+            Log::info('Order import completed', [
+                'imported' => $imported,
+                'errors' => count($errors)
+            ]);
+            
+            $message = "Import completed! {$imported} orders imported.";
+            if (!empty($errors)) {
+                $message .= " " . count($errors) . " errors occurred.";
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'imported' => $imported,
+                'errors' => $errors
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Order import failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Import failed: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

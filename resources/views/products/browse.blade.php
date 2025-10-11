@@ -231,82 +231,188 @@
     <!-- Admin Modals and Loading Overlays -->
     @if(auth()->user()?->role === 'admin')
     <!-- Add Product Modal -->
-    <div x-show="showAddModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div x-show="showAddModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
         <form method="POST" action="{{ route('unissa-cafe.products.store') }}" enctype="multipart/form-data"
-              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative overflow-y-auto"
-              style="max-height:90vh;">
+              class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
             @csrf
-            <button type="button" @click="showAddModal = false"
-                class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
-            <h2 class="text-2xl font-bold mb-6 text-center">Add New Product</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Form fields here - copying from original -->
+            
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
                 <div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Name</label>
-                        <input type="text" name="name" required class="border rounded px-3 py-2 w-full" />
+                    <h2 class="text-2xl font-bold text-gray-900">Add New Product</h2>
+                    <p class="text-gray-600 mt-1">Create a new product for the catalog</p>
+                </div>
+                <button type="button" @click="showAddModal = false" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Form Content -->
+            <div class="space-y-6">
+                <!-- Two Column Grid for Main Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Product Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
+                        <input type="text" name="name" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Description</label>
-                        <textarea name="desc" required class="border rounded px-3 py-2 w-full min-h-[100px]"></textarea>
+                    
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                        <input type="text" name="category" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Category</label>
-                        <input type="text" name="category" required class="border rounded px-3 py-2 w-full" />
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Type</label>
-                        <select name="type" required class="border rounded px-3 py-2 w-full">
-                            <option value="food">Food & Beverages</option>
+                    
+                    <!-- Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Type *</label>
+                        <select name="type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="">Select Type</option>
+                            <option value="food">Food</option>
                             <option value="merch">Merchandise</option>
                         </select>
                     </div>
+                    
+                    <!-- Price -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Price *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            <input type="number" name="price" step="0.01" min="0" required
+                                   class="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        </div>
+                    </div>
+                    
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                        <select name="status" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="active">Available</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="out_of_stock">Out of Stock</option>
+                            <option value="discontinued">Discontinued</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Low Stock Threshold -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Low Stock Threshold *</label>
+                        <input type="number" name="low_stock_threshold" value="10" min="0" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
                 </div>
+                
+                <!-- Description - Full Width -->
                 <div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Image</label>
-                        <input type="file" id="add-image-input" class="border rounded px-3 py-2 w-full mb-2" accept="image/*" 
-                               x-on:change="initAddCropper($event)" />
-                        
-                        <!-- Image Cropper Container -->
-                        <div id="add-cropper-container" class="hidden mb-4">
-                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
-                                <div class="cropper-wrapper" style="max-height: 400px; overflow: hidden;">
-                                    <img id="add-cropper-image" class="max-w-full block mx-auto" style="max-height: 350px;">
-                                </div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                    <textarea name="desc" required rows="4"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"></textarea>
+                </div>
+                
+                <!-- Image Section -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-4">Product Image *</label>
+                    
+                    <!-- Image Upload -->
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="add-image-input" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
+                                    <span>Upload an image</span>
+                                    <input id="add-image-input" type="file" accept="image/*" class="sr-only" required
+                                           x-on:change="initAddCropper($event)">
+                                </label>
+                                <p class="pl-1">or drag and drop</p>
                             </div>
-                            <div class="flex justify-between mt-3">
-                                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600 transition-colors" 
-                                        onclick="resetAddCropper()">Reset</button>
-                                <button type="button" class="bg-teal-600 text-white px-4 py-2 rounded text-sm hover:bg-teal-700 transition-colors" 
-                                        onclick="applyCrop('add')">Apply Crop</button>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Cropper Container -->
+                    <div id="add-cropper-container" class="hidden mb-4">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+                            <div class="cropper-wrapper" style="max-height: 400px; overflow: hidden;">
+                                <img id="add-cropper-image" class="max-w-full block mx-auto" style="max-height: 350px;">
                             </div>
                         </div>
-                        
-                        <!-- Preview Container -->
-                        <div id="add-preview-container" class="hidden mb-4">
-                            <label class="block text-sm font-medium mb-2">Preview as Product Card:</label>
-                            <!-- Mini Product Card Preview -->
-                            <div class="w-48 bg-white rounded-xl shadow-md overflow-hidden border">
-                                <div class="relative overflow-hidden">
-                                    <img id="add-cropped-preview" class="w-full h-36 object-cover">
-                                    <div class="absolute top-2 left-2">
-                                        <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Preview</span>
-                                    </div>
-                                </div>
-                                <div class="p-3">
-                                    <h3 class="text-sm font-bold text-gray-800 mb-1">New Product</h3>
-                                    <p class="text-xs text-gray-600">This is how your product will appear in the catalog</p>
+                        <div class="flex justify-between mt-3">
+                            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600 transition-colors" 
+                                    onclick="resetAddCropper()">Reset</button>
+                            <button type="button" class="bg-teal-600 text-white px-4 py-2 rounded text-sm hover:bg-teal-700 transition-colors" 
+                                    onclick="applyCrop('add')">Apply Crop</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Container -->
+                    <div id="add-preview-container" class="hidden mb-4">
+                        <label class="block text-sm font-medium mb-2">Preview as Product Card:</label>
+                        <!-- Mini Product Card Preview -->
+                        <div class="w-48 bg-white rounded-xl shadow-md overflow-hidden border">
+                            <div class="relative overflow-hidden">
+                                <img id="add-cropped-preview" class="w-full h-36 object-cover">
+                                <div class="absolute top-2 left-2">
+                                    <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">New</span>
                                 </div>
                             </div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-bold text-gray-800 mb-1">New Product</h3>
+                                <p class="text-xs text-gray-600">Product preview</p>
+                            </div>
                         </div>
-                        
-                        <!-- Hidden input for cropped image data -->
-                        <input type="hidden" name="cropped_image" id="add-cropped-data">
                     </div>
-                    <div class="flex justify-end mt-8">
-                        <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">Add</button>
+                    
+                    <!-- Hidden input for cropped image data -->
+                    <input type="hidden" name="cropped_image" id="add-cropped-data">
+                </div>
+                
+                <!-- Stock Management Section -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Stock Management</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Active Status -->
+                        <div class="flex items-center">
+                            <input type="checkbox" name="is_active" id="add_is_active" value="1" checked
+                                   class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded">
+                            <label for="add_is_active" class="ml-2 block text-sm text-gray-900">Product is active</label>
+                        </div>
+
+                        <!-- Track Stock -->
+                        <div class="flex items-center">
+                            <input type="checkbox" name="track_stock" id="add_track_stock" value="1" checked
+                                   class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                                   onchange="toggleAddStockField()">
+                            <label for="add_track_stock" class="ml-2 block text-sm text-gray-900">Track stock quantity</label>
+                        </div>
+
+                        <!-- Stock Quantity (shows by default since track_stock is checked) -->
+                        <div id="add_stock_quantity_field">
+                            <label for="add_stock_quantity" class="block text-sm font-medium text-gray-700 mb-2">Initial Stock Quantity</label>
+                            <input type="number" name="stock_quantity" id="add_stock_quantity" 
+                                   value="0" min="0"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <p class="mt-1 text-sm text-gray-600">Set the initial stock quantity for this product.</p>
+                        </div>
                     </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+                    <button type="button" @click="showAddModal = false" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                        Add Product
+                    </button>
                 </div>
             </div>
         </form>
@@ -318,14 +424,19 @@
     <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
         <form method="POST" :action="`/catalog/edit/${editingProduct?.id || ''}`" enctype="multipart/form-data"
               @submit="showEditModal = false" 
-              class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+              class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
             @csrf
             @method('PUT')
             <!-- Hidden inputs to remember state -->
             <input type="hidden" name="return_tab" :value="editingProduct?.type || 'food'">
             <input type="hidden" name="product_id" :value="editingProduct?.id || ''">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-center">Edit Product</h2>
+            
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Edit Product</h2>
+                    <p class="text-gray-600 mt-1" x-text="`Update ${editingProduct?.name || 'product'} details`"></p>
+                </div>
                 <button type="button" @click="showEditModal = false" class="text-gray-500 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -333,42 +444,99 @@
                 </button>
             </div>
             
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
-                    <input type="text" name="name" :value="editingProduct?.name || ''" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea name="desc" :value="editingProduct?.desc || ''" required rows="3"
-                              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                    <input type="text" name="category" :value="editingProduct?.category || ''" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                    <select name="type" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
-                        <option value="food" :selected="editingProduct?.type === 'food'">Food</option>
-                        <option value="merch" :selected="editingProduct?.type === 'merch'">Merchandise</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
-                    <div x-show="editingProduct?.img" class="mb-2">
-                        <img :src="editingProduct?.img" :alt="editingProduct?.name" class="w-20 h-20 object-cover rounded">
+            <!-- Form Content -->
+            <div class="space-y-6">
+                <!-- Two Column Grid for Main Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Product Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
+                        <input type="text" name="name" :value="editingProduct?.name || ''" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
                     </div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">New Image (optional)</label>
-                    <input type="file" id="edit-image-input" accept="image/*" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2"
-                           x-on:change="initEditCropper($event)">
+                    
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                        <input type="text" name="category" :value="editingProduct?.category || ''" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    
+                    <!-- Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Type *</label>
+                        <select name="type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="">Select Type</option>
+                            <option value="food" :selected="editingProduct?.type === 'food'">Food</option>
+                            <option value="merch" :selected="editingProduct?.type === 'merch'">Merchandise</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Price -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Price *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            <input type="number" name="price" :value="editingProduct?.price || ''" step="0.01" min="0" required
+                                   class="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        </div>
+                    </div>
+                    
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                        <select name="status" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="active" :selected="editingProduct?.status === 'active'">Available</option>
+                            <option value="inactive" :selected="editingProduct?.status === 'inactive'">Inactive</option>
+                            <option value="out_of_stock" :selected="editingProduct?.status === 'out_of_stock'">Out of Stock</option>
+                            <option value="discontinued" :selected="editingProduct?.status === 'discontinued'">Discontinued</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Low Stock Threshold -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Low Stock Threshold *</label>
+                        <input type="number" name="low_stock_threshold" :value="editingProduct?.low_stock_threshold || '10'" min="0" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+                
+                <!-- Description - Full Width -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                    <textarea name="desc" :value="editingProduct?.desc || ''" required rows="4"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"></textarea>
+                </div>
+                
+                <!-- Image Section -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-4">Product Image</label>
+                    
+                    <!-- Current Image Display -->
+                    <div x-show="editingProduct?.img" class="mb-4">
+                        <p class="text-sm text-gray-600 mb-2">Current Image:</p>
+                        <img :src="editingProduct?.img" :alt="editingProduct?.name" class="w-32 h-32 object-cover rounded-lg border border-gray-300">
+                    </div>
+                    
+                    <!-- New Image Upload -->
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="edit-image-input" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
+                                    <span>Replace image</span>
+                                    <input id="edit-image-input" type="file" accept="image/*" class="sr-only"
+                                           x-on:change="initEditCropper($event)">
+                                </label>
+                                <p class="pl-1">or drag and drop</p>
+                            </div>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                        </div>
+                    </div>
                     
                     <!-- Image Cropper Container -->
                     <div id="edit-cropper-container" class="hidden mb-4">
@@ -405,13 +573,71 @@
                     
                     <!-- Hidden input for cropped image data -->
                     <input type="hidden" name="cropped_image" id="edit-cropped-data">
-                    
-                    <p class="text-xs text-gray-500 mt-1">Leave empty to keep current image</p>
                 </div>
                 
-                <div class="flex gap-2 pt-4">
-                    <button type="button" @click="showEditModal = false" class="bg-gray-300 text-gray-700 px-4 py-2 rounded font-semibold hover:bg-gray-400">Cancel</button>
-                    <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded font-semibold hover:bg-teal-700">Update</button>
+                <!-- Stock Management Section -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Stock Management</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Active Status -->
+                        <div class="flex items-center">
+                            <input type="checkbox" name="is_active" id="edit_is_active" value="1" 
+                                   :checked="editingProduct?.is_active == 1"
+                                   class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded">
+                            <label for="edit_is_active" class="ml-2 block text-sm text-gray-900">Product is active</label>
+                        </div>
+
+                        <!-- Track Stock -->
+                        <div class="flex items-center">
+                            <input type="checkbox" name="track_stock" id="edit_track_stock" value="1"
+                                   :checked="editingProduct?.track_stock == 1"
+                                   class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                                   onchange="toggleEditStockField()">
+                            <label for="edit_track_stock" class="ml-2 block text-sm text-gray-900">Track stock quantity</label>
+                        </div>
+
+                        <!-- Current Stock Information (if tracking is enabled) -->
+                        <div x-show="editingProduct?.track_stock == 1" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-blue-900" x-text="`Current Stock: ${editingProduct?.stock_quantity || 0}`"></p>
+                                    <p class="text-xs text-blue-700" x-text="`Last updated: ${editingProduct?.last_restocked_at || 'Never'}`"></p>
+                                </div>
+                                <div>
+                                    <template x-if="editingProduct?.stock_quantity <= editingProduct?.low_stock_threshold && editingProduct?.stock_quantity > 0">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            Low Stock
+                                        </span>
+                                    </template>
+                                    <template x-if="editingProduct?.stock_quantity <= 0">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Out of Stock
+                                        </span>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stock Quantity (only shows if tracking is enabled) -->
+                        <div id="edit_stock_quantity_field" :class="editingProduct?.track_stock == 1 ? '' : 'hidden'">
+                            <label for="edit_stock_quantity" class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label>
+                            <input type="number" name="stock_quantity" id="edit_stock_quantity" 
+                                   :value="editingProduct?.stock_quantity || '0'" min="0"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <p class="mt-1 text-sm text-gray-600">Use the stock management tools for detailed stock operations.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+                    <button type="button" @click="showEditModal = false" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                        Update Product
+                    </button>
                 </div>
             </div>
         </form>
@@ -1014,9 +1240,47 @@ function resetEditCropper() {
     }
 }
 
+// Stock field toggle functionality for edit modal
+function toggleEditStockField() {
+    const trackStockCheckbox = document.getElementById('edit_track_stock');
+    const stockField = document.getElementById('edit_stock_quantity_field');
+    const stockInput = document.getElementById('edit_stock_quantity');
+    
+    if (trackStockCheckbox && stockField && stockInput) {
+        if (trackStockCheckbox.checked) {
+            stockField.classList.remove('hidden');
+            stockInput.required = true;
+        } else {
+            stockField.classList.add('hidden');
+            stockInput.required = false;
+            stockInput.value = 0;
+        }
+    }
+}
+
+// Stock field toggle functionality for add modal
+function toggleAddStockField() {
+    const trackStockCheckbox = document.getElementById('add_track_stock');
+    const stockField = document.getElementById('add_stock_quantity_field');
+    const stockInput = document.getElementById('add_stock_quantity');
+    
+    if (trackStockCheckbox && stockField && stockInput) {
+        if (trackStockCheckbox.checked) {
+            stockField.classList.remove('hidden');
+            stockInput.required = true;
+        } else {
+            stockField.classList.add('hidden');
+            stockInput.required = false;
+            stockInput.value = 0;
+        }
+    }
+}
+
 // Add Alpine.js methods to the component
 window.initAddCropper = initAddCropper;
 window.initEditCropper = initEditCropper;
+window.toggleEditStockField = toggleEditStockField;
+window.toggleAddStockField = toggleAddStockField;
 </script>
 
 <style>

@@ -32,9 +32,15 @@ class CatalogController extends Controller
                 'name' => 'required|string|max:255',
                 'desc' => 'required|string',
                 'category' => 'required|string|max:255',
+                'type' => 'required|in:food,merch',
+                'price' => 'required|numeric|min:0',
                 'img' => 'nullable|image|max:20480',
                 'cropped_image' => 'nullable|string',
-                'type' => 'required|in:food,merch',
+                'is_active' => 'boolean',
+                'status' => 'required|in:active,inactive,out_of_stock,discontinued',
+                'track_stock' => 'boolean',
+                'stock_quantity' => 'nullable|integer|min:0',
+                'low_stock_threshold' => 'required|integer|min:0',
             ], [
                 'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
             ]);
@@ -46,10 +52,16 @@ class CatalogController extends Controller
             return back()->withErrors($e->errors())->withInput();
         }
 
-        // Set default stock management values for catalog products (consistent with admin panel)
-        $validated['track_stock'] = true;
-        $validated['stock_quantity'] = 0; // Start with 0 stock, will be auto-updated to "out_of_stock"
-        $validated['low_stock_threshold'] = 5;
+        // Set boolean fields (checkboxes) - they only come through if checked
+        $validated['is_active'] = $request->has('is_active');
+        $validated['track_stock'] = $request->has('track_stock');
+        
+        // Set stock quantity if provided, otherwise default to 0
+        if (isset($validated['stock_quantity']) && $validated['stock_quantity'] !== null) {
+            $validated['stock_quantity'] = $validated['stock_quantity'];
+        } else {
+            $validated['stock_quantity'] = 0;
+        }
 
         try {
             // Handle cropped image data
@@ -173,16 +185,35 @@ class CatalogController extends Controller
             'desc' => 'required|string',
             'category' => 'required|string|max:255',
             'type' => 'required|in:food,merch',
+            'price' => 'required|numeric|min:0',
             'img' => 'nullable|image|max:20480',
             'cropped_image' => 'nullable|string',
+            'is_active' => 'boolean',
+            'status' => 'required|in:active,inactive,out_of_stock,discontinued',
+            'track_stock' => 'boolean',
+            'stock_quantity' => 'nullable|integer|min:0',
+            'low_stock_threshold' => 'required|integer|min:0',
         ], [
             'img.max' => 'The image must not be greater than 20MB. Please choose a smaller file.',
         ]);
 
+        // Update basic product information
         $product->name = $validated['name'];
         $product->desc = $validated['desc'];
         $product->category = $validated['category'];
         $product->type = $validated['type'];
+        $product->price = $validated['price'];
+        $product->status = $validated['status'];
+        $product->low_stock_threshold = $validated['low_stock_threshold'];
+        
+        // Set boolean fields (checkboxes)
+        $product->is_active = $request->has('is_active');
+        $product->track_stock = $request->has('track_stock');
+        
+        // Set stock quantity if provided
+        if (isset($validated['stock_quantity']) && $validated['stock_quantity'] !== null) {
+            $product->stock_quantity = $validated['stock_quantity'];
+        }
 
         // Handle image update
         if ($request->filled('cropped_image')) {
@@ -209,6 +240,16 @@ class CatalogController extends Controller
         }
 
         $product->save();
+        
+        // Update stock status automatically (consistent with admin panel)
+        $product->updateStockStatus();
+        
+        \Log::info('Catalog Product Edit - Product updated successfully with automatic stock status', [
+            'product_id' => $product->id,
+            'name' => $product->name,
+            'stock_quantity' => $product->stock_quantity,
+            'auto_status' => $product->status
+        ]);
 
         if ($request->expectsJson()) {
             return response()->json(['success' => true, 'message' => 'Product updated successfully']);

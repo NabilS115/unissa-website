@@ -462,6 +462,8 @@ class AdminProductController extends Controller
      */
     public function export(Request $request)
     {
+        Log::info('Product export accessed', ['request' => $request->all()]);
+        
         $query = Product::query();
 
         // Apply same filters as index
@@ -523,7 +525,12 @@ class AdminProductController extends Controller
             fclose($file);
         };
 
-        return response()->stream($callback, 200, $headers);
+        try {
+            return response()->stream($callback, 200, $headers);
+        } catch (\Exception $e) {
+            Log::error('Product export failed', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Export failed: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -540,5 +547,98 @@ class AdminProductController extends Controller
             'discontinued' => Product::where('status', Product::STATUS_DISCONTINUED)->count(),
             'recent_products' => Product::where('created_at', '>=', now()->subDays(7))->count(),
         ];
+    }
+
+    /**
+     * Import products from CSV.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:10240', // 10MB max
+        ]);
+
+        Log::info('Product import started', ['file' => $request->file('csv_file')->getClientOriginalName()]);
+
+        try {
+            $file = $request->file('csv_file');
+            $path = $file->getRealPath();
+            
+            $csv = array_map('str_getcsv', file($path));
+            $header = array_shift($csv);
+            
+            $imported = 0;
+            $errors = [];
+            
+            foreach ($csv as $index => $row) {
+                try {
+                    if (count($row) !== count($header)) {
+                        $errors[] = "Row " . ($index + 2) . ": Column count mismatch";
+                        continue;
+                    }
+                    
+                    $data = array_combine($header, $row);
+                    
+                    // Map CSV columns to database fields
+                    $productData = [
+                        'name' => $data['Name'] ?? $data['name'] ?? '',
+                        'desc' => $data['Description'] ?? $data['desc'] ?? '',
+                        'category' => $data['Category'] ?? $data['category'] ?? '',
+                        'type' => $data['Type'] ?? $data['type'] ?? 'merchandise',
+                        'price' => floatval($data['Price'] ?? $data['price'] ?? 0),
+                        'status' => $data['Status'] ?? $data['status'] ?? 'active',
+                        'stock_quantity' => intval($data['Stock Quantity'] ?? $data['stock_quantity'] ?? 0),
+                        'track_stock' => filter_var($data['Track Stock'] ?? $data['track_stock'] ?? 'false', FILTER_VALIDATE_BOOLEAN),
+                        'low_stock_threshold' => intval($data['Low Stock Threshold'] ?? $data['low_stock_threshold'] ?? 5),
+                    ];
+                    
+                    // Validate required fields
+                    if (empty($productData['name'])) {
+                        $errors[] = "Row " . ($index + 2) . ": Product name is required";
+                        continue;
+                    }
+                    
+                    // Check if product already exists (by name)
+                    $existingProduct = Product::where('name', $productData['name'])->first();
+                    
+                    if ($existingProduct) {
+                        // Update existing product
+                        $existingProduct->update($productData);
+                    } else {
+                        // Create new product
+                        Product::create($productData);
+                    }
+                    
+                    $imported++;
+                    
+                } catch (\Exception $e) {
+                    $errors[] = "Row " . ($index + 2) . ": " . $e->getMessage();
+                }
+            }
+            
+            Log::info('Product import completed', [
+                'imported' => $imported,
+                'errors' => count($errors)
+            ]);
+            
+            $message = "Import completed! {$imported} products imported.";
+            if (!empty($errors)) {
+                $message .= " " . count($errors) . " errors occurred.";
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'imported' => $imported,
+                'errors' => $errors
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Product import failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Import failed: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

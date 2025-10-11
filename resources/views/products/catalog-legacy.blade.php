@@ -722,7 +722,7 @@
     <!-- Edit Product Modal -->
     <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" :action="editFormAction" enctype="multipart/form-data"
-              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative overflow-y-auto"
+              class="bg-white rounded-lg shadow-lg p-8 w-full max-w-6xl relative overflow-y-auto"
               style="max-height:90vh;"
               @submit.prevent="handleEditSubmit">
             @csrf
@@ -730,66 +730,201 @@
             <button type="button" @click="showEditModal = false"
                 class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl">&times;</button>
             <h2 class="text-2xl font-bold mb-6 text-center">Edit Product</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Left: Image Section -->
-                <div class="flex flex-col items-center justify-start">
-                    <div class="mb-4 w-full">
-                        <label class="block text-sm font-medium mb-2">Current Image</label>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column: Image Section -->
+                <div class="space-y-6">
+                    <!-- Current Image -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
                         <img :src="editProduct.img" :alt="editProduct.name" id="edit-current-img"
-                             class="w-full h-48 object-contain rounded bg-gray-100 border" />
+                             class="w-full h-64 object-cover rounded-lg bg-gray-100 border border-gray-300" />
                     </div>
-                    <div class="mb-4 w-full">
-                        <label class="block text-sm font-medium mb-2">Change Image <span class="text-xs text-gray-500">(click & drag to crop)</span></label>
-                        <input type="file" name="img" id="edit-img-input" class="border rounded px-3 py-2 w-full" accept="image/*"
-                            @change="event => startCrop(event)" />
-                        <div x-show="showCropper" id="edit-cropper-preview"
-                             class="mt-4 flex flex-col items-center justify-center"
-                             style="width:100%;max-width:100%;height:192px;background:#f9fafb;border:2px solid #e2e8f0;border-radius:0.75rem;position:relative;z-index:10;">
-                            <div style="width:100%;height:192px;display:flex;align-items:center;justify-content:center;">
-                                <img id="edit-cropper-img"
-                                     style="max-width:100%;max-height:192px;object-fit:cover;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#fff;" />
+                    
+                    <!-- Change Image -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Change Image 
+                            <span class="text-xs text-gray-500">(click & drag to crop)</span>
+                        </label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                            <div class="space-y-1 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <div class="flex text-sm text-gray-600">
+                                    <label for="edit-img-input" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                        <span>Replace image</span>
+                                        <input type="file" name="img" id="edit-img-input" class="sr-only" accept="image/*"
+                                            @change="event => startCrop(event)" />
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 20MB</p>
                             </div>
                         </div>
-                        <div x-show="showCropper" class="flex flex-col items-center justify-center mt-2">
-                            <button type="button"
-                                    class="mt-2 px-6 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700 block mx-auto"
-                                    style="width:fit-content;"
-                                    @click="finishCrop">Crop & Preview</button>
-                            <template x-if="croppedUrl">
-                                <div class="mt-4 w-full flex flex-col items-center justify-center"
-                                     style="background:#fff;border:1px solid #e2e8f0;border-radius:0.75rem;padding:1rem;">
-                                    <label class="block text-xs text-gray-500 mb-2">Cropped Preview:</label>
-                                    <img :src="croppedUrl"
-                                         style="width:100%;height:192px;object-fit:cover;display:block;margin:auto;border-radius:0.75rem;border:1px solid #e2e8f0;background:#f9fafb;box-shadow:0 2px 8px 0 rgba(0,0,0,0.04);" />
+                        
+                        <!-- Cropper Preview -->
+                        <div x-show="showCropper" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform scale-95"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             class="mt-4 bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
+                            
+                            <div class="flex flex-col items-center justify-center">
+                                <div id="edit-cropper-preview" class="w-full max-w-lg h-64 bg-white border border-gray-300 rounded-lg overflow-hidden">
+                                    <img id="edit-cropper-img" class="w-full h-full object-contain" />
                                 </div>
-                            </template>
+                                
+                                <button type="button" 
+                                        @click="finishCrop"
+                                        class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                    Crop & Preview
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Cropped Preview -->
+                        <div x-show="croppedUrl" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform scale-95"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             class="mt-4 bg-white border border-gray-200 rounded-lg p-4">
+                            
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cropped Preview:</label>
+                            <div class="flex justify-center">
+                                <img :src="croppedUrl" 
+                                     class="w-64 h-48 object-cover rounded-lg border border-gray-300 shadow-sm" />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Right: Fields Section -->
-                <div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Name</label>
-                        <input type="text" name="name" :value="editProduct.name" required class="border rounded px-3 py-2 w-full" />
+                
+                <!-- Right Column: Product Details -->
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Product Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
+                            <input type="text" name="name" :value="editProduct.name" required 
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        
+                        <!-- Category -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                            <input type="text" name="category" :value="editProduct.category" required 
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        </div>
+                        
+                        <!-- Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type *</label>
+                            <select name="type" :value="editProduct.type" required
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select Type</option>
+                                <option value="food">Food & Beverages</option>
+                                <option value="merch">Merchandise</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Price -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Price *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input type="number" name="price" :value="editProduct.price" step="0.01" min="0" required
+                                       class="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                        
+                        <!-- Status -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                            <select name="status" :value="editProduct.status" required
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="active">Available</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="out_of_stock">Out of Stock</option>
+                                <option value="discontinued">Discontinued</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Low Stock Threshold -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Low Stock Threshold *</label>
+                            <input type="number" name="low_stock_threshold" :value="editProduct.low_stock_threshold" min="0" required
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Description</label>
-                        <textarea name="desc" required class="border rounded px-3 py-2 w-full min-h-[100px]" x-text="editProduct.desc"></textarea>
+                    
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                        <textarea name="desc" required rows="4" x-text="editProduct.desc"
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Category</label>
-                        <input type="text" name="category" :value="editProduct.category" required class="border rounded px-3 py-2 w-full" />
+                    
+                    <!-- Stock Management Options -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Stock Management</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Active Status -->
+                            <div class="flex items-center">
+                                <input type="checkbox" name="is_active" id="edit-is-active" value="1" 
+                                       :checked="editProduct.is_active"
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="edit-is-active" class="ml-2 block text-sm text-gray-900">Product is active</label>
+                            </div>
+
+                            <!-- Track Stock -->
+                            <div class="flex items-center">
+                                <input type="checkbox" name="track_stock" id="edit-track-stock" value="1" 
+                                       :checked="editProduct.track_stock"
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="edit-track-stock" class="ml-2 block text-sm text-gray-900">Track stock quantity</label>
+                            </div>
+
+                            <!-- Current Stock Information -->
+                            <div x-show="editProduct.track_stock" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-blue-900">Current Stock: <span x-text="editProduct.stock_quantity || 0"></span></p>
+                                        <p class="text-xs text-blue-700">Last updated: <span x-text="editProduct.last_restocked_at || 'Never'"></span></p>
+                                    </div>
+                                    <template x-if="editProduct.stock_quantity <= editProduct.low_stock_threshold && editProduct.stock_quantity > 0">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            Low Stock
+                                        </span>
+                                    </template>
+                                    <template x-if="editProduct.stock_quantity <= 0">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Out of Stock
+                                        </span>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Stock Quantity -->
+                            <div x-show="editProduct.track_stock">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label>
+                                <input type="number" name="stock_quantity" :value="editProduct.stock_quantity" min="0"
+                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <p class="mt-1 text-sm text-gray-600">Use the stock management tools on the products list for detailed stock operations.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Type</label>
-                        <select name="type" :value="editProduct.type" class="border rounded px-3 py-2 w-full">
-                            <option value="food">Food & Beverages</option>
-                            <option value="merch">Merchandise</option>
-                        </select>
-                    </div>
-                    <div class="flex justify-end mt-8">
-                        <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded font-semibold hover:bg-teal-700">
-                            Save Changes
+                    
+                    <!-- Form Actions -->
+                    <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+                        <button type="button" @click="showEditModal = false" 
+                                class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Update Product
                         </button>
                     </div>
                 </div>

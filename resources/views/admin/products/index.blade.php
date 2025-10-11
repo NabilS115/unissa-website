@@ -168,6 +168,73 @@ window.showNotification = function(message, type) {
         notification.remove();
     }, 3000);
 };
+
+// Dropdown functions - defined immediately for onclick access
+window.toggleDropdown = function(id) {
+    const dropdown = document.getElementById(id);
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+};
+
+// Import Modal Functions - defined immediately for onclick access
+window.openImportModal = function(type) {
+    document.getElementById('importModal').classList.remove('hidden');
+    document.getElementById('importType').value = type;
+    document.getElementById('modalTitle').textContent = `Import ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+};
+
+window.closeImportModal = function() {
+    document.getElementById('importModal').classList.add('hidden');
+    document.getElementById('importFile').value = '';
+    document.getElementById('importForm').reset();
+};
+
+window.handleImport = async function() {
+    const form = document.getElementById('importForm');
+    const fileInput = document.getElementById('importFile');
+    const type = document.getElementById('importType').value;
+    
+    if (!fileInput.files[0]) {
+        window.showNotification('Please select a CSV file', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('csv_file', fileInput.files[0]);
+    formData.append('_token', '{{ csrf_token() }}');
+    
+    try {
+        const response = await fetch(`/admin/${type}/import`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            window.showNotification(result.message || 'Import completed successfully', 'success');
+            window.closeImportModal();
+            // Reload the page to show imported data
+            window.location.reload();
+        } else {
+            window.showNotification(result.message || 'Import failed', 'error');
+        }
+    } catch (error) {
+        console.error('Import error:', error);
+        window.showNotification('Import failed. Please try again.', 'error');
+    }
+};
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('dropdown-menu');
+    const button = event.target.closest('[onclick*="toggleDropdown"]');
+    
+    if (!button && dropdown && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
 </script>
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -197,12 +264,35 @@ window.showNotification = function(message, type) {
                         </svg>
                         Add Product
                     </a>
-                    <a href="{{ route('admin.products.export', request()->query()) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-                        </svg>
-                        Export CSV
-                    </a>
+                    <!-- Import/Export Dropdown -->
+                    <div class="relative">
+                        <button onclick="toggleDropdown('dropdown-menu')" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            </svg>
+                            Import/Export
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        
+                        <div id="dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 hidden">
+                            <div class="py-2">
+                                <a href="{{ route('admin.products.export', request()->query()) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3"/>
+                                    </svg>
+                                    Export Products CSV
+                                </a>
+                                <button onclick="openImportModal('products')" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l3-3m-3 3l-3-3"/>
+                                    </svg>
+                                    Import Products CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -631,255 +721,58 @@ console.log('Stock management functions loaded successfully');
 
 @push('scripts')
 <script>
-// Functions are now defined at the top of the page for immediate availability
-
-// Additional page functionality starts here
-    
-    console.log('Delete confirmed, proceeding...');
-    
-    // Get CSRF token with fallback
-    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-    const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '{{ csrf_token() }}';
-    
-    if (!csrfToken) {
-        console.error('CSRF token not found!');
-        alert('Security token not found. Please refresh the page and try again.');
-        return;
-    }
-    
-    console.log('CSRF token found:', csrfToken ? 'Yes' : 'No');
-    
-    // Show loading state
-    const deleteButton = document.querySelector('.delete-btn-' + productId);
-    const row = deleteButton ? deleteButton.closest('tr') : null;
-    
-    console.log('Delete button found:', deleteButton ? 'Yes' : 'No');
-    console.log('Row found:', row ? 'Yes' : 'No');
-    
-    if (deleteButton) {
-        deleteButton.disabled = true;
-        deleteButton.textContent = 'Deleting...';
-        deleteButton.classList.add('delete-loading');
-    }
-    
-    if (row) {
-        row.classList.add('row-deleting');
-    }
-    
-    console.log('Sending delete request to:', '/admin/products/' + productId);
-    
-    // Use fetch for the delete request
-    fetch('/admin/products/' + productId, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(function(response) {
-        console.log('Response received:', response.status, response.statusText);
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('HTTP ' + response.status + ': ' + response.statusText);
-    })
-    .then(function(data) {
-        console.log('Response data:', data);
-        if (data.success) {
-            alert('Product deleted successfully!');
-            // Animate row removal
-            if (row) {
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(-100%)';
-                setTimeout(function() {
-                    row.remove();
-                    // Check if this was the last row
-                    const remainingRows = document.querySelectorAll('tbody tr').length;
-                    if (remainingRows === 0) {
-                        location.reload();
-                    }
-                }, 500);
-            } else {
-                location.reload();
-            }
-        } else {
-            throw new Error(data.message || 'Failed to delete product');
-        }
-    })
-    .catch(function(error) {
-        console.error('Delete error:', error);
-        alert('Error: ' + (error.message || 'Failed to delete product'));
-        
-        // If AJAX fails, fallback to form submission
-        console.log('AJAX failed, trying form submission fallback...');
-        const form = document.querySelector('.delete-form-' + productId);
-        if (form && confirm('AJAX failed. Try traditional form submission?')) {
-            form.submit();
-            return;
-        }
-        
-        // Reset button state
-        if (deleteButton) {
-            deleteButton.disabled = false;
-            deleteButton.textContent = 'Delete';
-            deleteButton.classList.remove('delete-loading');
-        }
-        
-        if (row) {
-            row.classList.remove('row-deleting');
-        }
-    });
-};
-
-let currentProductId = null;
-
-// Initialize all event listeners when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing event listeners...');
-    
-    // Delete button event listeners
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const productId = this.getAttribute('data-product-id');
-            deleteProduct(productId);
-        });
-        
-        // Double-click fallback
-        button.addEventListener('dblclick', function(e) {
-            e.preventDefault();
-            const productId = this.getAttribute('data-product-id');
-            const form = document.querySelector(`.delete-form-${productId}`);
-            if (form && confirm('Are you sure you want to delete this product? (Form submission)')) {
-                form.submit();
-            }
-        });
-    });
-    
-    // Bulk actions
-    const selectAll = document.getElementById('select-all');
-    if (selectAll) {
-        selectAll.addEventListener('change', function() {
-            const checkboxes = document.querySelectorAll('.product-checkbox');
-            checkboxes.forEach(cb => cb.checked = this.checked);
-            updateBulkActions();
-        });
-    }
-
-    document.querySelectorAll('.product-checkbox').forEach(cb => {
-        cb.addEventListener('change', updateBulkActions);
-    });
-
-    // Bulk action selector
-    const bulkAction = document.getElementById('bulk-action');
-    if (bulkAction) {
-        bulkAction.addEventListener('change', function() {
-            const statusSelect = document.getElementById('bulk-status');
-            if (statusSelect) {
-                statusSelect.classList.toggle('hidden', this.value !== 'update_status');
-            }
-        });
-    }
-
-    // Apply bulk action
-    const applyBulk = document.getElementById('apply-bulk');
-    if (applyBulk) {
-        applyBulk.addEventListener('click', applyBulkAction);
-    }
-
-    // Cancel bulk action
-    const cancelBulk = document.getElementById('cancel-bulk');
-    if (cancelBulk) {
-        cancelBulk.addEventListener('click', function() {
-            const bulkActions = document.getElementById('bulk-actions');
-            if (bulkActions) {
-                bulkActions.classList.add('hidden');
-            }
-            const selectAllBox = document.getElementById('select-all');
-            if (selectAllBox) {
-                selectAllBox.checked = false;
-            }
-            document.querySelectorAll('.product-checkbox').forEach(cb => cb.checked = false);
-        });
-    }
-});
-
-// Global functions (accessible from anywhere)
-function testJS() {
-    alert('JavaScript is working! Delete function should work now.');
-}
-
-window.updateBulkActions = function() {
-    const checked = document.querySelectorAll('.product-checkbox:checked');
-    const bulkActions = document.getElementById('bulk-actions');
-    const selectedCount = document.getElementById('selected-count');
-    
-    if (checked.length > 0) {
-        bulkActions.classList.remove('hidden');
-        selectedCount.textContent = `${checked.length} product${checked.length > 1 ? 's' : ''} selected`;
-    } else {
-        bulkActions.classList.add('hidden');
-    }
-}
-
-// Stock management functions are now defined at the top of the page
-
-
-// Bulk actions
-async function applyBulkAction() {
-    const selectedIds = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(cb => cb.value);
-    const action = document.getElementById('bulk-action').value;
-    const status = document.getElementById('bulk-status').value;
-
-    if (selectedIds.length === 0) {
-        showNotification('Please select at least one product', 'error');
-        return;
-    }
-
-    if (!action) {
-        showNotification('Please select an action', 'error');
-        return;
-    }
-
-    if (action === 'delete' && !confirm(`Are you sure you want to delete ${selectedIds.length} product(s)? This action cannot be undone.`)) {
-        return;
-    }
-
-    try {
-        const response = await fetch('/admin/products/bulk-update', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                product_ids: selectedIds,
-                action: action,
-                status: status
-            })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            if (data.success) {
-                showNotification(data.message, 'success');
-                location.reload();
-            } else {
-                showNotification(data.message || 'Bulk action failed', 'error');
-            }
-        } else {
-            const errorData = await response.json().catch(() => ({}));
-            showNotification(errorData.message || `Error: ${response.status} ${response.statusText}`, 'error');
-        }
-    } catch (error) {
-        console.error('Bulk action error:', error);
-        showNotification('Network error occurred', 'error');
-    }
-}
-
 // All JavaScript functions have been moved to the inline script at the top of the page for immediate loading
+console.log('Admin products page additional scripts loaded');
 </script>
 @endpush
+
+<!-- Import Modal -->
+<div id="importModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="modalTitle" class="text-lg font-medium text-gray-900">Import Data</h3>
+                <button onclick="closeImportModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="importForm" class="space-y-4">
+                <input type="hidden" id="importType" value="">
+                
+                <div>
+                    <label for="importFile" class="block text-sm font-medium text-gray-700 mb-2">
+                        Select CSV File
+                    </label>
+                    <input type="file" id="importFile" accept=".csv" required
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p class="text-sm text-blue-700">
+                        <strong>CSV Format Requirements:</strong><br>
+                        • First row should contain column headers<br>
+                        • Use comma (,) as field separator<br>
+                        • Enclose text fields in quotes if they contain commas<br>
+                        • Maximum file size: 10MB
+                    </p>
+                </div>
+                
+                <div class="flex items-center justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeImportModal()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="handleImport()" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Import CSV
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
