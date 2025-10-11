@@ -12,6 +12,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CartController;
 
 // contact routes
 Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
@@ -215,10 +216,35 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/gallery/{gallery}/toggle-active', [GalleryController::class, 'toggleActive'])->name('gallery.toggle-active');
 });
 
+// Cart routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product}', [App\Http\Controllers\CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/add-simple', [App\Http\Controllers\CartController::class, 'addToCartSimple'])->name('cart.add.simple');
+    Route::patch('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.update');
+    Route::delete('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'removeItem'])->name('cart.remove');
+    Route::delete('/cart', [App\Http\Controllers\CartController::class, 'clearCart'])->name('cart.clear');
+    Route::get('/api/cart/count', [App\Http\Controllers\CartController::class, 'getCartCount'])->name('cart.count');
+    Route::get('/api/cart/test', function() {
+        return response()->json([
+            'authenticated' => auth()->check(),
+            'user_id' => auth()->id(),
+            'message' => 'Cart API test successful'
+        ]);
+    })->name('cart.test');
+});
+
+// Checkout routes  
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout/{product}', [App\Http\Controllers\CheckoutController::class, 'show'])->name('checkout.show');
+    Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'showCart'])->name('checkout.cart');
+    Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/checkout/cart', [App\Http\Controllers\CheckoutController::class, 'processCart'])->name('checkout.process.cart');
+});
+
 // Order routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
-    Route::post('/orders', [App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}', [App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('orders.cancel');
 });

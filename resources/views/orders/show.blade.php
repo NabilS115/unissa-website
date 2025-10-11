@@ -136,6 +136,100 @@
                     </div>
                 </div>
 
+                <!-- Payment Information -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Payment Information
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                            <div class="flex items-center gap-2">
+                                @if($order->payment_method === 'cash')
+                                    <div class="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-800 rounded-lg">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                        </svg>
+                                        <span class="font-medium">Cash Payment</span>
+                                    </div>
+                                @else
+                                    <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-800 rounded-lg">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                        </svg>
+                                        <span class="font-medium">Online Payment</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
+                            <span class="inline-block px-3 py-2 text-sm font-semibold rounded-lg
+                                @if($order->payment_status === 'paid') bg-green-100 text-green-800
+                                @elseif($order->payment_status === 'pending') bg-yellow-100 text-yellow-800
+                                @elseif($order->payment_status === 'failed') bg-red-100 text-red-800
+                                @else bg-gray-100 text-gray-800
+                                @endif">
+                                {{ ucfirst($order->payment_status) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if($order->payment_method === 'cash')
+                        <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-amber-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-medium text-amber-800 mb-1">Cash Payment Instructions</h4>
+                                    <p class="text-sm text-amber-700">Payment will be collected when you pick up your order. Please bring exact change when possible.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($order->payment_method === 'online' && $order->payment_status === 'paid')
+                        <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-medium text-green-800 mb-1">Payment Confirmed</h4>
+                                    <p class="text-sm text-green-700">Your online payment has been successfully processed. No additional payment required at pickup.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($order->payment_method === 'online' && $order->payment_status === 'pending')
+                        <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-medium text-yellow-800 mb-1">Payment Processing</h4>
+                                    <p class="text-sm text-yellow-700">Your online payment is being processed. You'll receive a confirmation once payment is complete.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($order->payment_method === 'online' && $order->payment_status === 'failed')
+                        <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-red-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L10 11.414l1.293-1.293a1 1 0 00-1.414-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-medium text-red-800 mb-1">Payment Failed</h4>
+                                    <p class="text-sm text-red-700">Your online payment could not be processed. Please contact us to arrange alternative payment.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
                 <!-- Delivery Information -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">

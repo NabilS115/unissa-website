@@ -37,6 +37,12 @@ class OrderController extends Controller
             'pickup_notes' => 'nullable|string|max:1000',
             'notes' => 'nullable|string|max:1000',
             'payment_method' => 'required|in:cash,online',
+            // Credit card fields (required only for online payments, but not stored)
+            'card_number' => 'required_if:payment_method,online|nullable|string',
+            'card_expiry' => 'required_if:payment_method,online|nullable|string',
+            'card_cvv' => 'required_if:payment_method,online|nullable|string',
+            'cardholder_name' => 'required_if:payment_method,online|nullable|string|max:255',
+            'same_as_customer' => 'nullable|boolean',
         ]);
 
         $product = Product::findOrFail($validated['product_id']);
@@ -64,7 +70,7 @@ class OrderController extends Controller
         // Set payment status based on payment method
         $paymentStatus = $validated['payment_method'] === 'cash' 
             ? Order::PAYMENT_STATUS_PENDING  // Cash will be paid on pickup
-            : Order::PAYMENT_STATUS_PENDING; // Online payments start as pending
+            : Order::PAYMENT_STATUS_PAID; // Online payments are marked as paid immediately (simulated payment)
 
         $order = Order::create([
             'user_id' => Auth::id(),
@@ -82,8 +88,13 @@ class OrderController extends Controller
             'payment_status' => $paymentStatus,
         ]);
 
+        // Set success message based on payment method
+        $successMessage = $validated['payment_method'] === 'online' 
+            ? 'Your order has been placed and payment processed successfully! We\'ll prepare your order for pickup.'
+            : 'Your order has been placed successfully! Payment will be collected at pickup.';
+
         return redirect()->route('orders.show', $order)
-            ->with('success', 'Your order has been placed successfully!');
+            ->with('success', $successMessage);
     }
 
     /**

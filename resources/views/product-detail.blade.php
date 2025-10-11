@@ -132,7 +132,7 @@ input[type="number"]::-ms-clear {
 
             <!-- Right: Order Form and Reviews -->
             <div class="xl:col-span-2 space-y-8">
-                <!-- Order Product Section -->
+                <!-- Quick Order Section -->
                 @auth
                 <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
                     <!-- Header Section -->
@@ -145,8 +145,8 @@ input[type="number"]::-ms-clear {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl font-bold text-gray-900">Order This Product</h2>
-                                    <p class="text-gray-600 text-sm mt-1">Fill in your details to place an order</p>
+                                    <h2 class="text-2xl font-bold text-gray-900">Add to Cart</h2>
+                                    <p class="text-gray-600 text-sm mt-1">Select quantity and add to your cart</p>
                                 </div>
                             </div>
                             <div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border 
@@ -176,18 +176,15 @@ input[type="number"]::-ms-clear {
                         </div>
                     </div>
 
-                    <!-- Form Content -->
-                    <form id="order-form" action="{{ route('orders.store') }}" method="POST" class="p-8">
-                        @csrf
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        
+                    <!-- Quick Order Content -->
+                    <div class="p-8">
                         <!-- Pricing & Quantity Section -->
                         <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 mb-8">
                             <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                                 </svg>
-                                Pricing & Quantity
+                                Select Quantity & Proceed
                             </h3>
                             
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -257,207 +254,14 @@ input[type="number"]::-ms-clear {
                             </div>
                         </div>
 
-                        <!-- Customer Information Section -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                Customer Information
-                            </h3>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="space-y-2">
-                                    <label for="customer_name" class="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                        Full Name
-                                    </label>
-                                    <input type="text" id="customer_name" name="customer_name" value="{{ Auth::user()->name }}" required
-                                           class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
-                                </div>
-                                
-                                <div class="space-y-2">
-                                    <label for="customer_email" class="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
-                                        Email Address
-                                    </label>
-                                    <input type="email" id="customer_email" name="customer_email" value="{{ Auth::user()->email }}" required
-                                           class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
-                                </div>
-                                
-                                <div class="space-y-2 md:col-span-2">
-                                    <label for="customer_phone" class="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                        </svg>
-                                        Phone Number
-                                    </label>
-                                    <input type="tel" id="customer_phone" name="customer_phone" value="{{ Auth::user()->phone ?? '' }}" required
-                                           class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                                           placeholder="e.g., +673 1234567">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pickup Information Section -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                </svg>
-                                Pickup Information
-                            </h3>
-                            
-                            <div class="space-y-6">
-                                <!-- Pickup Location Info -->
-                                <div class="bg-green-50 border border-green-200 rounded-xl p-4">
-                                    <h4 class="font-semibold text-green-800 mb-2 flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        </svg>
-                                        Pickup Location
-                                    </h4>
-                                    <p class="text-green-700 text-sm">
-                                        <strong>Unissa Café</strong><br>
-                                        123 Main Street<br>
-                                        City Center, State 12345<br>
-                                        <span class="text-green-600 font-medium">📞 Phone: (555) 123-4567</span>
-                                    </p>
-                                </div>
-
-                                <!-- Pickup Hours -->
-                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                                    <h4 class="font-semibold text-blue-800 mb-2 flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Pickup Hours
-                                    </h4>
-                                    <div class="text-blue-700 text-sm space-y-1">
-                                        <p><strong>Monday - Friday:</strong> 8:00 AM - 8:00 PM</p>
-                                        <p><strong>Saturday - Sunday:</strong> 9:00 AM - 6:00 PM</p>
-                                        <p class="text-blue-600 font-medium mt-2">⏰ Orders ready for pickup within 30-60 minutes</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="space-y-2">
-                                    <label for="pickup_notes" class="block text-sm font-medium text-gray-700">Pickup Notes <span class="text-gray-500 font-normal">(Optional)</span></label>
-                                    <textarea id="pickup_notes" name="pickup_notes" rows="3"
-                                              placeholder="Any special pickup instructions or preferred pickup time..."
-                                              class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none transition-all"></textarea>
-                                </div>
-                                
-                                <div class="space-y-2">
-                                    <label for="notes" class="block text-sm font-medium text-gray-700">Order Notes <span class="text-gray-500 font-normal">(Optional)</span></label>
-                                    <textarea id="notes" name="notes" rows="2"
-                                              placeholder="Any special requests for your order preparation..."
-                                              class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none transition-all"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Payment Method Section -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                </svg>
-                                Payment Method
-                            </h3>
-                            
-                            <div class="space-y-4">
-                                <!-- Payment Method Selection -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <!-- Cash Payment Option -->
-                                    <label class="relative cursor-pointer">
-                                        <input type="radio" name="payment_method" value="cash" checked 
-                                               class="sr-only peer" onclick="updatePaymentMethod()">
-                                        <div class="w-full p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-green-300 peer-checked:border-green-500 peer-checked:bg-green-50 transition-all duration-200">
-                                            <div class="flex items-center gap-4">
-                                                <div class="flex-shrink-0">
-                                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <h4 class="font-semibold text-gray-900">Pay with Cash</h4>
-                                                    <p class="text-sm text-gray-600 mt-1">Pay when you pick up your order</p>
-                                                    <div class="flex items-center gap-1 mt-2">
-                                                        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                                        </svg>
-                                                        <span class="text-xs text-green-600 font-medium">Recommended</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    <!-- Online Payment Option (Future) -->
-                                    <label class="relative cursor-pointer opacity-60">
-                                        <input type="radio" name="payment_method" value="online" disabled 
-                                               class="sr-only peer">
-                                        <div class="w-full p-6 bg-gray-50 border-2 border-gray-200 rounded-xl">
-                                            <div class="flex items-center gap-4">
-                                                <div class="flex-shrink-0">
-                                                    <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <h4 class="font-semibold text-gray-500">Pay Online</h4>
-                                                    <p class="text-sm text-gray-400 mt-1">Credit/Debit Card, PayPal</p>
-                                                    <div class="flex items-center gap-1 mt-2">
-                                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                                        </svg>
-                                                        <span class="text-xs text-gray-400">Coming Soon</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <!-- Cash Payment Info -->
-                                <div id="cash-payment-info" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                                    <div class="flex items-start gap-3">
-                                        <div class="flex-shrink-0 mt-0.5">
-                                            <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-amber-800 mb-1">Cash Payment Instructions</h4>
-                                            <ul class="text-sm text-amber-700 space-y-1">
-                                                <li>• Please bring exact change when possible</li>
-                                                <li>• Payment is due upon pickup</li>
-                                                <li>• We accept bills and coins</li>
-                                                <li>• Your order will be confirmed immediately</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Submit Button -->
+                        <!-- Checkout Button -->
                         <div class="border-t border-gray-200 pt-8">
                             @if($product->isAvailable())
-                                <button type="submit" class="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 text-white font-bold py-4 px-8 rounded-xl hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 text-lg">
+                                <button type="button" id="checkout-btn" class="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 text-white font-bold py-4 px-8 rounded-xl hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 text-lg">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                                     </svg>
-                                    <span>Place Order Now</span>
+                                    <span>Add to Cart</span>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                                     </svg>
@@ -484,12 +288,13 @@ input[type="number"]::-ms-clear {
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
-                                Your information is secure and encrypted
+                                Complete your order details on the next page
                             </p>
                         </div>
-                    </form>
+                    </div>
                 </div>
-                @else
+                @endauth
+                @guest
                 <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-12 text-center">
                     <div class="mb-6">
                         <div class="w-20 h-20 mx-auto bg-gradient-to-r from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-4">
@@ -515,7 +320,7 @@ input[type="number"]::-ms-clear {
                         </div>
                     </div>
                 </div>
-                @endauth
+                @endguest
                 <!-- Rating Summary -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     @php
@@ -1111,6 +916,7 @@ input[type="number"]::-ms-clear {
         };
     });
 
+    @auth
     // Order form quantity controls and price calculation
     const quantityInput = document.getElementById('quantity');
     const decreaseBtn = document.getElementById('decrease-qty');
@@ -1125,7 +931,7 @@ input[type="number"]::-ms-clear {
         totalPriceElement.textContent = '$' + total.toFixed(2);
     }
 
-    if (decreaseBtn) {
+    if (decreaseBtn && quantityInput) {
         decreaseBtn.addEventListener('click', function() {
             let currentValue = parseInt(quantityInput.value) || 1;
             if (currentValue > 1) {
@@ -1135,7 +941,7 @@ input[type="number"]::-ms-clear {
         });
     }
 
-    if (increaseBtn) {
+    if (increaseBtn && quantityInput) {
         increaseBtn.addEventListener('click', function() {
             let currentValue = parseInt(quantityInput.value) || 1;
             if (currentValue < 100) {
@@ -1262,25 +1068,366 @@ input[type="number"]::-ms-clear {
     // Payment method handling
     function updatePaymentMethod() {
         const cashPaymentInfo = document.getElementById('cash-payment-info');
+        const onlinePaymentInfo = document.getElementById('online-payment-info');
+        const creditCardForm = document.getElementById('credit-card-form');
         const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+        const submitButton = document.querySelector('button[type="submit"] span');
         
-        // For future use when online payment is implemented
         paymentMethods.forEach(method => {
             if (method.checked && method.value === 'cash') {
                 if (cashPaymentInfo) {
                     cashPaymentInfo.style.display = 'block';
                 }
+                if (onlinePaymentInfo) {
+                    onlinePaymentInfo.style.display = 'none';
+                }
+                if (creditCardForm) {
+                    creditCardForm.style.display = 'none';
+                }
+                if (submitButton) {
+                    submitButton.textContent = 'Place Order Now';
+                }
             } else if (method.checked && method.value === 'online') {
                 if (cashPaymentInfo) {
                     cashPaymentInfo.style.display = 'none';
+                }
+                if (onlinePaymentInfo) {
+                    onlinePaymentInfo.style.display = 'block';
+                }
+                if (creditCardForm) {
+                    creditCardForm.style.display = 'block';
+                }
+                if (submitButton) {
+                    submitButton.textContent = 'Pay Now & Place Order';
                 }
             }
         });
     }
 
-    // Initialize payment method display
+    // Credit card input formatting
+    function formatCardNumber(input) {
+        let value = input.value.replace(/\D/g, ''); // Remove non-digits
+        value = value.substring(0, 16); // Limit to 16 digits
+        value = value.replace(/(.{4})/g, '$1 '); // Add space every 4 digits
+        input.value = value.trim();
+    }
+
+    function formatExpiryDate(input) {
+        let value = input.value.replace(/\D/g, ''); // Remove non-digits
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        input.value = value;
+    }
+
+    function formatCVV(input) {
+        input.value = input.value.replace(/\D/g, '').substring(0, 4); // Only digits, max 4
+    }
+
+    @auth
+    // Add event listeners for card formatting
     document.addEventListener('DOMContentLoaded', function() {
-        updatePaymentMethod();
+        const cardNumberInput = document.getElementById('card_number');
+        const expiryInput = document.getElementById('card_expiry');
+        const cvvInput = document.getElementById('card_cvv');
+
+        if (cardNumberInput) {
+            cardNumberInput.addEventListener('input', function() {
+                formatCardNumber(this);
+            });
+        }
+
+        if (expiryInput) {
+            expiryInput.addEventListener('input', function() {
+                formatExpiryDate(this);
+            });
+        }
+
+        if (cvvInput) {
+            cvvInput.addEventListener('input', function() {
+                formatCVV(this);
+            });
+        }
     });
+
+    // Form submission handling
+    const orderFormElement = document.getElementById('order-form');
+    if (orderFormElement) {
+        orderFormElement.addEventListener('submit', function(e) {
+            const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
+        
+        if (selectedPaymentMethod && selectedPaymentMethod.value === 'online') {
+            // Validate credit card fields
+            const cardNumber = document.getElementById('card_number').value.replace(/\s/g, '');
+            const cardExpiry = document.getElementById('card_expiry').value;
+            const cardCVV = document.getElementById('card_cvv').value;
+            const cardholderName = document.getElementById('cardholder_name').value;
+
+            if (!cardNumber || cardNumber.length < 13) {
+                alert('Please enter a valid card number');
+                e.preventDefault();
+                return;
+            }
+
+            if (!cardExpiry || !cardExpiry.match(/^\d{2}\/\d{2}$/)) {
+                alert('Please enter a valid expiry date (MM/YY)');
+                e.preventDefault();
+                return;
+            }
+
+            if (!cardCVV || cardCVV.length < 3) {
+                alert('Please enter a valid CVV');
+                e.preventDefault();
+                return;
+            }
+
+            if (!cardholderName.trim()) {
+                alert('Please enter the cardholder name');
+                e.preventDefault();
+                return;
+            }
+
+            // For online payment, show processing message
+            const submitButton = this.querySelector('button[type="submit"]');
+            const buttonText = submitButton.querySelector('span');
+            const originalText = buttonText.textContent;
+            
+            buttonText.textContent = 'Processing Payment...';
+            submitButton.disabled = true;
+            
+            // Re-enable after 10 seconds if something goes wrong
+            setTimeout(() => {
+                buttonText.textContent = originalText;
+                submitButton.disabled = false;
+            }, 10000);
+        }
+        });
+    }
+    @endauth
+    @endauth
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded. Auth status: {{ Auth::check() ? "logged in" : "guest" }}');
+        console.log('User ID: {{ Auth::id() ?? "none" }}');
+        
+        // Only setup checkout button if user is authenticated
+        @auth
+        // Checkout button functionality - prevent duplicate setup
+        if (window.checkoutButtonSetup) {
+            console.log('Checkout button already set up, skipping...');
+            return;
+        }
+        window.checkoutButtonSetup = true;
+        
+        console.log('Setting up checkout button listener...');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        console.log('Checkout button found:', checkoutBtn);
+        
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Prevent multiple rapid clicks
+                if (this.disabled) {
+                    console.log('Button already clicked, ignoring...');
+                    return;
+                }
+                
+                console.log('Order button clicked!');
+                
+                const quantityInput = document.getElementById('quantity');
+                const quantity = quantityInput ? quantityInput.value : '1';
+                const productId = {{ $product->id ?? 'null' }};
+                
+                console.log('Quantity:', quantity, 'Product ID:', productId);
+                console.log('Product ID type:', typeof productId);
+                
+                if (!productId || productId === 'null') {
+                    console.error('Error: Product ID not found!');
+                    alert('Error: Product ID is missing!');
+                    return;
+                }
+                
+                console.log('About to send AJAX request to:', `/cart/add/${productId}`);
+                
+                // Disable button to prevent multiple clicks
+                this.disabled = true;
+                
+                // Add visual feedback
+                this.style.opacity = '0.7';
+                this.innerHTML = '<span>Adding to Cart...</span>';
+                
+                // Add to cart via AJAX
+                const formData = new FormData();
+                formData.append('product_id', productId);
+                formData.append('quantity', parseInt(quantity));
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                
+                fetch('/cart/add-simple', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Response is not JSON');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        this.innerHTML = '<span>✓ Added to Cart!</span>';
+                        this.style.backgroundColor = '#10b981';
+                        
+                        // Update cart count if element exists
+                        const cartCount = document.getElementById('cart-count');
+                        if (cartCount) {
+                            cartCount.textContent = data.cart_count;
+                            cartCount.style.display = data.cart_count > 0 ? 'inline' : 'none';
+                        }
+                        
+                        // Show success toast/notification
+                        showNotification(data.message, 'success');
+                        
+                        // Reset button after 3 seconds
+                        setTimeout(() => {
+                            this.disabled = false;
+                            this.style.opacity = '1';
+                            this.style.backgroundColor = '';
+                            this.innerHTML = '<span>Add to Cart</span>';
+                        }, 3000);
+                    } else {
+                        throw new Error(data.message || 'Failed to add to cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error details:', error);
+                    this.innerHTML = '<span>Error - Try Again</span>';
+                    this.style.backgroundColor = '#ef4444';
+                    
+                    // More detailed error message
+                    let errorMessage = 'Failed to add item to cart. Please try again.';
+                    if (error.message.includes('HTTP error')) {
+                        errorMessage = 'Server error. Please check if you are logged in.';
+                    } else if (error.message.includes('JSON')) {
+                        errorMessage = 'Server response error. Please try refreshing the page.';
+                    }
+                    
+                    showNotification(errorMessage, 'error');
+                    
+                    // Reset button after 3 seconds
+                    setTimeout(() => {
+                        this.disabled = false;
+                        this.style.opacity = '1';
+                        this.style.backgroundColor = '';
+                        this.innerHTML = '<span>Add to Cart</span>';
+                    }, 3000);
+                });
+            });
+        } else {
+            console.error('Checkout button not found in DOM!');
+        }
+        
+        // Quantity controls - also only for authenticated users
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decrease-qty');
+        const increaseBtn = document.getElementById('increase-qty');
+        const unitPrice = {{ $product->price ?? 0 }};
+        const unitPriceElement = document.getElementById('unit-price');
+        const totalPriceElement = document.getElementById('total-price');
+
+        function updatePrice() {
+            if (!quantityInput) return;
+            const quantity = parseInt(quantityInput.value) || 1;
+            const total = unitPrice * quantity;
+            if (totalPriceElement) {
+                totalPriceElement.textContent = '$' + total.toFixed(2);
+            }
+        }
+
+        if (decreaseBtn && quantityInput) {
+            decreaseBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                    updatePrice();
+                }
+            });
+        }
+
+        if (increaseBtn && quantityInput) {
+            increaseBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                if (currentValue < 100) {
+                    quantityInput.value = currentValue + 1;
+                    updatePrice();
+                }
+            });
+        }
+
+        if (quantityInput) {
+            quantityInput.addEventListener('input', function() {
+                let value = parseInt(this.value) || 1;
+                value = Math.max(1, Math.min(100, value));
+                this.value = value;
+                updatePrice();
+            });
+        }
+        @else
+        console.log('User not authenticated - skipping all order controls setup');
+        @endauth
+    });
+
+    // Notification function
+    function showNotification(message, type = 'success') {
+        // Remove existing notifications
+        const existingNotification = document.getElementById('cart-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.id = 'cart-notification';
+        notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                    ${type === 'success' ? 
+                        '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>' :
+                        '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>'
+                    }
+                </div>
+                <span class="font-medium">${message}</span>
+            </div>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Auto-hide after 4 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateX(full)';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 4000);
+    }
 </script>
 @endsection

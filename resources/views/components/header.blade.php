@@ -316,6 +316,18 @@
             </script>
         </div>
         
+        <!-- Cart Icon (only show on cafe pages and for authenticated users) -->
+        @if((request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*')) && auth()->check())
+        <div class="relative" id="cart-group">
+            <a href="{{ route('cart.index') }}" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow hover:bg-gray-50 transition-colors relative" style="width:40px;height:40px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                </svg>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full min-w-[1.5rem] h-6 flex items-center justify-center" style="display: none;">0</span>
+            </a>
+        </div>
+        @endif
+        
         <div class="relative group" id="profile-group">
             <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden">
                 @if(Auth::check() && Auth::user()->profile_photo_url)
@@ -357,6 +369,36 @@
                 }
             </style>
         </div>
+        
+        @if((request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*')) && auth()->check())
+        <script>
+            // Load cart count on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                loadCartCount();
+            });
+
+            function loadCartCount() {
+                fetch('/api/cart/count', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const cartCount = document.getElementById('cart-count');
+                    if (cartCount) {
+                        cartCount.textContent = data.count;
+                        cartCount.style.display = data.count > 0 ? 'flex' : 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading cart count:', error);
+                });
+            }
+        </script>
+        @endif
     </div>
     </div>
 </header>
