@@ -596,15 +596,28 @@
 
         // Utility functions for image upload
         function setupImageUpload(type) {
-            const prefix = '';
-            const dropZoneId = 'gallery-drop-zone';
+            const prefix = type === 'gallery' ? '' : `${type}-`;
+            const dropZoneId = type === 'gallery' ? 'gallery-drop-zone' : `${type}-drop-zone`;
             const dropZone = document.getElementById(dropZoneId);
             const imageInput = document.getElementById(`${prefix}image-upload`);
             const imagePreview = document.getElementById(`${prefix}image-preview`);
             const previewImg = document.getElementById(`${prefix}preview-img`);
             
+            console.log('Setting up image upload for type:', type);
+            console.log('Looking for elements:', {
+                dropZone: dropZoneId,
+                imageInput: `${prefix}image-upload`,
+                imagePreview: `${prefix}image-preview`,
+                previewImg: `${prefix}preview-img`
+            });
+            
             if (!dropZone || !imageInput || !imagePreview || !previewImg) {
-                console.error('Required elements not found for image upload setup');
+                console.error('Required elements not found for image upload setup', {
+                    dropZone: !!dropZone,
+                    imageInput: !!imageInput,
+                    imagePreview: !!imagePreview,
+                    previewImg: !!previewImg
+                });
                 return;
             }
             
@@ -791,9 +804,17 @@
                     const formData = new FormData(e.target);
                     formData.set('is_active', formData.get('is_active') ? '1' : '0');
                     
+                    console.log('Submitting gallery form...');
+                    console.log('Form data entries:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(key, value);
+                    }
+                    
                     try {
                         const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
                         if (isEdit) formData.append('_method', 'PUT');
+                        
+                        console.log('Sending request to:', url);
                         
                         const response = await fetch(url, {
                             method: 'POST',
@@ -804,16 +825,23 @@
                             body: formData
                         });
 
+                        console.log('Response status:', response.status);
+                        console.log('Response headers:', response.headers);
+                        
                         const result = await response.json();
+                        console.log('Response data:', result);
+                        
                         if (response.ok) {
                             alert(result.message);
                             closeGalleryModal();
                             window.location.reload();
                         } else {
+                            console.error('Error response:', result);
                             alert(result.message || 'Failed to save image.');
                         }
                     } catch (error) {
-                        alert('Network error occurred.');
+                        console.error('Network error:', error);
+                        alert('Network error occurred: ' + error.message);
                     }
                 });
             }

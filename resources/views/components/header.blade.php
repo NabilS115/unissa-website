@@ -3,7 +3,7 @@
     <div class="flex items-center gap-4 logo-section">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">
-            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
+            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*'))
                 Unissa Cafe
             @else
                 Tijarah Co Sdn Bhd
@@ -13,7 +13,7 @@
     <div class="flex items-center gap-6 ml-12">
         <nav>
             <ul class="flex gap-4 nav-list">
-                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
+                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*'))
                     <!-- Unissa Cafe Navigation -->
                     <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Home</a></li>
                     <li><a href="{{ route('unissa-cafe.catalog') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/catalog') ? 'font-semibold underline' : '' }}">Catalog</a></li>
@@ -317,19 +317,21 @@
         </div>
         
         <!-- Cart Icon (only show on cafe pages and for authenticated users) -->
-        @if((request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*')) && auth()->check())
-        <div class="relative" id="cart-group">
-            <a href="{{ route('cart.index') }}" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow hover:bg-gray-50 transition-colors relative" style="width:40px;height:40px;">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+        @if((request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*')) && auth()->check())
+        <div class="relative mr-4" id="cart-group">
+            <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
+                <!-- Enhanced Shopping Cart Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                 </svg>
-                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full min-w-[1.5rem] h-6 flex items-center justify-center" style="display: none;">0</span>
             </a>
+            <!-- Smaller Notification Bubble -->
+            <span id="cart-count" class="absolute bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1" style="display: none; font-size: 8px; line-height: 1;">0</span>
         </div>
         @endif
         
         <div class="relative group" id="profile-group">
-            <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden">
+            <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden shadow hover:shadow-lg transition-all duration-300">
                 @if(Auth::check() && Auth::user()->profile_photo_url)
                     <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover pointer-events-none">
                 @else
@@ -367,6 +369,72 @@
                     opacity: 1;
                     pointer-events: auto;
                 }
+                
+                /* Enhanced Cart Icon Styles */
+                #cart-group a {
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                #cart-group a::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 0;
+                    height: 0;
+                    background: rgba(20, 184, 166, 0.1);
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                    transition: width 0.6s, height 0.6s;
+                }
+                
+                #cart-group a:hover::before {
+                    width: 100px;
+                    height: 100px;
+                }
+                
+                /* Cart Count Animation */
+                @keyframes bounce-in {
+                    0% {
+                        transform: translate(4px, -4px) scale(0);
+                        opacity: 0;
+                    }
+                    50% {
+                        transform: translate(4px, -4px) scale(1.2);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(4px, -4px) scale(1);
+                        opacity: 1;
+                    }
+                }
+                
+                @keyframes pulse-glow {
+                    0%, 100% {
+                        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+                    }
+                    50% {
+                        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+                    }
+                }
+                
+                #cart-count {
+                    /* No automatic animation - only animate on updates */
+                }
+                
+                #cart-count.updated {
+                    animation: pulse-glow 0.6s ease-out;
+                }
+                
+                /* Cart Icon Hover Effect */
+                #cart-group svg {
+                    transition: transform 0.3s ease;
+                }
+                
+                #cart-group a:hover svg {
+                    transform: translateY(-1px);
+                }
             </style>
         </div>
         
@@ -389,13 +457,40 @@
                 .then(data => {
                     const cartCount = document.getElementById('cart-count');
                     if (cartCount) {
-                        cartCount.textContent = data.count;
-                        cartCount.style.display = data.count > 0 ? 'flex' : 'none';
+                        const oldCount = parseInt(cartCount.textContent) || 0;
+                        const newCount = data.count || 0;
+                        
+                        cartCount.textContent = newCount;
+                        cartCount.style.display = newCount > 0 ? 'flex' : 'none';
+                        
+                        // Add animation if count changed
+                        if (newCount !== oldCount && newCount > 0) {
+                            cartCount.classList.add('updated');
+                            setTimeout(() => {
+                                cartCount.classList.remove('updated');
+                            }, 600);
+                        }
                     }
                 })
                 .catch(error => {
                     console.error('Error loading cart count:', error);
                 });
+            }
+            
+            // Enhanced cart update function for when items are added
+            window.updateCartCount = function(newCount) {
+                const cartCount = document.getElementById('cart-count');
+                if (cartCount) {
+                    cartCount.textContent = newCount;
+                    cartCount.style.display = newCount > 0 ? 'flex' : 'none';
+                    
+                    if (newCount > 0) {
+                        cartCount.classList.add('updated');
+                        setTimeout(() => {
+                            cartCount.classList.remove('updated');
+                        }, 600);
+                    }
+                }
             }
         </script>
         @endif

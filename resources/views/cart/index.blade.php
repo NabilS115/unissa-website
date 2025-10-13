@@ -3,106 +3,169 @@
 @section('title', 'Shopping Cart - Unissa')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-orange-50 via-white to-yellow-50 py-8">
-    <div class="max-w-6xl mx-auto px-4">
-        <!-- Header -->
+<div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Clean Header -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Your Shopping Cart</h1>
-            <p class="text-gray-600">Review your items and proceed to checkout</p>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mb-3">Your Shopping Cart</h1>
+            <p class="text-lg text-gray-600">Review your selected items and proceed to secure checkout</p>
         </div>
 
         @if($cartItems->isEmpty())
-            <!-- Empty Cart -->
-            <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
-                <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13h10m-10 0v6a2 2 0 002 2h6a2 2 0 002-2v-6"></path>
+            <!-- Elegant Empty Cart -->
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-16 text-center">
+                <div class="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-full flex items-center justify-center">
+                    <svg class="w-16 h-16 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13h10m-10 0v6a2 2 0 002 2h6a2 2 0 002-2v-6"></path>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your cart is empty</h2>
-                <p class="text-gray-600 mb-8">Looks like you haven't added anything to your cart yet.</p>
-                <a href="{{ route('unissa-cafe.catalog') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:from-orange-600 hover:to-pink-700 transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
+                <p class="text-lg text-gray-600 mb-10 max-w-md mx-auto">Discover our amazing products and start building your perfect order</p>
+                <a href="{{ route('unissa-cafe.catalog') }}" class="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:from-teal-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                     Start Shopping
                 </a>
             </div>
         @else
-            <div class="grid lg:grid-cols-3 gap-8">
-                <!-- Cart Items -->
+            <div class="grid lg:grid-cols-3 gap-10">
+                <!-- Modern Cart Items -->
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-2xl shadow-lg p-6">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Cart Items ({{ $cartItems->count() }})</h2>
+                    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+                        <div class="flex items-center justify-between mb-8">
+                            <h2 class="text-3xl font-bold text-gray-800">Cart Items <span class="text-2xl text-teal-600">({{ $cartItems->count() }})</span></h2>
+                            <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                Secure checkout
+                            </div>
+                        </div>
                         
                         <div class="space-y-6">
                             @foreach($cartItems as $item)
-                            <div class="flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:shadow-md transition-shadow">
+                            <div class="group relative bg-gradient-to-r from-gray-50 to-white p-6 border border-gray-200 rounded-2xl hover:shadow-lg hover:border-teal-200 transition-all duration-300">
                                 <!-- Product Image -->
-                                <div class="w-20 h-20 flex-shrink-0">
-                                    <img src="{{ asset('storage/' . $item->product->img) }}" 
-                                         alt="{{ $item->product->name }}"
-                                         class="w-full h-full object-cover rounded-lg">
-                                </div>
-                                
-                                <!-- Product Details -->
-                                <div class="flex-grow">
-                                    <h3 class="font-semibold text-gray-800">{{ $item->product->name }}</h3>
-                                    <p class="text-sm text-gray-600 capitalize">{{ $item->product->category }}</p>
-                                    <p class="text-sm text-orange-600 font-medium">${{ number_format($item->product->price, 2) }} each</p>
-                                </div>
-                                
-                                <!-- Quantity Controls -->
-                                <div class="flex items-center gap-2">
-                                    <form action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2">
+                                <div class="flex items-start gap-6">
+                                    <div class="w-24 h-24 flex-shrink-0 relative overflow-hidden rounded-xl bg-gray-100">
+                                        @if($item->product->img)
+                                            <img src="{{ asset($item->product->img) }}" 
+                                                 alt="{{ $item->product->name }}"
+                                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgMTZsNC41ODYtNC41ODZhMiAyIDAgMDEyLjgyOCAwTDE2IDE2bS0yLTJsMS41ODYtMS41ODZhMiAyIDAgMDEyLjgyOCAwTDIwIDE0bS02LTZoLjAxTTYgMjBoMTJhMiAyIDAgMDAyLTJWNmEyIDIgMCAwMC0yLTJINmEyIDIgMCAwMC0yIDJ2MTJhMiAyIDAgMDAyIDJ6IiBzdHJva2U9IiM5Q0E3QjQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo='; this.onerror=null;">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                                    </div>
+                                    
+                                    <!-- Product Details -->
+                                    <div class="flex-grow min-w-0">
+                                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                                            <div class="flex-grow">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $item->product->name }}</h3>
+                                                <div class="flex items-center gap-3 mb-3">
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800 capitalize">
+                                                        {{ $item->product->category }}
+                                                    </span>
+                                                    <span class="text-lg font-semibold text-teal-600">${{ number_format($item->product->price, 2) }}</span>
+                                                </div>
+                                                
+                                                <!-- Mobile quantity controls -->
+                                                <div class="sm:hidden">
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center gap-3">
+                                                            <form id="cart-form-mobile-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="button" onclick="updateQuantity('mobile-{{ $item->id }}', -1)" 
+                                                                        class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
+                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                                                    </svg>
+                                                                </button>
+                                                                
+                                                                <input type="number" name="quantity" value="{{ $item->quantity }}" 
+                                                                       min="1" max="100" 
+                                                                       class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200"
+                                                                       onchange="this.form.submit()">
+                                                                
+                                                                <button type="button" onclick="updateQuantity('mobile-{{ $item->id }}', 1)" 
+                                                                        class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
+                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <p class="text-2xl font-bold text-gray-800">${{ number_format($item->total_price, 2) }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                            <!-- Desktop Quantity Controls & Price -->
+                            <div class="hidden sm:flex items-center gap-6">
+                                <div class="flex items-center gap-3">
+                                    <form id="cart-form-desktop-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="button" onclick="updateQuantity({{ $item->id }}, -1)" 
-                                                class="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button type="button" onclick="updateQuantity('desktop-{{ $item->id }}', -1)" 
+                                                class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                                             </svg>
                                         </button>
                                         
                                         <input type="number" name="quantity" value="{{ $item->quantity }}" 
                                                min="1" max="100" 
-                                               class="w-16 text-center border border-gray-200 rounded-lg py-1"
+                                               class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200"
                                                onchange="this.form.submit()">
                                         
-                                        <button type="button" onclick="updateQuantity({{ $item->id }}, 1)" 
-                                                class="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button type="button" onclick="updateQuantity('desktop-{{ $item->id }}', 1)" 
+                                                class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                             </svg>
                                         </button>
                                     </form>
+                                </div>                                                <div class="text-right min-w-0">
+                                                    <p class="text-2xl font-bold text-gray-800">${{ number_format($item->total_price, 2) }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Remove Button -->
+                                    <form action="{{ route('cart.remove', $item) }}" method="POST" onsubmit="return confirm('Remove this item from cart?')" class="flex-shrink-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-10 h-10 flex items-center justify-center text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all duration-200 group">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
-                                
-                                <!-- Item Total -->
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-800">${{ number_format($item->total_price, 2) }}</p>
-                                </div>
-                                
-                                <!-- Remove Button -->
-                                <form action="{{ route('cart.remove', $item) }}" method="POST" onsubmit="return confirm('Remove this item from cart?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 p-2">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-                                </form>
                             </div>
                             @endforeach
                         </div>
                         
                         <!-- Clear Cart -->
-                        <div class="mt-6 pt-6 border-t border-gray-200">
+                        <div class="mt-8 pt-6 border-t border-gray-200">
                             <form action="{{ route('cart.clear') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear your entire cart?')" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 font-medium">
+                                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 font-medium rounded-xl transition-all duration-200">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
                                     Clear All Items
                                 </button>
                             </form>
@@ -110,32 +173,38 @@
                     </div>
                 </div>
                 
-                <!-- Cart Summary -->
+                <!-- Enhanced Order Summary -->
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-8">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Order Summary</h2>
+                    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sticky top-8">
+                        <div class="text-center mb-8">
+                            <h2 class="text-3xl font-bold text-gray-800 mb-2">Order Summary</h2>
+                            <p class="text-gray-600">Ready to checkout?</p>
+                        </div>
                         
-                        <div class="space-y-4 mb-6">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Subtotal ({{ $cartItems->sum('quantity') }} items)</span>
-                                <span class="font-medium">${{ number_format($totalPrice, 2) }}</span>
+                        <div class="space-y-6 mb-8">
+                            <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-4">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-gray-700 font-medium">Subtotal</span>
+                                    <span class="text-xl font-bold text-gray-800">${{ number_format($totalPrice, 2) }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Items</span>
+                                    <span class="text-teal-600 font-semibold">{{ $cartItems->sum('quantity') }} items</span>
+                                </div>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Shipping</span>
-                                <span class="font-medium text-green-600">Free</span>
-                            </div>
-                            <div class="border-t border-gray-200 pt-4">
-                                <div class="flex justify-between">
-                                    <span class="text-xl font-semibold text-gray-800">Total</span>
-                                    <span class="text-xl font-bold text-orange-600">${{ number_format($totalPrice, 2) }}</span>
+                            
+                            <div class="border-t-2 border-dashed border-gray-300 pt-6">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-2xl font-bold text-gray-800">Total</span>
+                                    <span class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Checkout Button -->
+                        <!-- Enhanced Checkout Button -->
                         <a href="{{ route('checkout.cart') }}" 
-                           class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-orange-500 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:from-orange-600 hover:to-pink-700 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           class="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl hover:from-teal-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                             </svg>
                             Proceed to Checkout
@@ -143,9 +212,30 @@
                         
                         <!-- Continue Shopping -->
                         <a href="{{ route('unissa-cafe.catalog') }}" 
-                           class="w-full mt-4 inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-700 font-medium rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all duration-200">
+                           class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-teal-200 text-teal-700 font-semibold rounded-2xl hover:border-teal-300 hover:bg-teal-50 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                            </svg>
                             Continue Shopping
                         </a>
+                        
+                        <!-- Trust Badges -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <div class="flex items-center justify-center gap-4 text-sm text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    <span>Secure Payment</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"></path>
+                                    </svg>
+                                    <span>Quality Guarantee</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,8 +244,11 @@
 </div>
 
 <script>
-function updateQuantity(itemId, change) {
-    const quantityInput = document.querySelector(`input[name="quantity"][form*="${itemId}"]`);
+function updateQuantity(formId, change) {
+    const form = document.getElementById(`cart-form-${formId}`);
+    if (!form) return;
+    
+    const quantityInput = form.querySelector('input[name="quantity"]');
     if (!quantityInput) return;
     
     let newQuantity = parseInt(quantityInput.value) + change;
@@ -163,7 +256,7 @@ function updateQuantity(itemId, change) {
     if (newQuantity > 100) newQuantity = 100;
     
     quantityInput.value = newQuantity;
-    quantityInput.form.submit();
+    form.submit();
 }
 </script>
 @endsection

@@ -1289,11 +1289,16 @@ input[type="number"]::-ms-clear {
                         this.innerHTML = '<span>✓ Added to Cart!</span>';
                         this.style.backgroundColor = '#10b981';
                         
-                        // Update cart count if element exists
-                        const cartCount = document.getElementById('cart-count');
-                        if (cartCount) {
-                            cartCount.textContent = data.cart_count;
-                            cartCount.style.display = data.cart_count > 0 ? 'inline' : 'none';
+                        // Update cart count with enhanced animation
+                        if (window.updateCartCount) {
+                            window.updateCartCount(data.cart_count);
+                        } else {
+                            // Fallback for older implementation
+                            const cartCount = document.getElementById('cart-count');
+                            if (cartCount) {
+                                cartCount.textContent = data.cart_count;
+                                cartCount.style.display = data.cart_count > 0 ? 'flex' : 'none';
+                            }
                         }
                         
                         // Show success toast/notification

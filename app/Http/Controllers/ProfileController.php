@@ -26,17 +26,34 @@ class ProfileController extends Controller
     }
     public function update(Request $request)
     {
+        \Log::info('Profile update method called');
+        \Log::info('Request data:', $request->all());
+        \Log::info('User ID: ' . Auth::id());
+        
         $user = Auth::user();
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-        ]);
+        
+        try {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            ]);
 
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        $user->save();
+            \Log::info('Validation passed:', $validated);
 
-    return Redirect::route('profile')->with('profile-updated', true);
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->save();
+
+            \Log::info('Profile updated successfully for user: ' . $user->id);
+
+            return Redirect::route('edit.profile')->with('profile-updated', true);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed:', $e->errors());
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            \Log::error('Profile update error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update profile. Please try again.')->withInput();
+        }
     }
     
         public function updatePhoto(Request $request)
@@ -55,16 +72,31 @@ class ProfileController extends Controller
         }
         public function updatePassword(Request $request)
     {
-        $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        \Log::info('Password update method called');
+        \Log::info('Request data (without passwords):', $request->except(['current_password', 'password', 'password_confirmation']));
+        
+        try {
+            $request->validate([
+                'current_password' => ['required', 'current_password'],
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+            ]);
 
-        $user = $request->user();
-        $user->password = Hash::make($request->password);
-        $user->save();
+            \Log::info('Password validation passed');
 
-        return back()->with('password-updated', true);
+            $user = $request->user();
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            \Log::info('Password updated successfully for user: ' . $user->id);
+
+            return back()->with('password-updated', true);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Password validation failed:', $e->errors());
+            return back()->withErrors($e->errors(), 'updatePassword')->withInput();
+        } catch (\Exception $e) {
+            \Log::error('Password update error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update password. Please try again.');
+        }
     }
     public function destroy(Request $request)
     {

@@ -130,9 +130,9 @@
                 </div>
 
                 <!-- Form Fields -->
-                <form method="POST" action="{{ route('profile.update') }}" class="space-y-6">
+                <form method="POST" action="{{ route('profile.update') }}" class="space-y-6" onsubmit="console.log('Profile form submitted');">
                     @csrf
-                    @method('patch')
+                    @method('put')
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -157,6 +157,14 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+                        @if (session('error'))
+                            <div class="flex items-center gap-2 text-red-600 font-medium">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         @if (session('profile-updated') || session('status') === 'profile-updated')
                             <div class="flex items-center gap-2 text-green-600 font-medium">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -165,7 +173,7 @@
                                 Profile updated successfully!
                             </div>
                         @endif
-                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" onclick="console.log('Update Profile button clicked');">
                             Update Profile
                         </button>
                     </div>
@@ -186,7 +194,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('profile.password') }}" class="space-y-6">
+                <form method="POST" action="{{ route('profile.password') }}" class="space-y-6" onsubmit="console.log('Password form submitted');">
                     @csrf
                     @method('put')
 
@@ -246,6 +254,14 @@
                     </div>
                     
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+                        @if (session('error'))
+                            <div class="flex items-center gap-2 text-red-600 font-medium">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         @if (session('password-updated') || session('status') === 'password-updated')
                             <div class="flex items-center gap-2 text-green-600 font-medium">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -254,7 +270,7 @@
                                 Password updated successfully!
                             </div>
                         @endif
-                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" onclick="console.log('Update Password button clicked');">
                             Update Password
                         </button>
                     </div>

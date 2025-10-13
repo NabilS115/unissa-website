@@ -43,15 +43,27 @@ class GalleryController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info('Gallery store method called');
+        \Log::info('Request data:', $request->all());
+        \Log::info('Files:', $request->allFiles());
+        \Log::info('User authenticated: ' . (auth()->check() ? 'true' : 'false'));
+        \Log::info('User role: ' . (auth()->check() ? auth()->user()->role : 'not authenticated'));
+        
         if (!auth()->check()) {
+            \Log::error('User not authenticated');
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'sort_order' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|boolean'
-        ]);
+        try {
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'sort_order' => 'nullable|integer|min:0',
+                'is_active' => 'nullable|boolean'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed:', $e->errors());
+            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+        }
 
         try {
             // If no sort_order provided, assign the next available order
@@ -71,7 +83,7 @@ class GalleryController extends Controller
             $image->storeAs('gallery', $filename, 'public');
             
             Gallery::create([
-                'image_path' => 'gallery/' . $filename,
+                'image_url' => 'gallery/' . $filename,
                 'sort_order' => $sortOrder,
                 'is_active' => $request->boolean('is_active', true)
             ]);
@@ -107,8 +119,8 @@ class GalleryController extends Controller
             // Handle image update if provided
             if ($request->hasFile('image')) {
                 // Delete old image
-                if ($gallery->image_path && Storage::disk('public')->exists($gallery->image_path)) {
-                    Storage::disk('public')->delete($gallery->image_path);
+                if ($gallery->image_url && Storage::disk('public')->exists($gallery->image_url)) {
+                    Storage::disk('public')->delete($gallery->image_url);
                 }
                 
                 // Store new image
@@ -116,7 +128,7 @@ class GalleryController extends Controller
                 $filename = Str::random(40) . '.' . $image->getClientOriginalExtension();
                 $image->storeAs('gallery', $filename, 'public');
                 
-                $gallery->image_path = 'gallery/' . $filename;
+                $gallery->image_url = 'gallery/' . $filename;
             }
 
             $gallery->sort_order = $newSortOrder;
@@ -138,8 +150,8 @@ class GalleryController extends Controller
 
         try {
             // Delete the image file
-            if ($gallery->image_path && Storage::disk('public')->exists($gallery->image_path)) {
-                Storage::disk('public')->delete($gallery->image_path);
+            if ($gallery->image_url && Storage::disk('public')->exists($gallery->image_url)) {
+                Storage::disk('public')->delete($gallery->image_url);
             }
 
             // Delete the gallery record

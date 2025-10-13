@@ -11,7 +11,7 @@ class Gallery extends Model
     use HasFactory;
 
     protected $fillable = [
-        'image_path',
+        'image_url',
         'is_active',
         'sort_order'
     ];
@@ -33,15 +33,18 @@ class Gallery extends Model
 
     public function getImageUrlAttribute()
     {
+        // Get the raw attribute value
+        $imagePath = $this->attributes['image_url'] ?? null;
+        
         // If it's already a full URL, return it
-        if (filter_var($this->image_path, FILTER_VALIDATE_URL)) {
-            return $this->image_path;
+        if (filter_var($imagePath, FILTER_VALIDATE_URL)) {
+            return $imagePath;
         }
         
         // If it's a file path and exists in storage, return the URL
-        if ($this->image_path && Storage::disk('public')->exists($this->image_path)) {
+        if ($imagePath && Storage::disk('public')->exists($imagePath)) {
             // Use Laravel's url helper to generate the full URL
-            return url('storage/' . $this->image_path);
+            return url('storage/' . $imagePath);
         }
         
         return asset('images/placeholder.jpg');
@@ -53,8 +56,8 @@ class Gallery extends Model
 
         static::deleting(function ($gallery) {
             // Only delete if it's a file path (not a URL)
-            if ($gallery->image_path && !filter_var($gallery->image_path, FILTER_VALIDATE_URL) && Storage::disk('public')->exists($gallery->image_path)) {
-                Storage::disk('public')->delete($gallery->image_path);
+            if ($gallery->image_url && !filter_var($gallery->image_url, FILTER_VALIDATE_URL) && Storage::disk('public')->exists($gallery->image_url)) {
+                Storage::disk('public')->delete($gallery->image_url);
             }
         });
     }
