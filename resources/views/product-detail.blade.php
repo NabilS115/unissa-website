@@ -924,15 +924,29 @@ input[type="number"]::-ms-clear {
     const unitPriceElement = document.getElementById('unit-price');
     const totalPriceElement = document.getElementById('total-price');
     const unitPrice = {{ $product->price ?? 0 }};
+    let inputTimeout; // Declare timeout variable in broader scope
 
     function updateTotalPrice() {
-        const quantity = parseInt(quantityInput.value) || 1;
+        // Handle partial input gracefully
+        let quantity = parseInt(quantityInput.value);
+        if (isNaN(quantity) || quantity < 1) {
+            quantity = 1;
+        }
+        if (quantity > 100) {
+            quantity = 100;
+        }
+        
         const total = unitPrice * quantity;
-        totalPriceElement.textContent = '$' + total.toFixed(2);
+        if (totalPriceElement) {
+            totalPriceElement.textContent = '$' + total.toFixed(2);
+        }
     }
 
     if (decreaseBtn && quantityInput) {
         decreaseBtn.addEventListener('click', function() {
+            // Clear any pending input validation
+            clearTimeout(inputTimeout);
+            
             let currentValue = parseInt(quantityInput.value) || 1;
             if (currentValue > 1) {
                 quantityInput.value = currentValue - 1;
@@ -943,6 +957,9 @@ input[type="number"]::-ms-clear {
 
     if (increaseBtn && quantityInput) {
         increaseBtn.addEventListener('click', function() {
+            // Clear any pending input validation
+            clearTimeout(inputTimeout);
+            
             let currentValue = parseInt(quantityInput.value) || 1;
             if (currentValue < 100) {
                 quantityInput.value = currentValue + 1;
@@ -952,14 +969,19 @@ input[type="number"]::-ms-clear {
     }
 
     if (quantityInput) {
-        // Handle text input as numeric only
-        quantityInput.addEventListener('input', function() {
-            // Remove any non-numeric characters
+        // Minimal interference - let user type freely
+        quantityInput.addEventListener('keyup', function() {
+            // Only update price display, don't modify input value
+            updateTotalPrice();
+        });
+        
+        // Clean up only when user is done editing
+        quantityInput.addEventListener('blur', function() {
             let value = this.value.replace(/[^0-9]/g, '');
-            if (value === '') value = '1';
+            if (value === '' || value === '0') value = '1';
             
             let numValue = parseInt(value);
-            if (numValue < 1) numValue = 1;
+            if (isNaN(numValue) || numValue < 1) numValue = 1;
             if (numValue > 100) numValue = 100;
             
             this.value = numValue;
@@ -1341,52 +1363,6 @@ input[type="number"]::-ms-clear {
             });
         } else {
             console.error('Checkout button not found in DOM!');
-        }
-        
-        // Quantity controls - also only for authenticated users
-        const quantityInput = document.getElementById('quantity');
-        const decreaseBtn = document.getElementById('decrease-qty');
-        const increaseBtn = document.getElementById('increase-qty');
-        const unitPrice = {{ $product->price ?? 0 }};
-        const unitPriceElement = document.getElementById('unit-price');
-        const totalPriceElement = document.getElementById('total-price');
-
-        function updatePrice() {
-            if (!quantityInput) return;
-            const quantity = parseInt(quantityInput.value) || 1;
-            const total = unitPrice * quantity;
-            if (totalPriceElement) {
-                totalPriceElement.textContent = '$' + total.toFixed(2);
-            }
-        }
-
-        if (decreaseBtn && quantityInput) {
-            decreaseBtn.addEventListener('click', function() {
-                let currentValue = parseInt(quantityInput.value) || 1;
-                if (currentValue > 1) {
-                    quantityInput.value = currentValue - 1;
-                    updatePrice();
-                }
-            });
-        }
-
-        if (increaseBtn && quantityInput) {
-            increaseBtn.addEventListener('click', function() {
-                let currentValue = parseInt(quantityInput.value) || 1;
-                if (currentValue < 100) {
-                    quantityInput.value = currentValue + 1;
-                    updatePrice();
-                }
-            });
-        }
-
-        if (quantityInput) {
-            quantityInput.addEventListener('input', function() {
-                let value = parseInt(this.value) || 1;
-                value = Math.max(1, Math.min(100, value));
-                this.value = value;
-                updatePrice();
-            });
         }
         @else
         console.log('User not authenticated - skipping all order controls setup');

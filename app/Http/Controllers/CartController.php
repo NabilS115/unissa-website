@@ -175,10 +175,17 @@ class CartController extends Controller
         ]);
 
         if ($request->ajax()) {
+            // Get updated cart totals
+            $cartItems = Cart::where('user_id', Auth::id())->get();
+            $cartTotal = $cartItems->sum('total_price');
+            $totalItems = $cartItems->sum('quantity');
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Quantity updated!',
-                'total_price' => $cartItem->total_price
+                'item_total' => $cartItem->total_price,
+                'cart_total' => $cartTotal,
+                'total_items' => $totalItems
             ]);
         }
 

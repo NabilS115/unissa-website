@@ -92,7 +92,8 @@
                                                                 
                                                                 <input type="number" name="quantity" value="{{ $item->quantity }}" 
                                                                        min="1" max="100" 
-                                                                       class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200"
+                                                                       class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200 appearance-none"
+                                                                       style="-webkit-appearance: none; -moz-appearance: textfield;"
                                                                        onchange="this.form.submit()">
                                                                 
                                                                 <button type="button" onclick="updateQuantity('mobile-{{ $item->id }}', 1)" 
@@ -104,7 +105,7 @@
                                                             </form>
                                                         </div>
                                                         <div class="text-right">
-                                                            <p class="text-2xl font-bold text-gray-800">${{ number_format($item->total_price, 2) }}</p>
+                                                            <p class="text-2xl font-bold text-gray-800" data-item-total>${{ number_format($item->total_price, 2) }}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -125,7 +126,8 @@
                                         
                                         <input type="number" name="quantity" value="{{ $item->quantity }}" 
                                                min="1" max="100" 
-                                               class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200"
+                                               class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200 appearance-none"
+                                               style="-webkit-appearance: none; -moz-appearance: textfield;"
                                                onchange="this.form.submit()">
                                         
                                         <button type="button" onclick="updateQuantity('desktop-{{ $item->id }}', 1)" 
@@ -136,7 +138,7 @@
                                         </button>
                                     </form>
                                 </div>                                                <div class="text-right min-w-0">
-                                                    <p class="text-2xl font-bold text-gray-800">${{ number_format($item->total_price, 2) }}</p>
+                                                    <p class="text-2xl font-bold text-gray-800" data-item-total>${{ number_format($item->total_price, 2) }}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -185,18 +187,18 @@
                             <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-4">
                                 <div class="flex justify-between items-center mb-3">
                                     <span class="text-gray-700 font-medium">Subtotal</span>
-                                    <span class="text-xl font-bold text-gray-800">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-xl font-bold text-gray-800" data-subtotal>${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-700">Items</span>
-                                    <span class="text-teal-600 font-semibold">{{ $cartItems->sum('quantity') }} items</span>
+                                    <span class="text-teal-600 font-semibold" data-item-count>{{ $cartItems->sum('quantity') }} items</span>
                                 </div>
                             </div>
                             
                             <div class="border-t-2 border-dashed border-gray-300 pt-6">
                                 <div class="flex justify-between items-center">
                                     <span class="text-2xl font-bold text-gray-800">Total</span>
-                                    <span class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent" data-subtotal>${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -243,8 +245,22 @@
     </div>
 </div>
 
+<style>
+/* Hide number input spinners completely */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: none;
+}
+</style>
+
 <script>
-function updateQuantity(formId, change) {
+async function updateQuantity(formId, change) {
     const form = document.getElementById(`cart-form-${formId}`);
     if (!form) return;
     
@@ -255,8 +271,58 @@ function updateQuantity(formId, change) {
     if (newQuantity < 1) newQuantity = 1;
     if (newQuantity > 100) newQuantity = 100;
     
+    // Update the input value immediately for better UX
     quantityInput.value = newQuantity;
-    form.submit();
+    
+    try {
+        // Get form data
+        const formData = new FormData(form);
+        formData.set('quantity', newQuantity);
+        
+        // Make AJAX request
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            // Update the item total price
+            const itemTotalElement = quantityInput.closest('.group').querySelector('[data-item-total]');
+            if (itemTotalElement && data.item_total) {
+                itemTotalElement.textContent = '$' + parseFloat(data.item_total).toFixed(2);
+            }
+            
+            // Update the cart summary
+            if (data.cart_total) {
+                const subtotalElements = document.querySelectorAll('[data-subtotal]');
+                subtotalElements.forEach(el => el.textContent = '$' + parseFloat(data.cart_total).toFixed(2));
+            }
+            
+            if (data.total_items) {
+                const itemCountElements = document.querySelectorAll('[data-item-count]');
+                itemCountElements.forEach(el => el.textContent = data.total_items + ' items');
+            }
+            
+            // Update cart icon notification
+            if (window.updateCartCount) {
+                window.updateCartCount(data.total_items || 0);
+            }
+        } else {
+            // Revert the quantity if the request failed
+            quantityInput.value = parseInt(quantityInput.value) - change;
+            alert('Failed to update cart. Please try again.');
+        }
+    } catch (error) {
+        // Revert the quantity if there was an error
+        quantityInput.value = parseInt(quantityInput.value) - change;
+        alert('Error updating cart. Please try again.');
+        console.error('Cart update error:', error);
+    }
 }
 </script>
 @endsection
