@@ -19,11 +19,11 @@ input[type="number"] {
 @endpush
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Back Button -->
         <div class="mb-8">
-            <a href="{{ route('product.detail', $product) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200 transition-all duration-200 font-medium">
+            <a href="{{ route('product.detail', $product) }}" class="inline-flex items-center gap-2 px-4 py-3 bg-white text-gray-700 rounded-xl shadow-md hover:shadow-lg border border-teal-100 hover:border-teal-300 transition-all duration-200 font-medium hover:bg-teal-50">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -33,34 +33,36 @@ input[type="number"] {
 
         <!-- Page Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Checkout</h1>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent mb-2">Checkout</h1>
             <p class="text-gray-600">Complete your order information below</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left: Order Summary -->
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-lg p-8 sticky top-8">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        Order Summary
-                    </h2>
+                <div class="bg-white rounded-2xl shadow-xl border border-teal-100 p-8 sticky top-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Order Summary</h2>
+                    </div>
 
                     <!-- Product Info -->
-                    <div class="mb-6">
+                    <div class="mb-6 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100">
                         <div class="flex items-start gap-4">
                             <img src="{{ $product->img }}" alt="{{ $product->name }}" 
-                                 class="w-16 h-16 object-cover rounded-xl border-2 border-gray-200 shadow-sm">
+                                 class="w-18 h-18 object-cover rounded-xl border-2 border-white shadow-md">
                             <div class="flex-1">
-                                <h3 class="font-semibold text-gray-900 mb-1">{{ $product->name }}</h3>
-                                <p class="text-sm text-gray-600 mb-2">{{ Str::limit($product->desc, 60) }}</p>
+                                <h3 class="font-bold text-gray-900 mb-1">{{ $product->name }}</h3>
+                                <p class="text-sm text-gray-600 mb-3">{{ Str::limit($product->desc, 60) }}</p>
                                 <div class="flex items-center gap-2">
-                                    <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                                    <span class="inline-block px-3 py-1 text-xs font-semibold bg-teal-100 text-teal-800 rounded-full">
                                         {{ $product->category }}
                                     </span>
-                                    <span class="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                    <span class="inline-block px-3 py-1 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full">
                                         {{ ucfirst($product->type) }}
                                     </span>
                                 </div>
@@ -69,27 +71,29 @@ input[type="number"] {
                     </div>
 
                     <!-- Order Details -->
-                    <div class="space-y-3 text-sm mb-6">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Unit Price:</span>
-                            <span class="font-semibold">${{ number_format($unitPrice, 2) }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Quantity:</span>
-                            <span class="font-semibold">{{ $quantity }}</span>
-                        </div>
-                        <div class="border-t pt-3">
-                            <div class="flex justify-between text-lg font-bold text-gray-900">
-                                <span>Total:</span>
-                                <span class="text-green-600">${{ number_format($totalPrice, 2) }}</span>
+                    <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-4 mb-6 border border-teal-100">
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700 font-medium">Unit Price:</span>
+                                <span class="font-semibold text-gray-800">${{ number_format($unitPrice, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700 font-medium">Quantity:</span>
+                                <span class="font-semibold text-gray-800">{{ $quantity }}</span>
+                            </div>
+                            <div class="border-t border-teal-200 pt-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xl font-bold text-gray-800">Total:</span>
+                                    <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Security Badge -->
                     <div class="text-center">
-                        <div class="inline-flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="inline-flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 rounded-xl text-sm font-semibold border border-teal-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                             </svg>
                             Secure Checkout
@@ -107,23 +111,25 @@ input[type="number"] {
                     <input type="hidden" name="quantity" value="{{ $quantity }}">
 
                     <!-- Customer Information -->
-                    <div class="bg-white rounded-2xl shadow-lg p-8">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                            Customer Information
-                        </h2>
+                    <div class="bg-white rounded-2xl shadow-xl border border-teal-100 p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Customer Information</h2>
+                        </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                                <label for="customer_name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
                                 <input type="text" id="customer_name" name="customer_name" required 
                                        value="{{ old('customer_name', auth()->user()->name ?? '') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-300">
                             </div>
                             <div>
-                                <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                                <label for="customer_email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
                                 <input type="email" id="customer_email" name="customer_email" required 
                                        value="{{ old('customer_email', auth()->user()->email ?? '') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">

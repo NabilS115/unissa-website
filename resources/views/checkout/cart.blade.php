@@ -3,50 +3,55 @@
 @section('title', 'Checkout - Unissa Cafe')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-orange-50 via-white to-yellow-50 py-8">
+<div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8">
     <div class="max-w-6xl mx-auto px-4">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Checkout</h1>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent mb-2">Checkout</h1>
             <p class="text-gray-600">Review your order and complete payment</p>
         </div>
 
         <div class="grid lg:grid-cols-3 gap-8">
             <!-- Order Summary -->
             <div class="lg:col-span-1 order-2 lg:order-1">
-                <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-8">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Order Summary</h2>
+                <div class="bg-white rounded-2xl shadow-xl border border-teal-100 p-6 sticky top-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Order Summary</h2>
+                    </div>
                     
                     <div class="space-y-4 mb-6">
                         @foreach($cartItems as $item)
-                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all duration-200">
                             <img src="{{ asset('storage/' . $item->product->img) }}" 
                                  alt="{{ $item->product->name }}"
-                                 class="w-12 h-12 object-cover rounded-lg">
+                                 class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm">
                             <div class="flex-grow">
-                                <h4 class="font-medium text-gray-800">{{ $item->product->name }}</h4>
-                                <p class="text-sm text-gray-600">{{ $item->quantity }}x ${{ number_format($item->product->price, 2) }}</p>
+                                <h4 class="font-semibold text-gray-800">{{ $item->product->name }}</h4>
+                                <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x ${{ number_format($item->product->price, 2) }}</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-semibold">${{ number_format($item->total_price, 2) }}</p>
+                                <p class="font-bold text-teal-700">${{ number_format($item->total_price, 2) }}</p>
                             </div>
                         </div>
                         @endforeach
                     </div>
                     
-                    <div class="space-y-2 mb-6">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Subtotal ({{ $totalItems }} items)</span>
-                            <span class="font-medium">${{ number_format($totalPrice, 2) }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Delivery</span>
-                            <span class="font-medium text-green-600">Free</span>
-                        </div>
-                        <div class="border-t border-gray-200 pt-2">
-                            <div class="flex justify-between">
-                                <span class="text-xl font-semibold text-gray-800">Total</span>
-                                <span class="text-xl font-bold text-orange-600">${{ number_format($totalPrice, 2) }}</span>
+                    <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-4 mb-6 border border-teal-100">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700 font-medium">Subtotal ({{ $totalItems }} items)</span>
+                                <span class="font-semibold text-gray-800">${{ number_format($totalPrice, 2) }}</span>
+                            </div>
+                            <div class="border-t border-teal-200 pt-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xl font-bold text-gray-800">Total</span>
+                                    <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -55,19 +60,26 @@
 
             <!-- Checkout Form -->
             <div class="lg:col-span-2 order-1 lg:order-2">
-                <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="bg-white rounded-2xl shadow-xl border border-teal-100 p-8">
                     <form action="{{ route('checkout.process.cart') }}" method="POST" id="checkout-form">
                         @csrf
                         
                         <!-- Customer Information -->
                         <div class="mb-8">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Customer Information</h3>
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Customer Information</h3>
+                            </div>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                                    <label for="customer_name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
                                     <input type="text" name="customer_name" id="customer_name" 
                                            value="{{ old('customer_name', Auth::user()->name) }}" 
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-300"
                                            required>
                                     @error('customer_name')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -75,10 +87,10 @@
                                 </div>
                                 
                                 <div>
-                                    <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                                    <label for="customer_email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
                                     <input type="email" name="customer_email" id="customer_email" 
                                            value="{{ old('customer_email', Auth::user()->email) }}" 
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-300"
                                            required>
                                     @error('customer_email')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -86,10 +98,10 @@
                                 </div>
                                 
                                 <div class="md:col-span-2">
-                                    <label for="customer_phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                                    <label for="customer_phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
                                     <input type="tel" name="customer_phone" id="customer_phone" 
                                            value="{{ old('customer_phone') }}" 
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-300"
                                            required>
                                     @error('customer_phone')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -100,24 +112,31 @@
 
                         <!-- Payment Method -->
                         <div class="mb-8">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Payment Method</h3>
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Payment Method</h3>
+                            </div>
                             <div class="space-y-4">
-                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
                                     <input type="radio" name="payment_method" value="cash" 
-                                           class="text-orange-600 focus:ring-orange-500" 
+                                           class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
                                            {{ old('payment_method', 'cash') === 'cash' ? 'checked' : '' }}>
-                                    <div class="ml-3">
-                                        <div class="font-medium text-gray-800">Cash on Pickup</div>
+                                    <div class="ml-4">
+                                        <div class="font-semibold text-gray-800">Cash on Pickup</div>
                                         <div class="text-sm text-gray-600">Pay when you collect your order</div>
                                     </div>
                                 </label>
                                 
-                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
                                     <input type="radio" name="payment_method" value="online" 
-                                           class="text-orange-600 focus:ring-orange-500" 
+                                           class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
                                            {{ old('payment_method') === 'online' ? 'checked' : '' }}>
-                                    <div class="ml-3">
-                                        <div class="font-medium text-gray-800">Credit/Debit Card</div>
+                                    <div class="ml-4">
+                                        <div class="font-semibold text-gray-800">Credit/Debit Card</div>
                                         <div class="text-sm text-gray-600">Pay securely online now</div>
                                     </div>
                                 </label>
@@ -128,14 +147,14 @@
                         </div>
 
                         <!-- Cash Payment Info -->
-                        <div id="cash-payment-info" class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div id="cash-payment-info" class="mb-6 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-xl">
                             <div class="flex items-center gap-2 mb-2">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                <h4 class="font-medium text-blue-800">Cash Payment Instructions</h4>
+                                <h4 class="font-semibold text-teal-800">Cash Payment Instructions</h4>
                             </div>
-                            <p class="text-sm text-blue-700">
+                            <p class="text-sm text-teal-700">
                                 Please bring the exact amount (${{ number_format($totalPrice, 2) }}) when collecting your order. 
                                 We'll prepare your order and notify you when it's ready for pickup.
                             </p>
@@ -187,7 +206,10 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-pink-600 text-white font-bold py-4 px-8 rounded-xl hover:from-orange-600 hover:to-pink-700 transition-all duration-200 shadow-lg">
+                        <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold py-4 px-8 rounded-xl hover:from-teal-700 hover:to-emerald-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                             <span>Place Order Now</span>
                         </button>
                     </form>
