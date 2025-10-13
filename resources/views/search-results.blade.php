@@ -34,7 +34,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     @foreach($results['products'] as $product)
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-                             onclick="window.location.href='/product/{{ $product->id }}'">
+                             onclick="storeScrollPositionAndNavigate('/product/{{ $product->id }}', 'search')"
                             <div class="h-48 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                                 <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
                             </div>
@@ -136,4 +136,40 @@
     overflow: hidden;
 }
 </style>
+
+<script>
+function storeScrollPositionAndNavigate(productUrl, source = 'search') {
+    const currentState = {
+        source: source,
+        sourcePage: window.location.pathname + window.location.search,
+        scrollPosition: window.scrollY,
+        timestamp: Date.now()
+    };
+    
+    sessionStorage.setItem('catalogState', JSON.stringify(currentState));
+    window.location.href = productUrl;
+}
+
+// Restore scroll position if returning from product detail
+document.addEventListener('DOMContentLoaded', function() {
+    const restoreState = sessionStorage.getItem('restoreCatalogState');
+    if (restoreState) {
+        try {
+            const state = JSON.parse(restoreState);
+            console.log('Restoring search results state:', state);
+            
+            // Restore scroll position after a short delay to ensure page is loaded
+            setTimeout(() => {
+                if (state.scrollPosition) {
+                    window.scrollTo(0, state.scrollPosition);
+                }
+            }, 300);
+            
+            sessionStorage.removeItem('restoreCatalogState');
+        } catch (e) {
+            console.error('Error restoring search state:', e);
+        }
+    }
+});
+</script>
 @endsection

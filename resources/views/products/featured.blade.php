@@ -109,7 +109,7 @@
         <h2 class="text-3xl font-bold text-center mb-8">Featured Food & Beverages</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($food->take(3) as $product)
-                <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" onclick="window.location.href='/product/{{ $product->id }}'">
+                <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" onclick="window.location.href='/product/{{ $product->id }}'"
                     <div class="relative overflow-hidden">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
                         <div class="absolute top-4 left-4">
@@ -151,7 +151,7 @@
         <h2 class="text-3xl font-bold text-center mb-8">Featured Merchandise</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($merchandise->take(3) as $product)
-                <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" onclick="window.location.href='/product/{{ $product->id }}'">
+                <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" onclick="window.location.href='/product/{{ $product->id }}'"
                     <div class="relative overflow-hidden">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
                         <div class="absolute top-4 left-4">
@@ -199,4 +199,40 @@
         </a>
     </div>
 </div>
+
+<script>
+function storeScrollPositionAndNavigate(productUrl, source = 'featured') {
+    const currentState = {
+        source: source,
+        sourcePage: window.location.pathname + window.location.search,
+        scrollPosition: window.scrollY,
+        timestamp: Date.now()
+    };
+    
+    sessionStorage.setItem('catalogState', JSON.stringify(currentState));
+    window.location.href = productUrl;
+}
+
+// Restore scroll position if returning from product detail
+document.addEventListener('DOMContentLoaded', function() {
+    const restoreState = sessionStorage.getItem('restoreCatalogState');
+    if (restoreState) {
+        try {
+            const state = JSON.parse(restoreState);
+            console.log('Restoring featured page state:', state);
+            
+            // Restore scroll position after a short delay to ensure page is loaded
+            setTimeout(() => {
+                if (state.scrollPosition) {
+                    window.scrollTo(0, state.scrollPosition);
+                }
+            }, 300);
+            
+            sessionStorage.removeItem('restoreCatalogState');
+        } catch (e) {
+            console.error('Error restoring featured page state:', e);
+        }
+    }
+});
+</script>
 @endsection

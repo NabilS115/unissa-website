@@ -557,7 +557,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <template x-for="(product, index) in food.slice(0, 3)" :key="product.id">
-                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" @click="window.location.href = `/product/${product.id}`">
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" @click="storeScrollPositionAndNavigate(`/product/${product.id}`)"
                         <div class="relative overflow-hidden">
                             <img :src="product.img" :alt="product.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
                             <div class="absolute top-4 left-4">
@@ -611,7 +611,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <template x-for="(product, index) in merchandise.slice(0, 3)" :key="product.id">
-                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" @click="window.location.href = `/product/${product.id}`">
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer" @click="storeScrollPositionAndNavigate(`/product/${product.id}`)"
                         <div class="relative overflow-hidden">
                             <img :src="product.img" :alt="product.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
                             <div class="absolute top-4 left-4">
@@ -955,7 +955,7 @@
                 <template x-for="food in pagedFoods" :key="food.id">
                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer food-card"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
-                         @click="navigateToReview(food.id)">
+                         @click="window.location.href = `/product/${food.id}`">
                         <div class="relative overflow-hidden">
                             <img :src="food.img" :alt="food.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
                             <div class="absolute top-4 left-4">
@@ -1023,7 +1023,7 @@
                 <template x-for="item in pagedMerch" :key="item.id">
                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer merch-card"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
-                         @click="navigateToReview(item.id)">
+                         @click="window.location.href = `/product/${item.id}`">
                         <div class="relative overflow-hidden">
                             <img :src="item.img" :alt="item.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
                             <div class="absolute top-4 left-4">
@@ -1197,18 +1197,9 @@
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('foodMerchComponent', function() {
-        // Check for restore state to set initial tab
-        let initialTab = 'food';
-        try {
-            const restoreState = sessionStorage.getItem('restoreCatalogState');
-            if (restoreState) {
-                const state = JSON.parse(restoreState);
-                initialTab = state.tab || 'food';
-                console.log('Setting initial tab from restore state:', initialTab);
-            }
-        } catch (e) {
-            console.error('Error reading restore state for initial tab:', e);
-        }
+        // Check URL parameter for tab, or use default
+        const urlParams = new URLSearchParams(window.location.search);
+        let initialTab = urlParams.get('tab') || 'food';
         
         return {
             tab: initialTab,
@@ -1427,6 +1418,11 @@ document.addEventListener('alpine:init', () => {
             async switchTab(newTab) {
                 if (this.tab === newTab) return;
                 
+                // Update URL to preserve tab state
+                const url = new URL(window.location);
+                url.searchParams.set('tab', newTab);
+                window.history.pushState(null, '', url);
+                
                 // Start loading state immediately
                 this.isLoading = true;
                 this.blurActive();
@@ -1615,6 +1611,33 @@ document.addEventListener('alpine:init', () => {
                 window.location.href = '/product/' + productId;
             },
             
+            storeScrollPositionAndNavigate(productUrl) {
+                console.log('=== storeScrollPositionAndNavigate CALLED ===');
+                console.log('Current tab:', this.tab);
+                console.log('Product URL:', productUrl);
+                console.log('this context:', this);
+                
+                const currentState = {
+                    source: 'catalog',
+                    sourcePage: '/catalog',
+                    tab: this.tab,
+                    foodFilter: this.foodFilter,
+                    merchFilter: this.merchFilter,
+                    foodSort: this.foodSort,
+                    merchSort: this.merchSort,
+                    foodSearch: this.foodSearch,
+                    merchSearch: this.merchSearch,
+                    foodPage: this.foodPage,
+                    merchPage: this.merchPage,
+                    scrollPosition: window.scrollY,
+                    timestamp: Date.now()
+                };
+                
+                console.log('Storing catalog state with tab:', this.tab, currentState);
+                sessionStorage.setItem('catalogState', JSON.stringify(currentState));
+                window.location.href = productUrl;
+            },
+            
             async init() {
                 // Check for state restoration first, before any other initialization
                 const restoreState = sessionStorage.getItem('restoreCatalogState');
@@ -1622,10 +1645,12 @@ document.addEventListener('alpine:init', () => {
                     try {
                         const state = JSON.parse(restoreState);
                         console.log('Restoring catalog state:', state);
+                        console.log('Current tab before restoration:', this.tab);
                         
                         // Set tab first, before other properties
                         this.tab = state.tab || 'food';
                         console.log('Setting tab to:', this.tab);
+                        console.log('Tab after setting:', this.tab);
                         
                         this.foodFilter = state.foodFilter || 'All';
                         this.merchFilter = state.merchFilter || 'All';

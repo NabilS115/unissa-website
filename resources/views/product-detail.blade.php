@@ -566,60 +566,11 @@ input[type="number"]::-ms-clear {
 <script>
     // Back button functionality with previous page detection
     function goBack() {
-        // First check if there's a stored previous page from homepage navigation
-        const previousPage = sessionStorage.getItem('previousPage');
-        const previousPageTitle = sessionStorage.getItem('previousPageTitle');
-        
-        if (previousPage) {
-            // Clear the stored information
-            sessionStorage.removeItem('previousPage');
-            sessionStorage.removeItem('previousPageTitle');
-            // Go back to the stored previous page
-            window.location.href = previousPage;
-            return;
-        }
-        
-        // Check if we have saved catalog state
-        const savedState = sessionStorage.getItem('catalogState');
-        
-        if (savedState) {
-            try {
-                const state = JSON.parse(savedState);
-                
-                // If coming from homepage, go back to homepage
-                if (state.source === 'homepage') {
-                    sessionStorage.removeItem('catalogState'); // Clean up
-                    window.location.href = '/';
-                    return;
-                }
-                
-                // If coming from catalog, restore the exact state
-                if (state.source === 'catalog' || state.sourcePage === '/catalog') {
-                    // Set restoration flag with the state
-                    sessionStorage.setItem('restoreCatalogState', savedState);
-                    window.location.href = '/catalog';
-                    return;
-                }
-                
-                // For other sources, try to go to the source page
-                if (state.sourcePage) {
-                    sessionStorage.setItem('restoreCatalogState', savedState);
-                    window.location.href = state.sourcePage;
-                    return;
-                }
-                
-                // Fallback to catalog with state restoration
-                sessionStorage.setItem('restoreCatalogState', savedState);
-                window.location.href = '/catalog';
-            } catch (e) {
-                // If parsing fails, fallback to catalog
-                console.error('Error parsing catalog state:', e);
-                window.location.href = '/catalog';
-            }
-        } else if (document.referrer && document.referrer !== window.location.href) {
+        // Simple: just go back to the previous page in browser history
+        if (window.history.length > 1) {
             window.history.back();
         } else {
-            // Fallback to catalog page
+            // Fallback if no history (e.g., direct link access)
             window.location.href = '/catalog';
         }
     }

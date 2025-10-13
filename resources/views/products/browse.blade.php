@@ -936,6 +936,11 @@ function foodMerchComponent() {
         },
         
         switchTab(newTab) {
+            // Update URL to preserve tab state
+            const url = new URL(window.location);
+            url.searchParams.set('tab', newTab);
+            window.history.pushState(null, '', url);
+            
             this.isLoading = true;
             setTimeout(() => {
                 this.tab = newTab;
