@@ -653,15 +653,10 @@
     </div>
 
     <!-- Content Container with Animation -->
-    <div class="relative overflow-hidden pt-8">
+    <div class="relative pt-8">
         <!-- Food Cards -->
-        <div x-show="tab === 'food'" 
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="opacity-0 translate-x-4"
-             x-transition:enter-end="opacity-100 translate-x-0"
-             x-transition:leave="transition ease-in duration-200 transform"
-             x-transition:leave-start="opacity-100 translate-x-0"
-             x-transition:leave-end="opacity-0 -translate-x-4">
+        <template x-if="tab === 'food'">
+            <div class="tab-content animate-fade-in">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.id">
                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer food-card"
@@ -731,16 +726,12 @@
                     </button>
                 </nav>
             </div>
-        </div>
+            </div>
+        </template>
 
         <!-- Merchandise Cards -->
-        <div x-show="tab === 'merch'"
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="opacity-0 translate-x-4"
-             x-transition:enter-end="opacity-100 translate-x-0"
-             x-transition:leave="transition ease-in duration-200 transform"
-             x-transition:leave-start="opacity-100 translate-x-0"
-             x-transition:leave-end="opacity-0 -translate-x-4">
+        <template x-if="tab === 'merch'">
+            <div class="tab-content animate-fade-in">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="merch in pagedMerch" :key="merch.id">
                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer merch-card"
@@ -810,7 +801,8 @@
                     </button>
                 </nav>
             </div>
-        </div>
+            </div>
+        </template>
     </div>
 </div>
 
@@ -936,16 +928,15 @@ function foodMerchComponent() {
         },
         
         switchTab(newTab) {
+            if (this.tab === newTab) return; // Prevent unnecessary switching
+            
             // Update URL to preserve tab state
             const url = new URL(window.location);
             url.searchParams.set('tab', newTab);
             window.history.pushState(null, '', url);
             
-            this.isLoading = true;
-            setTimeout(() => {
-                this.tab = newTab;
-                this.isLoading = false;
-            }, 300);
+            // Direct tab switch - let CSS handle the visual issues
+            this.tab = newTab;
         },
         
         performSearch() {
@@ -1325,6 +1316,29 @@ window.toggleAddStockField = toggleAddStockField;
 
 .cropper-modal {
     background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Tab content transition fixes */
+.tab-content {
+    will-change: opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* Fade-in animation for tab content */
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>
 @endsection

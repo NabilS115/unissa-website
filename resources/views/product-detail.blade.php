@@ -95,7 +95,7 @@ input[type="number"]::-ms-clear {
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
-                <span id="back-button-text">Back to Catalog</span>
+                <span id="back-button-text">Back</span>
             </button>
         </div>
 
@@ -564,58 +564,22 @@ input[type="number"]::-ms-clear {
 </div>
 
 <script>
-    // Back button functionality with previous page detection
-    function goBack() {
-        // Simple: just go back to the previous page in browser history
+    // Simple back to catalog functionality
+    window.goBack = function() {
+        // Just go back to the previous page (catalog with correct tab)
         if (window.history.length > 1) {
             window.history.back();
         } else {
-            // Fallback if no history (e.g., direct link access)
+            // Fallback if no history
             window.location.href = '/catalog';
         }
-    }
+    };
 
-    // Update back button text based on source
+    // Set back button text
     document.addEventListener('DOMContentLoaded', function() {
-        const previousPage = sessionStorage.getItem('previousPage');
-        const previousPageTitle = sessionStorage.getItem('previousPageTitle');
-        const savedState = sessionStorage.getItem('catalogState');
         const backButtonText = document.getElementById('back-button-text');
-        
-        // Add null check for backButtonText
-        if (!backButtonText) {
-            console.warn('Back button text element not found');
-            return;
-        }
-        
-        // Priority 1: Check for homepage navigation
-        if (previousPage && previousPageTitle) {
-            if (previousPageTitle.includes('UNISSA') && previousPage.includes(window.location.origin)) {
-                backButtonText.textContent = 'Back to Homepage';
-            } else {
-                backButtonText.textContent = 'Back to Previous Page';
-            }
-        }
-        // Priority 2: Check catalog state
-        else if (savedState) {
-            try {
-                const state = JSON.parse(savedState);
-                if (state.source === 'homepage') {
-                    backButtonText.textContent = 'Back to Homepage';
-                } else if (state.source === 'catalog') {
-                    // Show which tab they'll return to
-                    const tabName = state.tab === 'food' ? 'Food' : 'Merchandise';
-                    backButtonText.textContent = `Back to ${tabName} Catalog`;
-                } else if (state.sourcePage) {
-                    // Generic back to source page
-                    backButtonText.textContent = 'Back to Catalog';
-                } else {
-                    backButtonText.textContent = 'Back to Catalog';
-                }
-            } catch (e) {
-                console.error('Error parsing saved state:', e);
-                // Keep default text if parsing fails
-            }
+        if (backButtonText) {
+            backButtonText.textContent = 'Back';
         }
     });
 
