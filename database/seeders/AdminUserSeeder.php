@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@unissa.edu.bn'],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('adminpassword'), // Change this to a secure password
+                'password' => Hash::make('newSecurePassword123!'), // Updated secure password
                 'role' => 'admin',
             ]
         );
