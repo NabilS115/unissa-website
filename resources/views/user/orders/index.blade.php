@@ -86,12 +86,13 @@
                                                 ];
                                             @endphp
                                             
-                                            <span class="px-3 py-1 text-sm font-medium rounded-full border {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800 border-gray-200' }}">
-                                                {{ \App\Models\Order::getStatuses()[$order->status] ?? ucfirst($order->status) }}
-                                            </span>
-                                            
-                                            <span class="px-3 py-1 text-xs font-medium rounded-full {{ $paymentStatusColors[$order->payment_status] ?? 'bg-gray-100 text-gray-800' }}">
-                                                {{ ucfirst($order->payment_status) }}
+                                            <span class="flex items-center gap-2">
+                                                <span class="px-3 py-1 text-sm font-medium rounded-full border {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800 border-gray-200' }}">
+                                                    <span class="font-semibold">Order Status:</span> {{ \App\Models\Order::getStatuses()[$order->status] ?? ucfirst($order->status) }}
+                                                </span>
+                                                <span class="px-3 py-1 text-xs font-medium rounded-full {{ $paymentStatusColors[$order->payment_status] ?? 'bg-gray-100 text-gray-800' }}">
+                                                    <span class="font-semibold">Payment Status:</span> {{ ucfirst($order->payment_status) }}
+                                                </span>
                                             </span>
                                         </div>
                                     </div>

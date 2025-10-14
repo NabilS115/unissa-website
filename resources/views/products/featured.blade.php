@@ -161,83 +161,106 @@
         </div>
     </section>
 
-    <!-- Customer Testimonials Section -->
+    <!-- Customer Reviews Section -->
     <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div class="text-center mb-12">
             <h2 class="text-4xl font-bold text-gray-900 mb-4">What Our Customers Say</h2>
-            <p class="text-xl text-gray-600">Don't just take our word for it - hear from our satisfied customers</p>
+            <p class="text-xl text-gray-600">Real reviews from our satisfied customers</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Testimonial 1 -->
-            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                <div class="flex items-center mb-4">
-                    <div class="flex text-yellow-400">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        @if($reviews->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-{{ min($reviews->count(), 3) }} gap-8">
+                @foreach($reviews as $review)
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                        <!-- Star Rating -->
+                        <div class="flex items-center mb-4">
+                            <div class="flex text-yellow-400">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= $review->rating)
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" style="color: #e5e7eb;">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                    @endif
+                                @endfor
+                            </div>
+                            <span class="ml-2 text-sm text-gray-500">{{ $review->rating }}/5</span>
+                        </div>
+                        
+                        <!-- Review Text -->
+                        <p class="text-gray-700 mb-6 leading-relaxed italic">"{{ Str::limit($review->review, 150) }}"</p>
+                        
+                        <!-- Product Info -->
+                        @if($review->product)
+                            <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Product:</span>
+                                    <a href="{{ route('product.detail', $review->product->id) }}" class="text-teal-600 hover:text-teal-700">
+                                        {{ $review->product->name }}
+                                    </a>
+                                </p>
+                            </div>
+                        @endif
+                        
+                        <!-- User Info -->
+                        <div class="flex items-center">
+                            @php
+                                $colors = [
+                                    'from-teal-400 to-emerald-400',
+                                    'from-blue-400 to-indigo-400',
+                                    'from-purple-400 to-pink-400',
+                                    'from-orange-400 to-red-400',
+                                    'from-green-400 to-teal-400',
+                                ];
+                                $color = $colors[$loop->index % count($colors)];
+                                $initial = strtoupper(substr($review->user->name ?? 'Anonymous', 0, 1));
+                            @endphp
+                            <div class="w-12 h-12 bg-gradient-to-br {{ $color }} rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+                                {{ $initial }}
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">{{ $review->user->name ?? 'Anonymous' }}</h4>
+                                <p class="text-gray-500 text-sm">
+                                    {{ $review->created_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <p class="text-gray-700 mb-6 leading-relaxed italic">"The food quality at Unissa Cafe is absolutely amazing! Every dish is prepared with care and the flavors are incredible. The merchandise selection is also top-notch."</p>
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-gradient-to-br from-teal-400 to-emerald-400 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
-                        S
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Sarah Johnson</h4>
-                        <p class="text-gray-500 text-sm">Regular Customer</p>
-                    </div>
-                </div>
+                @endforeach
             </div>
 
-            <!-- Testimonial 2 -->
-            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                <div class="flex items-center mb-4">
-                    <div class="flex text-yellow-400">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    </div>
-                </div>
-                <p class="text-gray-700 mb-6 leading-relaxed italic">"Outstanding service and exceptional quality! I've been ordering from Unissa Cafe for months and they never disappoint. Highly recommend to anyone looking for great food."</p>
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-400 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
-                        M
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Michael Chen</h4>
-                        <p class="text-gray-500 text-sm">Food Enthusiast</p>
-                    </div>
-                </div>
+            
+            <!-- View All Reviews Link -->
+            <div class="text-center mt-12">
+                <a href="{{ route('unissa-cafe.catalog') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 text-white font-semibold rounded-2xl hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    View All Products & Reviews
+                </a>
             </div>
-
-            <!-- Testimonial 3 -->
-            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                <div class="flex items-center mb-4">
-                    <div class="flex text-yellow-400">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    </div>
+        @else
+            <!-- No Reviews Fallback -->
+            <div class="text-center py-16">
+                <div class="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-full flex items-center justify-center">
+                    <svg class="w-12 h-12 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.418 8-9.843 8-1.082 0-2.102-.168-3.063-.477L3 21l1.477-5.094C4.168 14.945 4 13.925 4 12.843 4 7.582 8.582 3 15 3s9 4.582 9 9z"></path>
+                    </svg>
                 </div>
-                <p class="text-gray-700 mb-6 leading-relaxed italic">"I love the variety and quality of both food and merchandise. The attention to detail and customer service is what keeps me coming back. Unissa Cafe truly cares about their customers."</p>
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
-                        E
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Emily Rodriguez</h4>
-                        <p class="text-gray-500 text-sm">Loyal Customer</p>
-                    </div>
-                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">No Reviews Yet</h3>
+                <p class="text-lg text-gray-600 mb-8 max-w-md mx-auto">Be the first to share your experience! Try our amazing products and leave a review.</p>
+                <a href="{{ route('unissa-cafe.catalog') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 text-white font-semibold rounded-2xl hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    Browse Our Products
+                </a>
             </div>
-        </div>
+        @endif
     </section>
 
     <!-- Statistics/Highlights Section -->
@@ -297,7 +320,7 @@
         <h2 class="text-3xl font-bold text-center mb-8">Featured Food & Beverages</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($food->take(3) as $product)
-                <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100 hover:border-teal-200 transform hover:-translate-y-2" onclick="window.location.href='/product/{{ $product->id }}'">
+                    <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2" onclick="window.location.href='/product/{{ $product->id }}'">
                     <div class="relative overflow-hidden">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -332,10 +355,7 @@
                                 <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
                                 <span class="text-sm text-gray-500 ml-1">each</span>
                             </div>
-                            <button class="group inline-flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                                <svg class="w-4 h-4 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                </svg>
+                            <button class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                                 Order Now
                             </button>
                         </div>
@@ -361,7 +381,7 @@
         <h2 class="text-3xl font-bold text-center mb-8">Featured Merchandise</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($merchandise->take(3) as $product)
-                <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100 hover:border-blue-200 transform hover:-translate-y-2" onclick="window.location.href='/product/{{ $product->id }}'">
+                <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2" onclick="window.location.href='/product/{{ $product->id }}'">
                     <div class="relative overflow-hidden">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -393,14 +413,11 @@
                         @if($product->price)
                         <div class="flex items-center justify-between">
                             <div>
-                                <span class="text-2xl font-bold text-blue-600">${{ number_format($product->price, 2) }}</span>
+                                <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
                                 <span class="text-sm text-gray-500 ml-1">each</span>
                             </div>
-                            <button class="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                                <svg class="w-4 h-4 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                                </svg>
-                                Buy Now
+                            <button class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                                Order Now
                             </button>
                         </div>
                         @endif

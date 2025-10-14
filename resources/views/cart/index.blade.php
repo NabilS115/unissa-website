@@ -161,7 +161,7 @@
                         
                         <!-- Clear Cart -->
                         <div class="mt-8 pt-6 border-t border-gray-200">
-                            <form action="{{ route('cart.clear') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear your entire cart?')" class="inline">
+                            <form action="{{ route('user.cart.clear') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear your entire cart?')" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 font-medium rounded-xl transition-all duration-200">

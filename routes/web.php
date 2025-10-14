@@ -223,6 +223,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add-simple', [App\Http\Controllers\CartController::class, 'addToCartSimple'])->name('cart.add.simple');
     Route::patch('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'removeItem'])->name('cart.remove');
+    Route::get('/api/cart/count', [App\Http\Controllers\CartController::class, 'getCartCount'])->name('cart.count');
 });
 
 // User Order routes
@@ -231,7 +232,6 @@ Route::middleware(['auth'])->prefix('my')->name('user.')->group(function () {
     Route::get('/orders/{order}', [App\Http\Controllers\UserOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/cancel', [App\Http\Controllers\UserOrderController::class, 'cancel'])->name('orders.cancel');
     Route::delete('/cart', [App\Http\Controllers\CartController::class, 'clearCart'])->name('cart.clear');
-    Route::get('/api/cart/count', [App\Http\Controllers\CartController::class, 'getCartCount'])->name('cart.count');
     Route::get('/api/cart/test', function() {
         return response()->json([
             'authenticated' => auth()->check(),

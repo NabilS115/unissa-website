@@ -276,7 +276,14 @@ class CatalogController extends Controller
         $merchandise = \App\Models\Product::where('type', 'merch')->latest()->get();
         $food = \App\Models\Product::where('type', 'food')->latest()->get();
         
-        return view('products.featured', compact('food', 'merchandise'));
+        // Get recent reviews for testimonials (latest 3 reviews with rating 4 or 5)
+        $reviews = Review::with(['user', 'product'])
+            ->where('rating', '>=', 4)
+            ->latest()
+            ->limit(3)
+            ->get();
+        
+        return view('products.featured', compact('food', 'merchandise', 'reviews'));
     }
 
     public function browse()

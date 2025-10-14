@@ -118,63 +118,58 @@ window.testOrderStatusFunctions = function() {
 };
 </script>
 
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="min-h-screen bg-gray-50 py-10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('admin.orders.index') }}" class="text-gray-500 hover:text-gray-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Order #{{ $order->id }}</h1>
-                        <p class="text-gray-600 mt-1">Order placed on {{ $order->created_at->format('F j, Y \a\t g:i A') }}</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <!-- Status Badge -->
-                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
-                        @if($order->status === 'pending') bg-yellow-100 text-yellow-800
-                        @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
-                        @elseif($order->status === 'processing') bg-purple-100 text-purple-800
-                        @elseif($order->status === 'ready_for_pickup') bg-orange-100 text-orange-800
-                        @elseif($order->status === 'picked_up') bg-green-100 text-green-800
-                        @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                        @endif">
-                        {{ str_replace('_', ' ', ucwords($order->status, '_')) }}
-                    </span>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Order #{{ $order->id }}</h1>
+                    <p class="text-gray-500 mt-1 text-sm">Placed on {{ $order->created_at->format('F j, Y \a\t g:i A') }}</p>
                 </div>
             </div>
-
-            <!-- Quick Actions -->
-            <div class="bg-gray-50 rounded-xl p-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm font-medium text-gray-700">Quick Actions:</span>
-                        <div class="flex gap-2">
-                            @foreach(App\Models\Order::getStatuses() as $status => $label)
-                                @if($status !== $order->status)
-                                    <button onclick="updateOrderStatus('{{ $status }}')" 
-                                            class="px-3 py-1 text-xs font-medium rounded-lg border transition-colors
-                                                @if($status === 'pending') border-yellow-300 text-yellow-700 hover:bg-yellow-50
-                                                @elseif($status === 'confirmed') border-blue-300 text-blue-700 hover:bg-blue-50
-                                                @elseif($status === 'processing') border-purple-300 text-purple-700 hover:bg-purple-50
-                                                @elseif($status === 'completed') border-green-300 text-green-700 hover:bg-green-50
-                                                @elseif($status === 'cancelled') border-red-300 text-red-700 hover:bg-red-50
-                                                @endif">
-                                        Mark as {{ $label }}
-                                    </button>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="text-sm text-gray-500">
-                        Last updated: {{ $order->updated_at->format('M d, Y g:i A') }}
-                    </div>
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 shadow-sm
+                    @if($order->status === 'pending') bg-yellow-50 text-yellow-800
+                    @elseif($order->status === 'confirmed') bg-blue-50 text-blue-800
+                    @elseif($order->status === 'processing') bg-purple-50 text-purple-800
+                    @elseif($order->status === 'ready_for_pickup') bg-orange-50 text-orange-800
+                    @elseif($order->status === 'picked_up') bg-green-50 text-green-800
+                    @elseif($order->status === 'cancelled') bg-red-50 text-red-800
+                    @endif">
+                    {{ str_replace('_', ' ', ucwords($order->status, '_')) }}
+                </span>
+            </div>
+        </div>
+        <!-- Quick Actions -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm font-medium text-gray-700">Quick Actions:</span>
+                <div class="flex flex-wrap gap-2">
+                    @foreach(App\Models\Order::getStatuses() as $status => $label)
+                        @if($status !== $order->status)
+                            <button onclick="updateOrderStatus('{{ $status }}')"
+                                class="px-3 py-1 text-xs font-semibold rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2
+                                    @if($status === 'pending') border-yellow-300 text-yellow-700 hover:bg-yellow-50
+                                    @elseif($status === 'confirmed') border-blue-300 text-blue-700 hover:bg-blue-50
+                                    @elseif($status === 'processing') border-purple-300 text-purple-700 hover:bg-purple-50
+                                    @elseif($status === 'ready_for_pickup') border-orange-300 text-orange-700 hover:bg-orange-50
+                                    @elseif($status === 'picked_up') border-green-300 text-green-700 hover:bg-green-50
+                                    @elseif($status === 'cancelled') border-red-300 text-red-700 hover:bg-red-50
+                                    @endif">
+                                Mark as {{ $label }}
+                            </button>
+                        @endif
+                    @endforeach
                 </div>
+            </div>
+            <div class="text-xs text-gray-400 mt-2 md:mt-0">
+                Last updated: {{ $order->updated_at->format('M d, Y g:i A') }}
             </div>
         </div>
 

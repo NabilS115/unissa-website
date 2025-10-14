@@ -3,7 +3,7 @@
     <div class="flex items-center gap-4 logo-section">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">
-            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*'))
+            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*'))
                 Unissa Cafe
             @else
                 Tijarah Co Sdn Bhd
@@ -13,7 +13,7 @@
     <div class="flex items-center gap-6 ml-12">
         <nav>
             <ul class="flex gap-4 nav-list">
-                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*'))
+                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*'))
                     <!-- Unissa Cafe Navigation -->
                     <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Home</a></li>
                     <li><a href="{{ route('unissa-cafe.catalog') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/catalog') ? 'font-semibold underline' : '' }}">Catalog</a></li>
@@ -317,7 +317,7 @@
         </div>
         
         <!-- Cart Icon (only show on cafe pages and for authenticated users) -->
-        @if((request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*')) && auth()->check())
+        @auth
         <div class="relative mr-4" id="cart-group">
             <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
                 <!-- Enhanced Shopping Cart Icon -->
@@ -328,7 +328,63 @@
             <!-- Smaller Notification Bubble -->
             <span id="cart-count" class="absolute bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1" style="display: none; font-size: 8px; line-height: 1;">0</span>
         </div>
-        @endif
+        <script>
+            // Cart count script always runs after cart icon is rendered
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('[CartCount] DOMContentLoaded, running loadCartCount');
+                loadCartCount();
+            });
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    console.log('[CartCount] visibilitychange, running loadCartCount');
+                    loadCartCount();
+                }
+            });
+            function loadCartCount() {
+                console.log('[CartCount] Fetching /api/cart/count...');
+                fetch("{{ route('cart.count') }}", {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const cartCount = document.getElementById('cart-count');
+                    console.log('[CartCount] Fetched count:', data.count, 'Element:', cartCount);
+                    if (cartCount) {
+                        const oldCount = parseInt(cartCount.textContent) || 0;
+                        const newCount = data.count || 0;
+                        cartCount.textContent = newCount;
+                        cartCount.style.display = newCount > 0 ? 'flex' : 'none';
+                        if (newCount !== oldCount && newCount > 0) {
+                            cartCount.classList.add('updated');
+                            setTimeout(() => {
+                                cartCount.classList.remove('updated');
+                            }, 600);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('[CartCount] Error loading cart count:', error);
+                });
+            }
+            window.updateCartCount = function(newCount) {
+                const cartCount = document.getElementById('cart-count');
+                if (cartCount) {
+                    cartCount.textContent = newCount;
+                    cartCount.style.display = newCount > 0 ? 'flex' : 'none';
+                    if (newCount > 0) {
+                        cartCount.classList.add('updated');
+                        setTimeout(() => {
+                            cartCount.classList.remove('updated');
+                        }, 600);
+                    }
+                }
+            }
+        </script>
+        @endauth
         
         <div class="relative group" id="profile-group">
             <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden shadow hover:shadow-lg transition-all duration-300">
@@ -440,11 +496,18 @@
             </style>
         </div>
         
-        @if((request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*')) && auth()->check())
+        @auth
         <script>
             // Load cart count on page load
-            document.addEventListener('DOMContentLoaded', function() {
+
+            function triggerCartCountLoad() {
                 loadCartCount();
+            }
+            document.addEventListener('DOMContentLoaded', triggerCartCountLoad);
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    loadCartCount();
+                }
             });
 
             function loadCartCount() {
@@ -461,10 +524,8 @@
                     if (cartCount) {
                         const oldCount = parseInt(cartCount.textContent) || 0;
                         const newCount = data.count || 0;
-                        
                         cartCount.textContent = newCount;
                         cartCount.style.display = newCount > 0 ? 'flex' : 'none';
-                        
                         // Add animation if count changed
                         if (newCount !== oldCount && newCount > 0) {
                             cartCount.classList.add('updated');
@@ -478,14 +539,12 @@
                     console.error('Error loading cart count:', error);
                 });
             }
-            
             // Enhanced cart update function for when items are added
             window.updateCartCount = function(newCount) {
                 const cartCount = document.getElementById('cart-count');
                 if (cartCount) {
                     cartCount.textContent = newCount;
                     cartCount.style.display = newCount > 0 ? 'flex' : 'none';
-                    
                     if (newCount > 0) {
                         cartCount.classList.add('updated');
                         setTimeout(() => {
@@ -495,7 +554,7 @@
                 }
             }
         </script>
-        @endif
+        @endauth
     </div>
     </div>
 </header>
