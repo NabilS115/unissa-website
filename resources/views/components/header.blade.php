@@ -326,7 +326,7 @@
                 </svg>
             </a>
             <!-- Smaller Notification Bubble -->
-            <span id="cart-count" class="absolute bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1" style="display: none; font-size: 8px; line-height: 1;">0</span>
+            <span id="cart-count" class="absolute bg-red-600 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1" style="display: none; font-size: 8px; line-height: 1; background-color:#dc2626;">0</span>
         </div>
         <script>
             // Cart count script always runs after cart icon is rendered

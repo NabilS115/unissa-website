@@ -19,7 +19,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>UNISSA Catalog - LEGACY</title>
     <meta name="theme-color" content="#0d9488">
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Tailwind CDN removed for production. Use main layout for styles. --}}
     <style>
         body {
             margin: 0;
@@ -1191,7 +1191,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
 </head>
 
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{{-- Alpine.js CDN removed. Use main layout for scripts. --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
 document.addEventListener('alpine:init', () => {

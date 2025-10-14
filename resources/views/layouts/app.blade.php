@@ -6,7 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Unissa Cafe')</title>
     <meta name="theme-color" content="#0d9488">
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Tailwind should be built with Vite or npm for production. Remove CDN in production. --}}
+    @if(app()->environment('local'))
+        <script src="https://cdn.tailwindcss.com"></script>
+    @endif
     <!-- Cropper.js CSS and JS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -132,7 +135,7 @@
     </main>
     @include('components.footer')
     @stack('scripts')
-    <!-- Alpine.js -->
+    {{-- Alpine.js should only be included once. --}}
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

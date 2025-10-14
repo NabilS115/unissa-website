@@ -806,7 +806,7 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{{-- Alpine.js CDN removed. Use main layout for scripts. --}}
 
 <script>
 // Alpine.js component needs to be included here - this would be a very long script

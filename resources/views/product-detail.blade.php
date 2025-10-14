@@ -458,13 +458,19 @@ input[type="number"]::-ms-clear {
                                             </div>
                                             
                                             <div class="flex items-center gap-4 text-sm text-gray-500">
-                                                @if(!Auth::user() || Auth::user()->id !== $review->user_id)
-                                                    <button class="helpful-btn flex items-center gap-1 hover:text-gray-700 transition-colors {{ Auth::user() && $review->isHelpfulBy(Auth::user()) ? 'text-blue-600' : 'text-gray-500' }}" data-review-id="{{ $review->id }}">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                                                        </svg>
-                                                        Helpful <span class="helpful-count">({{ $review->helpful_count ?? 0 }})</span>
-                                                    </button>
+                                                @if(Auth::user())
+                                                    @if(Auth::user()->id === $review->user_id)
+                                                        <button class="delete-review-btn text-red-600 hover:text-red-800 font-medium transition-colors" data-id="{{ $review->id }}">
+                                                            Delete Review
+                                                        </button>
+                                                    @else
+                                                        <button class="helpful-btn flex items-center gap-1 hover:text-gray-700 transition-colors {{ Auth::user() && $review->isHelpfulBy(Auth::user()) ? 'text-blue-600' : 'text-gray-500' }}" data-review-id="{{ $review->id }}">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                                                            </svg>
+                                                            Helpful <span class="helpful-count">({{ $review->helpful_count ?? 0 }})</span>
+                                                        </button>
+                                                    @endif
                                                 @else
                                                     <span class="flex items-center gap-1 text-gray-400">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -472,11 +478,6 @@ input[type="number"]::-ms-clear {
                                                         </svg>
                                                         Helpful <span class="helpful-count">({{ $review->helpful_count ?? 0 }})</span>
                                                     </span>
-                                                @endif
-                                                @if(Auth::user() && Auth::user()->role === 'admin')
-                                                    <button class="delete-review-btn text-red-600 hover:text-red-800 font-medium transition-colors" data-id="{{ $review->id }}">
-                                                        Delete Review
-                                                    </button>
                                                 @endif
                                             </div>
                                         </div>
