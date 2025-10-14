@@ -243,7 +243,6 @@
                     </div>
                     <hr class="my-2">
                     <a href="/profile" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Profile</a>
-                    <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">My Orders</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">Logout</button>

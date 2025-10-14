@@ -172,7 +172,7 @@
                     <!-- Right: Admin Controls & Sort Dropdown -->
                     <div class="flex items-center gap-4 flex-shrink-0">
                         @if(auth()->user()?->role === 'admin')
-                        <button @click="showAddModal = true" class="bg-white text-teal-600 px-4 py-2 rounded-lg font-semibold shadow hover:bg-gray-50 transition-colors">
+                        <button @click="showAddModal = true" class="bg-white text-teal-700 px-6 py-2 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-teal-200 hover:border-teal-300">
                             Add Product
                         </button>
                         @endif
@@ -653,13 +653,13 @@
     </div>
 
     <!-- Content Container with Animation -->
-    <div class="relative pt-8">
+    <div class="relative min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 pt-8">
         <!-- Food Cards -->
         <template x-if="tab === 'food'">
             <div class="tab-content animate-fade-in">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.id">
-                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer food-card"
+                    <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer food-card transform hover:-translate-y-2"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          :data-product-id="food.id"
                          @click="navigateToReview(food.id)">
@@ -693,7 +693,7 @@
                             <template x-if="food.price">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xl font-bold text-teal-600">$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
-                                    <button class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                                    <button class="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white px-4 py-2 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                                         Order Now
                                     </button>
                                 </div>
@@ -707,21 +707,21 @@
                 <nav class="flex items-center space-x-2">
                     <button @click="currentFoodPage > 1 && setFoodPage(currentFoodPage - 1)"
                             :disabled="currentFoodPage <= 1"
-                            :class="currentFoodPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
-                            class="px-3 py-2 rounded-md bg-teal-600 text-white font-medium transition-colors">
+                            :class="currentFoodPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
+                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                         Previous
                     </button>
                     <template x-for="page in Array.from({length: totalFoodPages}, (_, i) => i + 1)" :key="page">
                         <button @click="setFoodPage(page)"
-                                :class="page === currentFoodPage ? 'bg-teal-800 text-white' : 'bg-white text-teal-600 hover:bg-teal-50'"
-                                class="px-3 py-2 rounded-md border border-teal-600 font-medium transition-colors"
+                                :class="page === currentFoodPage ? 'bg-gradient-to-r from-teal-700 via-emerald-700 to-cyan-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-gradient-to-r hover:from-teal-50 hover:via-emerald-50 hover:to-cyan-50'"
+                                class="px-4 py-2 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                                 x-text="page">
                         </button>
                     </template>
                     <button @click="currentFoodPage < totalFoodPages && setFoodPage(currentFoodPage + 1)"
                             :disabled="currentFoodPage >= totalFoodPages"
-                            :class="currentFoodPage >= totalFoodPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
-                            class="px-3 py-2 rounded-md bg-teal-600 text-white font-medium transition-colors">
+                            :class="currentFoodPage >= totalFoodPages ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
+                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                         Next
                     </button>
                 </nav>
@@ -732,9 +732,9 @@
         <!-- Merchandise Cards -->
         <template x-if="tab === 'merch'">
             <div class="tab-content animate-fade-in">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
                 <template x-for="merch in pagedMerch" :key="merch.id">
-                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer merch-card"
+                    <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer merch-card transform hover:-translate-y-2"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          :data-product-id="merch.id"
                          @click="navigateToReview(merch.id)">
@@ -768,7 +768,7 @@
                             <template x-if="merch.price">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xl font-bold text-teal-600">$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
-                                    <button class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                                    <button class="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white px-4 py-2 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                                         Order Now
                                     </button>
                                 </div>
@@ -782,21 +782,21 @@
                 <nav class="flex items-center space-x-2">
                     <button @click="currentMerchPage > 1 && setMerchPage(currentMerchPage - 1)"
                             :disabled="currentMerchPage <= 1"
-                            :class="currentMerchPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
-                            class="px-3 py-2 rounded-md bg-teal-600 text-white font-medium transition-colors">
+                            :class="currentMerchPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
+                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                         Previous
                     </button>
                     <template x-for="page in Array.from({length: totalMerchPages}, (_, i) => i + 1)" :key="page">
                         <button @click="setMerchPage(page)"
-                                :class="page === currentMerchPage ? 'bg-teal-800 text-white' : 'bg-white text-teal-600 hover:bg-teal-50'"
-                                class="px-3 py-2 rounded-md border border-teal-600 font-medium transition-colors"
+                                :class="page === currentMerchPage ? 'bg-gradient-to-r from-teal-700 via-emerald-700 to-cyan-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-gradient-to-r hover:from-teal-50 hover:via-emerald-50 hover:to-cyan-50'"
+                                class="px-4 py-2 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                                 x-text="page">
                         </button>
                     </template>
                     <button @click="currentMerchPage < totalMerchPages && setMerchPage(currentMerchPage + 1)"
                             :disabled="currentMerchPage >= totalMerchPages"
-                            :class="currentMerchPage >= totalMerchPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
-                            class="px-3 py-2 rounded-md bg-teal-600 text-white font-medium transition-colors">
+                            :class="currentMerchPage >= totalMerchPages ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
+                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                         Next
                     </button>
                 </nav>

@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmationMail;
 use Illuminate\Support\Facades\Session;
 
 class CheckoutController extends Controller
@@ -102,13 +104,21 @@ class CheckoutController extends Controller
             'payment_status' => $paymentStatus,
         ]);
 
+        // Send order confirmation email
+        try {
+            Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));
+        } catch (\Exception $e) {
+            // Log email error but don't fail the order
+            \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+        }
+
         // Set success message based on payment method
         $successMessage = $validated['payment_method'] === 'online' 
             ? 'Your order has been placed and payment processed successfully! We\'ll prepare your order for pickup.'
             : 'Your order has been placed successfully! Payment will be collected at pickup.';
 
-        return redirect()->route('orders.show', $order)
-            ->with('success', $successMessage);
+        return redirect()->route('unissa-cafe.homepage')
+            ->with('success', $successMessage . " Order ID: #{$order->id}");
     }
 
     /**
@@ -159,6 +169,8 @@ class CheckoutController extends Controller
             'card_expiry' => 'required_if:payment_method,online|nullable|string|size:5',
             'card_cvv' => 'required_if:payment_method,online|nullable|string|min:3|max:4',
             'cardholder_name' => 'required_if:payment_method,online|nullable|string|max:255',
+            'pickup_notes' => 'nullable|string|max:500',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         $cartItems = \App\Models\Cart::with('product')
@@ -183,40 +195,46 @@ class CheckoutController extends Controller
             }
         }
 
-        $totalPrice = $cartItems->sum('total_price');
-        $paymentStatus = $validated['payment_method'] === 'online' ? Order::PAYMENT_PAID : Order::PAYMENT_PENDING;
+        $paymentStatus = $validated['payment_method'] === 'online' ? Order::PAYMENT_STATUS_PAID : Order::PAYMENT_STATUS_PENDING;
+        $orders = [];
 
-        // Create order with cart items
-        $orderData = [
-            'user_id' => Auth::id(),
-            'customer_name' => $validated['customer_name'],
-            'customer_email' => $validated['customer_email'],
-            'customer_phone' => $validated['customer_phone'],
-            'total_price' => $totalPrice,
-            'status' => Order::STATUS_PENDING,
-            'payment_method' => $validated['payment_method'],
-            'payment_status' => $paymentStatus,
-        ];
-
-        // Add cart items details to order
-        $orderData['items'] = $cartItems->map(function($item) {
-            return [
+        // Create separate orders for each cart item
+        foreach ($cartItems as $item) {
+            $orderData = [
+                'user_id' => Auth::id(),
                 'product_id' => $item->product_id,
-                'product_name' => $item->product->name,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->product->price,
-                'total_price' => $item->total_price
+                'total_price' => $item->total_price,
+                'customer_name' => $validated['customer_name'],
+                'customer_email' => $validated['customer_email'],
+                'customer_phone' => $validated['customer_phone'],
+                'pickup_notes' => $validated['pickup_notes'] ?? null,
+                'notes' => $validated['notes'] ?? null,
+                'status' => Order::STATUS_PENDING,
+                'payment_method' => $validated['payment_method'],
+                'payment_status' => $paymentStatus,
             ];
-        })->toArray();
 
-        $order = Order::create($orderData);
+            $order = Order::create($orderData);
+            $orders[] = $order;
 
-        // Update stock quantities if tracking
-        foreach ($cartItems as $item) {
+            // Send order confirmation email for each order
+            try {
+                Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));
+            } catch (\Exception $e) {
+                // Log email error but don't fail the order
+                \Log::error('Failed to send order confirmation email for order #' . $order->id . ': ' . $e->getMessage());
+            }
+
+            // Update stock quantities if tracking
             if ($item->product->track_stock) {
                 $item->product->decrement('stock_quantity', $item->quantity);
             }
         }
+
+        $totalPrice = $cartItems->sum('total_price');
+        $orderCount = count($orders);
 
         // Clear the cart after successful order
         \App\Models\Cart::where('user_id', Auth::id())->delete();
@@ -225,7 +243,7 @@ class CheckoutController extends Controller
             ? 'Your order has been placed and payment processed successfully! We\'ll prepare your order for pickup.'
             : 'Your order has been placed successfully! Payment will be collected at pickup.';
 
-        return redirect()->route('orders.show', $order)
-            ->with('success', $successMessage);
+        return redirect()->route('unissa-cafe.homepage')
+            ->with('success', $successMessage . " {$orderCount} order(s) created with total amount: $" . number_format($totalPrice, 2));
     }
 }

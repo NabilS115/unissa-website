@@ -223,6 +223,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add-simple', [App\Http\Controllers\CartController::class, 'addToCartSimple'])->name('cart.add.simple');
     Route::patch('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'removeItem'])->name('cart.remove');
+});
+
+// User Order routes
+Route::middleware(['auth'])->prefix('my')->name('user.')->group(function () {
+    Route::get('/orders', [App\Http\Controllers\UserOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [App\Http\Controllers\UserOrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/cancel', [App\Http\Controllers\UserOrderController::class, 'cancel'])->name('orders.cancel');
     Route::delete('/cart', [App\Http\Controllers\CartController::class, 'clearCart'])->name('cart.clear');
     Route::get('/api/cart/count', [App\Http\Controllers\CartController::class, 'getCartCount'])->name('cart.count');
     Route::get('/api/cart/test', function() {
@@ -242,12 +249,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/cart', [App\Http\Controllers\CheckoutController::class, 'processCart'])->name('checkout.process.cart');
 });
 
-// Order routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
-    Route::patch('/orders/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('orders.cancel');
-});
+// Order routes removed - non-functional user-facing order system
 
 // API endpoint to check authentication status
 Route::get('/api/auth-status', function () {
