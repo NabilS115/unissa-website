@@ -81,6 +81,13 @@ class AdminProductController extends Controller
      */
     public function store(Request $request)
     {
+        // Debug: Log all incoming request data
+        \Log::info('Admin Product Creation - Request received', [
+            'all_data' => $request->except(['cropped_image']),
+            'has_cropped_image' => $request->filled('cropped_image'),
+            'has_img_file' => $request->hasFile('img')
+        ]);
+
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
@@ -90,12 +97,15 @@ class AdminProductController extends Controller
                 'price' => 'required|numeric|min:0',
                 'img' => 'nullable|image|max:20480', // Increased to 20MB like catalog
                 'cropped_image' => 'nullable|string',
-                'is_active' => 'boolean',
+                'is_active' => 'nullable|boolean',
                 'status' => 'required|in:active,inactive,out_of_stock,discontinued',
-                'track_stock' => 'boolean',
+                'track_stock' => 'nullable|boolean',
                 'stock_quantity' => 'nullable|integer|min:0',
                 'low_stock_threshold' => 'required|integer|min:0',
             ]);
+            
+            \Log::info('Admin Product Creation - Validation passed', ['validated' => $validated]);
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Admin Product Creation - Validation failed', ['errors' => $e->errors()]);
             if ($request->expectsJson()) {
@@ -143,14 +153,18 @@ class AdminProductController extends Controller
 
             // Set defaults
             $validated['is_active'] = $request->has('is_active');
-            $validated['track_stock'] = true; // Always enable stock tracking for new products
+            $validated['track_stock'] = $request->has('track_stock');
             
             // Set default stock quantity if no quantity provided
             if (!isset($validated['stock_quantity']) || $validated['stock_quantity'] === null) {
                 $validated['stock_quantity'] = 0; // Start with 0 stock by default
             }
 
+            \Log::info('Admin Product Creation - About to create product', ['validated_data' => $validated]);
+
             $product = Product::create($validated);
+
+            \Log::info('Admin Product Creation - Product created, updating stock status', ['product_id' => $product->id]);
 
             // Immediately update stock status based on quantity (as requested)
             $product->updateStockStatus();
@@ -166,7 +180,7 @@ class AdminProductController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Product created successfully!',
-                    'product' => $product->load('images'), // Load any relationships if needed
+                    'product' => $product, // Return the product without trying to load non-existent relationships
                     'redirect_url' => route('admin.products.index')
                 ]);
             }
@@ -177,15 +191,33 @@ class AdminProductController extends Controller
         } catch (\Exception $e) {
             \Log::error('Admin Product Creation - Failed to create product', [
                 'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
                 'trace' => $e->getTraceAsString(),
-                'request_data' => $request->all()
+                'request_data' => $request->except(['cropped_image']), // Exclude large image data
+                'validated_data' => $validated ?? null
             ]);
 
-            if ($request->expectsJson()) {
-                return response()->json(['success' => false, 'error' => 'Failed to create product. Please try again.'], 500);
+            $errorMessage = 'Failed to create product. Please try again.';
+            
+            // Provide more specific error messages for common issues
+            if (str_contains($e->getMessage(), 'SQLSTATE') || str_contains($e->getMessage(), 'database')) {
+                $errorMessage = 'Database error occurred. Please try again.';
+            } elseif (str_contains($e->getMessage(), 'storage') || str_contains($e->getMessage(), 'disk')) {
+                $errorMessage = 'Image upload failed. Please try again.';
+            } elseif (str_contains($e->getMessage(), 'fillable')) {
+                $errorMessage = 'Invalid data provided. Please check your input.';
             }
 
-            return back()->withErrors(['general' => 'Failed to create product. Please try again.'])->withInput();
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false, 
+                    'error' => $errorMessage,
+                    'debug' => config('app.debug') ? $e->getMessage() : null
+                ], 500);
+            }
+
+            return back()->withErrors(['general' => $errorMessage])->withInput();
         }
     }
 

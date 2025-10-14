@@ -38,7 +38,7 @@
             <!-- Form Content -->
             <div class="p-8">
                 <form x-ref="productForm" @submit="handleSubmit" enctype="multipart/form-data" method="POST" action="{{ route('admin.products.store') }}"
-                      x-data="productForm()" x-init="init()">
+                      x-data="productForm()" x-init="init()" key="create-product-form">
                     @csrf
                 
                 <!-- Success Message -->
@@ -374,21 +374,13 @@
                     </div>
 
                 <!-- Form Actions -->
-                <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                    <a href="{{ route('admin.products.index') }}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                        Cancel
-                    </a>
+                <div class="flex items-center justify-center pt-6 pb-8 border-t border-gray-200">
                     <button type="submit" 
-                            :disabled="isSubmitting"
-                            :class="isSubmitting ? 'px-8 py-3 bg-gray-400 text-white rounded-xl cursor-not-allowed font-semibold' : 'px-8 py-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl hover:from-teal-700 hover:to-emerald-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105'">
-                        <span x-show="!isSubmitting">Add Product</span>
-                        <span x-show="isSubmitting" class="flex items-center gap-2">
-                            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Creating...
-                        </span>
+                            class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl hover:from-teal-700 hover:to-emerald-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Add Product
                     </button>
                 </div>
             </div>
@@ -410,8 +402,28 @@ function productForm() {
         croppedBlob: null,
 
         init() {
+            console.log('Alpine.js component initialized');
+            console.log('Initial isSubmitting state:', this.isSubmitting);
+            
+            // Ensure isSubmitting is false on page load
+            this.isSubmitting = false;
+            this.error = null;
+            
             // Initialize stock tracking toggle
             this.initStockTracking();
+            
+            console.log('After init, isSubmitting state:', this.isSubmitting);
+            
+            // Additional safeguard using $nextTick
+            this.$nextTick(() => {
+                this.isSubmitting = false;
+                console.log('Next tick isSubmitting state:', this.isSubmitting);
+                console.log('Should show Add Product span:', !this.isSubmitting);
+                console.log('Should show Creating span:', this.isSubmitting);
+                
+                // Force Alpine.js to update the DOM
+                this.$el.dispatchEvent(new Event('x-data-updated'));
+            });
         },
 
         initStockTracking() {
@@ -514,13 +526,19 @@ function productForm() {
         },
 
         handleSubmit(event) {
+            console.log('handleSubmit called', { croppedBlob: !!this.croppedBlob, eventType: event.type });
+            
             // If we have a cropped image, use JavaScript submission
             if (this.croppedBlob) {
                 event.preventDefault();
                 this.submitProduct();
             } else {
-                // Allow normal form submission for basic functionality
-                this.isSubmitting = true;
+                // For normal form submission, set submitting state only on actual submission
+                // Don't set it during page load or other events
+                if (event.type === 'submit') {
+                    this.isSubmitting = true;
+                    console.log('Setting isSubmitting to true for normal form submission');
+                }
             }
         },
 
@@ -548,23 +566,64 @@ function productForm() {
 
         async sendFormData(formData) {
             try {
+                console.log('Sending form data to:', '{{ route('admin.products.store') }}');
+                console.log('Form data entries:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}:`, value);
+                }
+
+                // Add timeout to prevent hanging
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    console.log('Request timed out after 30 seconds');
+                }, 30000); // 30 second timeout
+
+                // Add automatic reset after 10 seconds as failsafe
+                const failsafeTimeout = setTimeout(() => {
+                    if (this.isSubmitting) {
+                        console.log('Failsafe: Resetting form after 10 seconds');
+                        this.isSubmitting = false;
+                        alert('Form submission is taking too long. Please try again.');
+                    }
+                }, 10000);
+
                 const response = await fetch('{{ route('admin.products.store') }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Accept': 'application/json'
                     },
-                    body: formData
+                    body: formData,
+                    signal: controller.signal
                 });
 
+                clearTimeout(timeoutId);
+                clearTimeout(failsafeTimeout);
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+
                 const data = await response.json();
+                console.log('Response data:', data);
                 
                 if (data.success) {
+                    console.log('Success! Product created successfully');
                     // Show success message
                     this.successMessage = data.message || 'Product created successfully!';
                     this.errors = {};
                     
+                    // Reset submitting state immediately on success
+                    this.isSubmitting = false;
+                    
                     // Redirect after showing success message
+                    console.log('Redirecting in 1.5 seconds to:', data.redirect_url || '{{ route('admin.products.index') }}');
                     setTimeout(() => {
                         if (data.redirect_url) {
                             window.location.href = data.redirect_url;
@@ -595,7 +654,14 @@ function productForm() {
                 }
             } catch (error) {
                 console.error('Network Error:', error);
-                alert('Network error: ' + error.message + '. Please check your connection and try again.');
+                
+                if (error.name === 'AbortError') {
+                    alert('Request timed out. The server might be busy. Please try again.');
+                } else if (error.message.includes('Failed to fetch')) {
+                    alert('Network connection error. Please check your internet connection and try again.');
+                } else {
+                    alert('Error: ' + error.message + '. Please try again or contact support if the problem persists.');
+                }
             } finally {
                 this.isSubmitting = false;
             }

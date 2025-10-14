@@ -3,92 +3,74 @@
 @section('title', 'Product Management')
 
 @section('content')
-<!-- Essential JavaScript functions - loaded immediately -->
+<!-- Essential JavaScript functions -->
 <script>
-// Define critical functions in global scope immediately
-window.testJS = function() {
-    alert('JavaScript is working! Delete function should work now.');
+// Global variables for delete functionality
+let deleteProductId = null;
+
+// Modern delete modal functions
+window.openDeleteModal = function(productId, productName) {
+    deleteProductId = productId;
+    document.getElementById('delete-product-name').textContent = productName;
+    document.getElementById('delete-modal').classList.remove('hidden');
+    document.getElementById('delete-modal').classList.add('flex');
 };
 
-window.deleteProductSimple = function(productId) {
-    if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-        const form = document.querySelector('.delete-form-' + productId);
-        if (form) {
-            form.submit();
-        } else {
-            alert('Could not find delete form. Please refresh the page and try again.');
-        }
-    }
+window.closeDeleteModal = function() {
+    document.getElementById('delete-modal').classList.add('hidden');
+    document.getElementById('delete-modal').classList.remove('flex');
+    deleteProductId = null;
+    
+    // Reset button state
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = 'Delete Product';
+    confirmBtn.className = 'px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium';
 };
 
-window.deleteProduct = function(productId) {
-    console.log('Delete function called with productId:', productId);
+window.confirmDelete = async function() {
+    if (!deleteProductId) return;
     
-    if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-        console.log('Delete cancelled by user');
-        return;
-    }
-    
-    console.log('Delete confirmed, proceeding...');
-    
-    // Get CSRF token with fallback
-    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-    const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '{{ csrf_token() }}';
-    
-    if (!csrfToken) {
-        console.error('CSRF token not found!');
-        alert('Security token not found. Please refresh the page and try again.');
-        return;
-    }
-    
-    console.log('CSRF token found:', csrfToken ? 'Yes' : 'No');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    const row = document.querySelector(`tr:has(.delete-btn-${deleteProductId})`);
     
     // Show loading state
-    const deleteButton = document.querySelector('.delete-btn-' + productId);
-    const row = deleteButton ? deleteButton.closest('tr') : null;
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = `
+        <svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Deleting...
+    `;
+    confirmBtn.className = 'px-6 py-2.5 bg-gray-400 text-white rounded-lg cursor-not-allowed font-medium';
     
-    console.log('Delete button found:', deleteButton ? 'Yes' : 'No');
-    console.log('Row found:', row ? 'Yes' : 'No');
-    
-    if (deleteButton) {
-        deleteButton.disabled = true;
-        deleteButton.textContent = 'Deleting...';
-        deleteButton.classList.add('delete-loading');
-    }
-    
-    if (row) {
-        row.classList.add('row-deleting');
-    }
-    
-    console.log('Sending delete request to:', '/admin/products/' + productId);
-    
-    // Use fetch for the delete request
-    fetch('/admin/products/' + productId, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        console.log('Response received:', response.status, response.statusText);
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('HTTP ' + response.status + ': ' + response.statusText);
-    })
-    .then(data => {
-        console.log('Response data:', data);
+    try {
+        const response = await fetch(`/admin/products/${deleteProductId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
         if (data.success) {
-            alert(data.message || 'Product deleted successfully!');
+            // Show success notification
+            showNotification(data.message || 'Product deleted successfully!', 'success');
+            
+            // Close modal
+            closeDeleteModal();
             
             // Animate row removal
             if (row) {
                 row.style.opacity = '0';
                 row.style.transform = 'translateX(-100%)';
-                setTimeout(function() {
+                setTimeout(() => {
                     row.remove();
+                    
                     // Check if this was the last row
                     const remainingRows = document.querySelectorAll('tbody tr').length;
                     if (remainingRows === 0) {
@@ -101,30 +83,63 @@ window.deleteProduct = function(productId) {
         } else {
             throw new Error(data.message || 'Failed to delete product');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Delete error:', error);
-        alert(error.message || 'Failed to delete product');
-        
-        // If AJAX fails, fallback to form submission
-        console.log('AJAX failed, trying form submission fallback...');
-        const form = document.querySelector('.delete-form-' + productId);
-        if (form && confirm('AJAX failed. Try traditional form submission?')) {
-            form.submit();
-            return;
-        }
-        
-        // Reset button state
-        if (deleteButton) {
-            deleteButton.disabled = false;
-            deleteButton.textContent = 'Delete';
-            deleteButton.classList.remove('delete-loading');
-        }
-        
-        if (row) {
-            row.classList.remove('row-deleting');
-        }
-    });
+        showNotification(error.message || 'Failed to delete product', 'error');
+        closeDeleteModal();
+    }
+};
+
+// Modern notification system
+window.showNotification = function(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full`;
+    
+    // Set colors based on type
+    switch(type) {
+        case 'success':
+            notification.className += ' bg-green-500 text-white';
+            break;
+        case 'error':
+            notification.className += ' bg-red-500 text-white';
+            break;
+        case 'warning':
+            notification.className += ' bg-yellow-500 text-white';
+            break;
+        default:
+            notification.className += ' bg-blue-500 text-white';
+    }
+    
+    // Create content with icon
+    const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : type === 'warning' ? '⚠' : 'ℹ';
+    notification.innerHTML = `
+        <div class="flex items-center gap-2">
+            <span class="text-lg">${icon}</span>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 4000);
+};
+
+// Test function for debugging
+window.testJS = function() {
+    showNotification('JavaScript is working! Delete function is ready.', 'success');
 };
 
 // Update product status function
@@ -524,28 +539,30 @@ document.addEventListener('click', function(event) {
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-2">
-                                            <a href="{{ route('admin.products.show', $product) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <a href="{{ route('admin.products.show', $product) }}" 
+                                               class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition-all duration-200">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
                                                 View
                                             </a>
-                                            <a href="{{ route('admin.products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                                            <a href="{{ route('admin.products.edit', $product) }}" 
+                                               class="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-600 text-sm font-medium rounded-lg border border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 transition-all duration-200">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
                                                 Edit
                                             </a>
-                                            <form method="POST" action="{{ route('admin.products.destroy', $product) }}" class="inline-block delete-form-{{ $product->id }}" onsubmit="return confirm('Are you sure you want to delete this product?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" 
-                                                        class="text-red-600 hover:text-red-800 text-sm font-medium delete-btn delete-btn-{{ $product->id }}"
-                                                        data-product-id="{{ $product->id }}"
-                                                        onclick="window.deleteProduct && window.deleteProduct({{ $product->id }}) || window.deleteProductSimple({{ $product->id }})"
-                                                        title="Click to delete product">
-                                                    Delete
-                                                </button>
-                                                <noscript>
-                                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                                                        Delete (No JS)
-                                                    </button>
-                                                </noscript>
-                                            </form>
+                                            <button type="button" 
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 text-sm font-medium rounded-lg border border-red-200 hover:bg-red-100 hover:border-red-300 transition-all duration-200 delete-btn-{{ $product->id }}"
+                                                    onclick="openDeleteModal({{ $product->id }}, '{{ addslashes($product->name) }}')"
+                                                    title="Delete product">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                                Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -572,7 +589,7 @@ document.addEventListener('click', function(event) {
 </div>
 
 <!-- Stock Update Modal -->
-<div id="stock-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+<div id="stock-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6">
         <h3 class="text-lg font-bold text-gray-900 mb-4">Update Stock</h3>
         <div class="space-y-4">
@@ -660,11 +677,15 @@ function showStockModal(productId, currentStock) {
     document.getElementById('current-stock').textContent = currentStock || '0';
     document.getElementById('stock-quantity').value = '';
     document.getElementById('stock-action').value = 'set';
-    document.getElementById('stock-modal').classList.remove('hidden');
+    const modal = document.getElementById('stock-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 }
 
 function closeStockModal() {
-    document.getElementById('stock-modal').classList.add('hidden');
+    const modal = document.getElementById('stock-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
     currentProductId = null;
 }
 
@@ -725,6 +746,39 @@ console.log('Stock management functions loaded successfully');
 console.log('Admin products page additional scripts loaded');
 </script>
 @endpush
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+        <!-- Close button -->
+        <button onclick="closeDeleteModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+
+        <!-- Modal content -->
+        <div class="text-center">
+            <svg class="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+            </svg>
+            
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Delete Product</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to delete "<span id="delete-product-name" class="font-semibold"></span>"? This action cannot be undone.</p>
+            
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeDeleteModal()" 
+                        class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    Cancel
+                </button>
+                <button onclick="confirmDelete()" id="confirm-delete-btn"
+                        class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                    Delete Product
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Import Modal -->
 <div id="importModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
