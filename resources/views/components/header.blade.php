@@ -3,7 +3,12 @@
     <div class="flex items-center gap-4 logo-section">
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">
-            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*'))
+            @php
+                $headerContext = session('header_context');
+                $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
+                $isProfile = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+            @endphp
+            @if($isCafe || ($isProfile && $headerContext === 'unissa-cafe'))
                 Unissa Cafe
             @else
                 Tijarah Co Sdn Bhd
@@ -13,7 +18,7 @@
     <div class="flex items-center gap-6 ml-12">
         <nav>
             <ul class="flex gap-4 nav-list">
-                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*'))
+                @if($isCafe || ($isProfile && $headerContext === 'unissa-cafe'))
                     <!-- Unissa Cafe Navigation -->
                     <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Home</a></li>
                     <li><a href="{{ route('unissa-cafe.catalog') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/catalog') ? 'font-semibold underline' : '' }}">Catalog</a></li>
@@ -317,74 +322,77 @@
         </div>
         
         <!-- Cart Icon (only show on cafe pages and for authenticated users) -->
-        @auth
-        <div class="relative mr-4" id="cart-group">
-            <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
-                <!-- Enhanced Shopping Cart Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
-                </svg>
-            </a>
-            <!-- Smaller Notification Bubble -->
-            <span id="cart-count" class="absolute bg-red-600 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1" style="display: none; font-size: 8px; line-height: 1;">0</span>
-        </div>
-        <script>
-            // Cart count script always runs after cart icon is rendered
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('[CartCount] DOMContentLoaded, running loadCartCount');
-                loadCartCount();
-            });
-            document.addEventListener('visibilitychange', function() {
-                if (document.visibilityState === 'visible') {
-                    console.log('[CartCount] visibilitychange, running loadCartCount');
+
+    @if($isCafe || ($isProfile && $headerContext === 'unissa-cafe'))
+            @auth
+            <div class="relative mr-4 z-50 overflow-visible" id="cart-group">
+                <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 overflow-visible">
+                    <!-- Enhanced Shopping Cart Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                    </svg>
+                </a>
+                <!-- Smaller Notification Bubble -->
+                <span id="cart-count" class="absolute bg-red-600 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1 z-50 overflow-visible" style="display: none; font-size: 8px; line-height: 1;">0</span>
+            </div>
+            <script>
+                // Cart count script always runs after cart icon is rendered
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log('[CartCount] DOMContentLoaded, running loadCartCount');
                     loadCartCount();
-                }
-            });
-            function loadCartCount() {
-                console.log('[CartCount] Fetching /api/cart/count...');
-                fetch("{{ route('cart.count') }}", {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                });
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'visible') {
+                        console.log('[CartCount] visibilitychange, running loadCartCount');
+                        loadCartCount();
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
+                });
+                function loadCartCount() {
+                    console.log('[CartCount] Fetching /api/cart/count...');
+                    fetch("{{ route('cart.count') }}", {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']').getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const cartCount = document.getElementById('cart-count');
+                        console.log('[CartCount] Fetched count:', data.count, 'Element:', cartCount);
+                        if (cartCount) {
+                            const oldCount = parseInt(cartCount.textContent) || 0;
+                            const newCount = data.count || 0;
+                            cartCount.textContent = newCount;
+                            cartCount.style.display = newCount > 0 ? 'flex' : 'none';
+                            if (newCount !== oldCount && newCount > 0) {
+                                cartCount.classList.add('updated');
+                                setTimeout(() => {
+                                    cartCount.classList.remove('updated');
+                                }, 600);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('[CartCount] Error loading cart count:', error);
+                    });
+                }
+                window.updateCartCount = function(newCount) {
                     const cartCount = document.getElementById('cart-count');
-                    console.log('[CartCount] Fetched count:', data.count, 'Element:', cartCount);
                     if (cartCount) {
-                        const oldCount = parseInt(cartCount.textContent) || 0;
-                        const newCount = data.count || 0;
                         cartCount.textContent = newCount;
                         cartCount.style.display = newCount > 0 ? 'flex' : 'none';
-                        if (newCount !== oldCount && newCount > 0) {
+                        if (newCount > 0) {
                             cartCount.classList.add('updated');
                             setTimeout(() => {
                                 cartCount.classList.remove('updated');
                             }, 600);
                         }
                     }
-                })
-                .catch(error => {
-                    console.error('[CartCount] Error loading cart count:', error);
-                });
-            }
-            window.updateCartCount = function(newCount) {
-                const cartCount = document.getElementById('cart-count');
-                if (cartCount) {
-                    cartCount.textContent = newCount;
-                    cartCount.style.display = newCount > 0 ? 'flex' : 'none';
-                    if (newCount > 0) {
-                        cartCount.classList.add('updated');
-                        setTimeout(() => {
-                            cartCount.classList.remove('updated');
-                        }, 600);
-                    }
                 }
-            }
-        </script>
-        @endauth
+            </script>
+            @endauth
+        @endif
         
         <div class="relative group" id="profile-group">
             <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden shadow hover:shadow-lg transition-all duration-300">

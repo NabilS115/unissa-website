@@ -62,16 +62,47 @@ Route::view('dashboard', 'dashboard')
 // profile routes
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
-    Route::get('/profile', function () {
+    Route::get('/profile', function (\Illuminate\Http\Request $request) {
+        // Determine previous context from referer or session
+        $referer = $request->headers->get('referer');
+        $context = 'tijarah';
+        if ($referer) {
+            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
+                $context = 'unissa-cafe';
+            }
+        } elseif (session('header_context')) {
+            $context = session('header_context');
+        }
+        session(['header_context' => $context]);
         if (auth()->user()->role === 'admin') {
             return redirect()->route('admin.profile');
         }
         return view('profile');
     })->name('profile');
-    Route::get('/admin-profile', function () {
+    Route::get('/admin-profile', function (\Illuminate\Http\Request $request) {
+        $referer = $request->headers->get('referer');
+        $context = 'tijarah';
+        if ($referer) {
+            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
+                $context = 'unissa-cafe';
+            }
+        } elseif (session('header_context')) {
+            $context = session('header_context');
+        }
+        session(['header_context' => $context]);
         return view('admin-profile');
     })->name('admin.profile');
-    Route::get('/edit-profile', function () {
+    Route::get('/edit-profile', function (\Illuminate\Http\Request $request) {
+        $referer = $request->headers->get('referer');
+        $context = 'tijarah';
+        if ($referer) {
+            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
+                $context = 'unissa-cafe';
+            }
+        } elseif (session('header_context')) {
+            $context = session('header_context');
+        }
+        session(['header_context' => $context]);
         return view('edit-profile');
     })->name('edit.profile');
     Route::post('/profile/photo', [App\Http\Controllers\ProfileController::class, 'updatePhoto'])->name('profile.photo');
@@ -139,41 +170,108 @@ Route::get('/company-history', function () {
 
 // Admin routes with proper middleware alias
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-    Route::get('/users/api', [App\Http\Controllers\Admin\UserController::class, 'api'])->name('users.api');
-    Route::get('/users/export', [App\Http\Controllers\Admin\UserController::class, 'export'])->name('users.export');
-    Route::get('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
-    Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
-    Route::put('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
-    Route::patch('/users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    // Helper closure to set header context for admin pages
+    $setHeaderContext = function ($request) {
+        $referer = $request->headers->get('referer');
+        $context = 'tijarah';
+        if ($referer) {
+            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
+                $context = 'unissa-cafe';
+            }
+        } elseif (session('header_context')) {
+            $context = session('header_context');
+        }
+        session(['header_context' => $context]);
+    };
 
-    // Content Management (example for posts) - Commented out until PostController is created
-    // Route::get('/posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('posts.index');
-    // Route::get('/posts/{post}/edit', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('posts.edit');
-    // Route::put('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('posts.update');
-    // Route::delete('/posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('posts.destroy');
-
-    // Site Settings (example) - Commented out until SettingsController is created
-    // Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
-    // Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+    Route::get('/users', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->index($request);
+    })->name('users.index');
+    Route::get('/users/api', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->api($request);
+    })->name('users.api');
+    Route::get('/users/export', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->export($request);
+    })->name('users.export');
+    Route::get('/users/{user}', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->show($request, $user);
+    })->name('users.show');
+    Route::post('/users', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->store($request);
+    })->name('users.store');
+    Route::put('/users/{user}', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->update($request, $user);
+    })->name('users.update');
+    Route::delete('/users/{user}', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->destroy($request, $user);
+    })->name('users.destroy');
+    Route::patch('/users/{user}/toggle-status', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\UserController::class)->toggleStatus($request, $user);
+    })->name('users.toggle-status');
 
     // Order Management
-    Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/export', [\App\Http\Controllers\Admin\AdminOrderController::class, 'export'])->name('orders.export');
-    Route::post('/orders/import', [\App\Http\Controllers\Admin\AdminOrderController::class, 'import'])->name('orders.import');
-    Route::get('/orders/statistics', [\App\Http\Controllers\Admin\AdminOrderController::class, 'statistics'])->name('orders.statistics');
-    Route::post('/orders/bulk-update', [\App\Http\Controllers\Admin\AdminOrderController::class, 'bulkUpdate'])->name('orders.bulk-update');
-    Route::get('/orders/{order}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'show'])->name('orders.show');
-    Route::patch('/orders/{order}/status', [\App\Http\Controllers\Admin\AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
-    Route::patch('/orders/{order}/payment-status', [\App\Http\Controllers\Admin\AdminOrderController::class, 'updatePaymentStatus'])->name('orders.update-payment-status');
+    Route::get('/orders', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->index($request);
+    })->name('orders.index');
+    Route::get('/orders/export', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->export($request);
+    })->name('orders.export');
+    Route::post('/orders/import', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->import($request);
+    })->name('orders.import');
+    Route::get('/orders/statistics', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->statistics($request);
+    })->name('orders.statistics');
+    Route::post('/orders/bulk-update', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->bulkUpdate($request);
+    })->name('orders.bulk-update');
+    Route::get('/orders/{order}', function (\Illuminate\Http\Request $request, $order) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->show($request, $order);
+    })->name('orders.show');
+    Route::patch('/orders/{order}/status', function (\Illuminate\Http\Request $request, $order) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->updateStatus($request, $order);
+    })->name('orders.update-status');
+    Route::patch('/orders/{order}/payment-status', function (\Illuminate\Http\Request $request, $order) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->updatePaymentStatus($request, $order);
+    })->name('orders.update-payment-status');
 
     // Product Management
-    Route::get('/products/export', [\App\Http\Controllers\Admin\AdminProductController::class, 'export'])->name('products.export');
-    Route::post('/products/import', [\App\Http\Controllers\Admin\AdminProductController::class, 'import'])->name('products.import');
-    Route::post('/products/bulk-update', [\App\Http\Controllers\Admin\AdminProductController::class, 'bulkUpdate'])->name('products.bulk-update');
-    Route::patch('/products/{product}/update-status', [\App\Http\Controllers\Admin\AdminProductController::class, 'updateStatus'])->name('products.update-status');
-    Route::patch('/products/{product}/stock', [\App\Http\Controllers\Admin\AdminProductController::class, 'updateStock'])->name('products.update-stock');
+    Route::get('/products/export', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminProductController::class)->export($request);
+    })->name('products.export');
+    Route::post('/products/import', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminProductController::class)->import($request);
+    })->name('products.import');
+    Route::post('/products/bulk-update', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminProductController::class)->bulkUpdate($request);
+    })->name('products.bulk-update');
+    Route::patch('/products/{product}/update-status', function (\Illuminate\Http\Request $request, $product) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminProductController::class)->updateStatus($request, $product);
+    })->name('products.update-status');
+    Route::patch('/products/{product}/stock', function (\Illuminate\Http\Request $request, $product) use ($setHeaderContext) {
+        $setHeaderContext($request);
+        return app(\App\Http\Controllers\Admin\AdminProductController::class)->updateStock($request, $product);
+    })->name('products.update-stock');
     Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);
 });
 

@@ -88,6 +88,23 @@ input[type="number"]::-ms-clear {
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
+    @if(session('success'))
+        <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xs flex justify-center">
+            <div class="bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 border-2 border-green-600 animate-fade-in-up">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span class="font-semibold">{{ session('success') }}</span>
+            </div>
+        </div>
+        <style>
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-fade-in-up { animation: fade-in-up 0.4s cubic-bezier(0.4,0,0.2,1); }
+        </style>
+    @endif
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb and Back Button -->
         <div class="mb-8">
