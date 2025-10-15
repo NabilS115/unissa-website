@@ -1,3 +1,141 @@
+
+<!-- Edit Review Modal (now outside reviews loop) -->
+<div id="edit-review-modal" class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+        <div class="p-8">
+            <button id="close-edit-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Edit Your Review</h3>
+                <p class="text-gray-600">Update your experience for this product</p>
+            </div>
+            <form id="edit-review-form" class="space-y-6">
+                <input type="hidden" name="review_id" id="edit-review-id" value="">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-3">Your Rating</label>
+                    <div class="flex gap-1 justify-center mb-4">
+                        @for($i = 1; $i <= 5; $i++)
+                            <button type="button" class="edit-star-btn w-10 h-10 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="{{ $i }}">
+                                <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                </svg>
+                            </button>
+                        @endfor
+                    </div>
+                    <input type="hidden" name="rating" id="edit-rating-input" value="5">
+                    <p class="text-center text-sm text-gray-500" id="edit-rating-text">Excellent</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-3">Your Review</label>
+                    <textarea name="review" id="edit-review-textarea" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none" rows="4" required></textarea>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="cancel-edit-review" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-xl hover:from-yellow-500 hover:to-yellow-600 font-semibold transition-all duration-200 shadow-lg">
+                        Update Review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Open edit review modal
+    document.querySelectorAll('.edit-review-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const reviewId = btn.getAttribute('data-review-id');
+            const rating = btn.getAttribute('data-rating');
+            const review = btn.getAttribute('data-review');
+            document.getElementById('edit-review-id').value = reviewId;
+            document.getElementById('edit-rating-input').value = rating;
+            document.getElementById('edit-review-textarea').value = review;
+            updateEditStars(rating);
+            updateEditRatingText(rating);
+            document.getElementById('edit-review-modal').classList.remove('hidden');
+        });
+    });
+
+    // Close modal
+    document.getElementById('close-edit-review-modal').addEventListener('click', function() {
+        document.getElementById('edit-review-modal').classList.add('hidden');
+    });
+    document.getElementById('cancel-edit-review').addEventListener('click', function() {
+        document.getElementById('edit-review-modal').classList.add('hidden');
+    });
+
+    // Star rating logic
+    document.querySelectorAll('.edit-star-btn').forEach(function(starBtn) {
+        starBtn.addEventListener('click', function() {
+            const rating = starBtn.getAttribute('data-rating');
+            document.getElementById('edit-rating-input').value = rating;
+            updateEditStars(rating);
+            updateEditRatingText(rating);
+        });
+    });
+
+    function updateEditStars(rating) {
+        document.querySelectorAll('.edit-star-btn').forEach(function(starBtn) {
+            if (parseInt(starBtn.getAttribute('data-rating')) <= rating) {
+                starBtn.classList.add('text-yellow-400');
+                starBtn.classList.remove('text-gray-300');
+            } else {
+                starBtn.classList.remove('text-yellow-400');
+                starBtn.classList.add('text-gray-300');
+            }
+        });
+    }
+    function updateEditRatingText(rating) {
+        const texts = {
+            1: 'Terrible',
+            2: 'Bad',
+            3: 'Okay',
+            4: 'Good',
+            5: 'Excellent'
+        };
+        document.getElementById('edit-rating-text').textContent = texts[rating] || '';
+    }
+
+    // Submit edit review form
+    document.getElementById('edit-review-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const reviewId = document.getElementById('edit-review-id').value;
+        const rating = document.getElementById('edit-rating-input').value;
+        const review = document.getElementById('edit-review-textarea').value;
+        fetch(`/review/${reviewId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ rating, review })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to update review.');
+            }
+        })
+        .catch(() => alert('Failed to update review.'));
+    });
+});
+</script>
+@endpush
     @if(session('error'))
         <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xs flex justify-center">
             <div class="bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 border-2 border-red-600 animate-fade-in-up">
@@ -511,57 +649,7 @@ input[type="number"]::-ms-clear {
                                                         Helpful <span class="helpful-count">({{ $review->helpful_count ?? 0 }})</span>
                                                     </span>
                                             </div>
-<!-- Edit Review Modal (moved outside reviews loop) -->
-<div id="edit-review-modal" class="fixed inset-0 backdrop-blur-sm items-center justify-center z-50 hidden p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
-        <div class="p-8">
-            <button id="close-edit-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                    </svg>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Edit Your Review</h3>
-                <p class="text-gray-600">Update your experience for this product</p>
-            </div>
-            <form id="edit-review-form" class="space-y-6">
-                <input type="hidden" name="review_id" id="edit-review-id" value="">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-3">Your Rating</label>
-                    <div class="flex gap-1 justify-center mb-4">
-                        @for($i = 1; $i <= 5; $i++)
-                            <button type="button" class="edit-star-btn w-10 h-10 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="{{ $i }}">
-                                <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                                </svg>
-                            </button>
-                        @endfor
-                    </div>
-                    <input type="hidden" name="rating" id="edit-rating-input" value="5">
-                    <p class="text-center text-sm text-gray-500" id="edit-rating-text">Excellent</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-900 mb-3">Your Review</label>
-                    <textarea name="review" id="edit-review-textarea" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none" rows="4" required></textarea>
-                </div>
-                <div class="flex gap-3 pt-4">
-                    <button type="button" id="cancel-edit-review" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-xl hover:from-yellow-500 hover:to-yellow-600 font-semibold transition-all duration-200 shadow-lg">
-                        Update Review
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-</script>
+
 
 @endsection
 
@@ -751,7 +839,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <!-- Write Review Modal -->
-<div id="review-modal" class="fixed inset-0 backdrop-blur-sm items-center justify-center z-50 hidden p-4">
+<div id="review-modal" class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
         <div class="p-8">
             <button id="close-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
