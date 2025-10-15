@@ -9,8 +9,33 @@ use App\Models\ReviewHelpful;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 
+
 class ReviewController extends Controller
 {
+
+    public function update(Request $request, $id)
+    {
+        $review = Review::findOrFail($id);
+        // Only the review owner can update
+        if (auth()->id() !== $review->user_id && (!auth()->user() || auth()->user()->role !== 'admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized to update this review.'
+            ], 403);
+        }
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:1000',
+        ]);
+        $review->rating = $request->rating;
+        $review->review = $request->review;
+        $review->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Review updated successfully!',
+            'review' => $review->load('user')
+        ]);
+    }
     public function store(Request $request)
     {
         $request->validate([

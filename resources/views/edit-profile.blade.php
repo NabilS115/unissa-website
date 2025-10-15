@@ -18,48 +18,53 @@
             <div class="relative px-8 pb-8">
                 <div class="flex items-start justify-between -mt-16 relative">
                     <!-- Profile Picture (positioned absolutely to break out of flow) -->
-                    <div class="relative group flex-shrink-0 z-10" id="profile-photo-group">
+                    <div class="relative group flex-shrink-0 z-10" id="profile-photo-group" x-data="{ modalOpen: false, modalType: '' }">
                         <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" 
                              alt="Profile Picture" 
                              class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-xl bg-white cursor-pointer" 
                              id="profile-photo-trigger">
-                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-teal-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center z-30">
-                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                            </svg>
-                        </div>
 
-                        <button type="button" id="profile-photo-icon" class="absolute inset-0 flex items-center justify-center w-full h-full bg-black bg-opacity-0 hover:bg-opacity-50 rounded-2xl focus:outline-none transition-all duration-200 group-hover:bg-opacity-30" style="z-index:2;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="opacity-0 group-hover:opacity-100 transition-opacity duration-200" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
-                                <circle cx="12" cy="13" r="3.2" stroke="white" stroke-width="2" fill="none" />
-                                <rect x="4" y="7" width="16" height="12" rx="3" stroke="white" stroke-width="2" fill="none" />
-                                <rect x="9" y="3" width="6" height="4" rx="2" stroke="white" stroke-width="2" fill="none" />
-                            </svg>
-                        </button>
+                        <button type="button" id="profile-photo-icon" @click="modalOpen = true" class="absolute inset-0 flex items-center justify-center w-full h-full rounded-2xl focus:outline-none transition-all duration-200 group-hover:bg-opacity-30" style="z-index:2;"></button>
 
-                        <div id="profile-photo-menu" class="absolute left-1/2 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl py-2 opacity-0 pointer-events-none z-50 transform -translate-x-1/2 transition-all duration-200">
-                            <form method="POST" action="{{ route('profile.photo') }}" enctype="multipart/form-data">
-                                @csrf
-                                <label for="profile_photo" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 cursor-pointer transition-colors rounded-lg mx-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                    </svg>
-                                    Upload New Photo
-                                    <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*" onchange="this.form.submit()">
-                                </label>
-                            </form>
-                            @if(Auth::user()->profile_photo_url)
-                            <form method="POST" action="{{ route('profile.photo.delete') }}">
-                                @csrf
-                                <button type="submit" class="flex items-center gap-3 w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors rounded-lg mx-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                    Delete Photo
-                                </button>
-                            </form>
-                            @endif
-                        </div>
+                        <!-- Professional Modal Overlay for Upload & Delete (together) -->
+                        <template x-if="modalOpen">
+                            <div class="fixed inset-0 z-[9999] flex items-center justify-center">
+                                <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" @click="modalOpen = false"></div>
+                                <div class="relative bg-white rounded-2xl shadow-2xl px-6 py-8 w-full max-w-xs flex flex-col items-center z-10">
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Profile Photo</h2>
+                                    <p class="text-gray-500 mb-6 text-center">Update or remove your profile picture below.</p>
+                                    <form method="POST" action="{{ route('profile.photo') }}" enctype="multipart/form-data" class="w-full flex flex-col items-center gap-4 mb-4">
+                                        @csrf
+                                        <label for="profile_photo" class="flex flex-col items-center gap-2 cursor-pointer group">
+                                            <span class="flex items-center justify-center w-16 h-16 rounded-full bg-teal-50 group-hover:bg-teal-100 transition">
+                                                <svg class="w-8 h-8 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                </svg>
+                                            </span>
+                                            <span class="font-medium text-teal-700 group-hover:text-teal-900">Upload New Photo</span>
+                                            <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*" onchange="this.form.submit()">
+                                        </label>
+                                    </form>
+                                    @if(Auth::user()->profile_photo_url)
+                                    <div class="w-full flex items-center gap-2 my-2">
+                                        <div class="flex-1 h-px bg-gray-200"></div>
+                                        <span class="text-xs text-gray-400 font-medium">or</span>
+                                        <div class="flex-1 h-px bg-gray-200"></div>
+                                    </div>
+                                    <form method="POST" action="{{ route('profile.photo.delete') }}" class="w-full flex flex-col items-center gap-4 mt-2">
+                                        @csrf
+                                        <span class="flex items-center justify-center w-16 h-16 rounded-full bg-red-50">
+                                            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </span>
+                                        <span class="font-medium text-red-600">Delete Profile Photo</span>
+                                        <button type="submit" class="w-full py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition">Delete</button>
+                                    </form>
+                                    @endif
+                                </div>
+                            </div>
+                        </template>
                     </div>
 
                     <!-- Center Content: Profile Info -->

@@ -1,3 +1,16 @@
+    @if(session('error'))
+        <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xs flex justify-center">
+            <div class="bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 border-2 border-red-600 animate-fade-in-up">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span class="font-semibold">{{ session('error') }}</span>
+            </div>
+        </div>
+        <style>
+        .animate-fade-in-up { animation: fade-in-up 0.4s cubic-bezier(0.4,0,0.2,1); }
+        </style>
+    @endif
 @extends('layouts.app')
 
 @section('title', 'Product Details')
@@ -166,24 +179,27 @@ input[type="number"]::-ms-clear {
                                     <p class="text-gray-600 text-sm mt-1">Select quantity and add to your cart</p>
                                 </div>
                             </div>
-                            <div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border 
-                                @if($product->isAvailable()) border-green-200
-                                @elseif($product->status === 'out_of_stock') border-red-200
-                                @elseif($product->status === 'inactive') border-gray-200
-                                @else border-yellow-200
-                                @endif">
-                                <div class="w-2 h-2 rounded-full
-                                    @if($product->isAvailable()) bg-green-500 animate-pulse
-                                    @elseif($product->status === 'out_of_stock') bg-red-500
-                                    @elseif($product->status === 'inactive') bg-gray-500
-                                    @else bg-yellow-500
-                                    @endif"></div>
-                                <span class="text-sm font-medium
-                                    @if($product->isAvailable()) text-green-700
-                                    @elseif($product->status === 'out_of_stock') text-red-700
-                                    @elseif($product->status === 'inactive') text-gray-700
-                                    @else text-yellow-700
-                                    @endif">
+                            <div @class([
+                                'hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm',
+                                'border-green-200' => $product->isAvailable(),
+                                'border-red-200' => $product->status === 'out_of_stock',
+                                'border-gray-200' => $product->status === 'inactive',
+                                'border-yellow-200' => !$product->isAvailable() && $product->status !== 'out_of_stock' && $product->status !== 'inactive',
+                            ])>
+                                <div @class([
+                                    'w-2 h-2 rounded-full',
+                                    'bg-green-500 animate-pulse' => $product->isAvailable(),
+                                    'bg-red-500' => $product->status === 'out_of_stock',
+                                    'bg-gray-500' => $product->status === 'inactive',
+                                    'bg-yellow-500' => !$product->isAvailable() && $product->status !== 'out_of_stock' && $product->status !== 'inactive',
+                                ])></div>
+                                <span @class([
+                                    'text-sm font-medium',
+                                    'text-green-700' => $product->isAvailable(),
+                                    'text-red-700' => $product->status === 'out_of_stock',
+                                    'text-gray-700' => $product->status === 'inactive',
+                                    'text-yellow-700' => !$product->isAvailable() && $product->status !== 'out_of_stock' && $product->status !== 'inactive',
+                                ])>
                                     {{ $product->availability_status }}
                                     @if($product->track_stock && $product->isInStock())
                                         ({{ $product->stock_quantity }} left)
@@ -462,7 +478,7 @@ input[type="number"]::-ms-clear {
                                                 
                                                 @if($isLongReview)
                                                     <span class="review-text-{{ $review->id }} block">{{ $truncatedText }}...</span>
-                                                    <span class="review-full-{{ $review->id }} hidden block">{{ $reviewText }}</span>
+                                                    <span class="review-full-{{ $review->id }} hidden">{{ $reviewText }}</span>
                                                     <button class="read-more-btn text-blue-600 hover:text-blue-800 font-medium ml-1 mt-2" 
                                                             data-review-id="{{ $review->id }}">Read more</button>
                                                 @else
@@ -473,6 +489,9 @@ input[type="number"]::-ms-clear {
                                             <div class="flex items-center gap-4 text-sm text-gray-500">
                                                 @if(Auth::user())
                                                     @if(Auth::user()->id === $review->user_id)
+                                                        <button class="edit-review-btn text-blue-600 hover:text-blue-800 font-medium transition-colors mr-3" data-id="{{ $review->id }}" data-rating="{{ $review->rating }}" data-review="{{ e($review->review) }}">
+                                                            Edit Review
+                                                        </button>
                                                         <button class="delete-review-btn text-red-600 hover:text-red-800 font-medium transition-colors" data-id="{{ $review->id }}">
                                                             Delete Review
                                                         </button>
@@ -485,6 +504,214 @@ input[type="number"]::-ms-clear {
                                                         </button>
                                                     @endif
                                                 @else
+                                                    <span class="flex items-center gap-1 text-gray-400">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.20-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                                                        </svg>
+                                                        Helpful <span class="helpful-count">({{ $review->helpful_count ?? 0 }})</span>
+                                                    </span>
+                                            </div>
+<!-- Edit Review Modal (moved outside reviews loop) -->
+<div id="edit-review-modal" class="fixed inset-0 backdrop-blur-sm items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+        <div class="p-8">
+            <button id="close-edit-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Edit Your Review</h3>
+                <p class="text-gray-600">Update your experience for this product</p>
+            </div>
+            <form id="edit-review-form" class="space-y-6">
+                <input type="hidden" name="review_id" id="edit-review-id" value="">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-3">Your Rating</label>
+                    <div class="flex gap-1 justify-center mb-4">
+                        @for($i = 1; $i <= 5; $i++)
+                            <button type="button" class="edit-star-btn w-10 h-10 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="{{ $i }}">
+                                <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                </svg>
+                            </button>
+                        @endfor
+                    </div>
+                    <input type="hidden" name="rating" id="edit-rating-input" value="5">
+                    <p class="text-center text-sm text-gray-500" id="edit-rating-text">Excellent</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-3">Your Review</label>
+                    <textarea name="review" id="edit-review-textarea" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none" rows="4" required></textarea>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="cancel-edit-review" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-xl hover:from-yellow-500 hover:to-yellow-600 font-semibold transition-all duration-200 shadow-lg">
+                        Update Review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</script>
+
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Edit Review Modal Logic
+    const editReviewModal = document.getElementById('edit-review-modal');
+    const closeEditReviewModal = document.getElementById('close-edit-review-modal');
+    const cancelEditReview = document.getElementById('cancel-edit-review');
+    const editReviewForm = document.getElementById('edit-review-form');
+    const editStarBtns = document.querySelectorAll('.edit-star-btn');
+    const editRatingInput = document.getElementById('edit-rating-input');
+    const editRatingText = document.getElementById('edit-rating-text');
+    const editReviewTextarea = document.getElementById('edit-review-textarea');
+    const editReviewIdInput = document.getElementById('edit-review-id');
+    const editRatingTexts = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+    // Open modal and pre-fill data
+    document.querySelectorAll('.edit-review-btn').forEach(btn => {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            const reviewId = this.getAttribute('data-id');
+            const rating = this.getAttribute('data-rating');
+            const review = this.getAttribute('data-review');
+            if (editReviewModal && editReviewIdInput && editRatingInput && editReviewTextarea) {
+                editReviewIdInput.value = reviewId;
+                editRatingInput.value = rating;
+                editReviewTextarea.value = review;
+                // Set stars
+                editStarBtns.forEach((star, i) => {
+                    if (i < rating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+                editRatingText.textContent = editRatingTexts[rating-1];
+                editReviewModal.classList.remove('hidden');
+                editReviewModal.classList.add('flex');
+            }
+        };
+    });
+
+    if (closeEditReviewModal && editReviewModal) {
+        closeEditReviewModal.onclick = () => {
+            editReviewModal.classList.remove('flex');
+            editReviewModal.classList.add('hidden');
+        };
+    }
+    if (cancelEditReview && editReviewModal) {
+        cancelEditReview.onclick = () => {
+            editReviewModal.classList.remove('flex');
+            editReviewModal.classList.add('hidden');
+        };
+    }
+
+    // Star rating logic for edit modal
+    if (editStarBtns.length > 0 && editRatingInput && editRatingText) {
+        editStarBtns.forEach((btn, index) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const rating = index + 1;
+                editRatingInput.value = rating;
+                editRatingText.textContent = editRatingTexts[index];
+                editStarBtns.forEach((star, i) => {
+                    if (i < rating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+            btn.addEventListener('mouseenter', () => {
+                const rating = index + 1;
+                editStarBtns.forEach((star, i) => {
+                    if (i < rating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+            btn.addEventListener('mouseleave', () => {
+                const currentRating = parseInt(editRatingInput.value) || 5;
+                editStarBtns.forEach((star, i) => {
+                    if (i < currentRating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+        });
+    }
+
+    // Edit review form submission
+    if (editReviewForm) {
+        editReviewForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const reviewId = editReviewIdInput.value;
+            const rating = editRatingInput.value;
+            const reviewText = editReviewTextarea.value;
+            if (!reviewId || !rating || !reviewText.trim()) {
+                alert('Please provide both a rating and review text.');
+                return;
+            }
+            // Add loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Updating...';
+            submitBtn.disabled = true;
+            try {
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('_method', 'PUT');
+                formData.append('rating', parseInt(rating));
+                formData.append('review', reviewText.trim());
+                const response = await fetch(`/reviews/${reviewId}`, {
+                    method: "POST",
+                    body: formData
+                });
+                if (response.ok) {
+                    if (editReviewModal) editReviewModal.classList.add('hidden');
+                    window.location.reload();
+                } else {
+                    const text = await response.text();
+                    console.error('Server response:', text);
+                    alert("Failed to update review. Please try again.");
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert("Network error. Please check your connection and try again.");
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        };
+    }
+});
+</script>
+@endpush
                                                     <span class="flex items-center gap-1 text-gray-400">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.20-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
@@ -524,7 +751,7 @@ input[type="number"]::-ms-clear {
 </div>
 
 <!-- Write Review Modal -->
-<div id="review-modal" class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+<div id="review-modal" class="fixed inset-0 backdrop-blur-sm items-center justify-center z-50 hidden p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
         <div class="p-8">
             <button id="close-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">

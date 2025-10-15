@@ -288,6 +288,7 @@ Route::get('/product/{id}', [ReviewController::class, 'show'])->name('product.de
 Route::post('/product/{id}/add-review', [ReviewController::class, 'add'])->name('product.add-review');
 Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('review.delete')->middleware('auth');
 Route::post('/reviews/{id}/helpful', [ReviewController::class, 'helpful'])->name('review.helpful');
+Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('review.update')->middleware('auth');
 
 // Search routes
 Route::get('/search', [SearchController::class, 'search'])->name('search');
