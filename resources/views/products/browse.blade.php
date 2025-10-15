@@ -231,7 +231,7 @@
     <!-- Admin Modals and Loading Overlays -->
     @if(auth()->user()?->role === 'admin')
     <!-- Add Product Modal -->
-    <div x-show="showAddModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+    <div x-show="showAddModal" x-cloak class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
         <form method="POST" action="{{ route('unissa-cafe.products.store') }}" enctype="multipart/form-data"
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
             @csrf

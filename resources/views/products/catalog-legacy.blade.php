@@ -683,7 +683,7 @@
         </button>
     </div>
     <!-- Add Product Modal -->
-    <div x-show="showAddModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div x-show="showAddModal" x-cloak class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
         <form x-ref="addForm" @submit.prevent="submitAddProduct" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             @csrf

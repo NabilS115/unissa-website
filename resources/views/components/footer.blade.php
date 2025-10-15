@@ -42,7 +42,11 @@
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col items-center min-w-[200px]">
             <span class="font-bold mb-2">Follow Us</span>
             <div class="flex gap-4 mb-4">
-                <a href="#" class="text-white" title="Instagram">
+                @php
+                    $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*');
+                    $cafeInsta = 'https://www.instagram.com/unissacafe/';
+                @endphp
+                <a href="{{ $isCafe ? $cafeInsta : '#' }}" class="text-white" title="Instagram" target="_blank" rel="noopener">
                     <!-- Instagram Official SVG -->
                     <svg width="24" height="24" viewBox="0 0 448 512" fill="currentColor"><path d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.3 224.1 371.3 339.2 319.8 339.2 256.1 287.7 141 224.1 141zm0 186.6c-39.6 0-71.7-32.1-71.7-71.7s32.1-71.7 71.7-71.7 71.7 32.1 71.7 71.7-32.1 71.7-71.7 71.7zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zm76.1 27.2c-1.7-35.3-9.9-66.7-36.2-92.9S388.6 9.7 353.3 8c-35.3-1.7-138.6-1.7-173.9 0-35.3 1.7-66.7 9.9-92.9 36.2S9.7 123.4 8 158.7c-1.7 35.3-1.7 138.6 0 173.9 1.7 35.3 9.9 66.7 36.2 92.9s57.6 34.5 92.9 36.2c35.3 1.7 138.6 1.7 173.9 0 35.3-1.7 66.7-9.9 92.9-36.2s34.5-57.6 36.2-92.9c1.7-35.3 1.7-138.6 0-173.9zM398.8 388c-7.8 19.6-22.9 34.7-42.5 42.5-29.5 11.7-99.5 9-132.3 9s-102.7 2.6-132.3-9c-19.6-7.8-34.7-22.9-42.5-42.5-11.7-29.5-9-99.5-9-132.3s-2.6-102.7 9-132.3c7.8-19.6 22.9-34.7 42.5-42.5 29.5-11.7 99.5-9 132.3-9s102.7-2.6 132.3 9c19.6 7.8 34.7 22.9 42.5 42.5 11.7 29.5 9 99.5 9 132.3s2.6 102.7-9 132.3z"/></svg>
                 </a>

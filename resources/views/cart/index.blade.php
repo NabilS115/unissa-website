@@ -48,22 +48,31 @@
                             <div class="group relative bg-gradient-to-r from-gray-50 to-white p-6 border border-gray-200 rounded-2xl hover:shadow-lg hover:border-teal-200 transition-all duration-300">
                                 <!-- Product Image -->
                                 <div class="flex items-start gap-6">
-                                    <div class="w-24 h-24 flex-shrink-0 relative overflow-hidden rounded-xl bg-gray-100">
-                                        @if($item->product->img)
-                                            <img src="{{ asset($item->product->img) }}" 
-                                                 alt="{{ $item->product->name }}"
-                                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 bg-white"
-                                                 style="background-color: #fff;"
-                                                 onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'96\' height=\'96\' viewBox=\'0 0 96 96\'><rect width=\'96\' height=\'96\' rx=\'16\' fill=\'%23fff\'/><text x=\'50%\' y=\'54%\' text-anchor=\'middle\' fill=\'%23ccc\' font-size=\'18\' font-family=\'Arial\' dy=\'.3em\'>No Image</text></svg>'">
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center bg-white">
-                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                </svg>
-                                            </div>
-                                        @endif
-                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                                    </div>
+                                    @php
+                                        $imgPath = $item->product->img;
+                                        $isStorage = $imgPath && (str_starts_with($imgPath, 'products/') || str_starts_with($imgPath, 'catalog/') || str_starts_with($imgPath, 'gallery/'));
+                                        $validImage = false;
+                                        if ($imgPath && $isStorage && \Illuminate\Support\Facades\Storage::disk('public')->exists($imgPath)) {
+                                            $ext = strtolower(pathinfo($imgPath, PATHINFO_EXTENSION));
+                                            $validImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
+                                        } elseif ($imgPath && !$isStorage) {
+                                            $ext = strtolower(pathinfo($imgPath, PATHINFO_EXTENSION));
+                                            $validImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
+                                        }
+                                    @endphp
+                                    @if(($imgPath && $isStorage && $validImage && \Illuminate\Support\Facades\Storage::disk('public')->exists($imgPath)))
+                                        <img src="{{ Storage::url($imgPath) }}"
+                                             alt="{{ $item->product->name }}"
+                                             class="w-24 h-24 object-cover group-hover:scale-105 transition-transform duration-300 bg-white rounded-xl"
+                                             style="background-color: #fff;">
+                                    @elseif($imgPath && !$isStorage && $validImage)
+                                        <img src="{{ asset($imgPath) }}"
+                                             alt="{{ $item->product->name }}"
+                                             class="w-24 h-24 object-cover group-hover:scale-105 transition-transform duration-300 bg-white rounded-xl"
+                                             style="background-color: #fff;">
+                                    @else
+                                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'><rect width='96' height='96' rx='16' fill='%23f3f4f6'/><text x='50%' y='54%' text-anchor='middle' fill='%239ca3af' font-size='18' font-family='Arial' dy='.3em'>No Image</text></svg>" alt="No Image" class="w-24 h-24 object-contain opacity-80 bg-white rounded-xl" />
+                                    @endif
                                     
                                     <!-- Product Details -->
                                     <div class="flex-grow min-w-0">
@@ -195,7 +204,7 @@
                                     <span class="text-teal-600 font-semibold" data-item-count>{{ $cartItems->sum('quantity') }} items</span>
                                 </div>
                             </div>
-                            
+                            <!-- Removed floating white circle (decorative div with svg) here -->
                             <div class="border-t-2 border-dashed border-gray-300 pt-6">
                                 <div class="flex justify-between items-center">
                                     <span class="text-2xl font-bold text-gray-800">Total</span>
@@ -258,6 +267,7 @@ input[type="number"] {
     -moz-appearance: textfield;
     appearance: none;
 }
+
 </style>
 
 <script>

@@ -15,9 +15,10 @@
         </div>
         
         <!-- Floating Elements -->
-        <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
-        <div class="absolute top-1/2 right-20 w-16 h-16 bg-white/10 rounded-full animate-bounce" style="animation-delay: 1s;"></div>
-        <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-white/10 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
+    <!-- Removed the right-side white circle -->
+    {{-- <div class="absolute top-1/2 right-20 w-16 h-16 bg-white/10 rounded-full animate-bounce" style="animation-delay: 1s;"></div> --}}
+    <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-white/10 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
         
         <div class="relative z-10 text-center px-4">
             <div class="mb-6 animate-fade-in-up">
