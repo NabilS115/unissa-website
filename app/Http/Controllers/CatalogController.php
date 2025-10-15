@@ -212,6 +212,10 @@ class CatalogController extends Controller
         
         // Set stock quantity if provided
         if (isset($validated['stock_quantity']) && $validated['stock_quantity'] !== null) {
+            // If stock quantity is changed, update last_restocked_at
+            if ($product->stock_quantity != $validated['stock_quantity']) {
+                $product->last_restocked_at = now();
+            }
             $product->stock_quantity = $validated['stock_quantity'];
         }
 

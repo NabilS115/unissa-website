@@ -421,7 +421,7 @@
 
     <!-- Edit Product Modal -->
     @if(auth()->check() && auth()->user()->role === 'admin')
-    <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+    <div x-show="showEditModal" x-cloak class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
         <form method="POST" :action="`/catalog/edit/${editingProduct?.id || ''}`" enctype="multipart/form-data"
               @submit="showEditModal = false" 
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
