@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
-        <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
+    <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
             @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
                 <!-- Unissa Cafe Footer Navigation -->
                 <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
@@ -35,7 +35,6 @@
             @else
                 <!-- Tijarah Footer Navigation -->
                 <a href="/" class="text-white mb-2 hover:underline">Home</a>
-                <a href="/catalog" class="text-white mb-2 hover:underline">Catalog</a>
                 <a href="/company-history" class="text-white mb-2 hover:underline">About</a>
                 <a href="/contact" class="text-white hover:underline">Contact Us</a>
             @endif
