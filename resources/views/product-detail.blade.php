@@ -115,11 +115,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const reviewId = document.getElementById('edit-review-id').value;
         const rating = document.getElementById('edit-rating-input').value;
         const review = document.getElementById('edit-review-textarea').value;
-        fetch(`/review/${reviewId}`, {
+        fetch(`/reviews/${reviewId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({ rating, review })
         })
@@ -627,7 +628,7 @@ input[type="number"]::-ms-clear {
                                             <div class="flex items-center gap-4 text-sm text-gray-500">
                                                 @if(Auth::user())
                                                     @if(Auth::user()->id === $review->user_id)
-                                                        <button class="edit-review-btn text-blue-600 hover:text-blue-800 font-medium transition-colors mr-3" data-id="{{ $review->id }}" data-rating="{{ $review->rating }}" data-review="{{ e($review->review) }}">
+                                                        <button class="edit-review-btn text-blue-600 hover:text-blue-800 font-medium transition-colors mr-3" data-review-id="{{ $review->id }}" data-rating="{{ $review->rating }}" data-review="{{ e($review->review) }}">
                                                             Edit Review
                                                         </button>
                                                         <button class="delete-review-btn text-red-600 hover:text-red-800 font-medium transition-colors" data-id="{{ $review->id }}">
