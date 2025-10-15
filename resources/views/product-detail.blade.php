@@ -240,24 +240,40 @@ input[type="number"]::-ms-clear {
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
-    @if(session('success'))
-        <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xs flex justify-center">
-            <div class="bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 border-2 border-green-600 animate-fade-in-up">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                <span class="font-semibold">{{ session('success') }}</span>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        @if(session('success'))
+            <div id="success-toast" class="absolute top-0 left-0 mt-8 ml-8 z-50 max-w-xs w-fit pointer-events-none flex">
+                <div class="bg-green-500 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-3 border-2 border-green-600 animate-fade-in-up pointer-events-auto relative w-fit">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="font-semibold">{{ session('success') }}</span>
+                    <button id="close-success-toast" class="absolute top-2 right-2 text-white/70 hover:text-white transition-colors text-lg leading-none px-1 py-0.5 rounded focus:outline-none" aria-label="Close notification">&times;</button>
+                </div>
             </div>
-        </div>
-        <style>
-        @keyframes fade-in-up {
-            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .animate-fade-in-up { animation: fade-in-up 0.4s cubic-bezier(0.4,0,0.2,1); }
-        </style>
-    @endif
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <style>
+            @keyframes fade-in-up {
+                0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+                100% { opacity: 1; transform: translateY(0) scale(1); }
+            }
+            .animate-fade-in-up { animation: fade-in-up 0.4s cubic-bezier(0.4,0,0.2,1); }
+            </style>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var toast = document.getElementById('success-toast');
+                var closeBtn = document.getElementById('close-success-toast');
+                if (closeBtn && toast) {
+                    closeBtn.addEventListener('click', function() {
+                        toast.style.display = 'none';
+                    });
+                    setTimeout(function() {
+                        if (toast) toast.style.display = 'none';
+                    }, 4000);
+                }
+            });
+            </script>
+        @endif
         <!-- Breadcrumb and Back Button -->
         <div class="mb-8">
             <button onclick="goBack()" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200 transition-all duration-200 font-medium">
@@ -1625,7 +1641,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create notification element
         const notification = document.createElement('div');
         notification.id = 'cart-notification';
-        notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+        notification.className = `fixed top-4 left-1/2 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform -translate-x-1/2 opacity-0 ${
             type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
         }`;
         notification.innerHTML = `
@@ -1642,14 +1658,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.body.appendChild(notification);
 
-        // Animate in
+        // Animate in (fade in)
         setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
+            notification.style.opacity = '1';
         }, 100);
 
-        // Auto-hide after 4 seconds
+        // Auto-hide after 4 seconds (fade out)
         setTimeout(() => {
-            notification.style.transform = 'translateX(full)';
+            notification.style.opacity = '0';
             setTimeout(() => {
                 notification.remove();
             }, 300);
