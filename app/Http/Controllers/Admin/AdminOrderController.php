@@ -102,6 +102,15 @@ class AdminOrderController extends Controller
         // Log status change (you could create an order_status_logs table for this)
         \Log::info("Order {$order->id} status changed from {$oldStatus} to {$newStatus} by admin " . auth()->user()->id);
 
+        // Send email notification to the user about status change
+        if ($order->user && $order->user->email) {
+            try {
+                \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusChangedMail($order));
+            } catch (\Exception $e) {
+                \Log::error("Failed to send order status changed email for order {$order->id}: " . $e->getMessage());
+            }
+        }
+
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
