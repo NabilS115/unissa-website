@@ -196,9 +196,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         $setHeaderContext($request);
         return app(\App\Http\Controllers\Admin\UserController::class)->export($request);
     })->name('users.export');
-    Route::get('/users/{user}', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
+    Route::get('/users/{user}', function (\Illuminate\Http\Request $request, \App\Models\User $user) use ($setHeaderContext) {
         $setHeaderContext($request);
-        return app(\App\Http\Controllers\Admin\UserController::class)->show($request, $user);
+        return app(\App\Http\Controllers\Admin\UserController::class)->show($user);
     })->name('users.show');
     Route::post('/users', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
         $setHeaderContext($request);
@@ -238,15 +238,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         $setHeaderContext($request);
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->bulkUpdate($request);
     })->name('orders.bulk-update');
-    Route::get('/orders/{order}', function (\Illuminate\Http\Request $request, $order) use ($setHeaderContext) {
+    Route::get('/orders/{order}', function (\Illuminate\Http\Request $request, \App\Models\Order $order) use ($setHeaderContext) {
         $setHeaderContext($request);
-        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->show($request, $order);
+        return app(\App\Http\Controllers\Admin\AdminOrderController::class)->show($order);
     })->name('orders.show');
-    Route::patch('/orders/{order}/status', function (\Illuminate\Http\Request $request, $order) use ($setHeaderContext) {
+    Route::patch('/orders/{order}/status', function (\Illuminate\Http\Request $request, \App\Models\Order $order) use ($setHeaderContext) {
         $setHeaderContext($request);
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->updateStatus($request, $order);
     })->name('orders.update-status');
-    Route::patch('/orders/{order}/payment-status', function (\Illuminate\Http\Request $request, $order) use ($setHeaderContext) {
+    Route::patch('/orders/{order}/payment-status', function (\Illuminate\Http\Request $request, \App\Models\Order $order) use ($setHeaderContext) {
         $setHeaderContext($request);
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->updatePaymentStatus($request, $order);
     })->name('orders.update-payment-status');
