@@ -268,7 +268,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         $setHeaderContext($request);
         return app(\App\Http\Controllers\Admin\AdminProductController::class)->updateStatus($request, $product);
     })->name('products.update-status');
-    Route::patch('/products/{product}/stock', function (\Illuminate\Http\Request $request, $product) use ($setHeaderContext) {
+    Route::patch('/products/{product}/stock', function (\Illuminate\Http\Request $request, \App\Models\Product $product) use ($setHeaderContext) {
         $setHeaderContext($request);
         return app(\App\Http\Controllers\Admin\AdminProductController::class)->updateStock($request, $product);
     })->name('products.update-stock');
