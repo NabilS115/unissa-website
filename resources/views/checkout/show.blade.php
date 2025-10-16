@@ -53,8 +53,22 @@ input[type="number"] {
                     <!-- Product Info -->
                     <div class="mb-6 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100">
                         <div class="flex items-start gap-4">
-                            <img src="{{ $product->img }}" alt="{{ $product->name }}" 
-                                 class="w-18 h-18 object-cover rounded-xl border-2 border-white shadow-md">
+                            @php
+                                // Normalize image path to avoid double '/storage/storage'
+                                $imgPath = $product->img;
+                                if ($imgPath && Str::startsWith($imgPath, '/storage/')) {
+                                    $imgPath = ltrim($imgPath, '/');
+                                    // remove leading storage/ so asset('storage/...') builds correctly
+                                    if (Str::startsWith($imgPath, 'storage/')) {
+                                        $imgPath = substr($imgPath, strlen('storage/'));
+                                    }
+                                }
+                                $productImageSrc = $imgPath ? (Str::startsWith($imgPath, ['http://', 'https://']) ? $imgPath : asset('storage/' . $imgPath)) : null;
+                                // Inline SVG fallback (small transparent placeholder)
+                                $svgFallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="100%" height="100%" fill="%23e6fffa"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23666" font-size="14">No Image</text></svg>';
+                            @endphp
+                            <img src="{{ $productImageSrc ?? $svgFallback }}" alt="{{ $product->name }}"
+                                 class="w-18 h-18 object-cover rounded-xl border-2 border-white shadow-md" onerror="this.onerror=null;this.src='{{ $svgFallback }}';">
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-900 mb-1">{{ $product->name }}</h3>
                                 <p class="text-sm text-gray-600 mb-3">{{ Str::limit($product->desc, 60) }}</p>

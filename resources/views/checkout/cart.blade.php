@@ -27,9 +27,23 @@
                     <div class="space-y-4 mb-6">
                         @foreach($cartItems as $item)
                         <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all duration-200">
-                            <img src="{{ asset('storage/' . $item->product->img) }}" 
-                                 alt="{{ $item->product->name }}"
-                                 class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm">
+                       {{-- DEBUG: Show the actual image path for troubleshooting --}}
+                        {{-- <div class="text-xs text-red-500">IMG: {{ $item->product->img }}</div> --}}
+                        @php
+                            $img = $item->product->img;
+                            if ($img && Str::startsWith($img, '/storage/')) {
+                                $img = ltrim($img, '/');
+                                if (Str::startsWith($img, 'storage/')) {
+                                    $img = substr($img, strlen('storage/'));
+                                }
+                            }
+                            $itemImageSrc = $img ? (Str::startsWith($img, ['http://', 'https://']) ? $img : asset('storage/' . $img)) : null;
+                            $svgFallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="100%" height="100%" fill="%23e6fffa"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23666" font-size="10">No Image</text></svg>';
+                        @endphp
+                        <img src="{{ $itemImageSrc ?? $svgFallback }}"
+                             alt="{{ $item->product->name }}"
+                             class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm"
+                             onerror="this.onerror=null;this.src='{{ $svgFallback }}';">
                             <div class="flex-grow">
                                 <h4 class="font-semibold text-gray-800">{{ $item->product->name }}</h4>
                                 <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x ${{ number_format($item->product->price, 2) }}</p>
@@ -230,14 +244,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function togglePaymentMethod() {
         const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
         
-        if (selectedMethod && selectedMethod.value === 'cash') {
-            cashPaymentInfo.style.display = 'block';
-            creditCardForm.style.display = 'none';
-            submitButton.querySelector('span').textContent = 'Place Order Now';
-        } else if (selectedMethod && selectedMethod.value === 'online') {
-            cashPaymentInfo.style.display = 'none';
-            creditCardForm.style.display = 'block';
-            submitButton.querySelector('span').textContent = 'Pay Now & Place Order';
+        if (!selectedMethod) return;
+        // Safely toggle visibility if elements exist
+        if (selectedMethod.value === 'cash') {
+            if (cashPaymentInfo) cashPaymentInfo.style.display = 'block';
+            if (creditCardForm) creditCardForm.style.display = 'none';
+            if (submitButton && submitButton.querySelector('span')) submitButton.querySelector('span').textContent = 'Place Order Now';
+        } else if (selectedMethod.value === 'online') {
+            if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
+            if (creditCardForm) creditCardForm.style.display = 'block';
+            if (submitButton && submitButton.querySelector('span')) submitButton.querySelector('span').textContent = 'Pay Now & Place Order';
         }
     }
     
