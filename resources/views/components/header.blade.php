@@ -396,15 +396,7 @@
         
         <div class="relative group" id="profile-group">
             <button id="profileMenuButton" class="w-10 h-10 rounded-full bg-white flex items-center justify-center focus:outline-none overflow-hidden shadow hover:shadow-lg transition-all duration-300">
-                @if(Auth::check() && Auth::user()->profile_photo_url)
-                    <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover pointer-events-none">
-                @else
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="24" height="24" class="pointer-events-none">
-                        <circle cx="20" cy="20" r="18" fill="#fff" stroke="#0d9488" stroke-width="2" />
-                        <circle cx="20" cy="16" r="5" fill="none" stroke="#0d9488" stroke-width="2" />
-                        <path d="M12 30c0-4 8-4 8-4s8 0 8 4" fill="none" stroke="#0d9488" stroke-width="2" />
-                    </svg>
-                @endif
+                <img src="{{ Auth::user()->profile_photo_url ? Auth::user()->profile_photo_url : asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover pointer-events-none">
             </button>
             <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 opacity-0 pointer-events-none z-50">
                 @auth

@@ -19,9 +19,163 @@
             <div class="relative px-8 pb-8">
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16">
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6 w-full">
-                        <div class="relative">
-                            <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
+                        <div class="relative group">
+                            <img id="profile-photo" src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white cursor-pointer">
+                            @php
+                                $defaultPhoto = asset('images/default-profile.svg');
+                                $userPhoto = Auth::user()->profile_photo_url;
+                                $hasCustomPhoto = $userPhoto && $userPhoto !== $defaultPhoto;
+                            @endphp
+                            <div class="absolute inset-0 bg-black/40 rounded-2xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer select-none"
+                                 onclick="openPhotoModal()">
+                                <svg class="w-12 h-12 text-white/90" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                    <path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                    <circle cx="12" cy="14" r="3.5" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                </svg>
+                            </div>
                         </div>
+                        <!-- Profile Photo Modal/Overlay -->
+                        <div id="photo-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
+                            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs flex flex-col items-center border border-gray-100">
+                                <!-- Modal Header -->
+                                <div class="w-full flex items-center justify-between px-6 py-4 border-b border-gray-100 rounded-t-2xl bg-gradient-to-r from-teal-50 to-emerald-50">
+                                    <span class="font-semibold text-lg text-gray-800">Profile Photo</span>
+                                    <button onclick="closePhotoModal()" class="text-gray-400 hover:text-gray-700 text-2xl focus:outline-none">&times;</button>
+                                </div>
+                                <!-- Modal Content -->
+                                <div class="flex flex-col items-center w-full px-6 py-6">
+                                    <div class="flex flex-col items-center mb-4">
+                                        <img id="modal-photo-preview" src="{{ Auth::user()->profile_photo_url ? Auth::user()->profile_photo_url : asset('images/default-profile.svg') }}" alt="Profile Picture Preview" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow bg-gray-100">
+                                    </div>
+                                    <div class="w-full flex flex-col gap-3">
+                                        @if (!$hasCustomPhoto)
+                                            <form id="upload-photo-form" enctype="multipart/form-data" style="display:none;">
+                                                <input type="file" name="profile_photo" id="upload-photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
+                                            </form>
+                                            <button type="button" id="upload-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-semibold shadow transition">
+                                                Upload Image
+                                            </button>
+                                        @else
+                                            <form id="change-photo-form" enctype="multipart/form-data" style="display:none;">
+                                                <input type="file" name="profile_photo" id="change-photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
+                                            </form>
+                                            <button type="button" id="change-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-semibold shadow transition">
+                                                Change Image
+                                            </button>
+                                            <button type="button" id="delete-btn" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold shadow transition">
+                                                Delete Image
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+@push('scripts')
+<script>
+function openPhotoModal() {
+    document.getElementById('photo-modal').classList.remove('hidden');
+}
+function closePhotoModal() {
+    document.getElementById('photo-modal').classList.add('hidden');
+}
+function handlePhotoUpload(event) {
+    const fileInput = event.target;
+    const file = fileInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modal-photo-preview').src = e.target.result;
+            const overlayPhoto = document.getElementById('profile-photo');
+            if (overlayPhoto) overlayPhoto.src = e.target.result;
+            // Update header profile image if present
+            const headerProfileImg = document.querySelector('#profileMenuButton img');
+            if (headerProfileImg) headerProfileImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // AJAX upload
+        let formData = new FormData();
+        formData.append('profile_photo', file);
+        fetch("{{ route('profile.photo') }}", {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: formData
+        })
+        .then(response => {
+            // Accept any response as success (redirect or HTML)
+            closePhotoModal();
+        })
+        .catch(error => {
+            // Still close modal and update preview
+            closePhotoModal();
+        });
+    }
+}
+function deleteProfilePhoto() {
+    if (confirm('Are you sure you want to delete your profile photo?')) {
+        fetch("{{ route('profile.photo.delete') }}", {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => {
+            var defaultPhoto = "{{ Auth::user()->getProfilePhotoUrlAttribute(null) }}";
+            // Update modal preview
+            var modalPreview = document.getElementById('modal-photo-preview');
+            if (modalPreview) modalPreview.src = defaultPhoto;
+            // Update overlay photo
+            var overlayPhoto = document.getElementById('profile-photo');
+            if (overlayPhoto) overlayPhoto.src = defaultPhoto;
+            // Update header profile image if present
+            const headerProfileImg = document.querySelector('#profileMenuButton img');
+            if (headerProfileImg) headerProfileImg.src = defaultPhoto;
+            // Update any other profile photo images in the DOM
+            document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
+                img.src = defaultPhoto;
+            });
+            closePhotoModal();
+        })
+        .catch(error => {
+            var defaultPhoto = "{{ asset('images/default-profile.svg') }}";
+            var modalPreview = document.getElementById('modal-photo-preview');
+            if (modalPreview) modalPreview.src = defaultPhoto;
+            var overlayPhoto = document.getElementById('profile-photo');
+            if (overlayPhoto) overlayPhoto.src = defaultPhoto;
+            const headerProfileImg = document.querySelector('#profileMenuButton img');
+            if (headerProfileImg) headerProfileImg.src = defaultPhoto;
+            document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
+                img.src = defaultPhoto;
+            });
+            closePhotoModal();
+        });
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var uploadBtn = document.getElementById('upload-btn');
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', function() {
+            document.getElementById('upload-photo-input').click();
+        });
+    }
+    var changeBtn = document.getElementById('change-btn');
+    if (changeBtn) {
+        changeBtn.addEventListener('click', function() {
+            document.getElementById('change-photo-input').click();
+        });
+    }
+    var deleteBtn = document.getElementById('delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+            deleteProfilePhoto();
+        });
+    }
+});
+</script>
+@endpush
                         <div class="lg:mb-4 flex-1">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2 w-full">
                                 <div class="flex flex-col gap-0 mb-2">
