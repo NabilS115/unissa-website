@@ -7,7 +7,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- User Header Card -->
         <div class="bg-white rounded-2xl shadow-xl border border-teal-100 overflow-hidden mb-8">
-            <div class="h-32 bg-gradient-to-r from-teal-400 via-teal-500 to-green-500"></div>
+            <div class="h-32 bg-gradient-to-r from-teal-400 via-teal-500 to-green-500 relative">
+                <button type="button" onclick="window.location.href='/edit-profile'" class="absolute top-4 right-4 px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 z-10" aria-label="Edit Profile">
+                    Edit Profile
+                </button>
+            </div>
             <div class="relative px-8 pb-8">
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16">
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6">
@@ -19,9 +23,6 @@
                                 <div class="flex flex-col gap-0 mb-2">
                                     <div class="flex items-center gap-3">
                                         <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</h1>
-                                        <button type="button" onclick="window.location.href='/edit-profile'" class="px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 ml-2" aria-label="Edit Profile">
-                                            Edit Profile
-                                        </button>
                                     </div>
                                     <div class="flex items-center gap-2 text-gray-600 mt-2">
                                         <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">

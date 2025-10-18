@@ -25,7 +25,11 @@
         <!-- Admin Header Card -->
         <div class="bg-white rounded-2xl shadow-xl border border-teal-100 overflow-hidden mb-8">
             <!-- Admin Cover Background -->
-            <div class="h-32 bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-600"></div>
+            <div class="h-32 bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-600 relative">
+                <button type="button" onclick="window.location.href='/edit-profile'" class="absolute top-4 right-4 px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 z-10" aria-label="Edit Profile">
+                    Edit Profile
+                </button>
+            </div>
             
             <!-- Profile Content -->
             <div class="relative px-8 pb-8">
@@ -44,9 +48,6 @@
                                 <div class="flex flex-col gap-0 mb-2">
                                     <div class="flex items-center gap-3">
                                         <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'System Admin' }}</h1>
-                                        <button type="button" onclick="window.location.href='/edit-profile'" class="px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 ml-2" aria-label="Edit Profile">
-                                            Edit Profile
-                                        </button>
                                     </div>
                                     <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 mt-2">
                                         <div class="flex items-center gap-2">
