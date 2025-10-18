@@ -43,7 +43,7 @@
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
                                 <div class="flex flex-col gap-0 mb-2">
                                     <div class="flex items-center gap-3">
-                                        <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">{{ Auth::user()->name ?? 'System Admin' }}</h1>
+                                        <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'System Admin' }}</h1>
                                         <button type="button" onclick="window.location.href='/edit-profile'" class="px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 ml-2" aria-label="Edit Profile">
                                             Edit Profile
                                         </button>

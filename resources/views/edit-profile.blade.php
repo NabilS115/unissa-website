@@ -18,22 +18,25 @@
             </div>
             <div class="relative px-8 pb-8">
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16">
-                    <div class="flex flex-col lg:flex-row lg:items-end gap-6">
+                    <div class="flex flex-col lg:flex-row lg:items-end gap-6 w-full">
                         <div class="relative">
                             <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
                         </div>
-                        <div class="lg:mb-4">
-                            <div class="flex items-center gap-3 mb-2">
-                                <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</h1>
-                            </div>
-                            <div class="flex items-center gap-4 text-gray-600 mb-3">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                                        <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
-                                    </svg>
-                                    <span class="font-medium">{{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</span>
+                        <div class="lg:mb-4 flex-1">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2 w-full">
+                                <div class="flex flex-col gap-0 mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</h1>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-gray-600 mt-2">
+                                        <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                                        </svg>
+                                        <span class="font-medium">{{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</span>
+                                    </div>
                                 </div>
+                                <!-- removed Back to Profile button from here -->
                             </div>
                         </div>
                     </div>
@@ -50,62 +53,45 @@
             </div>
         </div>
         <div id="tab-content-profile" class="tab-content">
-            <!-- Profile Details Card (Profile Tab) -->
-            <div class="bg-white rounded-2xl shadow-lg p-8">
-                <div class="flex items-center gap-3 mb-6">
-                    @if(Auth::user()->role === 'admin')
-                        <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Administrator Details</h2>
-                            <p class="text-gray-600">Update your administrative profile and contact information</p>
-                        </div>
-                    @else
-                        <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Profile Details</h2>
-                            <p class="text-gray-600">Update your profile and contact information</p>
-                        </div>
-                    @endif
-                </div>
-                <form method="POST" action="{{ route('profile.update') }}" class="space-y-6" onsubmit="console.log('Profile form submitted');">
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <form method="POST" action="{{ route('profile.update') }}" class="space-y-4">
                     @csrf
                     @method('put')
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Full Name</label>
-                            <input name="name" id="name" type="text" required autocomplete="name" 
-                                   value="{{ old('name', Auth::user()->name) }}"
-                                   class="w-full px-4 py-3 border {{ $errors->has('name') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
-                            @if ($errors->has('name'))
-                                <p class="mt-2 text-sm text-red-600">{{ $errors->first('name') }}</p>
-                            @endif
-                        </div>
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-900 mb-2">Email Address</label>
-                            <input name="email" id="email" type="email" required autocomplete="username" 
-                                   value="{{ old('email', Auth::user()->email) }}"
-                                   class="w-full px-4 py-3 border {{ $errors->has('email') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
-                            @if ($errors->has('email'))
-                                <p class="mt-2 text-sm text-red-600">{{ $errors->first('email') }}</p>
-                            @endif
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="phone" class="block text-sm font-semibold text-gray-900 mb-2">Phone Number</label>
-                            <input name="phone" id="phone" type="text" autocomplete="tel" 
-                                   value="{{ old('phone', Auth::user()->phone) }}"
-                                   class="w-full px-4 py-3 border {{ $errors->has('phone') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. +673 1234567" />
-                            @if ($errors->has('phone'))
-                                <p class="mt-2 text-sm text-red-600">{{ $errors->first('phone') }}</p>
-                            @endif
-                        </div>
+                    <div class="border-l-4 border-teal-400 pl-4">
+                        <label for="name" class="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
+                        <input name="name" id="name" type="text" required autocomplete="name" 
+                               value="{{ old('name', Auth::user()->name) }}"
+                               class="w-full px-4 py-3 border {{ $errors->has('name') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                        @if ($errors->has('name'))
+                            <p class="mt-2 text-sm text-red-600">{{ $errors->first('name') }}</p>
+                        @endif
+                    </div>
+                    <div class="border-l-4 border-blue-400 pl-4">
+                        <label for="email" class="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
+                        <input name="email" id="email" type="email" required autocomplete="username" 
+                               value="{{ old('email', Auth::user()->email) }}"
+                               class="w-full px-4 py-3 border {{ $errors->has('email') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                        @if ($errors->has('email'))
+                            <p class="mt-2 text-sm text-red-600">{{ $errors->first('email') }}</p>
+                        @endif
+                    </div>
+                    <div class="border-l-4 border-green-400 pl-4">
+                        <label for="phone" class="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
+                        <input name="phone" id="phone" type="text" autocomplete="tel" 
+                               value="{{ old('phone', Auth::user()->phone) }}"
+                               class="w-full px-4 py-3 border {{ $errors->has('phone') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. +673 1234567" />
+                        @if ($errors->has('phone'))
+                            <p class="mt-2 text-sm text-red-600">{{ $errors->first('phone') }}</p>
+                        @endif
+                    </div>
+                    <div class="border-l-4 border-purple-400 pl-4">
+                        <label for="department" class="block text-sm font-medium text-gray-500 mb-1">Faculty / Department</label>
+                        <input name="department" id="department" type="text" autocomplete="organization" 
+                               value="{{ old('department', Auth::user()->department) }}"
+                               class="w-full px-4 py-3 border {{ $errors->has('department') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. Faculty of Usuluddin" />
+                        @if ($errors->has('department'))
+                            <p class="mt-2 text-sm text-red-600">{{ $errors->first('department') }}</p>
+                        @endif
                     </div>
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
                         @if (session('error'))
@@ -127,25 +113,6 @@
                         <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" onclick="console.log('Update Profile button clicked');">
                             Update Profile
                         </button>
-                        <style>
-                        .main-theme-btn {
-                            background-color: #0d9488 !important;
-                            color: #fff !important;
-                            border-radius: 0.75rem !important;
-                            font-weight: 600 !important;
-                            box-shadow: 0 2px 8px 0 rgba(13,148,136,0.15);
-                            padding: 0.75rem 1.5rem;
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 0.5rem;
-                            border: none;
-                            transition: background 0.2s, box-shadow 0.2s;
-                        }
-                        .main-theme-btn:hover, .main-theme-btn:focus {
-                            background-color: #007070 !important;
-                            box-shadow: 0 4px 16px 0 rgba(13,148,136,0.25);
-                        }
-                        </style>
                     </div>
                 </form>
             </div>
