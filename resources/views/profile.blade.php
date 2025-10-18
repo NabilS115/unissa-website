@@ -3,66 +3,44 @@
 @section('title', 'Profile')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Profile Header Card -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-            <!-- Cover Background -->
+<div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- User Header Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-teal-100 overflow-hidden mb-8">
             <div class="h-32 bg-gradient-to-r from-teal-400 via-teal-500 to-green-500"></div>
-            
-            <!-- Profile Content -->
             <div class="relative px-8 pb-8">
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16">
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6">
-                        <!-- Profile Picture -->
                         <div class="relative">
-                       <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" 
-                           alt="Profile Picture" 
-                           class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
+                            <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
                         </div>
-                        
-                        <!-- Profile Info -->
                         <div class="lg:mb-4">
-                            <div class="flex items-center gap-3 mb-2">
-                                <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</h1>
-                                <a href="/edit-profile" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all duration-200" title="Edit Profile">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13z" />
-                                    </svg>
-                                </a>
-                            </div>
-                            <div class="flex items-center gap-4 text-gray-600 mb-3">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                                        <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
-                                    </svg>
-                                    <span class="font-medium">{{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</span>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
+                                <div class="flex flex-col gap-0 mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</h1>
+                                        <button type="button" onclick="window.location.href='/edit-profile'" class="px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 ml-2" aria-label="Edit Profile">
+                                            Edit Profile
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-gray-600 mt-2">
+                                        <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                                        </svg>
+                                        <span class="font-medium">{{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Delete Account Button -->
-                    <div class="lg:mb-4">
-                        <form method="POST" action="{{ route('profile.destroy') }}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 border border-red-200 hover:border-red-300 transition-all duration-200 font-medium">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                Delete Account
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Left Column: Profile Details -->
-            <div class="xl:col-span-1 space-y-6">
+            <div class="space-y-6">
                 <!-- Personal Information Card -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <div class="flex items-center gap-3 mb-6">
@@ -114,7 +92,7 @@
             </div>
 
             <!-- Right Column: Reviews -->
-            <div class="xl:col-span-2">
+            <div>
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <div class="flex items-center justify-between mb-8">
                         <div class="flex items-center gap-3">

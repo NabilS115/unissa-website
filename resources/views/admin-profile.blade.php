@@ -40,26 +40,28 @@
                         
                         <!-- Admin Info -->
                         <div class="lg:mb-4">
-                            <div class="flex items-center gap-3 mb-2">
-                                <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">{{ Auth::user()->name ?? 'System Admin' }}</h1>
-                                <a href="/edit-profile" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-r from-teal-50 to-emerald-50 hover:from-teal-100 hover:to-emerald-100 text-teal-600 hover:text-teal-700 border border-teal-200 transition-all duration-200" title="Edit Profile">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13z" />
-                                    </svg>
-                                </a>
-                            </div>
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 mb-3">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span class="font-medium">Platform Administrator</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span class="font-medium">Full Access</span>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
+                                <div class="flex flex-col gap-0 mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">{{ Auth::user()->name ?? 'System Admin' }}</h1>
+                                        <button type="button" onclick="window.location.href='/edit-profile'" class="px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 ml-2" aria-label="Edit Profile">
+                                            Edit Profile
+                                        </button>
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 mt-2">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            <span class="font-medium">Platform Administrator</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span class="font-medium">Full Access</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
