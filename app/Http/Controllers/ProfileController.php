@@ -112,4 +112,35 @@ class ProfileController extends Controller
 
         return redirect('/')->with('status', 'Account deleted successfully.');
     }
+
+    public function updatePayment(Request $request)
+    {
+        $user = Auth::user();
+        try {
+            $validated = $request->validate([
+                'payment_method' => ['nullable', 'string', 'max:32'],
+                'payment_details' => ['nullable', 'string', 'max:255'],
+                'cardholder_name' => ['nullable', 'string', 'max:100'],
+                'card_number' => ['nullable', 'string', 'max:32'],
+                'card_expiry' => ['nullable', 'string', 'max:7'],
+                'card_ccv' => ['nullable', 'string', 'max:8'],
+                'billing_address' => ['nullable', 'string', 'max:255'],
+            ]);
+
+            $user->payment_method = $validated['payment_method'] ?? null;
+            $user->payment_details = $validated['payment_details'] ?? null;
+            $user->cardholder_name = $validated['cardholder_name'] ?? null;
+            $user->card_number = $validated['card_number'] ?? null;
+            $user->card_expiry = $validated['card_expiry'] ?? null;
+            $user->card_ccv = $validated['card_ccv'] ?? null;
+            $user->billing_address = $validated['billing_address'] ?? null;
+            $user->save();
+
+            return Redirect::route('edit.profile')->with('payment-updated', true);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update payment method. Please try again.')->withInput();
+        }
+    }
 }

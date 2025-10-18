@@ -26,6 +26,13 @@ class User extends Authenticatable
         'profile_photo_url',
         'phone',
         'department',
+        'payment_method',
+        'payment_details',
+        'cardholder_name',
+        'card_number',
+        'card_expiry',
+        'card_ccv',
+        'billing_address',
     ];
 
     /**
