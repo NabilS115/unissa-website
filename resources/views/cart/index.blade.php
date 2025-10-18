@@ -7,7 +7,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Clean Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mb-3">Your Shopping Cart</h1>
+            <h1 class="text-3xl font-bold text-emerald-600 mb-4 leading-tight">Your Shopping Cart</h1>
             <p class="text-lg text-gray-600">Review your selected items and proceed to secure checkout</p>
         </div>
 
