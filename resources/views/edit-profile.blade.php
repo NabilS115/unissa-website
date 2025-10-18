@@ -84,6 +84,7 @@
                             <p class="mt-2 text-sm text-red-600">{{ $errors->first('phone') }}</p>
                         @endif
                     </div>
+                    @if(Auth::user()->role !== 'admin')
                     <div class="border-l-4 border-purple-400 pl-4">
                         <label for="department" class="block text-sm font-medium text-gray-500 mb-1">Faculty / Department</label>
                         <input name="department" id="department" type="text" autocomplete="organization" 
@@ -93,6 +94,7 @@
                             <p class="mt-2 text-sm text-red-600">{{ $errors->first('department') }}</p>
                         @endif
                     </div>
+                    @endif
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
                         @if (session('error'))
                             <div class="flex items-center gap-2 text-red-600 font-medium">
@@ -452,61 +454,7 @@
 </div>
 
 <!-- Success Toast Messages -->
-@if (session('profile-updated') || session('status') === 'profile-updated')
-    <div class="bg-white rounded-2xl shadow-lg p-8">
-        <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                </svg>
-            </div>
-            <h2 class="text-2xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Payment Method Details</h2>
-        </div>
-        <form method="POST" action="{{ route('profile.payment') }}" class="space-y-6">
-            @csrf
-            @method('put')
-            <div class="space-y-4">
-                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
-                    <input type="radio" name="payment_method" value="cash" 
-                        class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
-                        {{ old('payment_method', Auth::user()->payment_method ?? 'cash') === 'cash' ? 'checked' : '' }}>
-                    <div class="ml-4">
-                        <div class="font-semibold text-gray-800">Cash on Pickup</div>
-                        <div class="text-sm text-gray-600">Pay when you collect your order</div>
-                    </div>
-                </label>
-                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
-                    <input type="radio" name="payment_method" value="online" 
-                        class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
-                        {{ old('payment_method', Auth::user()->payment_method) === 'online' ? 'checked' : '' }}>
-                    <div class="ml-4">
-                        <div class="font-semibold text-gray-800">Credit/Debit Card</div>
-                        <div class="text-sm text-gray-600">Pay securely online now</div>
-                    </div>
-                </label>
-            </div>
-            <div class="mt-6">
-                <label for="payment_details" class="block text-sm font-semibold text-teal-700 mb-2">Payment Details</label>
-                <input name="payment_details" id="payment_details" type="text" autocomplete="off"
-                    value="{{ old('payment_details', Auth::user()->payment_details) }}"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-300 text-teal-700 placeholder-teal-400 bg-white" placeholder="e.g. Card number, bank info, etc." />
-            </div>
-            <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                @if (session('payment-updated'))
-                    <div class="flex items-center gap-2 text-green-600 font-medium">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        Payment method updated!
-                    </div>
-                @endif
-                <button type="submit" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200">
-                    <span class="whitespace-nowrap">Save Payment Method</span>
-                </button>
-            </div>
-        </form>
-    </div>
-@endif
+<!-- Removed payment method details card from bottom of page after profile update -->
 
 <script>
     // Password toggle functionality
