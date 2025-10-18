@@ -112,11 +112,11 @@
                                 </div>
                                 
                                 <div class="md:col-span-2">
-                                    <label for="customer_phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
-                                    <input type="tel" name="customer_phone" id="customer_phone" 
-                                           value="{{ old('customer_phone') }}" 
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-300"
-                                           required>
+                     <label for="customer_phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
+                     <input type="tel" name="customer_phone" id="customer_phone" 
+                         value="{{ old('customer_phone', Auth::user()->phone) }}" 
+                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-300"
+                         required>
                                     @error('customer_phone')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror

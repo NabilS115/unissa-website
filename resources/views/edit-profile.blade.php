@@ -159,6 +159,16 @@
                                 <p class="mt-2 text-sm text-red-600">{{ $errors->first('email') }}</p>
                             @endif
                         </div>
+
+                        <div class="md:col-span-2">
+                            <label for="phone" class="block text-sm font-semibold text-gray-900 mb-2">Phone Number</label>
+                            <input name="phone" id="phone" type="text" autocomplete="tel" 
+                                   value="{{ old('phone', Auth::user()->phone) }}"
+                                   class="w-full px-4 py-3 border {{ $errors->has('phone') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. +673 1234567" />
+                            @if ($errors->has('phone'))
+                                <p class="mt-2 text-sm text-red-600">{{ $errors->first('phone') }}</p>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">

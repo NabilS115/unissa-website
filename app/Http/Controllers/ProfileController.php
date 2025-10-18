@@ -33,15 +33,18 @@ class ProfileController extends Controller
         $user = Auth::user();
         
         try {
+
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+                'phone' => ['nullable', 'string', 'max:30'],
             ]);
 
             \Log::info('Validation passed:', $validated);
 
             $user->name = $validated['name'];
             $user->email = $validated['email'];
+            $user->phone = $validated['phone'] ?? null;
             $user->save();
 
             \Log::info('Profile updated successfully for user: ' . $user->id);
