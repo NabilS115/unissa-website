@@ -78,20 +78,6 @@
                     </div>
                 </div>
 
-                <!-- Bio Card -->
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-bold text-gray-900">Bio & Background</h2>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4">
-                        <p class="text-gray-600 italic">Academic background and professional interests will be displayed here.</p>
-                    </div>
-                </div>
             </div>
 
             <!-- Right Column: Reviews -->
@@ -159,10 +145,6 @@
                                                             data-index="{{ $index }}"></button>
                                                 @endforeach
                                             @endif
-                                            <button onclick="goToReview({{ $index }})" 
-                                                    class="review-dot w-3 h-3 rounded-full transition-all duration-200 {{ $index === 0 ? 'bg-teal-500 w-8' : 'bg-gray-300 hover:bg-gray-400' }}"
-                                                    data-index="{{ $index }}"></button>
-                                        @endforeach
                                     </div>
                                 </div>
                             @else
