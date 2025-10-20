@@ -668,7 +668,6 @@ input[type="number"]::-ms-clear {
                                             </div>
 
 
-@endsection
 
 @push('scripts')
 <script>

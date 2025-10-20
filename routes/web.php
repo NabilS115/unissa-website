@@ -1,4 +1,10 @@
 <?php
+use Illuminate\Support\Facades\Auth;
+// Universal logout route (POST)
+Route::post('logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProfileController;
