@@ -24,9 +24,9 @@
                                 <img id="profile-photo" src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white cursor-pointer">
                             @endif
                             @php
-                                $defaultPhoto = asset('images/default-profile.svg');
                                 $userPhoto = Auth::user()->profile_photo_url;
-                                $hasCustomPhoto = $userPhoto && $userPhoto !== $defaultPhoto;
+                                // If the photo is a data URI (SVG fallback), it's not a custom upload
+                                $hasCustomPhoto = $userPhoto && !str_starts_with($userPhoto, 'data:image/svg+xml');
                             @endphp
                             <div class="absolute inset-0 bg-black/40 rounded-2xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer select-none"
                                  onclick="openPhotoModal()">
@@ -38,10 +38,10 @@
                             </div>
                         </div>
                         <!-- Profile Photo Modal/Overlay -->
-                        <div id="photo-modal" class="fixed inset-0 z-50 items-center justify-center hidden" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
-                            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs flex flex-col items-center border border-gray-100">
+                        <div id="photo-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
+                            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs flex flex-col items-center border border-gray-100 overflow-hidden">
                                 <!-- Modal Header -->
-                                <div class="w-full flex items-center justify-between px-6 py-4 border-b border-gray-100 rounded-t-2xl bg-gradient-to-r from-teal-50 to-emerald-50">
+                                <div class="w-full flex items-center justify-between px-6 py-4 bg-white bg-gradient-to-r from-teal-50 to-emerald-50">
                                     <span class="font-semibold text-lg text-gray-800">Profile Photo</span>
                                     <button onclick="closePhotoModal()" class="text-gray-400 hover:text-gray-700 text-2xl focus:outline-none">&times;</button>
                                 </div>

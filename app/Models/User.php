@@ -102,8 +102,12 @@ class User extends Authenticatable
         if ($value) {
             return $value;
         }
-        
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=14b8a6&color=fff';
+    // Fallback SVG avatar fills the square, initial maximized and centered
+    $initials = strtoupper($this->initials());
+    $bg = '14b8a6'; // teal
+    $color = 'fff';
+    $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="24" fill="#'.$bg.'"/><text x="50%" y="50%" font-size="84" fill="#'.$color.'" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">'.$initials.'</text></svg>';
+    return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
     /**
