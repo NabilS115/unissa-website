@@ -217,6 +217,7 @@
                                     <label for="card_number" class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
                                     <input type="text" name="card_number" id="card_number" 
                                            placeholder="1234 5678 9012 3456"
+                                           value="{{ old('card_number', Auth::user()->card_number) }}"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                                     @error('card_number')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -227,6 +228,7 @@
                                     <label for="card_expiry" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
                                     <input type="text" name="card_expiry" id="card_expiry" 
                                            placeholder="MM/YY"
+                                           value="{{ old('card_expiry', Auth::user()->card_expiry) }}"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                                     @error('card_expiry')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -237,6 +239,7 @@
                                     <label for="card_cvv" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
                                     <input type="text" name="card_cvv" id="card_cvv" 
                                            placeholder="123"
+                                           value="{{ old('card_ccv', Auth::user()->card_ccv) }}"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                                     @error('card_cvv')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -247,6 +250,7 @@
                                     <label for="cardholder_name" class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
                                     <input type="text" name="cardholder_name" id="cardholder_name" 
                                            placeholder="John Doe"
+                                           value="{{ old('cardholder_name', Auth::user()->cardholder_name) }}"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                                     @error('cardholder_name')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
