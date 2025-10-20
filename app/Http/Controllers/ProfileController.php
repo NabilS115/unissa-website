@@ -125,6 +125,9 @@ class ProfileController extends Controller
                 'card_expiry' => ['nullable', 'string', 'max:7'],
                 'card_ccv' => ['nullable', 'string', 'max:8'],
                 'billing_address' => ['nullable', 'string', 'max:255'],
+                'bank_name' => ['nullable', 'string', 'max:64'],
+                'bank_account' => ['nullable', 'string', 'max:64'],
+                'bank_reference' => ['nullable', 'string', 'max:128'],
             ]);
 
             $user->payment_method = $validated['payment_method'] ?? null;
@@ -134,6 +137,9 @@ class ProfileController extends Controller
             $user->card_expiry = $validated['card_expiry'] ?? null;
             $user->card_ccv = $validated['card_ccv'] ?? null;
             $user->billing_address = $validated['billing_address'] ?? null;
+            $user->bank_name = $validated['bank_name'] ?? null;
+            $user->bank_account = $validated['bank_account'] ?? null;
+            $user->bank_reference = $validated['bank_reference'] ?? null;
             $user->save();
 
             if ($request->ajax() || $request->wantsJson()) {

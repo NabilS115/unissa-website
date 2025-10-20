@@ -136,24 +136,60 @@
                             </div>
                             <div class="space-y-4">
                                 <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
-                     <input type="radio" name="payment_method" value="cash" 
-                         class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
-                         {{ old('payment_method', Auth::user()->payment_method ?? 'cash') === 'cash' ? 'checked' : '' }}>
+                                    <input type="radio" name="payment_method" value="cash" 
+                                        class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
+                                        {{ old('payment_method', Auth::user()->payment_method ?? 'cash') === 'cash' ? 'checked' : '' }}>
                                     <div class="ml-4">
                                         <div class="font-semibold text-gray-800">Cash on Pickup</div>
                                         <div class="text-sm text-gray-600">Pay when you collect your order</div>
                                     </div>
                                 </label>
-                                
+
                                 <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
-                     <input type="radio" name="payment_method" value="online" 
-                         class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
-                         {{ old('payment_method', Auth::user()->payment_method) === 'online' ? 'checked' : '' }}>
+                                    <input type="radio" name="payment_method" value="online" 
+                                        class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
+                                        {{ old('payment_method', Auth::user()->payment_method) === 'online' ? 'checked' : '' }}>
                                     <div class="ml-4">
                                         <div class="font-semibold text-gray-800">Credit/Debit Card</div>
                                         <div class="text-sm text-gray-600">Pay securely online now</div>
                                     </div>
                                 </label>
+
+                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
+                                    <input type="radio" name="payment_method" value="bank_transfer" 
+                                        class="text-teal-600 focus:ring-teal-500 w-5 h-5" 
+                                        {{ old('payment_method', Auth::user()->payment_method) === 'bank_transfer' ? 'checked' : '' }}>
+                                    <div class="ml-4">
+                                        <div class="font-semibold text-gray-800">Bank Transfer</div>
+                                        <div class="text-sm text-gray-600">Pay via local bank transfer</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Bank Transfer Fields -->
+                            <div id="bank-transfer-fields" class="mt-4 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-xl" style="display:none;">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="bank_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Bank Name</label>
+                                        <select name="bank_name" id="bank_name" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] bg-white">
+                                            <option value="">Select a bank</option>
+                                            <option value="BIBD" {{ old('bank_name', Auth::user()->bank_name) == 'BIBD' ? 'selected' : '' }}>BIBD</option>
+                                            <option value="Baiduri" {{ old('bank_name', Auth::user()->bank_name) == 'Baiduri' ? 'selected' : '' }}>Baiduri</option>
+                                            <option value="Standard Chartered" {{ old('bank_name', Auth::user()->bank_name) == 'Standard Chartered' ? 'selected' : '' }}>Standard Chartered</option>
+                                            <option value="TAIB" {{ old('bank_name', Auth::user()->bank_name) == 'TAIB' ? 'selected' : '' }}>TAIB</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="bank_account" class="block text-sm font-semibold text-[#0d9488] mb-2">Account Number</label>
+                                        <input name="bank_account" id="bank_account" type="text" autocomplete="off"
+                                            value="{{ old('bank_account', Auth::user()->bank_account) }}"
+                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Account number" />
+                                    </div>
+                                </div>
+                                <label for="bank_reference" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Reference</label>
+                                <input name="bank_reference" id="bank_reference" type="text" autocomplete="off"
+                                    value="{{ old('bank_reference', Auth::user()->bank_reference) }}"
+                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Reference (optional)" />
                             </div>
                             @error('payment_method')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -263,6 +299,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize on page load
     togglePaymentMethod();
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const bankFields = document.getElementById('bank-transfer-fields');
+    function toggleBankFields() {
+        const selected = document.querySelector('input[name="payment_method"]:checked');
+        if (selected && selected.value === 'bank_transfer') {
+            bankFields.style.display = 'block';
+        } else {
+            bankFields.style.display = 'none';
+        }
+    }
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', toggleBankFields);
+    });
+    // Initial state
+    toggleBankFields();
 });
 </script>
 @endsection
