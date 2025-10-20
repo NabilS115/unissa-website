@@ -1,3 +1,13 @@
+    {
+        // Set header context based on referer
+        $referer = request()->headers->get('referer');
+        if ($referer && str_contains($referer, 'unissa-cafe')) {
+            session(['header_context' => 'unissa-cafe']);
+        } else {
+            session(['header_context' => null]);
+        }
+        // ...existing code for showing the edit profile page...
+    }
 <?php
 
 namespace App\Http\Controllers;

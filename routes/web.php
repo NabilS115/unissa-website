@@ -109,6 +109,13 @@ Route::middleware(['auth'])->group(function () {
             $context = session('header_context');
         }
         session(['header_context' => $context]);
+        // Carry over header context from previous page (profile)
+        $headerContext = session('header_context');
+        if (!$headerContext && $request->headers->get('referer')) {
+            if (str_contains($request->headers->get('referer'), 'unissa-cafe')) {
+                session(['header_context' => 'unissa-cafe']);
+            }
+        }
         return view('edit-profile');
     })->name('edit.profile');
     Route::post('/profile/photo', [App\Http\Controllers\ProfileController::class, 'updatePhoto'])->name('profile.photo');
