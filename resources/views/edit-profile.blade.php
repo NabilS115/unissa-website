@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="text-[#007070]">Save your preferred payment method for faster checkout</p>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('profile.payment') }}" class="space-y-6">
+                <form id="payment-method-form" method="POST" action="{{ route('profile.payment') }}" class="space-y-6">
                     @csrf
                     @method('put')
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -348,9 +348,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <option value="Baiduri" {{ old('bank_name', Auth::user()->bank_name) == 'Baiduri' ? 'selected' : '' }}>Baiduri</option>
                                     <option value="Standard Chartered" {{ old('bank_name', Auth::user()->bank_name) == 'Standard Chartered' ? 'selected' : '' }}>Standard Chartered</option>
                                     <option value="TAIB" {{ old('bank_name', Auth::user()->bank_name) == 'TAIB' ? 'selected' : '' }}>TAIB</option>
-                                    <option value="Bank Islam Brunei Darussalam" {{ old('bank_name', Auth::user()->bank_name) == 'Bank Islam Brunei Darussalam' ? 'selected' : '' }}>Bank Islam Brunei Darussalam</option>
-                                    <option value="Maybank" {{ old('bank_name', Auth::user()->bank_name) == 'Maybank' ? 'selected' : '' }}>Maybank</option>
-                                    <option value="RHB" {{ old('bank_name', Auth::user()->bank_name) == 'RHB' ? 'selected' : '' }}>RHB</option>
                                 </select>
                                 <label for="bank_account" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Account Number</label>
                                 <input name="bank_account" id="bank_account" type="text" autocomplete="off"
@@ -429,17 +426,109 @@ document.addEventListener('DOMContentLoaded', function() {
     validateCardCCV();
 });
                     </script>
-                    <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                        @if (session('payment-updated'))
-                            <div class="flex items-center gap-2 text-green-600 font-medium">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                        @endif
-                        <button type="submit" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200">
+                    <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 w-full">
+                        <!-- ...existing code... -->
+                    </div>
+                    <!-- Move button to its own row at the bottom of the card, checked text removed -->
+                    <div class="flex justify-end w-full pt-6">
+                        <button type="submit" id="save-payment-btn" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200 border-4 border-red-500" autocomplete="off">
                             <span class="whitespace-nowrap">Save Payment Method</span>
                         </button>
+                    </div>
+                <!-- Toast Notification -->
+<!-- Toast Notification (fixed, high z-index, not covering button) -->
+<div id="profile-toast" style="position:fixed; bottom:2rem; left:2rem; z-index:9999; display:none; align-items:center; min-width:260px; max-width:90vw; padding:1rem 1.5rem; border-radius:1rem; box-shadow:0 4px 24px rgba(0,0,0,0.12); pointer-events:auto;" class="gap-2 text-white font-semibold">
+    <span class="toast-message font-medium text-base"></span>
+    <button id="profile-toast-close" class="ml-auto pl-4 focus:outline-none text-white/80 hover:text-white text-2xl leading-none bg-transparent" style="background:none; border:none;">&times;</button>
+</div>
+<script>
+// AJAX Payment Method Save
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('payment-method-form');
+    const btn = document.getElementById('save-payment-btn');
+    if (form && btn) {
+        btn.disabled = false;
+        btn.style.pointerEvents = 'auto';
+        // Ensure button is always enabled after toast
+        document.addEventListener('profile-toast-hide', function() {
+            btn.disabled = false;
+            btn.style.pointerEvents = 'auto';
+        });
+        btn.addEventListener('click', function() {
+            // Show notification immediately on click
+            showProfileToast('Saving payment method...', false);
+        });
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Validate required fields before AJAX
+            var bank = document.getElementById('bank_name');
+            var account = document.getElementById('bank_account');
+            if (!bank.value || !account.value) {
+                showProfileToast('Please fill in both bank and account number.', true);
+                return;
+            }
+            // Do not disable or block the button
+            const formData = new FormData(form);
+            formData.append('_method', 'PUT');
+            console.log('Submitting payment method form via AJAX...');
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': form.querySelector('[name=_token]').value
+                },
+                body: formData
+            })
+            .then(async response => {
+                console.log('AJAX response status:', response.status);
+                let data = null;
+                try { data = await response.json(); } catch (err) { console.log('Response not JSON:', err); }
+                console.log('AJAX response data:', data);
+                if (response.ok) {
+                    showProfileToast('Payment method updated!', false);
+                } else {
+                    let msg = 'Failed to update payment method.';
+                    if (data && data.message) msg = data.message;
+                    showProfileToast(msg, true);
+                }
+            })
+            .catch((err) => {
+                console.log('AJAX error:', err);
+                showProfileToast('Failed to update payment method.', true);
+            });
+        });
+    }
+    // Toast logic
+    window.showProfileToast = function(message, isError = false) {
+        let toast = document.getElementById('profile-toast');
+        if (!toast) return;
+        toast.querySelector('.toast-message').textContent = message;
+        toast.classList.remove('bg-green-500','bg-red-500','opacity-0','hidden');
+        toast.classList.add(isError ? 'bg-red-500' : 'bg-green-500');
+        toast.style.display = 'flex';
+        toast.style.opacity = '1';
+        toast.style.pointerEvents = 'none';
+        console.log('Toast notification shown:', message);
+        setTimeout(() => {
+            toast.classList.add('opacity-0');
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                // Custom event to re-enable button after toast hides
+                document.dispatchEvent(new Event('profile-toast-hide'));
+            }, 300);
+        }, 2500);
+    };
+    const closeBtn = document.getElementById('profile-toast-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            const toast = document.getElementById('profile-toast');
+            toast.classList.add('opacity-0');
+            setTimeout(() => toast.style.display = 'none', 300);
+        });
+    }
+});
+</script>
                     </div>
                 </form>
             </div>
