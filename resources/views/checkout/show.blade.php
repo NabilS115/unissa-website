@@ -332,6 +332,7 @@ input[type="number"] {
                                                 </svg>
                                             </div>
                                         </div>
+                                        <span id="card_number_error" class="text-xs text-red-600 mt-1 hidden">Please enter a valid card number</span>
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">
@@ -341,6 +342,7 @@ input[type="number"] {
                                             <input type="text" id="card_expiry" name="card_expiry" 
                                                    placeholder="MM/YY" maxlength="5"
                                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <span id="card_expiry_error" class="text-xs text-red-600 mt-1 hidden">Please enter a valid expiry date (MM/YY)</span>
                                         </div>
 
                                         <!-- CVV -->
@@ -349,6 +351,7 @@ input[type="number"] {
                                             <input type="text" id="card_cvv" name="card_cvv" 
                                                    placeholder="123" maxlength="4"
                                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <span id="card_cvv_error" class="text-xs text-red-600 mt-1 hidden">Please enter a valid CVV</span>
                                         </div>
                                     </div>
 
@@ -358,6 +361,7 @@ input[type="number"] {
                                         <input type="text" id="cardholder_name" name="cardholder_name" 
                                                placeholder="John Doe"
                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <span id="cardholder_name_error" class="text-xs text-red-600 mt-1 hidden">Please enter the cardholder name</span>
                                     </div>
 
                                     <!-- Billing Address Toggle -->
@@ -454,6 +458,36 @@ input[type="number"] {
         input.value = input.value.replace(/\D/g, '').substring(0, 4); // Only digits, max 4
     }
 
+    // Live validation functions
+    function validateCardNumber(value) {
+        const digits = value.replace(/\D/g, '');
+        return digits.length >= 13 && digits.length <= 16;
+    }
+    function validateExpiry(value) {
+        if (!/^\d{2}\/\d{2}$/.test(value)) return false;
+        const [mm, yy] = value.split('/').map(Number);
+        if (mm < 1 || mm > 12) return false;
+        // Optionally check for expired date
+        return true;
+    }
+    function validateCVV(value) {
+        return /^\d{3,4}$/.test(value);
+    }
+    function validateCardholderName(value) {
+        return value.trim().length > 0;
+    }
+
+    function showError(input, errorId, valid) {
+        const errorSpan = document.getElementById(errorId);
+        if (valid) {
+            input.classList.remove('border-red-500');
+            errorSpan.classList.add('hidden');
+        } else {
+            input.classList.add('border-red-500');
+            errorSpan.classList.remove('hidden');
+        }
+    }
+
     // Payment method handling
     function updatePaymentMethod() {
         const cashPaymentInfo = document.getElementById('cash-payment-info');
@@ -461,62 +495,50 @@ input[type="number"] {
         const creditCardForm = document.getElementById('credit-card-form');
         const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
         const submitButton = document.querySelector('button[type="submit"] span');
-        
         paymentMethods.forEach(method => {
             if (method.checked && method.value === 'cash') {
-                if (cashPaymentInfo) {
-                    cashPaymentInfo.style.display = 'block';
-                }
-                if (onlinePaymentInfo) {
-                    onlinePaymentInfo.style.display = 'none';
-                }
-                if (creditCardForm) {
-                    creditCardForm.style.display = 'none';
-                }
-                if (submitButton) {
-                    submitButton.textContent = 'Complete Order';
-                }
+                if (cashPaymentInfo) cashPaymentInfo.style.display = 'block';
+                if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'none';
+                if (creditCardForm) creditCardForm.style.display = 'none';
+                if (submitButton) submitButton.textContent = 'Complete Order';
             } else if (method.checked && method.value === 'online') {
-                if (cashPaymentInfo) {
-                    cashPaymentInfo.style.display = 'none';
-                }
-                if (onlinePaymentInfo) {
-                    onlinePaymentInfo.style.display = 'block';
-                }
-                if (creditCardForm) {
-                    creditCardForm.style.display = 'block';
-                }
-                if (submitButton) {
-                    submitButton.textContent = 'Pay Now & Complete Order';
-                }
+                if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
+                if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'block';
+                if (creditCardForm) creditCardForm.style.display = 'block';
+                if (submitButton) submitButton.textContent = 'Pay Now & Complete Order';
             }
         });
     }
 
-    // Add event listeners
     document.addEventListener('DOMContentLoaded', function() {
         const cardNumberInput = document.getElementById('card_number');
         const expiryInput = document.getElementById('card_expiry');
         const cvvInput = document.getElementById('card_cvv');
+        const cardholderNameInput = document.getElementById('cardholder_name');
 
         if (cardNumberInput) {
             cardNumberInput.addEventListener('input', function() {
                 formatCardNumber(this);
+                showError(this, 'card_number_error', validateCardNumber(this.value));
             });
         }
-
         if (expiryInput) {
             expiryInput.addEventListener('input', function() {
                 formatExpiryDate(this);
+                showError(this, 'card_expiry_error', validateExpiry(this.value));
             });
         }
-
         if (cvvInput) {
             cvvInput.addEventListener('input', function() {
                 formatCVV(this);
+                showError(this, 'card_cvv_error', validateCVV(this.value));
             });
         }
-
+        if (cardholderNameInput) {
+            cardholderNameInput.addEventListener('input', function() {
+                showError(this, 'cardholder_name_error', validateCardholderName(this.value));
+            });
+        }
         // Initialize payment method display
         updatePaymentMethod();
     });
@@ -524,47 +546,39 @@ input[type="number"] {
     // Form submission handling
     document.getElementById('checkout-form')?.addEventListener('submit', function(e) {
         const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
-        
         if (selectedPaymentMethod && selectedPaymentMethod.value === 'online') {
             // Validate credit card fields
-            const cardNumber = document.getElementById('card_number').value.replace(/\s/g, '');
-            const cardExpiry = document.getElementById('card_expiry').value;
-            const cardCVV = document.getElementById('card_cvv').value;
-            const cardholderName = document.getElementById('cardholder_name').value;
-
-            if (!cardNumber || cardNumber.length < 13) {
-                alert('Please enter a valid card number');
+            const cardNumber = document.getElementById('card_number');
+            const cardExpiry = document.getElementById('card_expiry');
+            const cardCVV = document.getElementById('card_cvv');
+            const cardholderName = document.getElementById('cardholder_name');
+            let valid = true;
+            if (!validateCardNumber(cardNumber.value)) {
+                showError(cardNumber, 'card_number_error', false);
+                valid = false;
+            }
+            if (!validateExpiry(cardExpiry.value)) {
+                showError(cardExpiry, 'card_expiry_error', false);
+                valid = false;
+            }
+            if (!validateCVV(cardCVV.value)) {
+                showError(cardCVV, 'card_cvv_error', false);
+                valid = false;
+            }
+            if (!validateCardholderName(cardholderName.value)) {
+                showError(cardholderName, 'cardholder_name_error', false);
+                valid = false;
+            }
+            if (!valid) {
                 e.preventDefault();
                 return;
             }
-
-            if (!cardExpiry || !cardExpiry.match(/^\d{2}\/\d{2}$/)) {
-                alert('Please enter a valid expiry date (MM/YY)');
-                e.preventDefault();
-                return;
-            }
-
-            if (!cardCVV || cardCVV.length < 3) {
-                alert('Please enter a valid CVV');
-                e.preventDefault();
-                return;
-            }
-
-            if (!cardholderName.trim()) {
-                alert('Please enter the cardholder name');
-                e.preventDefault();
-                return;
-            }
-
             // Show processing message
             const submitButton = this.querySelector('button[type="submit"]');
             const buttonText = submitButton.querySelector('span');
             const originalText = buttonText.textContent;
-            
             buttonText.textContent = 'Processing Payment...';
             submitButton.disabled = true;
-            
-            // Re-enable after 10 seconds if something goes wrong
             setTimeout(() => {
                 buttonText.textContent = originalText;
                 submitButton.disabled = false;

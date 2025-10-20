@@ -20,7 +20,9 @@
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16">
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6 w-full">
                         <div class="relative group">
-                            <img id="profile-photo" src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white cursor-pointer">
+                            @if(Auth::check())
+                                <img id="profile-photo" src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white cursor-pointer">
+                            @endif
                             @php
                                 $defaultPhoto = asset('images/default-profile.svg');
                                 $userPhoto = Auth::user()->profile_photo_url;
@@ -36,7 +38,7 @@
                             </div>
                         </div>
                         <!-- Profile Photo Modal/Overlay -->
-                        <div id="photo-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
+                        <div id="photo-modal" class="fixed inset-0 z-50 items-center justify-center hidden" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
                             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs flex flex-col items-center border border-gray-100">
                                 <!-- Modal Header -->
                                 <div class="w-full flex items-center justify-between px-6 py-4 border-b border-gray-100 rounded-t-2xl bg-gradient-to-r from-teal-50 to-emerald-50">
@@ -46,7 +48,9 @@
                                 <!-- Modal Content -->
                                 <div class="flex flex-col items-center w-full px-6 py-6">
                                     <div class="flex flex-col items-center mb-4">
-                                        <img id="modal-photo-preview" src="{{ Auth::user()->profile_photo_url ? Auth::user()->profile_photo_url : asset('images/default-profile.svg') }}" alt="Profile Picture Preview" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow bg-gray-100">
+                                        @if(Auth::check())
+                                            <img id="modal-photo-preview" src="{{ Auth::user()->profile_photo_url ? Auth::user()->profile_photo_url : asset('images/default-profile.svg') }}" alt="Profile Picture Preview" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow bg-gray-100">
+                                        @endif
                                     </div>
                                     <div class="w-full flex flex-col gap-3">
                                         @if (!$hasCustomPhoto)
@@ -215,7 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label for="name" class="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
                         <input name="name" id="name" type="text" required autocomplete="name" 
                                value="{{ old('name', Auth::user()->name) }}"
-                               class="w-full px-4 py-3 border {{ $errors->has('name') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                               class="w-full px-4 py-3 border {{ $errors->has('name') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" oninput="validateName()" />
+                        <p id="name-validation" class="mt-2 text-sm"></p>
                         @if ($errors->has('name'))
                             <p class="mt-2 text-sm text-red-600">{{ $errors->first('name') }}</p>
                         @endif
@@ -224,7 +229,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label for="email" class="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
                         <input name="email" id="email" type="email" required autocomplete="username" 
                                value="{{ old('email', Auth::user()->email) }}"
-                               class="w-full px-4 py-3 border {{ $errors->has('email') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                               class="w-full px-4 py-3 border {{ $errors->has('email') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" oninput="validateEmail()" />
+                        <p id="email-validation" class="mt-2 text-sm"></p>
                         @if ($errors->has('email'))
                             <p class="mt-2 text-sm text-red-600">{{ $errors->first('email') }}</p>
                         @endif
@@ -233,7 +239,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label for="phone" class="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
                         <input name="phone" id="phone" type="text" autocomplete="tel" 
                                value="{{ old('phone', Auth::user()->phone) }}"
-                               class="w-full px-4 py-3 border {{ $errors->has('phone') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. +673 1234567" />
+                               class="w-full px-4 py-3 border {{ $errors->has('phone') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. +673 1234567" oninput="validatePhone()" />
+                        <p id="phone-validation" class="mt-2 text-sm"></p>
                         @if ($errors->has('phone'))
                             <p class="mt-2 text-sm text-red-600">{{ $errors->first('phone') }}</p>
                         @endif
@@ -254,14 +261,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="flex items-center gap-2 text-red-600 font-medium">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                </svg>
-                                {{ session('error') }}
-                            </div>
+                            </svg>
+                            {{ session('error') }}
                         @endif
                         @if (session('profile-updated') || session('status') === 'profile-updated')
                             <div class="flex items-center gap-2 text-green-600 font-medium">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                </svg>
                                 </svg>
                                 Profile updated successfully!
                             </div>
@@ -304,23 +312,27 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <label for="cardholder_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Cardholder Name</label>
                                 <input name="cardholder_name" id="cardholder_name" type="text" autocomplete="cc-name"
                                     value="{{ old('cardholder_name', Auth::user()->cardholder_name) }}"
-                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Name on card" />
+                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Name on card" oninput="validateCardholderName()" />
+                                <p id="cardholder-name-validation" class="mt-2 text-sm"></p>
                                 <label for="card_number" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Card Number</label>
                                 <input name="card_number" id="card_number" type="text" autocomplete="cc-number"
                                     value="{{ old('card_number', Auth::user()->card_number) }}"
-                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Card number" />
+                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Card number" oninput="validateCardNumber()" />
+                                <p id="card-number-validation" class="mt-2 text-sm"></p>
                                 <div class="grid grid-cols-2 gap-4 mt-4">
                                     <div>
                                         <label for="card_expiry" class="block text-sm font-semibold text-[#0d9488] mb-2">Expiry (MM/YYYY)</label>
                                         <input name="card_expiry" id="card_expiry" type="text" autocomplete="cc-exp"
                                             value="{{ old('card_expiry', Auth::user()->card_expiry) }}"
-                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="MM/YYYY" />
+                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="MM/YYYY" oninput="validateCardExpiry()" />
+                                        <p id="card-expiry-validation" class="mt-2 text-sm"></p>
                                     </div>
                                     <div>
                                         <label for="card_ccv" class="block text-sm font-semibold text-[#0d9488] mb-2">CCV</label>
                                         <input name="card_ccv" id="card_ccv" type="text" autocomplete="cc-csc"
                                             value="{{ old('card_ccv', Auth::user()->card_ccv) }}"
-                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="CCV" />
+                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="CCV" oninput="validateCardCCV()" />
+                                        <p id="card-ccv-validation" class="mt-2 text-sm"></p>
                                     </div>
                                 </div>
                                 <label for="billing_address" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Billing Address</label>
@@ -362,13 +374,67 @@ document.addEventListener('DOMContentLoaded', function() {
                             togglePaymentFields();
                         });
                     </script>
+                    <script>
+function validateCardholderName() {
+    const name = document.getElementById('cardholder_name').value.trim();
+    const msg = document.getElementById('cardholder-name-validation');
+    if (name.length < 2) {
+        msg.textContent = 'Name must be at least 2 characters.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Looks good!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validateCardNumber() {
+    const number = document.getElementById('card_number').value.replace(/\s/g, '');
+    const msg = document.getElementById('card-number-validation');
+    const re = /^\d{16}$/;
+    if (!re.test(number)) {
+        msg.textContent = 'Card number must be 16 digits.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid card number!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validateCardExpiry() {
+    const expiry = document.getElementById('card_expiry').value.trim();
+    const msg = document.getElementById('card-expiry-validation');
+    const re = /^(0[1-9]|1[0-2])\/(\d{4})$/;
+    if (!re.test(expiry)) {
+        msg.textContent = 'Expiry must be MM/YYYY.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid expiry date!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validateCardCCV() {
+    const ccv = document.getElementById('card_ccv').value.trim();
+    const msg = document.getElementById('card-ccv-validation');
+    const re = /^\d{3,4}$/;
+    if (!re.test(ccv)) {
+        msg.textContent = 'CCV must be 3 or 4 digits.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid CCV!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    validateCardholderName();
+    validateCardNumber();
+    validateCardExpiry();
+    validateCardCCV();
+});
+                    </script>
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
                         @if (session('payment-updated'))
                             <div class="flex items-center gap-2 text-green-600 font-medium">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                Payment method updated!
                             </div>
                         @endif
                         <button type="submit" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200">
@@ -377,114 +443,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </form>
             </div>
-        </div>
-        <div id="tab-content-payment" class="tab-content hidden">
-            <!-- Payment Method Details Card (Payment Tab) -->
-            <div class="bg-[#f8fafc] border border-[#0d9488] rounded-2xl shadow-lg p-8">
-                <div class="flex items-center gap-3 mb-6">
-                    @if(Auth::user()->role === 'admin')
-                        <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Administrator Details</h2>
-                            <p class="text-gray-600">Update your administrative profile and contact information</p>
-                        </div>
-                    @else
-                        <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Profile Details</h2>
-                            <p class="text-gray-600">Update your profile and contact information</p>
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Form Fields -->
-                <form method="POST" action="{{ route('profile.update') }}" class="space-y-6" onsubmit="console.log('Profile form submitted');">
-                    @csrf
-                    @method('put')
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Full Name</label>
-                            <input name="name" id="name" type="text" required autocomplete="name" 
-                                   value="{{ old('name', Auth::user()->name) }}"
-                                   class="w-full px-4 py-3 border {{ $errors->has('name') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
-                            @if ($errors->has('name'))
-                                <p class="mt-2 text-sm text-red-600">{{ $errors->first('name') }}</p>
-                            @endif
-                        </div>
-
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-900 mb-2">Email Address</label>
-                            <input name="email" id="email" type="email" required autocomplete="username" 
-                                   value="{{ old('email', Auth::user()->email) }}"
-                                   class="w-full px-4 py-3 border {{ $errors->has('email') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
-                            @if ($errors->has('email'))
-                                <p class="mt-2 text-sm text-red-600">{{ $errors->first('email') }}</p>
-                            @endif
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label for="phone" class="block text-sm font-semibold text-gray-900 mb-2">Phone Number</label>
-                            <input name="phone" id="phone" type="text" autocomplete="tel" 
-                                   value="{{ old('phone', Auth::user()->phone) }}"
-                                   class="w-full px-4 py-3 border {{ $errors->has('phone') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. +673 1234567" />
-                            @if ($errors->has('phone'))
-                                <p class="mt-2 text-sm text-red-600">{{ $errors->first('phone') }}</p>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                        @if (session('error'))
-                            <div class="flex items-center gap-2 text-red-600 font-medium">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                </svg>
-                                {{ session('error') }}
-                            </div>
-                        @endif
-                        @if (session('profile-updated') || session('status') === 'profile-updated')
-                            <div class="flex items-center gap-2 text-green-600 font-medium">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                Profile updated successfully!
-                            </div>
-                        @endif
-                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" onclick="console.log('Update Profile button clicked');">
-                            Update Profile
-                        </button>
-                        <style>
-                        .main-theme-btn {
-                            background-color: #0d9488 !important;
-                            color: #fff !important;
-                            border-radius: 0.75rem !important;
-                            font-weight: 600 !important;
-                            box-shadow: 0 2px 8px 0 rgba(13,148,136,0.15);
-                            padding: 0.75rem 1.5rem;
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 0.5rem;
-                            border: none;
-                            transition: background 0.2s, box-shadow 0.2s;
-                        }
-                        .main-theme-btn:hover, .main-theme-btn:focus {
-                            background-color: #007070 !important;
-                            box-shadow: 0 4px 16px 0 rgba(13,148,136,0.25);
-                        }
-                        </style>
-                    </div>
-                </form>
-            </div>
-
         </div>
         <div id="tab-content-password" class="tab-content hidden">
             <!-- Password Update Card (Password Tab) -->
@@ -501,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('profile.password') }}" class="space-y-6" onsubmit="console.log('Password form submitted');">
+                <form method="POST" action="{{ route('profile.password') }}" class="space-y-6" id="change-password-form">
                     @csrf
                     @method('put')
 
@@ -510,14 +468,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <label for="current_password" class="block text-sm font-semibold text-gray-900 mb-2">Current Password</label>
                             <div class="relative">
                                 <input name="current_password" id="current_password" type="password" required autocomplete="current-password" 
-                                       class="w-full px-4 py-3 border {{ $errors->updatePassword->has('current_password') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12" />
+                                       class="w-full px-4 py-3 border border-gray-300 focus:ring-teal-500 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12 @if($errors->updatePassword->has('current_password')) border-red-500 focus:ring-red-500 @endif" />
                                 <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 focus:outline-none" onclick="togglePassword('current_password', this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
                                     </svg>
                                 </button>
                             </div>
+                            <span id="current_password_error" class="mt-2 text-sm text-red-600 hidden">Current password is required.</span>
                             @if ($errors->updatePassword->has('current_password'))
                                 <p class="mt-2 text-sm text-red-600">{{ $errors->updatePassword->first('current_password') }}</p>
                             @endif
@@ -527,14 +486,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <label for="password" class="block text-sm font-semibold text-gray-900 mb-2">New Password</label>
                             <div class="relative">
                                 <input name="password" id="password" type="password" required autocomplete="new-password" 
-                                       class="w-full px-4 py-3 border {{ $errors->updatePassword->has('password') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12" />
+                                       class="w-full px-4 py-3 border border-gray-300 focus:ring-teal-500 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12 @if($errors->updatePassword->has('password')) border-red-500 focus:ring-red-500 @endif" />
                                 <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 focus:outline-none" onclick="togglePassword('password', this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
                                     </svg>
                                 </button>
                             </div>
+                            <span id="password_error" class="mt-2 text-sm text-red-600 hidden">Password must be at least 8 characters.</span>
                             @if ($errors->updatePassword->has('password'))
                                 <p class="mt-2 text-sm text-red-600">{{ $errors->updatePassword->first('password') }}</p>
                             @endif
@@ -546,14 +506,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <label for="password_confirmation" class="block text-sm font-semibold text-gray-900 mb-2">Confirm New Password</label>
                             <div class="relative">
                                 <input name="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password" 
-                                       class="w-full px-4 py-3 border {{ $errors->updatePassword->has('password_confirmation') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12" />
+                                       class="w-full px-4 py-3 border border-gray-300 focus:ring-teal-500 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12 @if($errors->updatePassword->has('password_confirmation')) border-red-500 focus:ring-red-500 @endif" />
                                 <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 focus:outline-none" onclick="togglePassword('password_confirmation', this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
                                     </svg>
                                 </button>
                             </div>
+                            <span id="password_confirmation_error" class="mt-2 text-sm text-red-600 hidden">Passwords do not match.</span>
                             @if ($errors->updatePassword->has('password_confirmation'))
                                 <p class="mt-2 text-sm text-red-600">{{ $errors->updatePassword->first('password_confirmation') }}</p>
                             @endif
@@ -577,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 Password updated successfully!
                             </div>
                         @endif
-                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" onclick="console.log('Update Password button clicked');">
+                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" id="update-password-btn">
                             Update Password
                         </button>
                     </div>
@@ -619,14 +580,122 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!svg) return;
         if (input.type === 'password') {
             input.type = 'text';
-            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.042-3.368m3.087-2.933A9.956 9.956 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.973 9.973 0 01-4.293 5.411M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"/>';
+            // Professional Heroicons eye-off (hide)
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.94 17.94A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.042-3.368m3.087-2.933A9.956 9.956 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.973 9.973 0 01-4.293 5.411"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"/>';
             btn.title = 'Hide password';
         } else {
             input.type = 'password';
-            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268-2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+            // Professional Heroicons eye (show)
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" /><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />';
             btn.title = 'Show password';
         }
     }
+</script>
+<script>
+function validateName() {
+    const name = document.getElementById('name').value.trim();
+    const msg = document.getElementById('name-validation');
+    if (name.length < 2) {
+        msg.textContent = 'Name must be at least 2 characters.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Looks good!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validateEmail() {
+    const email = document.getElementById('email').value.trim();
+    const msg = document.getElementById('email-validation');
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(email)) {
+        msg.textContent = 'Please enter a valid email address.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid email!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validatePhone() {
+    const phone = document.getElementById('phone').value.trim();
+    const msg = document.getElementById('phone-validation');
+    // Accepts +673 1234567 or 1234567 or +673-1234567
+    const re = /^(\+673[- ]?)?\d{7}$/;
+    if (phone.length > 0 && !re.test(phone)) {
+        msg.textContent = 'Please enter a valid Brunei phone number.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else if (phone.length === 0) {
+        msg.textContent = '';
+    } else {
+        msg.textContent = 'Valid phone number!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+// Initial validation on page load
+document.addEventListener('DOMContentLoaded', function() {
+    validateName();
+    validateEmail();
+    validatePhone();
+});
+</script>
+
+<script>
+// Live validation for change password section
+function validatePasswordFields() {
+    const current = document.getElementById('current_password');
+    const newPass = document.getElementById('password');
+    const confirmPass = document.getElementById('password_confirmation');
+    let valid = true;
+
+    // Current password
+    if (!current.value.trim()) {
+        current.classList.add('border-red-500');
+        document.getElementById('current_password_error').classList.remove('hidden');
+        valid = false;
+    } else {
+        current.classList.remove('border-red-500');
+        document.getElementById('current_password_error').classList.add('hidden');
+    }
+
+    // New password
+    if (newPass.value.length < 8) {
+        newPass.classList.add('border-red-500');
+        document.getElementById('password_error').classList.remove('hidden');
+        valid = false;
+    } else {
+        newPass.classList.remove('border-red-500');
+        document.getElementById('password_error').classList.add('hidden');
+    }
+
+    // Confirm password
+    if (confirmPass.value !== newPass.value || confirmPass.value.length < 8) {
+        confirmPass.classList.add('border-red-500');
+        document.getElementById('password_confirmation_error').classList.remove('hidden');
+        valid = false;
+    } else {
+        confirmPass.classList.remove('border-red-500');
+        document.getElementById('password_confirmation_error').classList.add('hidden');
+    }
+    return valid;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const current = document.getElementById('current_password');
+    const newPass = document.getElementById('password');
+    const confirmPass = document.getElementById('password_confirmation');
+    const form = document.getElementById('change-password-form');
+    if (current && newPass && confirmPass) {
+        current.addEventListener('input', validatePasswordFields);
+        newPass.addEventListener('input', validatePasswordFields);
+        confirmPass.addEventListener('input', validatePasswordFields);
+    }
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!validatePasswordFields()) {
+                e.preventDefault();
+            }
+        });
+    }
+});
 </script>
 
 <style>

@@ -16,20 +16,22 @@
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16">
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6">
                         <div class="relative">
-                            <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
+                @if(Auth::check())
+                    <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
+                @endif
                         </div>
                         <div class="lg:mb-4">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
                                 <div class="flex flex-col gap-0 mb-2">
                                     <div class="flex items-center gap-3">
-                                        <h1 class="text-3xl font-bold text-gray-900">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</h1>
+                                        <h1 class="text-3xl font-bold text-gray-900">@if(Auth::check()){{ Auth::user()->name }}@else Dr. Ahmad bin Ali @endif</h1>
                                     </div>
                                     <div class="flex items-center gap-2 text-gray-600 mt-2">
                                         <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
                                             <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
                                         </svg>
-                                        <span class="font-medium">{{ Auth::user()->role ?? 'Lecturer / Student / Staff' }}</span>
+                                        <span class="font-medium">@if(Auth::check()){{ Auth::user()->role }}@else Lecturer / Student / Staff @endif</span>
                                     </div>
                                 </div>
                             </div>
@@ -56,22 +58,22 @@
                     <div class="space-y-4">
                         <div class="border-l-4 border-teal-400 pl-4">
                             <div class="text-sm font-medium text-gray-500 mb-1">Full Name</div>
-                            <div class="text-gray-900 font-medium">{{ Auth::user()->name ?? 'Dr. Ahmad bin Ali' }}</div>
+                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->name }}@else Dr. Ahmad bin Ali @endif</div>
                         </div>
                         
                         <div class="border-l-4 border-blue-400 pl-4">
                             <div class="text-sm font-medium text-gray-500 mb-1">Email Address</div>
-                            <div class="text-gray-900 font-medium">{{ Auth::user()->email ?? 'name@unissa.edu.bn' }}</div>
+                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->email }}@else name@unissa.edu.bn @endif</div>
                         </div>
                         
                         <div class="border-l-4 border-green-400 pl-4">
                             <div class="text-sm font-medium text-gray-500 mb-1">Phone Number</div>
-                            <div class="text-gray-900 font-medium">{{ Auth::user()->phone ?? '+673 xxxx xxxx' }}</div>
+                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->phone }}@else +673 xxxx xxxx @endif</div>
                         </div>
                         
                         <div class="border-l-4 border-purple-400 pl-4">
                             <div class="text-sm font-medium text-gray-500 mb-1">Faculty / Department</div>
-                            <div class="text-gray-900 font-medium">{{ Auth::user()->department ?? 'Faculty of Usuluddin' }}</div>
+                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->department }}@else Faculty of Usuluddin @endif</div>
                         </div>
                     </div>
                 </div>
@@ -104,11 +106,11 @@
                             </div>
                             <div>
                                 <h2 class="text-2xl font-bold text-gray-900">My Reviews</h2>
-                                <p class="text-gray-600">{{ Auth::user()->reviews->count() }} {{ Auth::user()->reviews->count() === 1 ? 'review' : 'reviews' }} shared</p>
+                                <p class="text-gray-600">@if(Auth::check()){{ Auth::user()->reviews->count() }} {{ Auth::user()->reviews->count() === 1 ? 'review' : 'reviews' }} shared @else 0 reviews shared @endif</p>
                             </div>
                         </div>
                         
-                        @if(Auth::user()->reviews->count() > 1)
+                        @if(Auth::check() && Auth::user()->reviews->count() > 1)
                             <div class="flex items-center gap-2 text-sm text-gray-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -118,10 +120,10 @@
                         @endif
                     </div>
 
-                    @if(Auth::user()->reviews->count() > 0)
+                    @if(Auth::check() && Auth::user()->reviews->count() > 0)
                         <!-- Reviews Display Area -->
                         <div class="bg-gray-50 rounded-xl p-6 min-h-[400px]">
-                            @if(Auth::user()->reviews->count() > 1)
+                            @if(Auth::check() && Auth::user()->reviews->count() > 1)
                                 <!-- Navigation Arrows for Multiple Reviews -->
                                 <div class="relative">
                                     <button onclick="moveReview(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white hover:bg-gray-50 rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-all duration-200">
@@ -150,7 +152,13 @@
                                     
                                     <!-- Navigation Dots -->
                                     <div class="flex justify-center mt-6 gap-2">
-                                        @foreach(Auth::user()->reviews as $index => $review)
+                                            @if(Auth::check())
+                                                @foreach(Auth::user()->reviews as $index => $review)
+                                                    <button onclick="goToReview({{ $index }})" 
+                                                            class="review-dot w-3 h-3 rounded-full transition-all duration-200 {{ $index === 0 ? 'bg-teal-500 w-8' : 'bg-gray-300 hover:bg-gray-400' }}"
+                                                            data-index="{{ $index }}"></button>
+                                                @endforeach
+                                            @endif
                                             <button onclick="goToReview({{ $index }})" 
                                                     class="review-dot w-3 h-3 rounded-full transition-all duration-200 {{ $index === 0 ? 'bg-teal-500 w-8' : 'bg-gray-300 hover:bg-gray-400' }}"
                                                     data-index="{{ $index }}"></button>
