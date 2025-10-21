@@ -255,7 +255,7 @@
                 </div>
                 <div class="info-item">
                     <label>Payment Method</label>
-                    <value>{{ ucfirst($order->payment_method) }}</value>
+                    <value>{{ $order->payment_method === 'bank_transfer' ? 'Bank Transfer' : ucfirst($order->payment_method) }}</value>
                 </div>
                 <div class="info-item">
                     <label>Payment Status</label>

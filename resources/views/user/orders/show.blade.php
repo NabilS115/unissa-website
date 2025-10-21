@@ -175,7 +175,7 @@
                 <div class="space-y-4">
                     <div>
                         <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Payment Method</p>
-                        <p class="text-lg font-semibold text-gray-800">{{ ucfirst($order->payment_method) }}</p>
+                        <p class="text-lg font-semibold text-gray-800">{{ $order->payment_method === 'bank_transfer' ? 'Bank Transfer' : ucfirst($order->payment_method) }}</p>
                     </div>
                     
                     <div>

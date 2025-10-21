@@ -15,59 +15,61 @@
             <!-- Order Summary -->
             <div class="lg:col-span-1 order-2 lg:order-1">
                 <div class="bg-white rounded-2xl shadow-xl border border-teal-100 p-6 sticky top-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
+                    @if(count($cartItems) === 0)
+                        <div class="flex flex-col items-center justify-center py-12">
+                                <!-- SVG cart icon removed as requested -->
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
+                            <p class="text-gray-500 mb-6">Browse our amazing products and start building your order!</p>
+                            <a href="{{ url('/products') }}" class="inline-block bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-semibold px-6 py-3 rounded-xl shadow hover:from-teal-600 hover:to-emerald-600 transition-all duration-200">Shop Now</a>
                         </div>
-                        <h2 class="text-2xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Order Summary</h2>
-                    </div>
-                    
-                    <div class="space-y-4 mb-6">
-                        @foreach($cartItems as $item)
-                        <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all duration-200">
-                       {{-- DEBUG: Show the actual image path for troubleshooting --}}
-                        {{-- <div class="text-xs text-red-500">IMG: {{ $item->product->img }}</div> --}}
-                        @php
-                            $img = $item->product->img;
-                            if ($img && Str::startsWith($img, '/storage/')) {
-                                $img = ltrim($img, '/');
-                                if (Str::startsWith($img, 'storage/')) {
-                                    $img = substr($img, strlen('storage/'));
-                                }
-                            }
-                            $itemImageSrc = $img ? (Str::startsWith($img, ['http://', 'https://']) ? $img : asset('storage/' . $img)) : null;
-                        @endphp
-                        <img src="{{ $itemImageSrc ?? '' }}"
-                             alt="{{ $item->product->name }}"
-                             class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm">
-                            <div class="flex-grow">
-                                <h4 class="font-semibold text-gray-800">{{ $item->product->name }}</h4>
-                                <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x ${{ number_format($item->product->price, 2) }}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-bold text-teal-700">${{ number_format($item->total_price, 2) }}</p>
-                            </div>
+                    @else
+                        <div class="flex items-center gap-3 mb-6">
+                            <!-- SVG cart icon removed as requested -->
+                            <h2 class="text-2xl font-bold bg-gradient-to-r from-teal-700 to-emerald-700 bg-clip-text text-transparent">Order Summary</h2>
                         </div>
-                        @endforeach
-                    </div>
-                    
-                    <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-4 mb-6 border border-teal-100">
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-700 font-medium">Subtotal ({{ $totalItems }} items)</span>
-                                <span class="font-semibold text-gray-800">${{ number_format($totalPrice, 2) }}</span>
+                        <div class="space-y-4 mb-6">
+                            @foreach($cartItems as $item)
+                            <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all duration-200">
+                                {{-- DEBUG: Show the actual image path for troubleshooting --}}
+                                {{-- <div class="text-xs text-red-500">IMG: {{ $item->product->img }}</div> --}}
+                                @php
+                                    $img = $item->product->img;
+                                    if ($img && Str::startsWith($img, '/storage/')) {
+                                        $img = ltrim($img, '/');
+                                        if (Str::startsWith($img, 'storage/')) {
+                                            $img = substr($img, strlen('storage/'));
+                                        }
+                                    }
+                                    $itemImageSrc = $img ? (Str::startsWith($img, ['http://', 'https://']) ? $img : asset('storage/' . $img)) : null;
+                                @endphp
+                                <img src="{{ $itemImageSrc ?? '' }}"
+                                     alt="{{ $item->product->name }}"
+                                     class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm">
+                                <div class="flex-grow">
+                                    <h4 class="font-semibold text-gray-800">{{ $item->product->name }}</h4>
+                                    <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x ${{ number_format($item->product->price, 2) }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-teal-700">${{ number_format($item->total_price, 2) }}</p>
+                                </div>
                             </div>
-                            <div class="border-t border-teal-200 pt-3">
+                            @endforeach
+                        </div>
+                        <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-4 mb-6 border border-teal-100">
+                            <div class="space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-xl font-bold text-gray-800">Total</span>
-                                    <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-gray-700 font-medium">Subtotal ({{ $totalItems }} items)</span>
+                                    <span class="font-semibold text-gray-800">${{ number_format($totalPrice, 2) }}</span>
+                                </div>
+                                <div class="border-t border-teal-200 pt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xl font-bold text-gray-800">Total</span>
+                                        <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    @endif
             </div>
 
             <!-- Checkout Form -->

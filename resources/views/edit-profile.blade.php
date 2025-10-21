@@ -571,7 +571,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
                         <svg class="w-7 h-7 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                        </svg>
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-gray-900">Update Password</h2>
@@ -646,9 +645,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="flex items-center gap-2 text-red-600 font-medium">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                </svg>
-                                {{ session('error') }}
-                            </div>
+                            </svg>
+                            {{ session('error') }}
                         @endif
                         @if (session('password-updated') || session('status') === 'password-updated')
                             <div class="flex items-center gap-2 text-green-600 font-medium">
@@ -792,18 +790,34 @@ document.addEventListener('DOMContentLoaded', function() {
         newPass.classList.add('border-red-500');
         document.getElementById('password_error').classList.remove('hidden');
         valid = false;
-            const number = document.getElementById('card_number').value.replace(/\s/g, '');
-            const msg = document.getElementById('card-number-validation');
-            if (!/^\d{13,19}$/.test(number)) {
-                msg.textContent = 'Card number must be 13–19 digits.';
-                msg.className = 'mt-2 text-sm text-red-600';
-            } else if (!luhnCheck(number)) {
-                msg.textContent = 'Card number is not valid.';
-                msg.className = 'mt-2 text-sm text-red-600';
-            } else {
-                msg.textContent = 'Valid card number!';
-                msg.className = 'mt-2 text-sm text-green-600';
-            }
+    } else {
+        newPass.classList.remove('border-red-500');
+        document.getElementById('password_error').classList.add('hidden');
+    }
+
+    // Confirm password
+    if (confirmPass.value !== newPass.value) {
+        confirmPass.classList.add('border-red-500');
+        document.getElementById('password_confirmation_error').classList.remove('hidden');
+        valid = false;
+    } else {
+        confirmPass.classList.remove('border-red-500');
+        document.getElementById('password_confirmation_error').classList.add('hidden');
+    }
+
+    // Card number
+    const number = document.getElementById('card_number').value.replace(/\s/g, '');
+    const msg = document.getElementById('card-number-validation');
+    if (!/^\d{13,19}$/.test(number)) {
+        msg.textContent = 'Card number must be 13–19 digits.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else if (!luhnCheck(number)) {
+        msg.textContent = 'Card number is not valid.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid card number!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
         valid = false;
     } else {
             const expiry = document.getElementById('card_expiry').value.trim();

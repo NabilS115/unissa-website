@@ -14,11 +14,7 @@
         @if($cartItems->isEmpty())
             <!-- Elegant Empty Cart -->
             <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-16 text-center">
-                <div class="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-full flex items-center justify-center">
-                    <svg class="w-16 h-16 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13h10m-10 0v6a2 2 0 002 2h6a2 2 0 002-2v-6"></path>
-                    </svg>
-                </div>
+                <!-- Empty cart SVG icon removed as requested -->
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
                 <p class="text-lg text-gray-600 mb-10 max-w-md mx-auto">Discover our amazing products and start building your perfect order</p>
                 <a href="{{ route('unissa-cafe.catalog') }}" class="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:from-teal-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
