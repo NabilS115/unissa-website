@@ -52,8 +52,12 @@
             @if($isCafe || ($isProfile && $footerContext === 'unissa-cafe'))
                 <div class="flex gap-4 mb-4">
                     <a href="https://www.instagram.com/unissacafe/" class="text-white" title="Instagram" target="_blank" rel="noopener">
-                        <!-- Instagram Official SVG -->
-                        <svg width="24" height="24" viewBox="0 0 448 512" fill="currentColor"><path d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.3 224.1 371.3 339.2 319.8 339.2 256.1 287.7 141 224.1 141zm0 186.6c-39.6 0-71.7-32.1-71.7-71.7s32.1-71.7 71.7-71.7 71.7 32.1 71.7 71.7-32.1 71.7-71.7 71.7zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zm76.1 27.2c-1.7-35.3-9.9-66.7-36.2-92.9S388.6 9.7 353.3 8c-35.3-1.7-138.6-1.7-173.9 0-35.3 1.7-66.7 9.9-92.9 36.2S9.7 123.4 8 158.7c-1.7 35.3-1.7 138.6 0 173.9 1.7 35.3 9.9 66.7 36.2 92.9s57.6 34.5 92.9 36.2c35.3 1.7 138.6 1.7 173.9 0 35.3-1.7 66.7-9.9 92.9-36.2s34.5-57.6 36.2-92.9c1.7-35.3 1.7-138.6 0-173.9zM398.8 388c-7.8 19.6-22.9 34.7-42.5 42.5-29.5 11.7-99.5 9-132.3 9s-102.7 2.6-132.3-9c-19.6-7.8-34.7-22.9-42.5-42.5-11.7-29.5-9-99.5-9-132.3s-2.6-102.7 9-132.3c7.8-19.6 22.9-34.7 42.5-42.5 29.5-11.7 99.5-9 132.3-9s102.7-2.6 132.3 9c19.6 7.8 34.7 22.9 42.5 42.5 11.7 29.5 9 99.5 9 132.3s2.6 102.7-9 132.3z"/></svg>
+                                                <!-- Refined Instagram SVG -->
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+                                                    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                    <circle cx="17" cy="7" r="1.2" fill="currentColor"/>
+                                                </svg>
                     </a>
                 </div>
                 <div class="flex items-center gap-2 mb-2">
@@ -69,8 +73,12 @@
             @else
                 <div class="flex gap-4 mb-4">
                     <a href="https://www.instagram.com/tijarahco/" class="text-white" title="Instagram" target="_blank" rel="noopener">
-                        <!-- Instagram Official SVG -->
-                        <svg width="24" height="24" viewBox="0 0 448 512" fill="currentColor"><path d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.3 224.1 371.3 339.2 319.8 339.2 256.1 287.7 141 224.1 141zm0 186.6c-39.6 0-71.7-32.1-71.7-71.7s32.1-71.7 71.7-71.7 71.7 32.1 71.7 71.7-32.1 71.7-71.7 71.7zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zm76.1 27.2c-1.7-35.3-9.9-66.7-36.2-92.9S388.6 9.7 353.3 8c-35.3-1.7-138.6-1.7-173.9 0-35.3 1.7-66.7 9.9-92.9 36.2S9.7 123.4 8 158.7c-1.7 35.3-1.7 138.6 0 173.9 1.7 35.3 9.9 66.7 36.2 92.9s57.6 34.5 92.9 36.2c35.3 1.7 138.6 1.7 173.9 0 35.3-1.7 66.7-9.9 92.9-36.2s34.5-57.6 36.2-92.9c1.7-35.3 1.7-138.6 0-173.9zM398.8 388c-7.8 19.6-22.9 34.7-42.5 42.5-29.5 11.7-99.5 9-132.3 9s-102.7 2.6-132.3-9c-19.6-7.8-34.7-22.9-42.5-42.5-11.7-29.5-9-99.5-9-132.3s-2.6-102.7 9-132.3c7.8-19.6 22.9-34.7 42.5-42.5 29.5-11.7 99.5-9 132.3-9s102.7-2.6 132.3 9c19.6 7.8 34.7 22.9 42.5 42.5 11.7 29.5 9 99.5 9 132.3s2.6 102.7-9 132.3z"/></svg>
+                                                <!-- Refined Instagram SVG -->
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+                                                    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                    <circle cx="17" cy="7" r="1.2" fill="currentColor"/>
+                                                </svg>
                     </a>
                     <a href="https://www.facebook.com/tijarahco/" class="text-white" title="Facebook" target="_blank" rel="noopener">
                         <!-- Facebook Official SVG -->
