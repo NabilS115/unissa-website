@@ -17,7 +17,12 @@
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <div class="flex flex-col">
             <span class="font-bold text-lg">
-                @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
+                @php
+                    $footerContext = session('header_context');
+                    $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*');
+                    $isProfile = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+                @endphp
+                @if($isCafe || ($isProfile && $footerContext === 'unissa-cafe'))
                     Unissa Cafe
                 @else
                     Tijarah Co Sdn Bhd
@@ -27,7 +32,7 @@
     </div>
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
     <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
-            @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*'))
+            @if($isCafe || ($isProfile && $footerContext === 'unissa-cafe'))
                 <!-- Unissa Cafe Footer Navigation -->
                 <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
                 <a href="{{ route('unissa-cafe.catalog') }}" class="text-white mb-2 hover:underline">Catalog</a>
@@ -42,9 +47,9 @@
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col items-center min-w-[200px]">
             <span class="font-bold mb-2">Follow Us</span>
             @php
-                $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*');
+                // $isCafe and $isProfile already defined above
             @endphp
-            @if($isCafe)
+            @if($isCafe || ($isProfile && $footerContext === 'unissa-cafe'))
                 <div class="flex gap-4 mb-4">
                     <a href="https://www.instagram.com/unissacafe/" class="text-white" title="Instagram" target="_blank" rel="noopener">
                         <!-- Instagram Official SVG -->

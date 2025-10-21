@@ -71,15 +71,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', function (\Illuminate\Http\Request $request) {
         // Determine previous context from referer or session
         $referer = $request->headers->get('referer');
-        $context = 'tijarah';
-        if ($referer) {
-            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
+        if ($request->query('context') === 'unissa-cafe') {
+            session(['header_context' => 'unissa-cafe']);
+        } else {
+            $context = session('header_context', 'tijarah');
+            if (
+                ($referer && (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')))
+                || ($referer && str_ends_with($referer, '/edit-profile') && $context === 'unissa-cafe')
+                || ($context === 'unissa-cafe')
+            ) {
                 $context = 'unissa-cafe';
+            } else {
+                $context = 'tijarah';
             }
-        } elseif (session('header_context')) {
-            $context = session('header_context');
+            session(['header_context' => $context]);
         }
-        session(['header_context' => $context]);
         if (auth()->user()->role === 'admin') {
             return redirect()->route('admin.profile');
         }
@@ -100,9 +106,11 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.profile');
     Route::get('/edit-profile', function (\Illuminate\Http\Request $request) {
         $referer = $request->headers->get('referer');
-        $context = session('header_context', 'tijarah');
-        // If coming from a cafe-related page, set context to unissa-cafe
-        if ($referer && (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders'))) {
+        $context = 'tijarah';
+        if (
+            ($referer && (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')))
+            || ($referer && str_ends_with($referer, '/profile') && session('header_context') === 'unissa-cafe')
+        ) {
             $context = 'unissa-cafe';
         }
         session(['header_context' => $context]);

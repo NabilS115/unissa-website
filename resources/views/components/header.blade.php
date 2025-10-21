@@ -414,7 +414,12 @@
                         <div class="text-sm text-gray-600">{{ Auth::user()->email }}</div>
                     </div>
                     <hr class="my-2">
-                    <a href="/profile" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Profile</a>
+                    @php
+                        $headerContext = session('header_context');
+                        $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
+                        $profileUrl = ($isCafe || $headerContext === 'unissa-cafe') ? '/profile?context=unissa-cafe' : '/profile';
+                    @endphp
+                    <a href="{{ $profileUrl }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Profile</a>
                     @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/*'))
                         <a href="{{ route('user.orders.index') }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">My Orders</a>
                     @endif
