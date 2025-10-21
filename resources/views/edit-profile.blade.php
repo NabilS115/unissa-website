@@ -462,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <!-- Move button to its own row at the bottom of the card, checked text removed -->
                     <div class="flex justify-end w-full pt-6">
-                        <button type="submit" id="save-payment-btn" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200 border-4 border-red-500" autocomplete="off">
+                        <button type="submit" id="save-payment-btn" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200" autocomplete="off">
                             <span class="whitespace-nowrap">Save Payment Method</span>
                         </button>
                     </div>
