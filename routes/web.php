@@ -100,22 +100,12 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.profile');
     Route::get('/edit-profile', function (\Illuminate\Http\Request $request) {
         $referer = $request->headers->get('referer');
-        $context = 'tijarah';
-        if ($referer) {
-            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
-                $context = 'unissa-cafe';
-            }
-        } elseif (session('header_context')) {
-            $context = session('header_context');
+        $context = session('header_context', 'tijarah');
+        // If coming from a cafe-related page, set context to unissa-cafe
+        if ($referer && (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders'))) {
+            $context = 'unissa-cafe';
         }
         session(['header_context' => $context]);
-        // Carry over header context from previous page (profile)
-        $headerContext = session('header_context');
-        if (!$headerContext && $request->headers->get('referer')) {
-            if (str_contains($request->headers->get('referer'), 'unissa-cafe')) {
-                session(['header_context' => 'unissa-cafe']);
-            }
-        }
         return view('edit-profile');
     })->name('edit.profile');
     Route::post('/profile/photo', [App\Http\Controllers\ProfileController::class, 'updatePhoto'])->name('profile.photo');
