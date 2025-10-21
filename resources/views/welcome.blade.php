@@ -264,9 +264,11 @@
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="/contact" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="background-color:#0d9488;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.959 8.959 0 01-4.906-1.436L3 21l2.436-5.094A8.959 8.959 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"/>
-                        </svg>
+                                                <!-- Refined Mail/Message Icon -->
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                    <path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
                         Send Us a Message
                     </a>
                     <a href="tel:+XXXXXXX" class="inline-flex items-center px-8 py-3 bg-white hover:bg-gradient-to-r hover:from-teal-50 hover:via-emerald-50 hover:to-cyan-50 text-teal-600 font-semibold rounded-2xl border-2 border-teal-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
