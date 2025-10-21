@@ -79,10 +79,8 @@
 <script>
 function openPhotoModal() {
     document.getElementById('photo-modal').classList.remove('hidden');
-}
 function closePhotoModal() {
     document.getElementById('photo-modal').classList.add('hidden');
-}
 function handlePhotoUpload(event) {
     const fileInput = event.target;
     const file = fileInput.files[0];
@@ -321,10 +319,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p id="card-number-validation" class="mt-2 text-sm"></p>
                                 <div class="grid grid-cols-2 gap-4 mt-4">
                                     <div>
-                                        <label for="card_expiry" class="block text-sm font-semibold text-[#0d9488] mb-2">Expiry (MM/YYYY)</label>
+                                        <label for="card_expiry" class="block text-sm font-semibold text-[#0d9488] mb-2">Expiry (MM/YY)</label>
                                         <input name="card_expiry" id="card_expiry" type="text" autocomplete="cc-exp"
                                             value="{{ old('card_expiry', Auth::user()->card_expiry) }}"
-                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="MM/YYYY" oninput="validateCardExpiry()" />
+                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="MM/YY" oninput="validateCardExpiry()" />
                                         <p id="card-expiry-validation" class="mt-2 text-sm"></p>
                                     </div>
                                     <div>
@@ -352,7 +350,29 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <label for="bank_account" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Account Number</label>
                                 <input name="bank_account" id="bank_account" type="text" autocomplete="off"
                                     value="{{ old('bank_account', Auth::user()->bank_account) }}"
-                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Account number" />
+                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Account number" maxlength="16" pattern="^[0-9]{16}$" oninput="validateBankAccount(this)" />
+                                <p id="bank-account-validation" class="mt-2 text-sm"></p>
+<script>
+function validateBankAccount(input) {
+    const value = input.value;
+    const msg = document.getElementById('bank-account-validation');
+    // Only allow digits, no spaces or other characters
+    if (!/^[0-9]{16}$/.test(value)) {
+        msg.textContent = 'Account number must be exactly 16 digits, no spaces.';
+        msg.className = 'mt-2 text-sm text-red-600';
+        input.classList.remove('border-[#0d9488]','focus:ring-[#0d9488]');
+        input.classList.add('border-red-500','focus:ring-red-500');
+    } else {
+        msg.textContent = 'Valid account number.';
+        msg.className = 'mt-2 text-sm text-green-600';
+        input.classList.remove('border-red-500','focus:ring-red-500');
+        input.classList.add('border-[#0d9488]','focus:ring-[#0d9488]');
+    }
+    // Optionally, prevent non-digit input
+    input.value = value.replace(/[^0-9]/g, '');
+}
+</script>
+
                                 <label for="bank_reference" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Reference</label>
                                 <input name="bank_reference" id="bank_reference" type="text" autocomplete="off"
                                     value="{{ old('bank_reference', Auth::user()->bank_reference) }}"
@@ -398,9 +418,20 @@ function validateCardNumber() {
 function validateCardExpiry() {
     const expiry = document.getElementById('card_expiry').value.trim();
     const msg = document.getElementById('card-expiry-validation');
-    const re = /^(0[1-9]|1[0-2])\/(\d{4})$/;
+    const re = /^(0[1-9]|1[0-2])\/(\d{2})$/;
     if (!re.test(expiry)) {
-        msg.textContent = 'Expiry must be MM/YYYY.';
+        msg.textContent = 'Expiry must be MM/YY.';
+        msg.className = 'mt-2 text-sm text-red-600';
+        return;
+    }
+    // Check for expired date
+    const [mm, yy] = expiry.split('/');
+    const now = new Date();
+    // Convert YY to 20YY (assume 2000-2099)
+    const yyyy = parseInt(yy) + 2000;
+    const expDate = new Date(yyyy, parseInt(mm) - 1, 1);
+    if (expDate < new Date(now.getFullYear(), now.getMonth(), 1)) {
+        msg.textContent = 'Card is expired.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
         msg.textContent = 'Valid expiry date!';
@@ -682,57 +713,68 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
 function validateName() {
-    const name = document.getElementById('name').value.trim();
-    const msg = document.getElementById('name-validation');
-    if (name.length < 2) {
-        msg.textContent = 'Name must be at least 2 characters.';
-        msg.className = 'mt-2 text-sm text-red-600';
-    } else {
-        msg.textContent = 'Looks good!';
-        msg.className = 'mt-2 text-sm text-green-600';
-    }
+            const name = document.getElementById('name').value.trim();
+            const msg = document.getElementById('name-validation');
+            if (!/^([A-Za-z\s]{2,})$/.test(name)) {
+                msg.textContent = 'Name must be at least 2 letters.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else {
+                msg.textContent = 'Valid name!';
+                msg.className = 'mt-2 text-sm text-green-600';
+            }
 }
 function validateEmail() {
-    const email = document.getElementById('email').value.trim();
-    const msg = document.getElementById('email-validation');
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!re.test(email)) {
-        msg.textContent = 'Please enter a valid email address.';
-        msg.className = 'mt-2 text-sm text-red-600';
-    } else {
-        msg.textContent = 'Valid email!';
-        msg.className = 'mt-2 text-sm text-green-600';
-    }
+            const email = document.getElementById('email').value.trim();
+            const msg = document.getElementById('email-validation');
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!re.test(email)) {
+                msg.textContent = 'Please enter a valid email address.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else {
+                msg.textContent = 'Valid email!';
+                msg.className = 'mt-2 text-sm text-green-600';
+            }
 }
 function validatePhone() {
-    const phone = document.getElementById('phone').value.trim();
-    const msg = document.getElementById('phone-validation');
-    // Accepts +673 1234567 or 1234567 or +673-1234567
-    const re = /^(\+673[- ]?)?\d{7}$/;
-    if (phone.length > 0 && !re.test(phone)) {
-        msg.textContent = 'Please enter a valid Brunei phone number.';
-        msg.className = 'mt-2 text-sm text-red-600';
-    } else if (phone.length === 0) {
-        msg.textContent = '';
-    } else {
-        msg.textContent = 'Valid phone number!';
-        msg.className = 'mt-2 text-sm text-green-600';
-    }
+            const phone = document.getElementById('phone').value.trim();
+            const msg = document.getElementById('phone-validation');
+            const re = /^(\+673[- ]?)?\d{7}$/;
+            if (phone.length > 0 && !re.test(phone)) {
+                msg.textContent = 'Please enter a valid Brunei phone number.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else if (phone.length === 0) {
+                msg.textContent = '';
+            } else {
+                msg.textContent = 'Valid phone number!';
+                msg.className = 'mt-2 text-sm text-green-600';
+            }
 }
+        function validateDepartment() {
+            const department = document.getElementById('department');
+            if (!department) return;
+            const msg = document.getElementById('department-validation');
+            if (!/^([A-Za-z\s]{2,})$/.test(department.value.trim())) {
+                msg.textContent = 'Department must be at least 2 letters.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else {
+                msg.textContent = 'Valid department!';
+                msg.className = 'mt-2 text-sm text-green-600';
+            }
+        }
 // Initial validation on page load
 document.addEventListener('DOMContentLoaded', function() {
     validateName();
     validateEmail();
     validatePhone();
-});
-</script>
-
-<script>
-// Live validation for change password section
-function validatePasswordFields() {
-    const current = document.getElementById('current_password');
-    const newPass = document.getElementById('password');
-    const confirmPass = document.getElementById('password_confirmation');
+            const name = document.getElementById('cardholder_name').value.trim();
+            const msg = document.getElementById('cardholder-name-validation');
+            if (!/^([A-Za-z\s]{2,})$/.test(name)) {
+                msg.textContent = 'Cardholder name must be at least 2 letters.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else {
+                msg.textContent = 'Valid cardholder name!';
+                msg.className = 'mt-2 text-sm text-green-600';
+            }
     let valid = true;
 
     // Current password
@@ -750,44 +792,61 @@ function validatePasswordFields() {
         newPass.classList.add('border-red-500');
         document.getElementById('password_error').classList.remove('hidden');
         valid = false;
-    } else {
-        newPass.classList.remove('border-red-500');
-        document.getElementById('password_error').classList.add('hidden');
-    }
-
-    // Confirm password
-    if (confirmPass.value !== newPass.value || confirmPass.value.length < 8) {
-        confirmPass.classList.add('border-red-500');
-        document.getElementById('password_confirmation_error').classList.remove('hidden');
+            const number = document.getElementById('card_number').value.replace(/\s/g, '');
+            const msg = document.getElementById('card-number-validation');
+            if (!/^\d{13,19}$/.test(number)) {
+                msg.textContent = 'Card number must be 13–19 digits.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else if (!luhnCheck(number)) {
+                msg.textContent = 'Card number is not valid.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else {
+                msg.textContent = 'Valid card number!';
+                msg.className = 'mt-2 text-sm text-green-600';
+            }
         valid = false;
     } else {
-        confirmPass.classList.remove('border-red-500');
-        document.getElementById('password_confirmation_error').classList.add('hidden');
-    }
-    return valid;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const current = document.getElementById('current_password');
-    const newPass = document.getElementById('password');
-    const confirmPass = document.getElementById('password_confirmation');
+            const expiry = document.getElementById('card_expiry').value.trim();
+            const msg = document.getElementById('card-expiry-validation');
+            const re = /^(0[1-9]|1[0-2])\/(\d{4})$/;
+            if (!re.test(expiry)) {
+                msg.textContent = 'Expiry must be MM/YYYY.';
+                msg.className = 'mt-2 text-sm text-red-600';
+                return;
+            }
+            // Check for expired date
+            const [mm, yyyy] = expiry.split('/');
+            const now = new Date();
+            const expDate = new Date(parseInt(yyyy), parseInt(mm) - 1, 1);
+            if (expDate < new Date(now.getFullYear(), now.getMonth(), 1)) {
+                msg.textContent = 'Card is expired.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else {
+                msg.textContent = 'Valid expiry date!';
+                msg.className = 'mt-2 text-sm text-green-600';
+            }
     const form = document.getElementById('change-password-form');
     if (current && newPass && confirmPass) {
-        current.addEventListener('input', validatePasswordFields);
-        newPass.addEventListener('input', validatePasswordFields);
-        confirmPass.addEventListener('input', validatePasswordFields);
-    }
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            if (!validatePasswordFields()) {
-                e.preventDefault();
+            const ccv = document.getElementById('card_ccv').value.trim();
+            const msg = document.getElementById('card-ccv-validation');
+            if (!/^\d{3,4}$/.test(ccv)) {
+                msg.textContent = 'CCV must be 3 or 4 digits.';
+                msg.className = 'mt-2 text-sm text-red-600';
+            } else {
+                msg.textContent = 'Valid CCV!';
+                msg.className = 'mt-2 text-sm text-green-600';
             }
-        });
     }
 });
-</script>
-
-<style>
+            validateName();
+            validateEmail();
+            validatePhone();
+            validateDepartment();
+            validateCardholderName();
+            validateCardNumber();
+            validateCardExpiry();
+            validateCardCCV();
+            validateBillingAddress();
     @keyframes fade-in {
         from {
             opacity: 0;

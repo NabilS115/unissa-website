@@ -38,12 +38,10 @@
                                 }
                             }
                             $itemImageSrc = $img ? (Str::startsWith($img, ['http://', 'https://']) ? $img : asset('storage/' . $img)) : null;
-                            $svgFallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="100%" height="100%" fill="%23e6fffa"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23666" font-size="10">No Image</text></svg>';
                         @endphp
-                        <img src="{{ $itemImageSrc ?? $svgFallback }}"
+                        <img src="{{ $itemImageSrc ?? '' }}"
                              alt="{{ $item->product->name }}"
-                             class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm"
-                             onerror="this.onerror=null;this.src='{{ $svgFallback }}';">
+                             class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm">
                             <div class="flex-grow">
                                 <h4 class="font-semibold text-gray-800">{{ $item->product->name }}</h4>
                                 <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x ${{ number_format($item->product->price, 2) }}</p>
@@ -183,7 +181,8 @@
                                         <label for="bank_account" class="block text-sm font-semibold text-[#0d9488] mb-2">Account Number</label>
                                         <input name="bank_account" id="bank_account" type="text" autocomplete="off"
                                             value="{{ old('bank_account', Auth::user()->bank_account) }}"
-                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Account number" />
+                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Account number" maxlength="16" pattern="^[0-9]{16}$" oninput="validateBankAccount(this)" />
+                                        <p id="bank-account-validation" class="mt-2 text-sm"></p>
                                     </div>
                                 </div>
                                 <label for="bank_reference" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Reference</label>
@@ -199,10 +198,6 @@
                         <!-- Cash Payment Info -->
                         <div id="cash-payment-info" class="mb-6 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-xl">
                             <div class="flex items-center gap-2 mb-2">
-                                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <h4 class="font-semibold text-teal-800">Cash Payment Instructions</h4>
                             </div>
                             <p class="text-sm text-teal-700">
                                 Please bring the exact amount (${{ number_format($totalPrice, 2) }}) when collecting your order. 
@@ -218,34 +213,37 @@
                                     <input type="text" name="card_number" id="card_number" 
                                            placeholder="1234 5678 9012 3456"
                                            value="{{ old('card_number', Auth::user()->card_number) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                           oninput="validateCheckoutCardNumber()">
+                                    <p id="checkout-card-number-validation" class="mt-2 text-sm"></p>
                                     @error('card_number')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
-                                
                                 <div>
                                     <label for="card_expiry" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
                                     <input type="text" name="card_expiry" id="card_expiry" 
                                            placeholder="MM/YY"
                                            value="{{ old('card_expiry', Auth::user()->card_expiry) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                           oninput="validateCheckoutCardExpiry()">
+                                    <p id="checkout-card-expiry-validation" class="mt-2 text-sm"></p>
                                     @error('card_expiry')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
-                                
                                 <div>
                                     <label for="card_cvv" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
                                     <input type="text" name="card_cvv" id="card_cvv" 
                                            placeholder="123"
                                            value="{{ old('card_ccv', Auth::user()->card_ccv) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                           oninput="validateCheckoutCardCVV()">
+                                    <p id="checkout-card-cvv-validation" class="mt-2 text-sm"></p>
                                     @error('card_cvv')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
-                                
                                 <div class="md:col-span-2">
                                     <label for="cardholder_name" class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
                                     <input type="text" name="cardholder_name" id="cardholder_name" 
@@ -272,57 +270,99 @@
         </div>
     </div>
 </div>
-
-<script>
-// Payment method toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
-    const cashPaymentInfo = document.getElementById('cash-payment-info');
-    const creditCardForm = document.getElementById('credit-card-form');
-    const submitButton = document.querySelector('button[type="submit"]');
-    
-    function togglePaymentMethod() {
-        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
-        
-        if (!selectedMethod) return;
-        // Safely toggle visibility if elements exist
-        if (selectedMethod.value === 'cash') {
-            if (cashPaymentInfo) cashPaymentInfo.style.display = 'block';
-            if (creditCardForm) creditCardForm.style.display = 'none';
-            if (submitButton && submitButton.querySelector('span')) submitButton.querySelector('span').textContent = 'Place Order Now';
-        } else if (selectedMethod.value === 'online') {
-            if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
-            if (creditCardForm) creditCardForm.style.display = 'block';
-            if (submitButton && submitButton.querySelector('span')) submitButton.querySelector('span').textContent = 'Pay Now & Place Order';
-        }
-    }
-    
-    paymentMethods.forEach(method => {
-        method.addEventListener('change', togglePaymentMethod);
-    });
-    
-    // Initialize on page load
-    togglePaymentMethod();
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
-    const bankFields = document.getElementById('bank-transfer-fields');
-    function toggleBankFields() {
-        const selected = document.querySelector('input[name="payment_method"]:checked');
-        if (selected && selected.value === 'bank_transfer') {
-            bankFields.style.display = 'block';
-        } else {
-            bankFields.style.display = 'none';
-        }
-    }
-    paymentRadios.forEach(radio => {
-        radio.addEventListener('change', toggleBankFields);
-    });
-    // Initial state
-    toggleBankFields();
-});
-</script>
 @endsection
+
+<script>
+function luhnCheck(card) {
+    let sum = 0;
+    let shouldDouble = false;
+    card = card.replace(/\s/g, '');
+    for (let i = card.length - 1; i >= 0; i--) {
+        let digit = parseInt(card.charAt(i));
+        if (shouldDouble) {
+            digit *= 2;
+            if (digit > 9) digit -= 9;
+        }
+        sum += digit;
+        shouldDouble = !shouldDouble;
+    }
+    return sum % 10 === 0;
+}
+function validateCheckoutCardNumber() {
+    const number = document.getElementById('card_number').value.replace(/\s/g, '');
+    const msg = document.getElementById('checkout-card-number-validation');
+    if (!/^\d{13,19}$/.test(number)) {
+        msg.textContent = 'Card number must be 13–19 digits.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else if (!luhnCheck(number)) {
+        msg.textContent = 'Card number is not valid.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid card number!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validateCheckoutCardExpiry() {
+    const expiry = document.getElementById('card_expiry').value.trim();
+    const msg = document.getElementById('checkout-card-expiry-validation');
+    const re = /^(0[1-9]|1[0-2])\/(\d{2})$/;
+    if (!re.test(expiry)) {
+        msg.textContent = 'Expiry must be MM/YY.';
+        msg.className = 'mt-2 text-sm text-red-600';
+        return;
+    }
+    // Check for expired date
+    const [mm, yy] = expiry.split('/');
+    const now = new Date();
+    const yyyy = parseInt(yy) + 2000;
+    const expDate = new Date(yyyy, parseInt(mm) - 1, 1);
+    if (expDate < new Date(now.getFullYear(), now.getMonth(), 1)) {
+        msg.textContent = 'Card is expired.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid expiry date!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validateCheckoutCardCVV() {
+    const ccv = document.getElementById('card_cvv').value.trim();
+    const msg = document.getElementById('checkout-card-cvv-validation');
+    if (!/^\d{3,4}$/.test(ccv)) {
+        msg.textContent = 'CVV must be 3 or 4 digits.';
+        msg.className = 'mt-2 text-sm text-red-600';
+    } else {
+        msg.textContent = 'Valid CVV!';
+        msg.className = 'mt-2 text-sm text-green-600';
+    }
+}
+function validateBankAccount(input) {
+    const value = input.value;
+    const msg = document.getElementById('bank-account-validation');
+    if (!/^[0-9]{16}$/.test(value)) {
+        msg.textContent = 'Account number must be exactly 16 digits, no spaces.';
+        msg.className = 'mt-2 text-sm text-red-600';
+        input.classList.remove('border-[#0d9488]','focus:ring-[#0d9488]');
+        input.classList.add('border-red-500','focus:ring-red-500');
+    } else {
+        msg.textContent = 'Valid account number.';
+        msg.className = 'mt-2 text-sm text-green-600';
+        input.classList.remove('border-red-500','focus:ring-red-500');
+        input.classList.add('border-[#0d9488]','focus:ring-[#0d9488]');
+    }
+    input.value = value.replace(/[^0-9]/g, '');
+}
+function showPaymentSection() {
+    const method = document.querySelector('input[name="payment_method"]:checked')?.value;
+    document.getElementById('cash-payment-info').style.display = (method === 'cash') ? 'block' : 'none';
+    document.getElementById('credit-card-form').style.display = (method === 'online') ? 'block' : 'none';
+    document.getElementById('bank-transfer-fields').style.display = (method === 'bank_transfer') ? 'block' : 'none';
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // Initial display
+    showPaymentSection();
+    // Listen for changes
+    document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
+        radio.addEventListener('change', showPaymentSection);
+    });
+});
+</script>

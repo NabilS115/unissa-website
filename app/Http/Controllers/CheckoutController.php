@@ -52,7 +52,7 @@ class CheckoutController extends Controller
             'customer_phone' => 'required|string|max:20',
             'pickup_notes' => 'nullable|string|max:1000',
             'notes' => 'nullable|string|max:1000',
-            'payment_method' => 'required|in:cash,online',
+            'payment_method' => 'required|in:cash,online,bank_transfer',
             // Credit card fields (required only for online payments, but not stored)
             'card_number' => 'required_if:payment_method,online|nullable|string',
             'card_expiry' => 'required_if:payment_method,online|nullable|string',
@@ -164,7 +164,7 @@ class CheckoutController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
-            'payment_method' => 'required|in:cash,online',
+            'payment_method' => 'required|in:cash,online,bank_transfer',
             'card_number' => 'required_if:payment_method,online|nullable|string|min:13|max:19',
             'card_expiry' => 'required_if:payment_method,online|nullable|string|size:5',
             'card_cvv' => 'required_if:payment_method,online|nullable|string|min:3|max:4',
