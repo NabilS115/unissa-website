@@ -1,13 +1,3 @@
-    {
-        // Set header context based on referer
-        $referer = request()->headers->get('referer');
-        if ($referer && str_contains($referer, 'unissa-cafe')) {
-            session(['header_context' => 'unissa-cafe']);
-        } else {
-            session(['header_context' => null]);
-        }
-        // ...existing code for showing the edit profile page...
-    }
 <?php
 
 namespace App\Http\Controllers;
@@ -39,11 +29,10 @@ class ProfileController extends Controller
         \Log::info('Profile update method called');
         \Log::info('Request data:', $request->all());
         \Log::info('User ID: ' . Auth::id());
-        
-        $user = Auth::user();
-        
-        try {
 
+        $user = Auth::user();
+
+        try {
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
