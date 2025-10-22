@@ -554,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                         </svg>
-                        <span class="text-sm font-medium text-gray-700">Uploading...</span>
+                        <span class="spinner-message text-sm font-medium text-gray-700">Uploading...</span>
                     </div>
                 </div>
                 <!-- Modal Header -->
@@ -576,12 +576,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <input type="file" name="profile_photo_file" id="photo-file-input" accept="image/*" onchange="openCropperFromFile(event)">
                             </form>
                             <div class="grid grid-cols-1 gap-3">
-                                @if (!$hasCustomPhoto)
-                                    <button type="button" id="upload-btn" class="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold shadow transition">Upload Image</button>
-                                @else
-                                    <button type="button" id="change-btn" class="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold shadow transition">Change Image</button>
-                                    <button type="button" id="delete-btn" class="w-full px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold shadow transition">Delete Image</button>
-                                @endif
+                                {{-- Render all buttons but control visibility via classes so JS can toggle without a full refresh --}}
+                                <button type="button" id="upload-btn" class="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold shadow transition {{ $hasCustomPhoto ? 'hidden' : '' }}">Upload Image</button>
+                                <button type="button" id="change-btn" class="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold shadow transition {{ $hasCustomPhoto ? '' : 'hidden' }}">Change Image</button>
+                                <button type="button" id="delete-btn" class="w-full px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold shadow transition {{ $hasCustomPhoto ? '' : 'hidden' }}">Delete Image</button>
                             </div>
 
                             {{-- Cropper area (hidden until a file is selected) --}}
@@ -623,6 +621,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 const closeBtn = modal.querySelector('button[onclick="closePhotoModal()"]');
                 if (closeBtn) closeBtn.focus();
             }, 50);
+            // Ensure buttons reflect current preview (so delete appears immediately after upload)
+            try {
+                const preview = document.getElementById('modal-photo-preview');
+                const uploadBtn = modal.querySelector('#upload-btn');
+                const changeBtn = modal.querySelector('#change-btn');
+                const deleteBtn = modal.querySelector('#delete-btn');
+                if (preview && preview.src) {
+                    const src = preview.src;
+                    const isDefault = src.includes('default-profile.svg') || src.startsWith('data:image/svg+xml');
+                    if (isDefault) {
+                        if (uploadBtn) uploadBtn.classList.remove('hidden');
+                        if (changeBtn) changeBtn.classList.add('hidden');
+                        if (deleteBtn) deleteBtn.classList.add('hidden');
+                    } else {
+                        if (uploadBtn) uploadBtn.classList.add('hidden');
+                        if (changeBtn) changeBtn.classList.remove('hidden');
+                        if (deleteBtn) deleteBtn.classList.remove('hidden');
+                    }
+                }
+            } catch (e) {
+                // ignore
+            }
             // attach ESC listener and backdrop click
             document.addEventListener('keydown', photoModalKeyHandler);
             modal.addEventListener('click', photoModalBackdropHandler);
@@ -657,9 +677,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        function showPhotoModalSpinner() {
+        function showPhotoModalSpinner(message = null) {
             const s = document.getElementById('photo-modal-spinner');
-            if (s) { s.classList.remove('hidden'); s.classList.add('flex'); }
+            if (s) {
+                // support optional message; only override if provided
+                const msgEl = s.querySelector('.spinner-message');
+                if (msgEl) {
+                    if (message !== null) msgEl.textContent = message;
+                    else if (!msgEl.textContent || msgEl.textContent.trim() === '') msgEl.textContent = 'Uploading...';
+                }
+                s.classList.remove('hidden'); s.classList.add('flex');
+            }
         }
 
         function hidePhotoModalSpinner() {
@@ -708,6 +736,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (overlayPhoto) overlayPhoto.src = url;
                                 if (preview) preview.src = url;
                                 if (headerImg) headerImg.src = url;
+                                // Ensure buttons update: show change/delete, hide upload
+                                const uploadBtn = document.getElementById('upload-btn');
+                                const changeBtn = document.getElementById('change-btn');
+                                const deleteBtn = document.getElementById('delete-btn');
+                                if (uploadBtn) uploadBtn.classList.add('hidden');
+                                if (changeBtn) changeBtn.classList.remove('hidden');
+                                if (deleteBtn) deleteBtn.classList.remove('hidden');
                             }
                         } catch (err) {
                             // ignore JSON parse errors
@@ -731,7 +766,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         function deleteProfilePhoto() {
             if (!confirm('Are you sure you want to delete your profile photo?')) return;
-            showPhotoModalSpinner();
+            // show deleting message on spinner (pass message so it's not overwritten)
+            showPhotoModalSpinner('Deleting...');
             fetch("{{ route('profile.photo.delete') }}", {
                 method: 'POST',
                 headers: {
@@ -891,6 +927,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (overlay) overlay.src = data.url;
                                 if (preview) preview.src = data.url;
                                 if (headerImg) headerImg.src = data.url;
+                                // Make delete visible immediately after successful crop upload
+                                const uploadBtn = document.getElementById('upload-btn');
+                                const changeBtn = document.getElementById('change-btn');
+                                const deleteBtn = document.getElementById('delete-btn');
+                                if (uploadBtn) uploadBtn.classList.add('hidden');
+                                if (changeBtn) changeBtn.classList.remove('hidden');
+                                if (deleteBtn) deleteBtn.classList.remove('hidden');
                             } else {
                                 const blobUrl = URL.createObjectURL(blob);
                                 const overlay = document.getElementById('profile-photo');
