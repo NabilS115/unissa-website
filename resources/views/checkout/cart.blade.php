@@ -240,7 +240,7 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
 function luhnCheck(card) {
     let sum = 0;
@@ -267,7 +267,7 @@ function validateCheckoutCardNumber() {
         msg.textContent = 'Card number is not valid.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
-        msg.textContent = 'Valid card number!';
+        msg.textContent = 'Valid card number.';
         msg.className = 'mt-2 text-sm text-green-600';
     }
 }
@@ -288,7 +288,7 @@ function validateCheckoutCardExpiry() {
         msg.textContent = 'Card is expired.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
-        msg.textContent = 'Valid expiry date!';
+        msg.textContent = 'Valid expiry date.';
         msg.className = 'mt-2 text-sm text-green-600';
     }
 }
@@ -299,7 +299,7 @@ function validateCheckoutCardCVV() {
         msg.textContent = 'CVV must be 3 or 4 digits.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
-        msg.textContent = 'Valid CVV!';
+        msg.textContent = 'Valid CVV.';
         msg.className = 'mt-2 text-sm text-green-600';
     }
 }
@@ -320,16 +320,28 @@ function validateBankAccount(input) {
     input.value = value.replace(/[^0-9]/g, '');
 }
 function showPaymentSection() {
-    const method = document.querySelector('input[name="payment_method"]:checked')?.value;
-    document.getElementById('cash-payment-info').style.display = (method === 'cash') ? 'block' : 'none';
-    document.getElementById('credit-card-form').style.display = (method === 'online') ? 'block' : 'none';
-    document.getElementById('bank-transfer-fields').style.display = (method === 'bank_transfer') ? 'block' : 'none';
+    const checked = document.querySelector('input[name="payment_method"]:checked');
+    const method = checked ? checked.value : null;
+    console.log('[checkout] showPaymentSection, method=', method);
+    const cashEl = document.getElementById('cash-payment-info');
+    const cardEl = document.getElementById('credit-card-form');
+    const bankEl = document.getElementById('bank-transfer-fields');
+    if (cashEl) cashEl.style.display = (method === 'cash') ? 'block' : 'none';
+    if (cardEl) cardEl.style.display = (method === 'online') ? 'block' : 'none';
+    if (bankEl) bankEl.style.display = (method === 'bank_transfer') ? 'block' : 'none';
 }
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('[checkout] DOMContentLoaded - attaching payment_method listeners');
     showPaymentSection();
-    document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
-        radio.addEventListener('change', showPaymentSection);
+    const radios = document.querySelectorAll('input[name="payment_method"]');
+    if (!radios || radios.length === 0) console.warn('[checkout] No payment_method radios found');
+    radios.forEach(function(radio) {
+        radio.addEventListener('change', function(e) {
+            console.log('[checkout] payment_method change ->', e.target.value);
+            showPaymentSection();
+        });
     });
 });
 </script>
-@endsection
+@endpush

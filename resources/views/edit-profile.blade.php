@@ -38,7 +38,7 @@
                             </div>
                         </div>
                         <!-- Profile Photo Modal/Overlay -->
-                        <div id="photo-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
+                        <div id="photo-modal" class="fixed inset-0 z-50 hidden items-center justify-center" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
                             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs flex flex-col items-center border border-gray-100 overflow-hidden">
                                 <!-- Modal Header -->
                                 <div class="w-full flex items-center justify-between px-6 py-4 bg-white bg-gradient-to-r from-teal-50 to-emerald-50">
@@ -78,16 +78,25 @@
 @push('scripts')
 <script>
 function openPhotoModal() {
-    document.getElementById('photo-modal').classList.remove('hidden');
+    const modal = document.getElementById('photo-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
 function closePhotoModal() {
-    document.getElementById('photo-modal').classList.add('hidden');
+    const modal = document.getElementById('photo-modal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
 function handlePhotoUpload(event) {
     const fileInput = event.target;
-    const file = fileInput.files[0];
+    const file = fileInput.files && fileInput.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('modal-photo-preview').src = e.target.result;
+            const preview = document.getElementById('modal-photo-preview');
+            if (preview) preview.src = e.target.result;
             const overlayPhoto = document.getElementById('profile-photo');
             if (overlayPhoto) overlayPhoto.src = e.target.result;
             // Update header profile image if present
@@ -107,54 +116,47 @@ function handlePhotoUpload(event) {
             body: formData
         })
         .then(response => {
-            // Accept any response as success (redirect or HTML)
             closePhotoModal();
         })
         .catch(error => {
-            // Still close modal and update preview
             closePhotoModal();
         });
     }
 }
 function deleteProfilePhoto() {
-    if (confirm('Are you sure you want to delete your profile photo?')) {
-        fetch("{{ route('profile.photo.delete') }}", {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(response => {
-            var defaultPhoto = "{{ Auth::user()->getProfilePhotoUrlAttribute(null) }}";
-            // Update modal preview
-            var modalPreview = document.getElementById('modal-photo-preview');
-            if (modalPreview) modalPreview.src = defaultPhoto;
-            // Update overlay photo
-            var overlayPhoto = document.getElementById('profile-photo');
-            if (overlayPhoto) overlayPhoto.src = defaultPhoto;
-            // Update header profile image if present
-            const headerProfileImg = document.querySelector('#profileMenuButton img');
-            if (headerProfileImg) headerProfileImg.src = defaultPhoto;
-            // Update any other profile photo images in the DOM
-            document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
-                img.src = defaultPhoto;
-            });
-            closePhotoModal();
-        })
-        .catch(error => {
-            var defaultPhoto = "{{ asset('images/default-profile.svg') }}";
-            var modalPreview = document.getElementById('modal-photo-preview');
-            if (modalPreview) modalPreview.src = defaultPhoto;
-            var overlayPhoto = document.getElementById('profile-photo');
-            if (overlayPhoto) overlayPhoto.src = defaultPhoto;
-            const headerProfileImg = document.querySelector('#profileMenuButton img');
-            if (headerProfileImg) headerProfileImg.src = defaultPhoto;
-            document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
-                img.src = defaultPhoto;
-            });
-            closePhotoModal();
+    if (!confirm('Are you sure you want to delete your profile photo?')) return;
+    fetch("{{ route('profile.photo.delete') }}", {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => {
+        var defaultPhoto = "{{ Auth::user()->getProfilePhotoUrlAttribute(null) }}";
+        var modalPreview = document.getElementById('modal-photo-preview');
+        if (modalPreview) modalPreview.src = defaultPhoto;
+        var overlayPhoto = document.getElementById('profile-photo');
+        if (overlayPhoto) overlayPhoto.src = defaultPhoto;
+        const headerProfileImg = document.querySelector('#profileMenuButton img');
+        if (headerProfileImg) headerProfileImg.src = defaultPhoto;
+        document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
+            img.src = defaultPhoto;
         });
-    }
+        closePhotoModal();
+    })
+    .catch(error => {
+        var defaultPhoto = "{{ asset('images/default-profile.svg') }}";
+        var modalPreview = document.getElementById('modal-photo-preview');
+        if (modalPreview) modalPreview.src = defaultPhoto;
+        var overlayPhoto = document.getElementById('profile-photo');
+        if (overlayPhoto) overlayPhoto.src = defaultPhoto;
+        const headerProfileImg = document.querySelector('#profileMenuButton img');
+        if (headerProfileImg) headerProfileImg.src = defaultPhoto;
+        document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
+            img.src = defaultPhoto;
+        });
+        closePhotoModal();
+    });
 }
 document.addEventListener('DOMContentLoaded', function() {
     var uploadBtn = document.getElementById('upload-btn');
@@ -399,7 +401,7 @@ function validateCardholderName() {
         msg.textContent = 'Name must be at least 2 characters.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
-        msg.textContent = 'Looks good!';
+        msg.textContent = 'Looks good.';
         msg.className = 'mt-2 text-sm text-green-600';
     }
 }
@@ -411,7 +413,7 @@ function validateCardNumber() {
         msg.textContent = 'Card number must be 16 digits.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
-        msg.textContent = 'Valid card number!';
+        msg.textContent = 'Valid card number.';
         msg.className = 'mt-2 text-sm text-green-600';
     }
 }
@@ -434,7 +436,7 @@ function validateCardExpiry() {
         msg.textContent = 'Card is expired.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
-        msg.textContent = 'Valid expiry date!';
+        msg.textContent = 'Valid expiry date.';
         msg.className = 'mt-2 text-sm text-green-600';
     }
 }
@@ -446,7 +448,7 @@ function validateCardCCV() {
         msg.textContent = 'CCV must be 3 or 4 digits.';
         msg.className = 'mt-2 text-sm text-red-600';
     } else {
-        msg.textContent = 'Valid CCV!';
+        msg.textContent = 'Valid CCV.';
         msg.className = 'mt-2 text-sm text-green-600';
     }
 }
@@ -571,6 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
                         <svg class="w-7 h-7 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-gray-900">Update Password</h2>
@@ -586,8 +589,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="relative">
                             <label for="current_password" class="block text-sm font-semibold text-gray-900 mb-2">Current Password</label>
                             <div class="relative">
-                                <input name="current_password" id="current_password" type="password" required autocomplete="current-password" 
-                                       class="w-full px-4 py-3 border border-gray-300 focus:ring-teal-500 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12 @if($errors->updatePassword->has('current_password')) border-red-500 focus:ring-red-500 @endif" />
+                    <input name="current_password" id="current_password" type="password" required autocomplete="current-password"
+                                       class="{{ 'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12' . ($errors->updatePassword->has('current_password') ? ' border-red-500 focus:ring-red-500' : ' border-gray-300 focus:ring-teal-500') }}" />
                                 <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 focus:outline-none" onclick="togglePassword('current_password', this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
@@ -604,8 +607,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="relative">
                             <label for="password" class="block text-sm font-semibold text-gray-900 mb-2">New Password</label>
                             <div class="relative">
-                                <input name="password" id="password" type="password" required autocomplete="new-password" 
-                                       class="w-full px-4 py-3 border border-gray-300 focus:ring-teal-500 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12 @if($errors->updatePassword->has('password')) border-red-500 focus:ring-red-500 @endif" />
+                    <input name="password" id="password" type="password" required autocomplete="new-password"
+                                       class="{{ 'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12' . ($errors->updatePassword->has('password') ? ' border-red-500 focus:ring-red-500' : ' border-gray-300 focus:ring-teal-500') }}" />
                                 <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 focus:outline-none" onclick="togglePassword('password', this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
@@ -624,8 +627,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="relative">
                             <label for="password_confirmation" class="block text-sm font-semibold text-gray-900 mb-2">Confirm New Password</label>
                             <div class="relative">
-                                <input name="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password" 
-                                       class="w-full px-4 py-3 border border-gray-300 focus:ring-teal-500 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12 @if($errors->updatePassword->has('password_confirmation')) border-red-500 focus:ring-red-500 @endif" />
+                    <input name="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password"
+                                       class="{{ 'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 pr-12' . ($errors->updatePassword->has('password_confirmation') ? ' border-red-500 focus:ring-red-500' : ' border-gray-300 focus:ring-teal-500') }}" />
                                 <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 focus:outline-none" onclick="togglePassword('password_confirmation', this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
@@ -770,7 +773,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 msg.textContent = 'Cardholder name must be at least 2 letters.';
                 msg.className = 'mt-2 text-sm text-red-600';
             } else {
-                msg.textContent = 'Valid cardholder name!';
+                msg.textContent = 'Valid cardholder name.';
                 msg.className = 'mt-2 text-sm text-green-600';
             }
     let valid = true;
