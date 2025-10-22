@@ -52,16 +52,12 @@
                                     <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 mt-2">
                                         <div class="flex items-center gap-2">
                                             <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
+                                                <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                                <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
                                             </svg>
-                                            <span class="font-medium">Platform Administrator</span>
+                                            <span class="font-medium">Admin</span>
                                         </div>
-                                        <div class="flex items-center gap-2">
-                                            <svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            <span class="font-medium">Full Access</span>
-                                        </div>
+                                        <!-- Full access label removed to match edit-profile page for admin -->
                                     </div>
                                 </div>
                             </div>
@@ -116,8 +112,10 @@
                         <div class="bg-white rounded-2xl shadow-xl border border-teal-100 p-4 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group-hover:border-teal-300 h-full">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-12 h-12 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center group-hover:from-teal-200 group-hover:to-emerald-200 transition-all duration-300">
-                                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11a4 4 0 10-8 0 4 4 0 008 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 8a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2 20v-1a4 4 0 014-4h12a4 4 0 014 4v1" />
                                     </svg>
                                 </div>
                                 <div class="flex items-center text-teal-600 group-hover:text-teal-700 transition-colors duration-300">
@@ -154,7 +152,7 @@
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-12 h-12 bg-gradient-to-r from-emerald-100 to-teal-100 rounded-xl flex items-center justify-center group-hover:from-emerald-200 group-hover:to-teal-200 transition-all duration-300">
                                     <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2M7 7h10"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
                                     </svg>
                                 </div>
                                 <div class="flex items-center text-emerald-600 group-hover:text-emerald-700 transition-colors duration-300">
@@ -191,7 +189,8 @@
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-12 h-12 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center group-hover:from-teal-200 group-hover:to-emerald-200 transition-all duration-300">
                                     <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 9h14l1 12H4L5 9z" />
                                     </svg>
                                 </div>
                                 <div class="flex items-center text-teal-600 group-hover:text-teal-700 transition-colors duration-300">
@@ -228,7 +227,8 @@
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-12 h-12 bg-gradient-to-r from-emerald-100 to-teal-100 rounded-xl flex items-center justify-center group-hover:from-emerald-200 group-hover:to-teal-200 transition-all duration-300">
                                     <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 1L5 3l4 2 4-2-4-2zM1 13l4 2 4-2-4-2-4 2zm0 0l4 2v4l-4-2v-4zm16 0l4 2v4l-4-2v-4z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 16V8l-9-4-9 4v8l9 4 9-4z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.27 6.96L12 11.07l8.73-4.11" />
                                     </svg>
                                 </div>
                                 <div class="flex items-center text-emerald-600 group-hover:text-emerald-700 transition-colors duration-300">
