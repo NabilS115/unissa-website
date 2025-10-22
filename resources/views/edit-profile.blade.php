@@ -37,149 +37,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <!-- Profile Photo Modal/Overlay -->
-                        <div id="photo-modal" class="fixed inset-0 z-50 hidden items-center justify-center" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);">
-                            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs flex flex-col items-center border border-gray-100 overflow-hidden">
-                                <!-- Modal Header -->
-                                <div class="w-full flex items-center justify-between px-6 py-4 bg-white bg-gradient-to-r from-teal-50 to-emerald-50">
-                                    <span class="font-semibold text-lg text-gray-800">Profile Photo</span>
-                                    <button onclick="closePhotoModal()" class="text-gray-400 hover:text-gray-700 text-2xl focus:outline-none">&times;</button>
-                                </div>
-                                <!-- Modal Content -->
-                                <div class="flex flex-col items-center w-full px-6 py-6">
-                                    <div class="flex flex-col items-center mb-4">
-                                        @if(Auth::check())
-                                            <img id="modal-photo-preview" src="{{ Auth::user()->profile_photo_url ? Auth::user()->profile_photo_url : asset('images/default-profile.svg') }}" alt="Profile Picture Preview" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow bg-gray-100">
-                                        @endif
-                                    </div>
-                                    <div class="w-full flex flex-col gap-3">
-                                        @if (!$hasCustomPhoto)
-                                            <form id="upload-photo-form" enctype="multipart/form-data" style="display:none;">
-                                                <input type="file" name="profile_photo" id="upload-photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
-                                            </form>
-                                            <button type="button" id="upload-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-semibold shadow transition">
-                                                Upload Image
-                                            </button>
-                                        @else
-                                            <form id="change-photo-form" enctype="multipart/form-data" style="display:none;">
-                                                <input type="file" name="profile_photo" id="change-photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
-                                            </form>
-                                            <button type="button" id="change-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-semibold shadow transition">
-                                                Change Image
-                                            </button>
-                                            <button type="button" id="delete-btn" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold shadow transition">
-                                                Delete Image
-                                            </button>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-@push('scripts')
-<script>
-function openPhotoModal() {
-    const modal = document.getElementById('photo-modal');
-    if (!modal) return;
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-}
-function closePhotoModal() {
-    const modal = document.getElementById('photo-modal');
-    if (!modal) return;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-}
-function handlePhotoUpload(event) {
-    const fileInput = event.target;
-    const file = fileInput.files && fileInput.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('modal-photo-preview');
-            if (preview) preview.src = e.target.result;
-            const overlayPhoto = document.getElementById('profile-photo');
-            if (overlayPhoto) overlayPhoto.src = e.target.result;
-            // Update header profile image if present
-            const headerProfileImg = document.querySelector('#profileMenuButton img');
-            if (headerProfileImg) headerProfileImg.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-
-        // AJAX upload
-        let formData = new FormData();
-        formData.append('profile_photo', file);
-        fetch("{{ route('profile.photo') }}", {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: formData
-        })
-        .then(response => {
-            closePhotoModal();
-        })
-        .catch(error => {
-            closePhotoModal();
-        });
-    }
-}
-function deleteProfilePhoto() {
-    if (!confirm('Are you sure you want to delete your profile photo?')) return;
-    fetch("{{ route('profile.photo.delete') }}", {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
-    })
-    .then(response => {
-        var defaultPhoto = "{{ Auth::user()->getProfilePhotoUrlAttribute(null) }}";
-        var modalPreview = document.getElementById('modal-photo-preview');
-        if (modalPreview) modalPreview.src = defaultPhoto;
-        var overlayPhoto = document.getElementById('profile-photo');
-        if (overlayPhoto) overlayPhoto.src = defaultPhoto;
-        const headerProfileImg = document.querySelector('#profileMenuButton img');
-        if (headerProfileImg) headerProfileImg.src = defaultPhoto;
-        document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
-            img.src = defaultPhoto;
-        });
-        closePhotoModal();
-    })
-    .catch(error => {
-        var defaultPhoto = "{{ asset('images/default-profile.svg') }}";
-        var modalPreview = document.getElementById('modal-photo-preview');
-        if (modalPreview) modalPreview.src = defaultPhoto;
-        var overlayPhoto = document.getElementById('profile-photo');
-        if (overlayPhoto) overlayPhoto.src = defaultPhoto;
-        const headerProfileImg = document.querySelector('#profileMenuButton img');
-        if (headerProfileImg) headerProfileImg.src = defaultPhoto;
-        document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
-            img.src = defaultPhoto;
-        });
-        closePhotoModal();
-    });
-}
-document.addEventListener('DOMContentLoaded', function() {
-    var uploadBtn = document.getElementById('upload-btn');
-    if (uploadBtn) {
-        uploadBtn.addEventListener('click', function() {
-            document.getElementById('upload-photo-input').click();
-        });
-    }
-    var changeBtn = document.getElementById('change-btn');
-    if (changeBtn) {
-        changeBtn.addEventListener('click', function() {
-            document.getElementById('change-photo-input').click();
-        });
-    }
-    var deleteBtn = document.getElementById('delete-btn');
-    if (deleteBtn) {
-        deleteBtn.addEventListener('click', function() {
-            deleteProfilePhoto();
-        });
-    }
-});
-</script>
-@endpush
+                        
                         <div class="lg:mb-4 flex-1">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2 w-full">
                                 <div class="flex flex-col gap-0 mb-2">
@@ -686,6 +544,391 @@ document.addEventListener('DOMContentLoaded', function() {
             showTab('profile');
         });
         </script>
+        <!-- Profile Photo Modal/Overlay (moved out of header to avoid layout shifts) -->
+        <div id="photo-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" style="background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl md:max-w-2xl lg:max-w-3xl flex flex-col items-stretch border border-gray-100 overflow-hidden relative" role="document" style="max-height:90vh;">
+                <!-- Spinner overlay -->
+                <div id="photo-modal-spinner" class="absolute inset-0 bg-black/30 items-center justify-center hidden">
+                    <div class="bg-white/90 rounded-full p-4 flex items-center gap-3">
+                        <svg class="animate-spin h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-700">Uploading...</span>
+                    </div>
+                </div>
+                <!-- Modal Header -->
+                <div class="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-b border-teal-100">
+                    <span class="font-semibold text-lg text-gray-800">Profile Photo</span>
+                    <button onclick="closePhotoModal()" aria-label="Close profile photo dialog" class="text-gray-500 hover:text-gray-800 text-2xl focus:outline-none">&times;</button>
+                </div>
+                <!-- Modal Content -->
+                <div class="flex flex-col items-stretch w-full px-4 py-4">
+                    <div class="w-full px-4 py-4" style="overflow:auto; max-height:calc(90vh - 140px);">
+                        <div class="flex flex-col items-center mb-4">
+                            @if(Auth::check())
+                                <img id="modal-photo-preview" src="{{ Auth::user()->profile_photo_url ? Auth::user()->profile_photo_url : asset('images/default-profile.svg') }}" alt="Profile Picture Preview" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow bg-gray-100">
+                            @endif
+                        </div>
+                        <div class="w-full flex flex-col gap-3">
+                            {{-- Hidden file input used for both upload and change; onchange opens cropper --}} 
+                            <form id="photo-file-form" enctype="multipart/form-data" style="display:none;">
+                                <input type="file" name="profile_photo_file" id="photo-file-input" accept="image/*" onchange="openCropperFromFile(event)">
+                            </form>
+                            <div class="grid grid-cols-1 gap-3">
+                                @if (!$hasCustomPhoto)
+                                    <button type="button" id="upload-btn" class="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold shadow transition">Upload Image</button>
+                                @else
+                                    <button type="button" id="change-btn" class="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold shadow transition">Change Image</button>
+                                    <button type="button" id="delete-btn" class="w-full px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold shadow transition">Delete Image</button>
+                                @endif
+                            </div>
+
+                            {{-- Cropper area (hidden until a file is selected) --}}
+                            <div id="cropper-area" class="w-full mt-4 hidden">
+                                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                                    <div class="cropper-container p-3" style="height:360px; max-height:60vh; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                                        <img id="cropper-image" class="max-w-full max-h-full block mx-auto" src="" alt="Crop preview" style="width:auto; height:100%; object-fit:cover; border-radius:8px;" />
+                                    </div>
+                                    <div class="flex items-center justify-between gap-3 p-4 border-t border-gray-100">
+                                        <div class="flex gap-3">
+                                            <button type="button" id="crop-reset-btn" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm">Reset</button>
+                                            <button type="button" id="crop-cancel-btn" class="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg text-sm">Cancel</button>
+                                        </div>
+                                        <button type="button" id="crop-upload-btn" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold">Crop & Save</button>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2 text-center">Use the handles to crop. Recommended aspect ratio: 1:1.</p>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @push('scripts')
+    <script>
+        function openPhotoModal() {
+            const modal = document.getElementById('photo-modal');
+            if (!modal) return;
+            // show modal and set ARIA
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.setAttribute('aria-hidden', 'false');
+            // lock background scroll
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+            // focus first focusable element inside modal
+            setTimeout(() => {
+                const closeBtn = modal.querySelector('button[onclick="closePhotoModal()"]');
+                if (closeBtn) closeBtn.focus();
+            }, 50);
+            // attach ESC listener and backdrop click
+            document.addEventListener('keydown', photoModalKeyHandler);
+            modal.addEventListener('click', photoModalBackdropHandler);
+        }
+        function closePhotoModal() {
+            const modal = document.getElementById('photo-modal');
+            if (!modal) return;
+            // hide modal and reset ARIA
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            modal.setAttribute('aria-hidden', 'true');
+            // restore scroll
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+            // remove listeners
+            document.removeEventListener('keydown', photoModalKeyHandler);
+            modal.removeEventListener('click', photoModalBackdropHandler);
+        }
+
+        function photoModalBackdropHandler(e) {
+            // close when clicking on backdrop (the modal wrapper) only
+            const modal = document.getElementById('photo-modal');
+            if (!modal) return;
+            if (e.target === modal) {
+                closePhotoModal();
+            }
+        }
+
+        function photoModalKeyHandler(e) {
+            if (e.key === 'Escape' || e.key === 'Esc') {
+                closePhotoModal();
+            }
+        }
+
+        function showPhotoModalSpinner() {
+            const s = document.getElementById('photo-modal-spinner');
+            if (s) { s.classList.remove('hidden'); s.classList.add('flex'); }
+        }
+
+        function hidePhotoModalSpinner() {
+            const s = document.getElementById('photo-modal-spinner');
+            if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }
+        }
+        function handlePhotoUpload(event) {
+            const fileInput = event.target;
+            const file = fileInput.files && fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('modal-photo-preview');
+                    if (preview) preview.src = e.target.result;
+                    const overlayPhoto = document.getElementById('profile-photo');
+                    if (overlayPhoto) overlayPhoto.src = e.target.result;
+                    // Update header profile image if present
+                    const headerProfileImg = document.querySelector('#profileMenuButton img');
+                    if (headerProfileImg) headerProfileImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                // AJAX upload with spinner
+                let formData = new FormData();
+                formData.append('profile_photo', file);
+                showPhotoModalSpinner();
+                fetch("{{ route('profile.photo') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(async response => {
+                    hidePhotoModalSpinner();
+                    if (response.ok) {
+                        closePhotoModal();
+                        try {
+                            const data = await response.json();
+                            const url = data.url || (data.data && data.data.url) || null;
+                            if (url) {
+                                const overlayPhoto = document.getElementById('profile-photo');
+                                const preview = document.getElementById('modal-photo-preview');
+                                const headerImg = document.querySelector('#profileMenuButton img');
+                                if (overlayPhoto) overlayPhoto.src = url;
+                                if (preview) preview.src = url;
+                                if (headerImg) headerImg.src = url;
+                            }
+                        } catch (err) {
+                            // ignore JSON parse errors
+                        }
+                    } else {
+                        let msg = 'Failed to upload image.';
+                        try {
+                            const err = await response.json();
+                            if (err && err.message) msg = err.message;
+                            else if (err && err.errors) msg = Object.values(err.errors).flat().join(' ');
+                        } catch (e) {}
+                        alert(msg);
+                    }
+                })
+                .catch(error => {
+                    hidePhotoModalSpinner();
+                    alert('Failed to upload image. Please check your connection and try again.');
+                    console.error('Upload error', error);
+                });
+            }
+        }
+        function deleteProfilePhoto() {
+            if (!confirm('Are you sure you want to delete your profile photo?')) return;
+            showPhotoModalSpinner();
+            fetch("{{ route('profile.photo.delete') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => {
+                hidePhotoModalSpinner();
+                var defaultPhoto = "{{ Auth::user()->getProfilePhotoUrlAttribute(null) }}";
+                var modalPreview = document.getElementById('modal-photo-preview');
+                if (modalPreview) modalPreview.src = defaultPhoto;
+                var overlayPhoto = document.getElementById('profile-photo');
+                if (overlayPhoto) overlayPhoto.src = defaultPhoto;
+                const headerProfileImg = document.querySelector('#profileMenuButton img');
+                if (headerProfileImg) headerProfileImg.src = defaultPhoto;
+                document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
+                    img.src = defaultPhoto;
+                });
+                closePhotoModal();
+            })
+            .catch(error => {
+                hidePhotoModalSpinner();
+                var defaultPhoto = "{{ asset('images/default-profile.svg') }}";
+                var modalPreview = document.getElementById('modal-photo-preview');
+                if (modalPreview) modalPreview.src = defaultPhoto;
+                var overlayPhoto = document.getElementById('profile-photo');
+                if (overlayPhoto) overlayPhoto.src = defaultPhoto;
+                const headerProfileImg = document.querySelector('#profileMenuButton img');
+                if (headerProfileImg) headerProfileImg.src = defaultPhoto;
+                document.querySelectorAll('img[data-profile-photo], img.profile-photo, img[src*="profile-photos/"]').forEach(function(img) {
+                    img.src = defaultPhoto;
+                });
+                closePhotoModal();
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var uploadBtn = document.getElementById('upload-btn');
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', function() {
+                    document.getElementById('photo-file-input').click();
+                });
+            }
+            var changeBtn = document.getElementById('change-btn');
+            if (changeBtn) {
+                changeBtn.addEventListener('click', function() {
+                    document.getElementById('photo-file-input').click();
+                });
+            }
+            var deleteBtn = document.getElementById('delete-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    deleteProfilePhoto();
+                });
+            }
+            // Cropper bindings
+            var cropCancel = document.getElementById('crop-cancel-btn');
+            var cropUpload = document.getElementById('crop-upload-btn');
+            if (cropCancel) cropCancel.addEventListener('click', function() { hideCropperArea(); });
+            if (cropUpload) cropUpload.addEventListener('click', function() { cropAndUpload(); });
+            var cropReset = document.getElementById('crop-reset-btn');
+            if (cropReset) cropReset.addEventListener('click', function() { resetCropper(); });
+        });
+
+        // Cropper logic
+        let cropperInstance = null;
+        function openCropperFromFile(e) {
+            const input = e.target;
+            const file = input && input.files && input.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            const img = document.getElementById('cropper-image');
+            img.src = url;
+            showCropperArea();
+            // Destroy previous instance
+            if (cropperInstance) {
+                try { cropperInstance.destroy(); } catch (err) {}
+                cropperInstance = null;
+            }
+            // Wait a tick for image to load
+            img.onload = function() {
+                cropperInstance = new Cropper(img, {
+                    aspectRatio: 1,
+                    viewMode: 0,
+                    dragMode: 'move',
+                    autoCropArea: 0.9,
+                    restore: false,
+                    modal: true,
+                    guides: true,
+                    center: true,
+                    highlight: true,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                    responsive: true,
+                    checkOrientation: false,
+                    zoomable: true,
+                    wheelZoomRatio: 0.1,
+                    background: true,
+                });
+            };
+        }
+
+        function showCropperArea() {
+            const area = document.getElementById('cropper-area');
+            if (!area) return;
+            area.classList.remove('hidden');
+            // ensure modal remains open
+            const modal = document.getElementById('photo-modal');
+            if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        }
+
+        function hideCropperArea() {
+            const area = document.getElementById('cropper-area');
+            if (!area) return;
+            area.classList.add('hidden');
+            if (cropperInstance) {
+                try { cropperInstance.destroy(); } catch (err) {}
+                cropperInstance = null;
+            }
+            // clear file input
+            const fileInput = document.getElementById('photo-file-input');
+            if (fileInput) fileInput.value = '';
+        }
+
+        function resetCropper() {
+            if (!cropperInstance) return;
+            try { cropperInstance.reset(); } catch (err) { console.warn('Reset failed', err); }
+        }
+
+        function cropAndUpload() {
+            if (!cropperInstance) return;
+            cropperInstance.getCroppedCanvas({ width: 600, height: 600, fillColor: '#fff' }).toBlob(function(blob) {
+                if (!blob) return;
+                const fd = new FormData();
+                fd.append('profile_photo', blob, 'profile.jpg');
+                // Append _method if your endpoint expects it (not necessary for POST)
+                showPhotoModalSpinner();
+                fetch("{{ route('profile.photo') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: fd
+                })
+                .then(async (res) => {
+                    hidePhotoModalSpinner();
+                    hideCropperArea();
+                    if (res.ok) {
+                        closePhotoModal();
+                        try {
+                            const data = await res.json();
+                            if (data && data.url) {
+                                const overlay = document.getElementById('profile-photo');
+                                const preview = document.getElementById('modal-photo-preview');
+                                const headerImg = document.querySelector('#profileMenuButton img');
+                                if (overlay) overlay.src = data.url;
+                                if (preview) preview.src = data.url;
+                                if (headerImg) headerImg.src = data.url;
+                            } else {
+                                const blobUrl = URL.createObjectURL(blob);
+                                const overlay = document.getElementById('profile-photo');
+                                const preview = document.getElementById('modal-photo-preview');
+                                const headerImg = document.querySelector('#profileMenuButton img');
+                                if (overlay) overlay.src = blobUrl;
+                                if (preview) preview.src = blobUrl;
+                                if (headerImg) headerImg.src = blobUrl;
+                            }
+                        } catch (err) {
+                            const blobUrl = URL.createObjectURL(blob);
+                            const overlay = document.getElementById('profile-photo');
+                            const preview = document.getElementById('modal-photo-preview');
+                            const headerImg = document.querySelector('#profileMenuButton img');
+                            if (overlay) overlay.src = blobUrl;
+                            if (preview) preview.src = blobUrl;
+                            if (headerImg) headerImg.src = blobUrl;
+                        }
+                    } else {
+                        let msg = 'Failed to upload cropped image.';
+                        try {
+                            const err = await res.json();
+                            if (err && err.message) msg = err.message;
+                            else if (err && err.errors) msg = Object.values(err.errors).flat().join(' ');
+                        } catch (e) {}
+                        alert(msg);
+                    }
+                })
+                .catch(err => {
+                    hidePhotoModalSpinner();
+                    hideCropperArea();
+                    console.error('Upload error', err);
+                    alert('Failed to upload cropped image. Please check your connection and try again.');
+                });
+            }, 'image/jpeg', 0.9);
+        }
+        </script>
+        @endpush
     </div>
 </div>
 
@@ -768,7 +1011,8 @@ document.addEventListener('DOMContentLoaded', function() {
     validateEmail();
     validatePhone();
             const name = document.getElementById('cardholder_name').value.trim();
-            const msg = document.getElementById('cardholder-name-validation');
+            let msg; // single reusable message element to avoid redeclaration
+            msg = document.getElementById('cardholder-name-validation');
             if (!/^([A-Za-z\s]{2,})$/.test(name)) {
                 msg.textContent = 'Cardholder name must be at least 2 letters.';
                 msg.className = 'mt-2 text-sm text-red-600';
@@ -810,7 +1054,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Card number
     const number = document.getElementById('card_number').value.replace(/\s/g, '');
-    const msg = document.getElementById('card-number-validation');
+    msg = document.getElementById('card-number-validation');
     if (!/^\d{13,19}$/.test(number)) {
         msg.textContent = 'Card number must be 13–19 digits.';
         msg.className = 'mt-2 text-sm text-red-600';
@@ -824,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', function() {
         valid = false;
     } else {
             const expiry = document.getElementById('card_expiry').value.trim();
-            const msg = document.getElementById('card-expiry-validation');
+            msg = document.getElementById('card-expiry-validation');
             const re = /^(0[1-9]|1[0-2])\/(\d{4})$/;
             if (!re.test(expiry)) {
                 msg.textContent = 'Expiry must be MM/YYYY.';
@@ -845,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('change-password-form');
     if (current && newPass && confirmPass) {
             const ccv = document.getElementById('card_ccv').value.trim();
-            const msg = document.getElementById('card-ccv-validation');
+            msg = document.getElementById('card-ccv-validation');
             if (!/^\d{3,4}$/.test(ccv)) {
                 msg.textContent = 'CCV must be 3 or 4 digits.';
                 msg.className = 'mt-2 text-sm text-red-600';
@@ -864,6 +1108,7 @@ document.addEventListener('DOMContentLoaded', function() {
             validateCardExpiry();
             validateCardCCV();
             validateBillingAddress();
+    <style>
     @keyframes fade-in {
         from {
             opacity: 0;
