@@ -683,7 +683,7 @@
         </button>
     </div>
     <!-- Add Product Modal -->
-    <div x-show="showAddModal" x-cloak class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+    <div x-show="showAddModal" x-cloak data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
         <form x-ref="addForm" @submit.prevent="submitAddProduct" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             @csrf
@@ -719,7 +719,7 @@
         </form>
     </div>
     <!-- Edit Product Modal -->
-    <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div x-show="showEditModal" x-cloak data-initial-hidden class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <form method="POST" :action="editFormAction" enctype="multipart/form-data"
               class="bg-white rounded-lg shadow-lg p-8 w-full max-w-6xl relative overflow-y-auto"
               style="max-height:90vh;"
@@ -933,7 +933,7 @@
     @endif
 
     <!-- Loading Overlay -->
-    <div x-show="isLoading" x-cloak class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
+    <div x-show="isLoading" x-cloak data-initial-hidden class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
         <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mb-4"></div>
             <p class="text-gray-600 font-medium">Switching catalog...</p>
@@ -1954,7 +1954,7 @@ document.addEventListener('alpine:init', () => {
 @endif
 
 <!-- Loading overlay for backend search -->
-<div x-show="isSearching" x-cloak class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
+<div x-show="isSearching" x-cloak data-initial-hidden class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
     <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mb-4"></div>
         <p class="text-gray-600 font-medium">Searching...</p>

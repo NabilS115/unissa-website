@@ -231,7 +231,7 @@
     <!-- Admin Modals and Loading Overlays -->
     @if(auth()->user()?->role === 'admin')
     <!-- Add Product Modal -->
-    <div x-show="showAddModal" x-cloak class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+    <div x-show="showAddModal" x-cloak data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
         <form method="POST" action="{{ route('unissa-cafe.products.store') }}" enctype="multipart/form-data"
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
             @csrf
@@ -421,7 +421,7 @@
 
     <!-- Edit Product Modal -->
     @if(auth()->check() && auth()->user()->role === 'admin')
-    <div x-show="showEditModal" x-cloak class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+    <div x-show="showEditModal" x-cloak data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
         <form method="POST" :action="`/catalog/edit/${editingProduct?.id || ''}`" enctype="multipart/form-data"
               @submit="showEditModal = false" 
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
@@ -645,7 +645,7 @@
     @endif
 
     <!-- Loading Overlay -->
-    <div x-show="isLoading" x-cloak class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
+    <div x-show="isLoading" x-cloak data-initial-hidden class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
         <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mb-4"></div>
             <p class="text-gray-600 font-medium">Switching catalog...</p>

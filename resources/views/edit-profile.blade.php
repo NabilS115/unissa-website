@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         </script>
         <!-- Profile Photo Modal/Overlay (moved out of header to avoid layout shifts) -->
-        <div id="photo-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" style="background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);">
+    <div id="photo-modal" data-initial-hidden class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" style="background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl md:max-w-2xl lg:max-w-3xl flex flex-col items-stretch border border-gray-100 overflow-hidden relative" role="document" style="max-height:90vh;">
                 <!-- Spinner overlay -->
                 <div id="photo-modal-spinner" class="absolute inset-0 bg-black/30 items-center justify-center hidden">

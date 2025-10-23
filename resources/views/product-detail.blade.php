@@ -1,6 +1,6 @@
 
 <!-- Edit Review Modal (now outside reviews loop) -->
-<div id="edit-review-modal" class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
+<div id="edit-review-modal" data-initial-hidden class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
         <div class="p-8">
             <button id="close-edit-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
@@ -855,7 +855,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <!-- Write Review Modal -->
-<div id="review-modal" class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
+<div id="review-modal" data-initial-hidden class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
         <div class="p-8">
             <button id="close-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">

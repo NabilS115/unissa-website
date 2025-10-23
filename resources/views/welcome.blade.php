@@ -745,7 +745,7 @@
                 }
                 
                 const modalHtml = `
-                    <div id="gallery-modal" class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div id="gallery-modal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative">
                             <div class="p-6">
                                 <div class="flex items-center justify-between mb-6">
@@ -858,7 +858,7 @@
 
             function showGalleryManagementModal() {
                 const modalHtml = `
-                    <div id="manage-gallery-modal" class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div id="manage-gallery-modal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
                             <div class="p-6">
                                 <div class="flex items-center justify-between mb-6">

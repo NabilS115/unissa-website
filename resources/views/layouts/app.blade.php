@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <style>
+        /* Critical minimal styles to avoid flashes before Tailwind CSS loads */
+        /* These are intentionally tiny and safe to include inline */
+        html, body { background-color: #fdfdfc; }
+        /* Prevent full-screen overlays from briefly displaying before JS/CSS runs */
+        [data-initial-hidden] { display: none !important; }
+
         /* Fallback styles in case Tailwind doesn't load */
         .header-fallback {
             width: 100%;
@@ -135,5 +141,31 @@
     @stack('scripts')
     {{-- Alpine.js should only be included once. --}}
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        // Remove data-initial-hidden attribute once DOM is ready so modals and overlays
+        // are only revealed after initial paint and critical CSS has been applied.
+        (function() {
+            function unguardOverlays() {
+                try {
+                    const nodes = document.querySelectorAll('[data-initial-hidden]');
+                    nodes.forEach(n => {
+                        n.removeAttribute('data-initial-hidden');
+                        // If aria-hidden is present, expose for accessibility
+                        if (n.hasAttribute('aria-hidden')) n.setAttribute('aria-hidden', 'false');
+                    });
+                } catch (e) {
+                    // swallow errors to avoid breaking pages that run early
+                    console.error('guard removal error', e);
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', unguardOverlays);
+            } else {
+                // already ready
+                setTimeout(unguardOverlays, 0);
+            }
+        })();
+    </script>
 </body>
 </html>

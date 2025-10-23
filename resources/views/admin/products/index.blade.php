@@ -589,7 +589,7 @@ document.addEventListener('click', function(event) {
 </div>
 
 <!-- Stock Update Modal -->
-<div id="stock-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+<div id="stock-modal" data-initial-hidden class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6">
         <h3 class="text-lg font-bold text-gray-900 mb-4">Update Stock</h3>
         <div class="space-y-4">
@@ -748,7 +748,7 @@ console.log('Admin products page additional scripts loaded');
 @endpush
 
 <!-- Delete Confirmation Modal -->
-<div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+<div id="delete-modal" data-initial-hidden class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
         <!-- Close button -->
         <button onclick="closeDeleteModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -781,7 +781,7 @@ console.log('Admin products page additional scripts loaded');
 </div>
 
 <!-- Import Modal -->
-<div id="importModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+<div id="importModal" data-initial-hidden class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <div class="flex items-center justify-between mb-4">
