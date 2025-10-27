@@ -715,25 +715,45 @@
 
         @if(auth()->check() && auth()->user()->role === 'admin')
             // Admin gallery management functions
-            document.getElementById('add-gallery-btn')?.addEventListener('click', () => {
-                showGalleryModal();
-            });
+            // Use event delegation so buttons work even if DOM nodes are replaced dynamically
+            document.addEventListener('click', function(e) {
+                try {
+                    console.log('Gallery delegation click:', {target: e.target && e.target.tagName, href: (e.target && e.target.getAttribute) ? e.target.getAttribute('href') : null});
+                    const addBtn = e.target.closest && e.target.closest('#add-gallery-btn');
+                    if (addBtn) {
+                        e.preventDefault();
+                        showGalleryModal();
+                        return;
+                    }
 
-            document.getElementById('manage-gallery-btn')?.addEventListener('click', () => {
-                showGalleryManagementModal();
-            });
+                    const manageBtn = e.target.closest && e.target.closest('#manage-gallery-btn');
+                    if (manageBtn) {
+                        e.preventDefault();
+                        showGalleryManagementModal();
+                        return;
+                    }
 
-            document.getElementById('edit-current-gallery-btn')?.addEventListener('click', () => {
-                if (eventImages[currentEvent] && eventImages[currentEvent].id) {
-                    showGalleryModal(eventImages[currentEvent]);
+                    const editBtn = e.target.closest && e.target.closest('#edit-current-gallery-btn');
+                    if (editBtn) {
+                        e.preventDefault();
+                        if (eventImages[currentEvent] && eventImages[currentEvent].id) {
+                            showGalleryModal(eventImages[currentEvent]);
+                        }
+                        return;
+                    }
+
+                    const delBtn = e.target.closest && e.target.closest('#delete-current-gallery-btn');
+                    if (delBtn) {
+                        e.preventDefault();
+                        if (eventImages[currentEvent] && eventImages[currentEvent].id) {
+                            deleteGalleryImage(eventImages[currentEvent].id);
+                        }
+                        return;
+                    }
+                } catch (err) {
+                    console.error('Gallery delegation error:', err);
                 }
-            });
-
-            document.getElementById('delete-current-gallery-btn')?.addEventListener('click', () => {
-                if (eventImages[currentEvent] && eventImages[currentEvent].id) {
-                    deleteGalleryImage(eventImages[currentEvent].id);
-                }
-            });
+            }, {capture: true});
 
             function showGalleryModal(gallery = null) {
                 const isEdit = gallery !== null;
@@ -804,56 +824,121 @@
                 `;
                 
                 document.body.insertAdjacentHTML('beforeend', modalHtml);
-                
-                setTimeout(() => {
-                    setupImageUpload('gallery');
-                }, 100);
-                
-                document.getElementById('gallery-form').addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    formData.set('is_active', formData.get('is_active') ? '1' : '0');
-                    
-                    console.log('Submitting gallery form...');
-                    console.log('Form data entries:');
-                    for (let [key, value] of formData.entries()) {
-                        console.log(key, value);
-                    }
-                    
-                    try {
-                        const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
-                        if (isEdit) formData.append('_method', 'PUT');
-                        
-                        console.log('Sending request to:', url);
-                        
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            },
-                            body: formData
-                        });
 
-                        console.log('Response status:', response.status);
-                        console.log('Response headers:', response.headers);
-                        
-                        const result = await response.json();
-                        console.log('Response data:', result);
-                        
-                        if (response.ok) {
-                            alert(result.message);
-                            closeGalleryModal();
-                            window.location.reload();
-                        } else {
-                            console.error('Error response:', result);
-                            alert(result.message || 'Failed to save image.');
+                // Ensure dynamic overlays are visible (layout may hide [data-initial-hidden])
+                const inserted = document.getElementById('gallery-modal');
+                if (inserted) {
+                    inserted.removeAttribute('data-initial-hidden');
+                    inserted.classList.remove('hidden');
+                    inserted.style.display = 'flex';
+                }
+
+                // Wait for modal DOM nodes to be available before setting up upload handlers and form listener.
+                const waitForElements = (ids, timeout = 2000) => {
+                    const start = Date.now();
+                    return new Promise((resolve, reject) => {
+                        const check = () => {
+                            const found = ids.every(id => !!document.getElementById(id));
+                            if (found) return resolve(true);
+                            if (Date.now() - start > timeout) return reject(new Error('Timeout waiting for elements: ' + ids.join(', ')));
+                            setTimeout(check, 50);
+                        };
+                        check();
+                    });
+                };
+
+                waitForElements(['gallery-drop-zone', 'image-upload', 'image-preview', 'preview-img', 'gallery-form'], 3000)
+                    .then(() => {
+                        console.log('Gallery modal elements ready - initializing upload');
+                        try { setupImageUpload('gallery'); } catch (e) { console.error('setupImageUpload error', e); }
+
+                        const galleryForm = document.getElementById('gallery-form');
+                        if (!galleryForm) {
+                            console.error('gallery-form not found after wait');
+                            return;
                         }
-                    } catch (error) {
-                        console.error('Network error:', error);
-                        alert('Network error occurred: ' + error.message);
-                    }
-                });
+
+                        galleryForm.addEventListener('submit', async (e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.target);
+                            formData.set('is_active', formData.get('is_active') ? '1' : '0');
+                            
+                            console.log('Submitting gallery form...');
+                            console.log('Form data entries:');
+                            for (let [key, value] of formData.entries()) {
+                                console.log(key, value);
+                            }
+                            
+                            try {
+                                const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
+                                if (isEdit) formData.append('_method', 'PUT');
+                                
+                                console.log('Sending request to:', url);
+                                
+                                const response = await fetch(url, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Accept': 'application/json'
+                                    },
+                                    body: formData
+                                });
+
+                                console.log('Response status:', response.status);
+                                console.log('Response headers:', response.headers);
+                                
+                                const result = await response.json();
+                                console.log('Response data:', result);
+                                
+                                if (response.ok) {
+                                    alert(result.message);
+                                    closeGalleryModal();
+                                    window.location.reload();
+                                } else {
+                                    console.error('Error response:', result);
+                                    alert(result.message || 'Failed to save image.');
+                                }
+                            } catch (error) {
+                                console.error('Network error:', error);
+                                alert('Network error occurred: ' + error.message);
+                            }
+                        });
+                    })
+                    .catch((err) => {
+                        console.error('Failed to find gallery modal elements:', err);
+                        try { setupImageUpload('gallery'); } catch (e) { console.error('setupImageUpload failed after retry:', e); }
+                        const galleryForm = document.getElementById('gallery-form');
+                        if (galleryForm && !galleryForm._listenerAttached) {
+                            // best-effort attach
+                            galleryForm.addEventListener('submit', async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                formData.set('is_active', formData.get('is_active') ? '1' : '0');
+                                try {
+                                    const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
+                                    if (isEdit) formData.append('_method', 'PUT');
+                                    const response = await fetch(url, {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            'Accept': 'application/json'
+                                        },
+                                        body: formData
+                                    });
+                                    const result = await response.json();
+                                    if (response.ok) {
+                                        alert(result.message);
+                                        closeGalleryModal();
+                                        window.location.reload();
+                                    } else {
+                                        alert(result.message || 'Failed to save image.');
+                                    }
+                                } catch (error) {
+                                    alert('Network error occurred: ' + error.message);
+                                }
+                            });
+                        }
+                    });
             }
 
             function showGalleryManagementModal() {
@@ -882,81 +967,158 @@
                 `;
                 
                 document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // If overlays are inserted after initial page load they may still have
+                // the data-initial-hidden attribute (which our layout CSS hides).
+                // Remove it immediately so the modal becomes visible.
+                const inserted = document.getElementById('manage-gallery-modal');
+                if (inserted) {
+                    inserted.removeAttribute('data-initial-hidden');
+                    inserted.classList.remove('hidden');
+                    // ensure it's on top
+                    inserted.style.display = 'flex';
+                }
                 loadGalleryForManagement();
             }
 
             async function loadGalleryForManagement() {
-                try {
-                    const response = await fetch('/gallery', {
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    });
+                        try {
+                            console.log('Loading gallery for management via GET /gallery');
+                            const response = await fetch('/gallery', {
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            });
 
-                    if (response.ok) {
-                        const galleries = await response.json();
-                        displayGalleryForManagement(galleries);
-                    } else {
-                        document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Failed to load images.</p>';
-                    }
-                } catch (error) {
-                    document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Network error occurred.</p>';
-                }
+                            console.log('Gallery management response status:', response.status);
+
+                            const text = await response.text();
+                            let json = null;
+                            try { json = JSON.parse(text); } catch (e) { /* not json */ }
+                            console.log('Gallery management response body:', json ?? text);
+
+                            if (response.ok) {
+                                const galleries = json || [];
+                                displayGalleryForManagement(galleries);
+                            } else {
+                                document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Failed to load images.</p>';
+                                console.error('Failed to load gallery for management', {status: response.status, body: json ?? text});
+                            }
+                        } catch (error) {
+                            document.getElementById('gallery-list').innerHTML = '<p class="text-red-600 text-center">Network error occurred.</p>';
+                            console.error('Network error when loading gallery for management', error);
+                        }
             }
 
             function displayGalleryForManagement(galleries) {
                 const listContainer = document.getElementById('gallery-list');
-                
-                if (galleries.length === 0) {
-                    listContainer.innerHTML = `
-                        <div class="text-center py-8">
-                            <p class="text-gray-600 mb-4">No images found.</p>
-                            <button onclick="closeManageGalleryModal(); showGalleryModal();" 
-                                    class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
-                                Add Your First Image
-                            </button>
-                        </div>
-                    `;
+                listContainer.innerHTML = '';
+
+                if (!galleries || galleries.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'text-center py-8';
+
+                    const p = document.createElement('p');
+                    p.className = 'text-gray-600 mb-4';
+                    p.textContent = 'No images found.';
+
+                    const btn = document.createElement('button');
+                    btn.className = 'px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700';
+                    btn.textContent = 'Add Your First Image';
+                    btn.addEventListener('click', function() {
+                        closeManageGalleryModal();
+                        showGalleryModal();
+                    });
+
+                    empty.appendChild(p);
+                    empty.appendChild(btn);
+                    listContainer.appendChild(empty);
                     return;
                 }
 
-                const galleriesHtml = galleries.map(gallery => `
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div class="flex items-start justify-between">
-                            <div class="flex items-start gap-4 flex-1">
-                                <img src="${gallery.image_url}" alt="Gallery image" class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="px-2 py-1 text-xs rounded-full ${gallery.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                            ${gallery.is_active ? 'Active' : 'Inactive'}
-                                        </span>
-                                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                            Order: ${gallery.sort_order}
-                                        </span>
-                                    </div>
-                                    <p class="text-gray-600 text-sm truncate">Uploaded image</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 ml-4">
-                                <button onclick="toggleGalleryActive(${gallery.id})" 
-                                        class="px-3 py-1 text-xs rounded ${gallery.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} transition-colors">
-                                    ${gallery.is_active ? 'Hide' : 'Show'}
-                                </button>
-                                <button onclick="closeManageGalleryModal(); showGalleryModal({id: ${gallery.id}, image: '${gallery.image_url}', active: ${gallery.is_active}, order: ${gallery.sort_order}})" 
-                                        class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors">
-                                    Edit
-                                </button>
-                                <button onclick="deleteGalleryFromManagement(${gallery.id})" 
-                                        class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-                
-                listContainer.innerHTML = galleriesHtml;
+                galleries.forEach(gallery => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow';
+
+                    const row = document.createElement('div');
+                    row.className = 'flex items-start justify-between';
+
+                    const left = document.createElement('div');
+                    left.className = 'flex items-start gap-4 flex-1';
+
+                    const img = document.createElement('img');
+                    img.src = gallery.image_url || '';
+                    img.alt = 'Gallery image';
+                    img.className = 'w-16 h-16 object-cover rounded-lg flex-shrink-0';
+
+                    const info = document.createElement('div');
+                    info.className = 'flex-1 min-w-0';
+
+                    const meta = document.createElement('div');
+                    meta.className = 'flex items-center gap-3 mb-2';
+
+                    const status = document.createElement('span');
+                    status.className = `px-2 py-1 text-xs rounded-full ${gallery.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`;
+                    status.textContent = gallery.is_active ? 'Active' : 'Inactive';
+
+                    const order = document.createElement('span');
+                    order.className = 'px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full';
+                    order.textContent = 'Order: ' + (gallery.sort_order ?? '0');
+
+                    meta.appendChild(status);
+                    meta.appendChild(order);
+
+                    const desc = document.createElement('p');
+                    desc.className = 'text-gray-600 text-sm truncate';
+                    desc.textContent = 'Uploaded image';
+
+                    info.appendChild(meta);
+                    info.appendChild(desc);
+
+                    left.appendChild(img);
+                    left.appendChild(info);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'flex items-center gap-2 ml-4';
+
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.className = `px-3 py-1 text-xs rounded ${gallery.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} transition-colors`;
+                    toggleBtn.textContent = gallery.is_active ? 'Hide' : 'Show';
+                    toggleBtn.addEventListener('click', function() {
+                        toggleGalleryActive(gallery.id);
+                    });
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors';
+                    editBtn.textContent = 'Edit';
+                    editBtn.addEventListener('click', function() {
+                        closeManageGalleryModal();
+                        // pass a plain object to showGalleryModal
+                        showGalleryModal({
+                            id: gallery.id,
+                            image: gallery.image_url,
+                            active: !!gallery.is_active,
+                            order: gallery.sort_order
+                        });
+                    });
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors';
+                    delBtn.textContent = 'Delete';
+                    delBtn.addEventListener('click', function() {
+                        deleteGalleryFromManagement(gallery.id);
+                    });
+
+                    actions.appendChild(toggleBtn);
+                    actions.appendChild(editBtn);
+                    actions.appendChild(delBtn);
+
+                    row.appendChild(left);
+                    row.appendChild(actions);
+                    wrapper.appendChild(row);
+
+                    listContainer.appendChild(wrapper);
+                });
             }
 
             async function toggleGalleryActive(galleryId) {
@@ -1132,6 +1294,18 @@
                     }, 100);
                 }
             });        // Safety net disabled - all automatic refresh disabled
+
+        // Debug: log pointer events on gallery control buttons to diagnose click issues
+        try {
+            const dbgAdd = document.getElementById('add-gallery-btn');
+            const dbgManage = document.getElementById('manage-gallery-btn');
+            if (dbgAdd) dbgAdd.addEventListener('pointerdown', (e) => { console.log('DBG: add-gallery-btn pointerdown', e.type, e); });
+            if (dbgAdd) dbgAdd.addEventListener('click', (e) => { console.log('DBG: add-gallery-btn click', e.type); });
+            if (dbgManage) dbgManage.addEventListener('pointerdown', (e) => { console.log('DBG: manage-gallery-btn pointerdown', e.type, e); });
+            if (dbgManage) dbgManage.addEventListener('click', (e) => { console.log('DBG: manage-gallery-btn click', e.type); });
+        } catch (err) {
+            console.error('DBG: failed to attach debug listeners to gallery buttons', err);
+        }
     </script>
 
     <style>
