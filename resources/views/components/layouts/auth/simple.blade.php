@@ -34,8 +34,3 @@
         @fluxScripts
     </body>
 </html>
-            </div>
-        </div>
-        @fluxScripts
-    </body>
-</html>
