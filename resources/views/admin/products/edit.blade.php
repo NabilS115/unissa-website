@@ -305,54 +305,6 @@
 </div>
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const trackStockCheckbox = document.getElementById('track_stock');
-    const stockField = document.getElementById('stock_quantity_field');
-    const stockInput = document.getElementById('stock_quantity');
-    const imageInput = document.getElementById('img');
-    
-    // Handle stock tracking toggle
-    trackStockCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            stockField.classList.remove('hidden');
-            stockInput.required = true;
-        } else {
-            stockField.classList.add('hidden');
-            stockInput.required = false;
-            stockInput.value = 0;
-        }
-    });
-    
-    // Handle image upload preview
-    imageInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                // Create preview if it doesn't exist
-                let preview = document.getElementById('image-preview');
-                if (!preview) {
-                    preview = document.createElement('div');
-                    preview.id = 'image-preview';
-                    preview.className = 'mt-4 p-4 bg-teal-50 border border-teal-200 rounded-xl';
-                    imageInput.parentNode.parentNode.appendChild(preview);
-                }
-                
-                preview.innerHTML = `
-                    <p class="text-sm font-medium text-teal-800 mb-2 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                        </svg>
-                        New Image Preview:
-                    </p>
-                    <img src="${e.target.result}" alt="Preview" class="w-40 h-40 object-cover rounded-xl border-2 border-white shadow-lg">
-                `;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-});
-</script>
+    <script src="/js/admin-product-edit.js"></script>
 @endpush
 @endsection

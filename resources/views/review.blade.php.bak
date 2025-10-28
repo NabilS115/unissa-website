@@ -1,0 +1,308 @@
+@extends('layouts.app')
+
+@section('title', 'Product Review')
+
+@section('content')
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumb and Back Button -->
+        <div class="mb-8">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200 transition-all duration-200 font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    </div>
+
+                    <!-- Bootstrapped data for external review.js -->
+                    <script>
+                        window.__review = {
+                            csrf: '{{ csrf_token() }}',
+                            productId: {{ $product->id }},
+                            isAuthenticated: @json(auth()->check()),
+                            currentUserId: @json(auth()->check() ? auth()->id() : null)
+                        };
+                    </script>
+                    <script src="/js/review.js"></script>
+                    @endsection
+            if (previousPageTitle.includes('UNISSA') && previousPage.includes(window.location.origin)) {
+                backButtonText.textContent = 'Back to Homepage';
+            } else {
+                backButtonText.textContent = 'Back to Previous Page';
+            }
+        }
+        // Priority 2: Check catalog state
+        else if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                if (state.source === 'homepage') {
+                    backButtonText.textContent = 'Back to Homepage';
+                } else if (state.source === 'catalog') {
+                    // Show which tab they'll return to
+                    const tabName = state.tab === 'food' ? 'Food' : 'Merchandise';
+                    backButtonText.textContent = `Back to ${tabName} Catalog`;
+                } else if (state.sourcePage) {
+                    // Generic back to source page
+                    backButtonText.textContent = 'Back to Catalog';
+                } else {
+                    backButtonText.textContent = 'Back to Catalog';
+                }
+            } catch (e) {
+                console.error('Error parsing saved state:', e);
+                // Keep default text if parsing fails
+            }
+        }
+    });
+
+    // Modal logic - Add null checks
+    const modal = document.getElementById('review-modal');
+    const writeReviewBtn = document.getElementById('write-review-btn');
+    
+    if (writeReviewBtn && modal) {
+        writeReviewBtn.onclick = () => { modal.classList.remove('hidden'); };
+    }
+    
+    const closeReviewModal = document.getElementById('close-review-modal');
+    const cancelReview = document.getElementById('cancel-review');
+    
+    if (closeReviewModal && modal) {
+        closeReviewModal.onclick = () => { modal.classList.add('hidden'); };
+    }
+    
+    if (cancelReview && modal) {
+        cancelReview.onclick = () => { modal.classList.add('hidden'); };
+    }
+
+    // Add null check for review form
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        reviewForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const rating = this.rating.value;
+            const reviewText = this.review.value;
+            
+            // Validate required fields
+            if (!rating || !reviewText.trim()) {
+                alert('Please provide both a rating and review text.');
+                return;
+            }
+            
+            // Add loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Use the correct route URL format
+                const response = await fetch(`/review/{{ $product->id }}/add`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        rating: parseInt(rating),
+                        review: reviewText.trim(),
+                        product_id: {{ $product->id }}
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Review submitted successfully!');
+                    // Close the modal first
+                    const modal = document.getElementById('review-modal');
+                    if (modal) {
+                        modal.classList.add('hidden');
+                    }
+                    // Then reload the page
+                    window.location.reload();
+                } else {
+                    console.error('Server response:', data);
+                    alert(data.message || "Failed to submit review. Please try again.");
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert("Network error. Please check your connection and try again.");
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        };
+    }
+
+    // Add error handling for delete review buttons
+    document.querySelectorAll('.delete-review-btn').forEach(btn => {
+        btn.onclick = async function(e) {
+            e.preventDefault();
+            if (!confirm('Delete this review?')) return;
+            
+            const reviewId = this.getAttribute('data-id');
+            if (!reviewId) {
+                alert('Review ID not found.');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/reviews/${reviewId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (res.ok) {
+                    const reviewElement = document.querySelector(`[data-review-id="${reviewId}"]`);
+                    if (reviewElement) {
+                        reviewElement.remove();
+                    }
+                    // Reload page to update ratings statistics
+                    window.location.reload();
+                } else {
+                    const errorData = await res.json().catch(() => ({}));
+                    alert(errorData.message || 'Failed to delete review.');
+                }
+            } catch (error) {
+                console.error('Delete review error:', error);
+                alert('Network error occurred.');
+            }
+        };
+    });
+
+    // Read more functionality
+    document.querySelectorAll('.read-more-btn').forEach(btn => {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            const reviewId = this.getAttribute('data-review-id');
+            const truncatedText = document.querySelector(`.review-text-${reviewId}`);
+            const fullText = document.querySelector(`.review-full-${reviewId}`);
+            
+            if (this.textContent === 'Read more') {
+                truncatedText.classList.add('hidden');
+                fullText.classList.remove('hidden');
+                this.textContent = 'Read less';
+            } else {
+                truncatedText.classList.remove('hidden');
+                fullText.classList.add('hidden');
+                this.textContent = 'Read more';
+            }
+        };
+    });
+    
+    // Star rating functionality
+    const starBtns = document.querySelectorAll('.star-btn');
+    const ratingInput = document.getElementById('rating-input');
+    const ratingText = document.getElementById('rating-text');
+    const ratingTexts = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+    
+    if (starBtns.length > 0 && ratingInput && ratingText) {
+        starBtns.forEach((btn, index) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const rating = index + 1;
+                ratingInput.value = rating;
+                ratingText.textContent = ratingTexts[index];
+                
+                starBtns.forEach((star, i) => {
+                    if (i < rating) {
+                        star.classList.remove('text-gray-300');
+                        star.classList.add('text-yellow-400');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+            
+            btn.addEventListener('mouseenter', () => {
+                const rating = index + 1;
+                starBtns.forEach((star, i) => {
+                    if (i < rating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                const currentRating = parseInt(ratingInput.value) || 5;
+                starBtns.forEach((star, i) => {
+                    if (i < currentRating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+        });
+        
+        // Set initial 5-star rating
+        starBtns.forEach((star, i) => {
+            if (i < 5) {
+                star.classList.add('text-yellow-400');
+                star.classList.remove('text-gray-300');
+            }
+        });
+    }
+
+    // Fix helpful button functionality with better error handling
+    document.querySelectorAll('.helpful-btn').forEach(btn => {
+        btn.onclick = async function(e) {
+            e.preventDefault();
+            
+            @auth
+                const reviewId = this.getAttribute('data-review-id');
+                if (!reviewId) {
+                    console.warn('Review ID not found');
+                    return;
+                }
+                
+                const countSpan = this.querySelector('.helpful-count');
+                if (!countSpan) {
+                    console.warn('Helpful count span not found');
+                    return;
+                }
+                
+                try {
+                    const res = await fetch(`/reviews/${reviewId}/helpful`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const data = await res.json();
+                    
+                    if (res.ok) {
+                        countSpan.textContent = `(${data.helpful_count || 0})`;
+                        
+                        if (data.action === 'added') {
+                            this.classList.add('text-blue-600');
+                            this.classList.remove('text-gray-500');
+                        } else {
+                            this.classList.remove('text-blue-600');
+                            this.classList.add('text-gray-500');
+                        }
+                    } else {
+                        console.error('Helpful button error:', data);
+                        alert(data.message || 'Failed to mark as helpful');
+                    }
+                } catch (error) {
+                    console.error('Helpful button network error:', error);
+                    alert('Network error. Please try again.');
+                }
+            @else
+                alert('Please login to mark reviews as helpful');
+            @endauth
+        };
+    });
+</script>
+@endsection

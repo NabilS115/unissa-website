@@ -331,126 +331,14 @@
 </div>
 
 @push('scripts')
-<script>
-let currentProductId = {{ $product->id }};
-
-// Stock management functions
-function showStockModal(productId, currentStock) {
-    currentProductId = productId;
-    document.getElementById('current-stock').textContent = currentStock;
-    document.getElementById('stock-quantity').value = '';
-    document.getElementById('stock-modal').classList.remove('hidden');
-}
-
-function closeStockModal() {
-    document.getElementById('stock-modal').classList.add('hidden');
-}
-
-async function updateStock(productId, action, quantity) {
-    try {
-        const response = await fetch(`/admin/products/${productId}/stock`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ action, quantity })
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            location.reload();
-        } else {
-            showNotification(data.message || 'Failed to update stock', 'error');
-        }
-    } catch (error) {
-        showNotification('Network error occurred', 'error');
-    }
-}
-
-async function applyStockUpdate() {
-    const action = document.getElementById('stock-action').value;
-    const quantity = parseInt(document.getElementById('stock-quantity').value);
-    
-    if (!quantity || quantity < 0) {
-        showNotification('Please enter a valid quantity', 'error');
-        return;
-    }
-    
-    await updateStock(currentProductId, action, quantity);
-    closeStockModal();
-}
-
-// Toggle status
-async function toggleStatus(productId) {
-    try {
-        const response = await fetch(`/admin/products/${productId}/toggle-status`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            location.reload();
-        } else {
-            showNotification(data.message || 'Failed to toggle status', 'error');
-        }
-    } catch (error) {
-        showNotification('Network error occurred', 'error');
-    }
-}
-
-// Delete product
-async function deleteProduct(productId) {
-    if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/admin/products/${productId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            showNotification('Product deleted successfully!', 'success');
-            setTimeout(() => {
-                window.location.href = '{{ route("admin.products.index") }}';
-            }, 1500);
-        } else {
-            const data = await response.json();
-            showNotification(data.message || 'Failed to delete product', 'error');
-        }
-    } catch (error) {
-        showNotification('Network error occurred', 'error');
-    }
-}
-
-function showNotification(message, type) {
-    const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
-        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-    }`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-</script>
+    <script>
+        // Bootstrap for admin product show page
+        window.__adminProduct = {
+            csrf: '{{ csrf_token() }}',
+            redirectIndex: '{{ route("admin.products.index") }}',
+            productId: {{ $product->id }}
+        };
+    </script>
+    <script src="/js/admin-product-show.js"></script>
 @endpush
 @endsection

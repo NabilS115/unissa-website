@@ -3,254 +3,13 @@
 @section('title', 'Product Management')
 
 @section('content')
-<!-- Essential JavaScript functions -->
+<!-- Admin products JS extracted to an external file -->
 <script>
-// Global variables for delete functionality
-let deleteProductId = null;
-
-// Modern delete modal functions
-window.openDeleteModal = function(productId, productName) {
-    deleteProductId = productId;
-    document.getElementById('delete-product-name').textContent = productName;
-    document.getElementById('delete-modal').classList.remove('hidden');
-    document.getElementById('delete-modal').classList.add('flex');
+window.__adminProducts = {
+    csrf: '{{ csrf_token() }}'
 };
-
-window.closeDeleteModal = function() {
-    document.getElementById('delete-modal').classList.add('hidden');
-    document.getElementById('delete-modal').classList.remove('flex');
-    deleteProductId = null;
-    
-    // Reset button state
-    const confirmBtn = document.getElementById('confirm-delete-btn');
-    confirmBtn.disabled = false;
-    confirmBtn.innerHTML = 'Delete Product';
-    confirmBtn.className = 'px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium';
-};
-
-window.confirmDelete = async function() {
-    if (!deleteProductId) return;
-    
-    const confirmBtn = document.getElementById('confirm-delete-btn');
-    const row = document.querySelector(`tr:has(.delete-btn-${deleteProductId})`);
-    
-    // Show loading state
-    confirmBtn.disabled = true;
-    confirmBtn.innerHTML = `
-        <svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        Deleting...
-    `;
-    confirmBtn.className = 'px-6 py-2.5 bg-gray-400 text-white rounded-lg cursor-not-allowed font-medium';
-    
-    try {
-        const response = await fetch(`/admin/products/${deleteProductId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Show success notification
-            showNotification(data.message || 'Product deleted successfully!', 'success');
-            
-            // Close modal
-            closeDeleteModal();
-            
-            // Animate row removal
-            if (row) {
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(-100%)';
-                setTimeout(() => {
-                    row.remove();
-                    
-                    // Check if this was the last row
-                    const remainingRows = document.querySelectorAll('tbody tr').length;
-                    if (remainingRows === 0) {
-                        location.reload();
-                    }
-                }, 500);
-            } else {
-                location.reload();
-            }
-        } else {
-            throw new Error(data.message || 'Failed to delete product');
-        }
-    } catch (error) {
-        console.error('Delete error:', error);
-        showNotification(error.message || 'Failed to delete product', 'error');
-        closeDeleteModal();
-    }
-};
-
-// Modern notification system
-window.showNotification = function(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full`;
-    
-    // Set colors based on type
-    switch(type) {
-        case 'success':
-            notification.className += ' bg-green-500 text-white';
-            break;
-        case 'error':
-            notification.className += ' bg-red-500 text-white';
-            break;
-        case 'warning':
-            notification.className += ' bg-yellow-500 text-white';
-            break;
-        default:
-            notification.className += ' bg-blue-500 text-white';
-    }
-    
-    // Create content with icon
-    const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : type === 'warning' ? '⚠' : 'ℹ';
-    notification.innerHTML = `
-        <div class="flex items-center gap-2">
-            <span class="text-lg">${icon}</span>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.classList.remove('translate-x-full');
-    }, 100);
-    
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        notification.classList.add('translate-x-full');
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 300);
-    }, 4000);
-};
-
-// Test function for debugging
-window.testJS = function() {
-    showNotification('JavaScript is working! Delete function is ready.', 'success');
-};
-
-// Update product status function
-window.updateProductStatus = async function(productId, newStatus) {
-    try {
-        const response = await fetch(`/admin/products/${productId}/update-status`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ status: newStatus })
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            location.reload();
-        } else {
-            showNotification(data.message || 'Failed to update status', 'error');
-        }
-    } catch (error) {
-        console.error('Update status error:', error);
-        showNotification('Error updating status', 'error');
-    }
-};
-
-// Notification function
-window.showNotification = function(message, type) {
-    const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
-        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-    }`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-};
-
-// Dropdown functions - defined immediately for onclick access
-window.toggleDropdown = function(id) {
-    const dropdown = document.getElementById(id);
-    if (dropdown) {
-        dropdown.classList.toggle('hidden');
-    }
-};
-
-// Import Modal Functions - defined immediately for onclick access
-window.openImportModal = function(type) {
-    document.getElementById('importModal').classList.remove('hidden');
-    document.getElementById('importType').value = type;
-    document.getElementById('modalTitle').textContent = `Import ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-};
-
-window.closeImportModal = function() {
-    document.getElementById('importModal').classList.add('hidden');
-    document.getElementById('importFile').value = '';
-    document.getElementById('importForm').reset();
-};
-
-window.handleImport = async function() {
-    const form = document.getElementById('importForm');
-    const fileInput = document.getElementById('importFile');
-    const type = document.getElementById('importType').value;
-    
-    if (!fileInput.files[0]) {
-        window.showNotification('Please select a CSV file', 'error');
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('csv_file', fileInput.files[0]);
-    formData.append('_token', '{{ csrf_token() }}');
-    
-    try {
-        const response = await fetch(`/admin/${type}/import`, {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-            window.showNotification(result.message || 'Import completed successfully', 'success');
-            window.closeImportModal();
-            // Reload the page to show imported data
-            window.location.reload();
-        } else {
-            window.showNotification(result.message || 'Import failed', 'error');
-        }
-    } catch (error) {
-        console.error('Import error:', error);
-        window.showNotification('Import failed. Please try again.', 'error');
-    }
-};
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('dropdown-menu');
-    const button = event.target.closest('[onclick*="toggleDropdown"]');
-    
-    if (!button && dropdown && !dropdown.contains(event.target)) {
-        dropdown.classList.add('hidden');
-    }
-});
 </script>
+<script src="/js/admin-products.js"></script>
 
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -620,112 +379,19 @@ document.addEventListener('click', function(event) {
     </div>
 </div>
 
-<!-- Essential Stock Management Functions - Loaded Immediately -->
-<script>
-// Global variables
-let currentProductId = null;
 
-// Stock management functions
-async function updateStock(productId, action, quantity) {
-    console.log('updateStock called:', { productId, action, quantity });
-    
-    try {
-        // Add visual feedback
-        const button = event?.target?.closest('button');
-        if (button) {
-            button.disabled = true;
-            button.style.opacity = '0.5';
-        }
-        
-        const url = `/admin/products/${productId}/stock`;
-        console.log('Sending request to:', url);
-        
-        const response = await fetch(url, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ action, quantity })
-        });
-
-        console.log('Response status:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('Response data:', data);
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            location.reload();
-        } else {
-            showNotification(data.message || 'Failed to update stock', 'error');
-        }
-    } catch (error) {
-        console.error('Stock update error:', error);
-        showNotification(`Error: ${error.message}`, 'error');
-    }
-}
-
-function showStockModal(productId, currentStock) {
-    console.log('showStockModal called:', { productId, currentStock });
-    currentProductId = productId;
-    document.getElementById('current-stock').textContent = currentStock || '0';
-    document.getElementById('stock-quantity').value = '';
-    document.getElementById('stock-action').value = 'set';
-    const modal = document.getElementById('stock-modal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-}
-
-function closeStockModal() {
-    const modal = document.getElementById('stock-modal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    currentProductId = null;
-}
-
-async function applyStockUpdate() {
-    const action = document.getElementById('stock-action').value;
-    const quantity = parseInt(document.getElementById('stock-quantity').value);
-    
-    if (!quantity || quantity < 0) {
-        showNotification('Please enter a valid quantity', 'error');
-        return;
-    }
-    
-    await updateStock(currentProductId, action, quantity);
-    closeStockModal();
-}
-
-function showNotification(message, type) {
-    console.log('showNotification:', { message, type });
-    const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
-        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-    }`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-// Test function - you can call this from browser console
-function testStockButtons() {
-    console.log('Testing stock button functionality...');
-    showNotification('Stock buttons JavaScript is loaded!', 'success');
-    return 'Stock button functions are available';
-}
-
-console.log('Stock management functions loaded successfully');
-</script>
+            @push('styles')
+            <style>
+                .delete-loading {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+                .row-deleting {
+                    opacity: 0.5;
+                    transition: opacity 0.5s ease;
+                }
+            </style>
+            @endpush
 
 @push('styles')
 <style>
@@ -741,10 +407,6 @@ console.log('Stock management functions loaded successfully');
 @endpush
 
 @push('scripts')
-<script>
-// All JavaScript functions have been moved to the inline script at the top of the page for immediate loading
-console.log('Admin products page additional scripts loaded');
-</script>
 @endpush
 
 <!-- Delete Confirmation Modal -->

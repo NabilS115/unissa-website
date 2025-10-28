@@ -3,120 +3,16 @@
 @section('title', 'Order Details - #' . $order->id)
 
 @section('content')
-<!-- Essential JavaScript functions - loaded immediately -->
+<!-- Bootstrap + external admin orders show JS -->
 <script>
-// Define status update functions in global scope immediately
-window.updateOrderStatus = async function(newStatus) {
-    console.log('updateOrderStatus called with status:', newStatus);
-    
-    if (newStatus === 'cancelled' && !confirm('Are you sure you want to cancel this order?')) {
-        console.log('Cancel confirmation declined');
-        return;
-    }
-
-    console.log('Proceeding with status update...');
-    
-    try {
-        const updateUrl = '{{ route('admin.orders.update-status', $order->id) }}';
-        console.log('Order ID:', {{ $order->id }});
-        console.log('Update URL:', updateUrl);
-        console.log('About to make PATCH request...');
-        
-        const response = await fetch(updateUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({ 
-                status: newStatus,
-                _method: 'PATCH'
-            })
-        });
-
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-        const data = await response.json();
-        console.log('Response data:', data);
-        console.log('data.success:', data.success);
-        
-        if (response.ok && data.success) {
-            showNotification(data.message || 'Order status updated successfully', 'success');
-            setTimeout(() => location.reload(), 1000);
-        } else {
-            showNotification(data.message || 'Failed to update status', 'error');
-        }
-    } catch (error) {
-        console.error('Status update error:', error);
-        showNotification('Network error occurred', 'error');
-    }
-};
-
-window.showNotification = function(message, type) {
-    console.log('showNotification:', { message, type });
-    const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
-        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-    }`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-};
-
-// Payment status update function
-window.updatePaymentStatus = async function() {
-    const paymentStatusSelect = document.getElementById('payment-status-select');
-    const newPaymentStatus = paymentStatusSelect.value;
-    
-    console.log('updatePaymentStatus called with status:', newPaymentStatus);
-    
-    try {
-        const updateUrl = '{{ route('admin.orders.update-payment-status', $order->id) }}';
-        console.log('Payment status update URL:', updateUrl);
-        
-        const response = await fetch(updateUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({ 
-                payment_status: newPaymentStatus,
-                _method: 'PATCH'
-            })
-        });
-
-        console.log('Payment status response status:', response.status);
-        const data = await response.json();
-        console.log('Payment status response data:', data);
-        
-        if (response.ok && data.success) {
-            showNotification(data.message || 'Payment status updated successfully', 'success');
-            setTimeout(() => location.reload(), 1000);
-        } else {
-            showNotification(data.message || 'Failed to update payment status', 'error');
-        }
-    } catch (error) {
-        console.error('Payment status update error:', error);
-        showNotification('Network error occurred', 'error');
-    }
-};
-
-// Test function - you can call this from browser console
-window.testOrderStatusFunctions = function() {
-    console.log('Testing order status functionality...');
-    showNotification('Order status functions are loaded!', 'success');
-    return 'Order status functions are available';
-};
+    window.__adminOrder = {
+        csrf: '{{ csrf_token() }}',
+        updateStatusUrl: '{{ route('admin.orders.update-status', $order->id) }}',
+        updatePaymentUrl: '{{ route('admin.orders.update-payment-status', $order->id) }}',
+        orderId: {{ $order->id }}
+    };
 </script>
+<script src="/js/admin-orders-show.js"></script>
 
 <div class="min-h-screen bg-gray-50 py-10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -428,10 +324,6 @@ window.testOrderStatusFunctions = function() {
     </div>
 </div>
 
-@push('scripts')
-<script>
-// Order status functions have been moved to inline script at the top of the page for immediate loading
-</script>
 @endpush
 
 <style>

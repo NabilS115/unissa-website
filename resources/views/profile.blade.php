@@ -155,87 +155,11 @@
                             @endif
                         </div>
                         
+                        <!-- Review carousel & read-more logic moved to external script -->
                         <script>
-                            @if(Auth::user()->reviews->count() > 1)
-                            let currentReview = 0;
-                            const totalReviews = {{ Auth::user()->reviews->count() }};
-                            
-                            // Set initial width for carousel track
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const track = document.getElementById('reviews-track');
-                                if (track && totalReviews > 1) {
-                                    track.style.width = `${totalReviews * 100}%`;
-                                    track.querySelectorAll('.w-full').forEach((slide, index) => {
-                                        slide.style.width = `${100 / totalReviews}%`;
-                                    });
-                                }
-                                
-                                // Initialize read more functionality
-                                initializeReadMoreButtons();
-                            });
-                            
-                            function moveReview(dir) {
-                                if (totalReviews <= 1) return;
-                                
-                                const track = document.getElementById('reviews-track');
-                                currentReview = (currentReview + dir + totalReviews) % totalReviews;
-                                const translateX = -(currentReview * (100 / totalReviews));
-                                track.style.transform = `translateX(${translateX}%)`;
-                                updateReviewDots();
-                            }
-                            
-                            function goToReview(index) {
-                                if (totalReviews <= 1) return;
-                                
-                                const track = document.getElementById('reviews-track');
-                                currentReview = index;
-                                const translateX = -(currentReview * (100 / totalReviews));
-                                track.style.transform = `translateX(${translateX}%)`;
-                                updateReviewDots();
-                            }
-                            
-                            function updateReviewDots() {
-                                document.querySelectorAll('.review-dot').forEach((dot, index) => {
-                                    if (index === currentReview) {
-                                        dot.className = 'review-dot w-8 h-3 rounded-full bg-teal-500 transition-all duration-200';
-                                    } else {
-                                        dot.className = 'review-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-200';
-                                    }
-                                });
-                            }
-                            @else
-                            document.addEventListener('DOMContentLoaded', function() {
-                                initializeReadMoreButtons();
-                            });
-                            @endif
-
-                            function initializeReadMoreButtons() {
-                                document.querySelectorAll('.read-more-btn').forEach(btn => {
-                                    btn.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        
-                                        const reviewId = this.getAttribute('data-review-id');
-                                        const truncatedText = document.querySelector(`.review-text-${reviewId}`);
-                                        const fullText = document.querySelector(`.review-full-${reviewId}`);
-                                        const buttonText = this.querySelector('span') || this;
-                                        const icon = this.querySelector('svg');
-                                        
-                                        if (buttonText.textContent.includes('Read more')) {
-                                            if (truncatedText) truncatedText.classList.add('hidden');
-                                            if (fullText) fullText.classList.remove('hidden');
-                                            buttonText.textContent = 'Read less';
-                                            if (icon) icon.style.transform = 'rotate(180deg)';
-                                        } else {
-                                            if (truncatedText) truncatedText.classList.remove('hidden');
-                                            if (fullText) fullText.classList.add('hidden');
-                                            buttonText.textContent = 'Read more';
-                                            if (icon) icon.style.transform = 'rotate(0deg)';
-                                        }
-                                    });
-                                });
-                            }
+                            window.__profileReviews = { totalReviews: {{ Auth::user()->reviews->count() }} };
                         </script>
+                        <script src="/js/profile-reviews.js"></script>
                     @else
                         <!-- Empty State -->
                         <div class="text-center py-16">
