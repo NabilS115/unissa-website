@@ -562,7 +562,6 @@ input[type="number"]::-ms-clear {
                                                         </button>
                                                     @endif
                                                 @else
-                                                    <!-- duplicate helpful display removed -->
                                             </div>
 
 
