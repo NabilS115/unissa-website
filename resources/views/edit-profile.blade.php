@@ -28,14 +28,14 @@
                                 // If the photo is a data URI (SVG fallback), it's not a custom upload
                                 $hasCustomPhoto = $userPhoto && !str_starts_with($userPhoto, 'data:image/svg+xml');
                             @endphp
-                            <div class="absolute inset-0 bg-black/40 rounded-2xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer select-none"
-                                 onclick="openPhotoModal()">
-                                <svg class="w-12 h-12 text-white/90" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                       <button id="profile-photo-overlay" type="button" aria-label="Change profile photo" title="Change profile photo" class="absolute inset-0 bg-black/40 rounded-2xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-200 cursor-pointer select-none focus:outline-none focus:ring-4 focus:ring-teal-300/30">
+                                <svg class="w-12 h-12 text-white/95" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                                     <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" />
                                     <path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="1.5" fill="none" />
                                     <circle cx="12" cy="14" r="3.5" stroke="currentColor" stroke-width="1.5" fill="none" />
                                 </svg>
-                            </div>
+                                <span class="mt-2 text-sm font-medium text-white/90">Change photo</span>
+                            </button>
                         </div>
                         
                         <div class="lg:mb-4 flex-1">
@@ -310,6 +310,58 @@
                     </div>
                 </div>
 
+                <!-- Photo modal (used by /js/profile.js) -->
+                <div id="photo-modal" class="hidden fixed inset-0 z-50 flex items-start md:items-center justify-center bg-black/60 px-4 py-8 overflow-auto" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title">
+                    <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl mx-auto overflow-visible border border-teal-100 animate-fade-in max-h-[calc(100vh-4rem)]">
+                        <div class="flex items-start justify-between p-6 border-b border-teal-100">
+                            <h3 id="photo-modal-title" class="text-xl font-semibold text-teal-800">Update profile photo</h3>
+                            <button id="photo-modal-close" type="button" class="text-teal-600 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md" aria-label="Close dialog">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+
+                        <div class="p-6 md:p-8">
+                            <div class="md:flex md:items-start md:gap-8">
+                                <div class="md:w-1/2 flex flex-col items-center">
+                                    <div class="w-48 h-48 rounded-2xl overflow-hidden border border-teal-100 shadow-lg flex items-center justify-center bg-white">
+                                        <img id="modal-photo-preview" src="{{ Auth::user()->profile_photo_url }}" alt="Preview" class="w-full h-full object-cover" />
+                                    </div>
+                                    <p class="mt-3 text-sm text-teal-700 text-center">Preview — how your photo appears across the site.</p>
+                                </div>
+
+                                <div class="md:flex-1 mt-6 md:mt-0">
+                                    <p class="text-sm text-teal-700 mb-4">Select an image file. You can crop and adjust before saving. Recommended size: square, at least 400×400px.</p>
+
+                                    <div class="flex flex-wrap gap-3 items-center">
+                                        <button id="upload-btn" type="button" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium shadow">Upload</button>
+                                        <button id="change-btn" type="button" class="px-4 py-2 bg-white border border-teal-100 text-teal-700 rounded-xl hidden">Change</button>
+                                        <button id="delete-btn" type="button" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl hidden">Delete</button>
+                                        <input id="photo-file-input" type="file" accept="image/*" class="hidden" />
+                                    </div>
+
+                                    <div id="photo-modal-spinner" class="hidden mt-6">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full border-4 border-teal-200 border-t-teal-600 animate-spin"></div>
+                                            <div class="text-sm text-teal-700 spinner-message">Uploading…</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- cropper area (initially hidden) -->
+                                    <div id="cropper-area" class="hidden mt-6">
+                                        <div class="mx-auto cropper-wrapper relative w-full max-w-[420px] min-h-[200px] overflow-visible rounded-xl border border-teal-100 bg-white shadow-sm flex items-center justify-center">
+                                            <img id="cropper-image" src="" alt="Crop" class="max-w-full max-h-[50vh] object-contain" />
+                                        </div>
+                                        <div class="mt-4 flex items-center gap-3">
+                                            <button id="crop-upload-btn" type="button" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-medium">Apply crop & upload</button>
+                                            <button id="crop-reset-btn" type="button" class="px-4 py-2 bg-white border border-teal-100 rounded-xl">Reset</button>
+                                            <button id="crop-cancel-btn" type="button" class="px-4 py-2 bg-white border border-gray-200 rounded-xl">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- profile script extracted to /js/profile.js -->
                 <script>
                     window.__profile = {

@@ -388,7 +388,7 @@
         document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden';
         document.addEventListener('keydown', photoModalKeyHandler);
         modal.addEventListener('click', photoModalBackdropHandler);
-        setTimeout(()=>{ const closeBtn = modal.querySelector('button[onclick="closePhotoModal()"]'); if (closeBtn) closeBtn.focus(); },50);
+        setTimeout(()=>{ const closeBtn = document.getElementById('photo-modal-close'); if (closeBtn) closeBtn.focus(); },50);
     }
     function closePhotoModal(){
         const modal = document.getElementById('photo-modal'); if (!modal) return;
@@ -422,6 +422,10 @@
 
     // Cropper helpers (uses global Cropper)
     function openCropperFromFile(e){ const input = e.target; const file = input && input.files && input.files[0]; if (!file) return; const url = URL.createObjectURL(file); const img = document.getElementById('cropper-image'); if (!img) return; img.src = url; showCropperArea(); if (cropperInstance){ try{ cropperInstance.destroy(); }catch(e){} cropperInstance = null; } img.onload = function(){ cropperInstance = new Cropper(img, { aspectRatio:1, viewMode:0, dragMode:'move', autoCropArea:0.9, restore:false, modal:true, guides:true, center:true, highlight:true, cropBoxMovable:true, cropBoxResizable:true, toggleDragModeOnDblclick:false, responsive:true, checkOrientation:false, zoomable:true, wheelZoomRatio:0.1, background:true }); }; }
+    // If Cropper.js is not available, fallback to direct upload behavior
+    function openCropperFromFile(e){ const input = e.target; const file = input && input.files && input.files[0]; if (!file) return; // fallback if Cropper not loaded
+        if (typeof Cropper === 'undefined') { console.warn('Cropper.js not available; uploading directly'); return handlePhotoUpload(e); }
+        const url = URL.createObjectURL(file); const img = document.getElementById('cropper-image'); if (!img) return; img.src = url; showCropperArea(); if (cropperInstance){ try{ cropperInstance.destroy(); }catch(e){} cropperInstance = null; } img.onload = function(){ try{ cropperInstance = new Cropper(img, { aspectRatio:1, viewMode:0, dragMode:'move', autoCropArea:0.9, restore:false, modal:true, guides:true, center:true, highlight:true, cropBoxMovable:true, cropBoxResizable:true, toggleDragModeOnDblclick:false, responsive:true, checkOrientation:false, zoomable:true, wheelZoomRatio:0.1, background:true }); }catch(err){ console.error('Failed to initialize cropper', err); } }; }
     function showCropperArea(){ const area = document.getElementById('cropper-area'); if (!area) return; area.classList.remove('hidden'); const modal = document.getElementById('photo-modal'); if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); } }
     function hideCropperArea(){ const area = document.getElementById('cropper-area'); if (!area) return; area.classList.add('hidden'); if (cropperInstance){ try{ cropperInstance.destroy(); }catch(e){} cropperInstance = null; } const fileInput = document.getElementById('photo-file-input'); if (fileInput) fileInput.value = ''; }
     function resetCropper(){ if (!cropperInstance) return; try{ cropperInstance.reset(); }catch(e){ console.warn('Reset failed', e); } }
@@ -475,7 +479,12 @@
         const uploadBtn = document.getElementById('upload-btn'); if (uploadBtn) uploadBtn.addEventListener('click', ()=> document.getElementById('photo-file-input').click());
         const changeBtn = document.getElementById('change-btn'); if (changeBtn) changeBtn.addEventListener('click', ()=> document.getElementById('photo-file-input').click());
         const deleteBtn = document.getElementById('delete-btn'); if (deleteBtn) deleteBtn.addEventListener('click', deleteProfilePhoto);
-        const fileInput = document.getElementById('photo-file-input'); if (fileInput) fileInput.addEventListener('change', handlePhotoUpload);
+    const fileInput = document.getElementById('photo-file-input'); if (fileInput) fileInput.addEventListener('change', openCropperFromFile);
+    // Bind the modal close button (no inline onclick)
+    const closeBtn = document.getElementById('photo-modal-close'); if (closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); try{ closePhotoModal(); }catch(err){ console.error('closePhotoModal not available', err); } });
+    // Bind overlay click (avoid inline onclick and ensure handler exists when clicked)
+    const photoOverlay = document.getElementById('profile-photo-overlay');
+    if (photoOverlay) photoOverlay.addEventListener('click', function(e){ e.preventDefault(); try{ openPhotoModal(); }catch(err){ console.error('openPhotoModal is not available', err); } });
         // cropper bindings
         const cropCancel = document.getElementById('crop-cancel-btn'); if (cropCancel) cropCancel.addEventListener('click', hideCropperArea);
         const cropUpload = document.getElementById('crop-upload-btn'); if (cropUpload) cropUpload.addEventListener('click', cropAndUpload);
