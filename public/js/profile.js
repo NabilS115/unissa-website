@@ -11,18 +11,29 @@
     function setMessage(elId, text, ok){
         const el = document.getElementById(elId);
         if (!el) return;
+        // If text is empty, hide the validation element for a cleaner initial UI
+        if (!text) {
+            el.textContent = '';
+            el.classList.add('hidden');
+            return;
+        }
+        el.classList.remove('hidden');
         el.textContent = text;
         el.className = ok ? 'mt-2 text-sm text-green-600' : 'mt-2 text-sm text-red-600';
     }
 
     function validateName(){
         const name = (document.getElementById('name')||{}).value || '';
-        setMessage('name-validation', /^([A-Za-z\s]{2,})$/.test(name) ? 'Valid name!' : 'Name must be at least 2 letters.', /^([A-Za-z\s]{2,})$/.test(name));
+        if (!name.trim()) { setMessage('name-validation','',true); return; }
+        const ok = /^([A-Za-z\s]{2,})$/.test(name);
+        setMessage('name-validation', ok ? 'Valid name!' : 'Name must be at least 2 letters.', ok);
     }
     function validateEmail(){
         const email = (document.getElementById('email')||{}).value || '';
+        if (!email.trim()) { setMessage('email-validation','',true); return; }
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        setMessage('email-validation', re.test(email) ? 'Valid email!' : 'Please enter a valid email address.', re.test(email));
+        const ok = re.test(email);
+        setMessage('email-validation', ok ? 'Valid email!' : 'Please enter a valid email address.', ok);
     }
     function validatePhone(){
         const phone = (document.getElementById('phone')||{}).value || '';
@@ -32,35 +43,51 @@
     }
     function validateDepartment(){
         const department = (document.getElementById('department')||{}).value || '';
-        setMessage('department-validation', /^([A-Za-z\s]{2,})$/.test(department) ? 'Valid department!' : 'Department must be at least 2 letters.', /^([A-Za-z\s]{2,})$/.test(department));
+        if (!department.trim()) { setMessage('department-validation','',true); return; }
+        const ok = /^([A-Za-z\s]{2,})$/.test(department);
+        setMessage('department-validation', ok ? 'Valid department!' : 'Department must be at least 2 letters.', ok);
     }
 
     // --- Card validators ---
     function validateCardholderName(){
         const nm = (document.getElementById('cardholder_name')||{}).value || '';
-        setMessage('cardholder-name-validation', nm.trim().length >= 2 ? 'Looks good.' : 'Name must be at least 2 characters.', nm.trim().length >= 2);
+        if (!nm.trim()) { setMessage('cardholder-name-validation','',true); return; }
+        const ok = nm.trim().length >= 2;
+        setMessage('cardholder-name-validation', ok ? 'Looks good.' : 'Name must be at least 2 characters.', ok);
     }
+
     function validateCardNumber(){
         const num = ((document.getElementById('card_number')||{}).value || '').replace(/\s/g,'');
         const msgId = 'card-number-validation';
+        if (!num) { setMessage(msgId,'',true); return; }
         const re = /^\d{16}$/;
-        setMessage(msgId, re.test(num) ? 'Valid card number.' : 'Card number must be 16 digits.', re.test(num));
+        const ok = re.test(num);
+        setMessage(msgId, ok ? 'Valid card number.' : 'Card number must be 16 digits.', ok);
     }
+
     function validateCardExpiry(){
         const expiry = (document.getElementById('card_expiry')||{}).value || '';
         const msgId = 'card-expiry-validation';
+        if (!expiry) { setMessage(msgId,'',true); return; }
         const re = /^(0[1-9]|1[0-2])\/(\d{2})$/;
         if (!re.test(expiry)) { setMessage(msgId,'Expiry must be MM/YY.',false); return; }
         const [mm, yy] = expiry.split('/');
         const yyyy = parseInt(yy,10) + 2000;
         const expDate = new Date(yyyy, parseInt(mm,10)-1, 1);
         const now = new Date();
-        setMessage(msgId, expDate >= new Date(now.getFullYear(), now.getMonth(), 1) ? 'Valid expiry date.' : 'Card is expired.', expDate >= new Date(now.getFullYear(), now.getMonth(), 1));
+        const ok = expDate >= new Date(now.getFullYear(), now.getMonth(), 1);
+        setMessage(msgId, ok ? 'Valid expiry date.' : 'Card is expired.', ok);
     }
+
     function validateCardCCV(){
         const ccv = (document.getElementById('card_ccv')||{}).value || '';
-        setMessage('card-ccv-validation', (/^\d{3,4}$/).test(ccv) ? 'Valid CCV.' : 'CCV must be 3 or 4 digits.', (/^\d{3,4}$/).test(ccv));
+        if (!ccv) { setMessage('card-ccv-validation','',true); return; }
+        // Enforce exactly 3 digits for CCV (3 is standard). If 4-digit CCV support is ever required
+        // (e.g., for specific card schemes), update this regex accordingly.
+        const ok = (/^\d{3}$/).test(ccv);
+        setMessage('card-ccv-validation', ok ? 'Valid CCV.' : 'CCV must be 3 digits.', ok);
     }
+
     function validateBankAccount(input){
         if (!input) return;
         let value = input.value || '';
@@ -156,8 +183,8 @@
                 inp.classList.remove('border-red-300','focus:ring-red-500');
             }catch(e){}
         });
-        // clear any named validation placeholders (e.g. name-validation)
-        form.querySelectorAll('[id$="-validation"]').forEach(el => { el.textContent = ''; });
+        // clear any named validation placeholders (e.g. name-validation) and hide them
+        form.querySelectorAll('[id$="-validation"]').forEach(el => { el.textContent = ''; try{ el.classList.add('hidden'); }catch(e){} });
     }
 
     // Render server-side field errors inline inside the form
@@ -185,7 +212,10 @@
                     else input.parentNode.appendChild(validationEl);
                 }
             }
-            if (validationEl) validationEl.textContent = msg;
+            if (validationEl) {
+                try{ validationEl.classList.remove('hidden'); }catch(e){}
+                validationEl.textContent = msg;
+            }
             if (input){
                 try{ input.classList.add('border-red-300','focus:ring-red-500'); }catch(e){}
             }
@@ -235,6 +265,32 @@
                         // clear any inline errors
                         clearFieldErrors(form);
                         showProfileToast((data && data.message) ? data.message : 'Profile updated successfully!', false);
+                        // If server returned updated user data, update visible UI without reload
+                        try{
+                            const user = data && (data.data || data.user) ? (data.data || data.user) : null;
+                            if (user) {
+                                // header dropdown
+                                const hdrName = document.querySelector('#profileDropdown .font-bold');
+                                if (hdrName) hdrName.textContent = user.name || '';
+                                const hdrEmail = document.querySelector('#profileDropdown .text-sm');
+                                if (hdrEmail) hdrEmail.textContent = user.email || '';
+                                // profile page heading (edit-profile)
+                                    // Try several places where the large profile name might appear
+                                    const profileHeadingSelectors = [
+                                        '#tab-content-profile h1.text-3xl.font-bold',
+                                        'h1.text-3xl.font-bold.text-gray-900',
+                                        '.profile-page-heading',
+                                    ];
+                                    let profileHeading = null;
+                                    for (let s of profileHeadingSelectors) {
+                                        profileHeading = document.querySelector(s);
+                                        if (profileHeading) break;
+                                    }
+                                    if (profileHeading) profileHeading.textContent = user.name || '';
+                                // generic data-user-name attributes
+                                document.querySelectorAll('[data-user-name]').forEach(el=>{ el.textContent = user.name || ''; });
+                            }
+                        }catch(e){ console.error('Failed to update UI after profile save', e); }
                     } else {
                         const msg = getFirstErrorMessage(data) || 'Failed to update profile.';
                         showProfileToast(msg, true);
@@ -452,8 +508,7 @@
                 }
             }catch(e){}
         });
-        // initial validation run
-        try{ validateName(); validateEmail(); validatePhone(); validateDepartment(); validateCardholderName(); validateCardNumber(); validateCardExpiry(); validateCardCCV(); }catch(e){}
+    // Don't run initial validation sweep on load — only validate on user input for a cleaner UI
     });
 
 })();

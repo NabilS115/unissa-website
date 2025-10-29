@@ -48,12 +48,28 @@ class ProfileController extends Controller
 
             \Log::info('Profile updated successfully for user: ' . $user->id);
 
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Profile updated successfully!',
+                    'data' => [
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ],
+                ]);
+            }
             return Redirect::route('edit.profile')->with('profile-updated', true);
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation failed:', $e->errors());
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $e->errors()], 422);
+            }
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             \Log::error('Profile update error: ' . $e->getMessage());
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to update profile. Please try again.'], 500);
+            }
             return back()->with('error', 'Failed to update profile. Please try again.')->withInput();
         }
     }
