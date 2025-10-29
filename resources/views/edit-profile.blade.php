@@ -70,7 +70,7 @@
         </div>
         <div id="tab-content-profile" class="tab-content">
             <div class="bg-white rounded-2xl shadow-lg p-6">
-                <form method="POST" action="{{ route('profile.update') }}" class="space-y-4">
+                <form id="profile-form" method="POST" action="{{ route('profile.update') }}" class="space-y-4">
                     @csrf
                     @method('put')
                     <div class="border-l-4 border-teal-400 pl-4">
@@ -126,8 +126,6 @@
                             <div class="flex items-center gap-2 text-green-600 font-medium">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                </svg>
                                 </svg>
                                 Profile updated successfully!
                             </div>
@@ -221,19 +219,7 @@
                         </div>
                     </div>
 
-                    <!-- Profile JS bootstrap + external script (extracted) -->
-                    <script>
-                        window.__profile = {
-                            csrf: '{{ csrf_token() }}',
-                            routes: {
-                                photoUpload: '{{ route('profile.photo') }}',
-                                photoDelete: '{{ route('profile.photo.delete') }}'
-                            },
-                            defaultProfileUrl: '{{ asset('images/default-profile.svg') }}',
-                            hasCustomPhoto: @json($hasCustomPhoto)
-                        };
-                    </script>
-                    <script src="/js/profile.js"></script>
+                    <!-- Profile JS bootstrap injected later to avoid load-order issues -->
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 w-full">
                         <!-- ...existing code... -->
                     </div>
@@ -243,20 +229,104 @@
                             <span class="whitespace-nowrap">Save Payment Method</span>
                         </button>
                     </div>
-                <!-- Toast Notification -->
-<!-- Toast Notification (fixed, high z-index, not covering button) -->
-<div id="profile-toast" style="position:fixed; bottom:2rem; left:2rem; z-index:9999; display:none; align-items:center; min-width:260px; max-width:90vw; padding:1rem 1.5rem; border-radius:1rem; box-shadow:0 4px 24px rgba(0,0,0,0.12); pointer-events:auto;" class="gap-2 text-white font-semibold">
-    <span class="toast-message font-medium text-base"></span>
-    <button id="profile-toast-close" class="ml-auto pl-4 focus:outline-none text-white/80 hover:text-white text-2xl leading-none bg-transparent" style="background:none; border:none;">&times;</button>
-</div>
+                </form>
+            </div>
+        </div>
 
-    </div>
-</div>
+        <!-- Password Tab Content -->
+        <div id="tab-content-password" class="tab-content hidden">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <form id="password-form" method="POST" action="{{ route('profile.password') }}" class="space-y-4">
+                            @csrf
+                            @method('put')
+                            <div class="border-l-4 border-red-400 pl-4">
+                                <label for="current_password" class="block text-sm font-medium text-gray-500 mb-1">Current Password</label>
+                                <div class="relative">
+                                    <input name="current_password" id="current_password" type="password" required autocomplete="current-password"
+                                           class="w-full px-4 py-3 border {{ $errors->updatePassword->has('current_password') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                                    <button type="button" data-target="current_password" class="password-toggle absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none" title="Show password">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
+                                            <!-- refined slash for closed-eye -->
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                @if (optional($errors->updatePassword)->has('current_password'))
+                                    <p class="mt-2 text-sm text-red-600">{{ optional($errors->updatePassword)->first('current_password') }}</p>
+                                @endif
+                            </div>
 
-<!-- Success Toast Messages -->
-<!-- Removed payment method details card from bottom of page after profile update -->
+                            <div class="border-l-4 border-yellow-400 pl-4">
+                                <label for="password" class="block text-sm font-medium text-gray-500 mb-1">New Password</label>
+                                <div class="relative">
+                                    <input name="password" id="password" type="password" required autocomplete="new-password"
+                                           class="w-full px-4 py-3 border {{ $errors->updatePassword->has('password') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                                    <button type="button" data-target="password" class="password-toggle absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none" title="Show password">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
+                                            <!-- refined slash for closed-eye -->
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                @if (optional($errors->updatePassword)->has('password'))
+                                    <p class="mt-2 text-sm text-red-600">{{ optional($errors->updatePassword)->first('password') }}</p>
+                                @endif
+                            </div>
 
-        <!-- profile script extracted to /js/profile.js -->
+                            <div class="border-l-4 border-green-400 pl-4">
+                                <label for="password_confirmation" class="block text-sm font-medium text-gray-500 mb-1">Confirm New Password</label>
+                                <div class="relative">
+                                    <input name="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200" />
+                                    <button type="button" data-target="password_confirmation" class="password-toggle absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none" title="Show password">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
+                                            <!-- refined slash for closed-eye -->
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
+                                @if (session('password-updated'))
+                                    <div class="flex items-center gap-2 text-green-600 font-medium">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Password updated successfully!
+                                    </div>
+                                @endif
+                                <button type="submit" class="px-6 py-3 bg-red-600 hover:bg-red-700 focus:ring-red-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg">
+                                    Change Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- profile script extracted to /js/profile.js -->
+                <script>
+                    window.__profile = {
+                        csrf: '{{ csrf_token() }}',
+                        routes: {
+                            photoUpload: '{{ route('profile.photo') }}',
+                            photoDelete: '{{ route('profile.photo.delete') }}'
+                        },
+                        defaultProfileUrl: '{{ asset('images/default-profile.svg') }}',
+                        hasCustomPhoto: @json($hasCustomPhoto)
+                    };
+                </script>
+                <script src="/js/profile.js"></script>
+                <!-- Toast container for AJAX save notifications (top-center to avoid back-to-top overlap) -->
+                <div id="profile-toast" class="hidden fixed top-6 left-1/2 z-50 items-center gap-3 px-4 py-3 rounded-lg text-white shadow-lg opacity-0" style="display:none; transform: translateX(-50%);">
+                    <div class="toast-message">Saved</div>
+                </div>
     <style>
     @keyframes fade-in {
         from {

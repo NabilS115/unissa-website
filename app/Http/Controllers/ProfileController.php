@@ -91,12 +91,21 @@ class ProfileController extends Controller
 
             \Log::info('Password updated successfully for user: ' . $user->id);
 
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => true, 'message' => 'Password updated successfully!']);
+            }
             return back()->with('password-updated', true);
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Password validation failed:', $e->errors());
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $e->errors()], 422);
+            }
             return back()->withErrors($e->errors(), 'updatePassword')->withInput();
         } catch (\Exception $e) {
             \Log::error('Password update error: ' . $e->getMessage());
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to update password. Please try again.'], 500);
+            }
             return back()->with('error', 'Failed to update password. Please try again.');
         }
     }

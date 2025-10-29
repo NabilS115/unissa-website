@@ -79,20 +79,25 @@
     }
 
     // --- Tabs ---
+    // Global tab switcher (exposed for debugging/fallbacks)
+    function showProfileTab(tab){
+        try{ const tabContents = document.querySelectorAll('.tab-content'); tabContents.forEach(c=>{ c.classList.add('hidden'); c.classList.remove('tab-visible'); }); }catch(e){}
+        const el = document.getElementById('tab-content-' + tab);
+        if (el){ el.classList.remove('hidden'); el.classList.add('tab-visible'); }
+        try{ const tabBtns = document.querySelectorAll('.tab-btn'); tabBtns.forEach(b=>b.classList.remove('border-teal-500','text-teal-900')); }catch(e){}
+        const btn = document.querySelector('.tab-btn[data-tab="'+tab+'"]');
+        if (btn) btn.classList.add('border-teal-500','text-teal-900');
+    }
+    // (no globals exposed) keep showProfileTab internal for production
+
     function initTabs(){
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
+        try{}catch(e){}
         if (!tabBtns.length) return;
-        function showTab(tab){
-            tabContents.forEach(c=>c.classList.add('hidden'));
-            const el = document.getElementById('tab-content-' + tab);
-            if (el) el.classList.remove('hidden');
-            tabBtns.forEach(b=>b.classList.remove('border-teal-500','text-teal-900'));
-            const btn = document.querySelector('.tab-btn[data-tab="'+tab+'"]');
-            if (btn) btn.classList.add('border-teal-500','text-teal-900');
-        }
-        tabBtns.forEach(btn=>btn.addEventListener('click', function(){ showTab(this.dataset.tab); }));
-        showTab('profile');
+        tabBtns.forEach(btn=>btn.addEventListener('click', function(e){ e.preventDefault(); const t = this.dataset && this.dataset.tab; if (t) showProfileTab(t); }));
+        // show default
+        showProfileTab('profile');
     }
 
     // --- Payment fields toggle & AJAX save ---
@@ -122,6 +127,190 @@
                     if (response.ok) showProfileToast('Payment method updated!', false);
                     else showProfileToast((data && data.message) ? data.message : 'Failed to update payment method.', true);
                 }).catch(()=> showProfileToast('Failed to update payment method.', true));
+        });
+    }
+
+    // --- Profile form AJAX ---
+    function getFirstErrorMessage(data){
+        if (!data) return null;
+        if (data.message) return data.message;
+        if (data.errors){
+            const keys = Object.keys(data.errors);
+            if (keys.length){
+                const first = data.errors[keys[0]];
+                if (Array.isArray(first)) return first.join(' ');
+                return String(first);
+            }
+        }
+        return null;
+    }
+
+    // Clear previous inline field errors inside a form
+    function clearFieldErrors(form){
+        if (!form) return;
+        // remove generated ajax-field-error elements
+        form.querySelectorAll('.ajax-field-error').forEach(el => el.remove());
+        // restore input border classes where we added error styles
+        form.querySelectorAll('input, select, textarea').forEach(inp => {
+            try{
+                inp.classList.remove('border-red-300','focus:ring-red-500');
+            }catch(e){}
+        });
+        // clear any named validation placeholders (e.g. name-validation)
+        form.querySelectorAll('[id$="-validation"]').forEach(el => { el.textContent = ''; });
+    }
+
+    // Render server-side field errors inline inside the form
+    function renderFieldErrors(form, errors){
+        if (!form || !errors) return;
+        Object.keys(errors).forEach(field => {
+            const messages = errors[field];
+            const msg = Array.isArray(messages) ? messages.join(' ') : String(messages);
+            // try to find input by name
+            let input = form.querySelector('[name="' + field + '"]');
+            if (!input){
+                // maybe dotted names, try replacing [] or . with _ or direct id
+                input = document.getElementById(field) || form.querySelector('[name="' + field.replace('.','\.') + '"]');
+            }
+            // find existing validation element
+            let validationEl = document.getElementById(field + '-validation');
+            if (!validationEl && input){
+                // create a new p after the input
+                validationEl = document.createElement('p');
+                validationEl.className = 'ajax-field-error mt-2 text-sm text-red-600';
+                validationEl.id = field + '-validation';
+                if (input.parentNode){
+                    // place after input or after wrapper
+                    if (input.nextSibling) input.parentNode.insertBefore(validationEl, input.nextSibling);
+                    else input.parentNode.appendChild(validationEl);
+                }
+            }
+            if (validationEl) validationEl.textContent = msg;
+            if (input){
+                try{ input.classList.add('border-red-300','focus:ring-red-500'); }catch(e){}
+            }
+        });
+    }
+
+    function initProfileAjax(){
+        const form = document.getElementById('profile-form');
+        if (!form) return;
+        const submitBtn = form.querySelector('[type="submit"]');
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            // clear any previous inline errors
+            clearFieldErrors(form);
+            if (submitBtn) submitBtn.disabled = true;
+            const fd = new FormData(form);
+            // include method override if present
+            const methodInput = form.querySelector('input[name="_method"]');
+            if (methodInput && methodInput.value) fd.append('_method', methodInput.value);
+            fetch(form.action, { method: 'POST', headers: { 'X-Requested-With':'XMLHttpRequest', 'X-CSRF-TOKEN': CSRF }, body: fd })
+                .then(async res => {
+                    const contentType = res.headers.get('content-type') || '';
+                    let data = null;
+                    if (contentType.indexOf('application/json') !== -1) {
+                        try { data = await res.json(); } catch(e){ data = null; }
+                    } else {
+                        const text = await res.text();
+                        console.warn('[profile.js] Profile update returned non-JSON response', text);
+                        throw new Error('Unexpected server response');
+                    }
+
+                    if (data && data.errors){
+                        // show inline field errors
+                        renderFieldErrors(form, data.errors);
+                        const msg = getFirstErrorMessage(data) || 'Failed to update profile.';
+                        showProfileToast(msg, true);
+                        return;
+                    }
+
+                    if (data && (data.success === false || data.status === 'error' || data.status === 'failed')){
+                        const msg = data.message || 'Failed to update profile.';
+                        showProfileToast(msg, true);
+                        return;
+                    }
+
+                    if (res.ok){
+                        // clear any inline errors
+                        clearFieldErrors(form);
+                        showProfileToast((data && data.message) ? data.message : 'Profile updated successfully!', false);
+                    } else {
+                        const msg = getFirstErrorMessage(data) || 'Failed to update profile.';
+                        showProfileToast(msg, true);
+                    }
+                }).catch(err => { showProfileToast(typeof err === 'string' ? err : (err && err.message) ? err.message : 'Network error while saving profile.', true); })
+                .finally(()=>{ if (submitBtn) submitBtn.disabled = false; });
+        });
+    }
+
+    // --- Password form AJAX ---
+    function initPasswordAjax(){
+        const form = document.getElementById('password-form');
+        if (!form) return;
+        const submitBtn = form.querySelector('[type="submit"]');
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            // client-side validation: ensure new password matches confirmation and is different from current
+            const current = (form.querySelector('#current_password') || form.querySelector('input[name="current_password"]') || {}).value || '';
+            const nw = (form.querySelector('#password') || form.querySelector('input[name="password"]') || {}).value || '';
+            const conf = (form.querySelector('#password_confirmation') || form.querySelector('input[name="password_confirmation"]') || {}).value || '';
+
+            if (nw.length < 8){ showProfileToast('New password must be at least 8 characters.', true); return; }
+            if (nw !== conf){ showProfileToast('New password and confirmation do not match.', true); return; }
+            if (current && current === nw){ showProfileToast('New password must be different from the current password.', true); return; }
+
+            // clear any previous inline errors
+            clearFieldErrors(form);
+            if (submitBtn) submitBtn.disabled = true;
+            const fd = new FormData(form);
+            const methodInput = form.querySelector('input[name="_method"]');
+            if (methodInput && methodInput.value) fd.append('_method', methodInput.value);
+            fetch(form.action, { method: 'POST', headers: { 'X-Requested-With':'XMLHttpRequest', 'X-CSRF-TOKEN': CSRF }, body: fd })
+                .then(async res => {
+                    const contentType = res.headers.get('content-type') || '';
+                    let data = null;
+                    if (contentType.indexOf('application/json') !== -1) {
+                        try { data = await res.json(); } catch(e){ data = null; }
+                    } else {
+                        // Non-JSON response; treat as failure to avoid falsely reporting success
+                        const text = await res.text();
+                        console.warn('[profile.js] Password change returned non-JSON response', text);
+                        throw new Error('Unexpected server response');
+                    }
+
+                    // If server returned validation errors, show them inline
+                    if (data && data.errors) {
+                        renderFieldErrors(form, data.errors);
+                        const msg = getFirstErrorMessage(data) || 'Failed to change password.';
+                        showProfileToast(msg, true);
+                        return;
+                    }
+
+                    // server may set a failure flag/message
+                    if (data && (data.success === false || data.status === 'error' || data.status === 'failed')){
+                        const msg = data.message || 'Failed to change password.';
+                        showProfileToast(msg, true);
+                        return;
+                    }
+
+                    if (res.ok) {
+                        // clear inline errors
+                        clearFieldErrors(form);
+                        showProfileToast((data && data.message) ? data.message : 'Password changed successfully!', false);
+                        // clear password fields
+                        form.querySelectorAll('input[type="password"], input[type="text"]').forEach(i=>{ i.value = ''; i.type = 'password'; });
+                        // re-initialize icons to show open-eye
+                        document.querySelectorAll('button.password-toggle[data-target]').forEach(btn => {
+                            try{ const t = btn.dataset && btn.dataset.target; const input = t && document.getElementById(t); if (input && btn.querySelector('svg')){ const svg = btn.querySelector('svg'); const eyeOpen = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" /><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />'; svg.innerHTML = eyeOpen; btn.title = 'Show password'; btn.setAttribute('aria-pressed','false'); }
+                            }catch(e){}
+                        });
+                    } else {
+                        const msg = getFirstErrorMessage(data) || 'Failed to change password.';
+                        showProfileToast(msg, true);
+                    }
+                }).catch(err => { showProfileToast(typeof err === 'string' ? err : (err && err.message) ? err.message : 'Network error while changing password.', true); })
+                .finally(()=>{ if (submitBtn) submitBtn.disabled = false; });
         });
     }
 
@@ -183,16 +372,45 @@
     function cropAndUpload(){ if (!cropperInstance) return; cropperInstance.getCroppedCanvas({ width:600, height:600, fillColor:'#fff' }).toBlob(function(blob){ if (!blob) return; const fd = new FormData(); fd.append('profile_photo', blob, 'profile.jpg'); showPhotoModalSpinner(); fetch(ROUTES.photoUpload || P.routes && P.routes.photoUpload || '', { method:'POST', headers: { 'X-CSRF-TOKEN': CSRF, 'X-Requested-With': 'XMLHttpRequest' }, body: fd }).then(async res=>{ hidePhotoModalSpinner(); hideCropperArea(); if (res.ok){ closePhotoModal(); try{ const data = await res.json(); if (data && data.url){ const overlay = document.getElementById('profile-photo'); const preview = document.getElementById('modal-photo-preview'); const headerImg = document.querySelector('#profileMenuButton img'); if (overlay) overlay.src = data.url; if (preview) preview.src = data.url; if (headerImg) headerImg.src = data.url; const uploadBtn = document.getElementById('upload-btn'); const changeBtn = document.getElementById('change-btn'); const deleteBtn = document.getElementById('delete-btn'); if (uploadBtn) uploadBtn.classList.add('hidden'); if (changeBtn) changeBtn.classList.remove('hidden'); if (deleteBtn) deleteBtn.classList.remove('hidden'); } }catch(e){} } else { let msg = 'Failed to upload cropped image.'; try{ const err = await res.json(); if (err && err.message) msg = err.message; else if (err && err.errors) msg = Object.values(err.errors).flat().join(' '); }catch(e){} alert(msg); } }).catch(err=>{ hidePhotoModalSpinner(); hideCropperArea(); console.error('Upload error', err); alert('Failed to upload cropped image. Please check your connection and try again.'); }); }, 'image/jpeg', 0.9); }
 
     // --- Password toggle ---
-    function togglePassword(id, btn){ const input = document.getElementById(id); if (!input || !btn) return; const svg = btn.querySelector('svg'); if (!svg) return; if (input.type === 'password'){ input.type='text'; svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.94 17.94A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.042-3.368m3.087-2.933A9.956 9.956 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.973 9.973 0 01-4.293 5.411"/>';
-        btn.title='Hide password';
-    } else { input.type='password'; svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" /><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />'; btn.title='Show password'; }
+    function togglePassword(id, btn){
+        const input = document.getElementById(id);
+        if (!input || !btn) return;
+        const svg = btn.querySelector('svg');
+        if (!svg) return;
+
+        // SVG states: eyeOpen (visible), eyeClosed (hidden with slash)
+        const eyeOpen = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" /><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />';
+        const eyeClosed = eyeOpen + '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />';
+
+        if (input.type === 'password'){
+            // reveal -> show CLOSED (slashed) eye meaning "click to hide"
+            input.type = 'text';
+            svg.innerHTML = eyeClosed;
+            btn.title = 'Hide password';
+            btn.setAttribute('aria-label','Hide password');
+            btn.setAttribute('aria-pressed','true');
+        } else {
+            // hide -> show OPEN eye meaning "click to show"
+            input.type = 'password';
+            svg.innerHTML = eyeOpen;
+            btn.title = 'Show password';
+            btn.setAttribute('aria-label','Show password');
+            btn.setAttribute('aria-pressed','false');
+        }
     }
 
-    // Wire everything on DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function(){
+    // Wire everything when the DOM is ready. Support scripts loaded after DOMContentLoaded.
+    function onReady(fn){
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+        else fn();
+    }
+
+    onReady(function(){
         initTabs();
         togglePaymentFields();
         initPaymentAjax();
+        initProfileAjax();
+        initPasswordAjax();
         // validations
         ['name','email','phone','department','cardholder_name','card_number','card_expiry','card_ccv'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', function(){ try{ if (id==='name') validateName(); if (id==='email') validateEmail(); if (id==='phone') validatePhone(); if (id==='department') validateDepartment(); if (id==='cardholder_name') validateCardholderName(); if (id==='card_number') validateCardNumber(); if (id==='card_expiry') validateCardExpiry(); if (id==='card_ccv') validateCardCCV(); }catch(e){} }); });
         // bank account
@@ -206,8 +424,34 @@
         const cropCancel = document.getElementById('crop-cancel-btn'); if (cropCancel) cropCancel.addEventListener('click', hideCropperArea);
         const cropUpload = document.getElementById('crop-upload-btn'); if (cropUpload) cropUpload.addEventListener('click', cropAndUpload);
         const cropReset = document.getElementById('crop-reset-btn'); if (cropReset) cropReset.addEventListener('click', resetCropper);
-        // password toggles
-        document.querySelectorAll('button[onclick^="togglePassword("]').forEach(btn => btn.addEventListener('click', function(){ const m = btn.getAttribute('onclick'); try{ const parts = m.match(/togglePassword\('([^']+)'/); if(parts && parts[1]) togglePassword(parts[1], btn); }catch(e){} }));
+        // password toggles - bind once to buttons with data-target to avoid double-calls
+        document.querySelectorAll('button.password-toggle[data-target]').forEach(btn => {
+            btn.addEventListener('click', function(e){ e.preventDefault(); const target = btn.dataset && btn.dataset.target; if (target) togglePassword(target, btn); });
+            // initialize icon state according to current input type
+            try{
+                const t = btn.dataset && btn.dataset.target;
+                const input = t && document.getElementById(t);
+                if (input){
+                    const svg = btn.querySelector('svg');
+                    if (svg){
+                        const eyeOpen = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" /><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />';
+                        const eyeClosed = eyeOpen + '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />';
+                        // behaviour: when input is type=password (hidden), show OPEN eye (meaning "click to show"); when visible (type=text), show CLOSED (with slash) meaning "click to hide"
+                        if (input.type === 'password'){
+                            svg.innerHTML = eyeOpen;
+                            btn.title = 'Show password';
+                            btn.setAttribute('aria-label','Show password');
+                            btn.setAttribute('aria-pressed','false');
+                        } else {
+                            svg.innerHTML = eyeClosed;
+                            btn.title = 'Hide password';
+                            btn.setAttribute('aria-label','Hide password');
+                            btn.setAttribute('aria-pressed','true');
+                        }
+                    }
+                }
+            }catch(e){}
+        });
         // initial validation run
         try{ validateName(); validateEmail(); validatePhone(); validateDepartment(); validateCardholderName(); validateCardNumber(); validateCardExpiry(); validateCardCCV(); }catch(e){}
     });
