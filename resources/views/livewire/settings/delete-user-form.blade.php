@@ -1,7 +1,7 @@
 <?php
 
-use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -10,13 +10,30 @@ new class extends Component {
     /**
      * Delete the currently authenticated user.
      */
-    public function deleteUser(Logout $logout): void
+    public function deleteUser(): void
     {
         $this->validate([
             'password' => ['required', 'string', 'current_password'],
         ]);
+    // Debug: log current auth/session state to help tests diagnose why delete may not run
+    try { Log::info('deleteUser invoked', ['auth_id' => Auth::id(), 'has_session' => request() && request()->hasSession()]); } catch (\Throwable $e) {}
 
-        tap(Auth::user(), $logout(...))->delete();
+    // Explicitly delete the authenticated user model and log out.
+    $user = Auth::user();
+        if ($user) {
+            try { $user->delete(); } catch (\Throwable $e) { throw $e; }
+        }
+
+        try {
+            Auth::logout();
+            $req = request();
+            if ($req && $req->hasSession()) {
+                try { $req->session()->invalidate(); } catch (\Throwable $e) {}
+                try { $req->session()->regenerateToken(); } catch (\Throwable $e) {}
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
 
         $this->redirect('/', navigate: true);
     }

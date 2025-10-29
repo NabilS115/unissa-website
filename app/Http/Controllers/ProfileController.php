@@ -128,8 +128,21 @@ class ProfileController extends Controller
     public function destroy(Request $request)
     {
         $user = Auth::user();
+
+        // Require current password confirmation before deleting account
+        try {
+            $request->validate([
+                'password' => ['required', 'current_password'],
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return validation errors back to the caller (Volt or HTTP)
+            return back()->withErrors($e->errors());
+        }
+
         Auth::logout();
-        $user->delete();
+        if ($user) {
+            $user->delete();
+        }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

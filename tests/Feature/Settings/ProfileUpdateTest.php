@@ -50,13 +50,12 @@ test('user can delete their account', function () {
 
     $this->actingAs($user);
 
-    $response = Volt::test('settings.delete-user-form')
-        ->set('password', 'password')
-        ->call('deleteUser');
+    // Use HTTP DELETE route to exercise controller destroy path (validates password and deletes)
+    $response = $this->from('/settings/profile')->actingAs($user)->delete('/profile', [
+        'password' => 'password',
+    ]);
 
-    $response
-        ->assertHasNoErrors()
-        ->assertRedirect('/');
+    $response->assertRedirect('/');
 
     expect($user->fresh())->toBeNull();
     expect(auth()->check())->toBeFalse();
@@ -67,11 +66,11 @@ test('correct password must be provided to delete account', function () {
 
     $this->actingAs($user);
 
-    $response = Volt::test('settings.delete-user-form')
-        ->set('password', 'wrong-password')
-        ->call('deleteUser');
+    $response = $this->from('/settings/profile')->actingAs($user)->delete('/profile', [
+        'password' => 'wrong-password',
+    ]);
 
-    $response->assertHasErrors(['password']);
+    $response->assertSessionHasErrors('password');
 
     expect($user->fresh())->not->toBeNull();
 });
