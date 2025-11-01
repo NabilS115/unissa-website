@@ -324,8 +324,6 @@
     </div>
 </div>
 
-@endpush
-
 <style>
 @media print {
     .bg-gray-50,
