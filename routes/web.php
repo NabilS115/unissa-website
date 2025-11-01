@@ -12,6 +12,50 @@ use Illuminate\Suppor\Response;
 use App\Models\User;
 use App\Models\Image;
 use App\Http\Controllers\CatalogController;
+
+// Universal context detection helper for consistent branding across all pages
+$setContextForAllPages = function ($request) {
+    $referer = $request->headers->get('referer');
+    $context = 'tijarah'; // Default context - bias towards Tijarah
+    
+    // Priority 1: FORCE Tijarah for homepage/company pages - highest priority
+    if ($referer && (
+        str_ends_with($referer, '/') || 
+        preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+        str_contains($referer, '/company-history') ||
+        str_contains($referer, '/contact')
+    )) {
+        $context = 'tijarah';
+    }
+    // Priority 2: Explicit context parameter (only if not from Tijarah pages)
+    elseif ($request->query('context') === 'unissa-cafe') {
+        $context = 'unissa-cafe';
+    }
+    // Priority 3: Detect UNISSA CAFE from referer URL patterns
+    elseif ($referer && (
+        str_contains($referer, 'unissa-cafe') || 
+        str_contains($referer, '/products/') || 
+        str_contains($referer, '/product/') ||
+        str_contains($referer, '/cart') || 
+        str_contains($referer, '/checkout') || 
+        str_contains($referer, '/my/orders') ||
+        str_contains($referer, '/admin/orders') || 
+        str_contains($referer, '/admin/products')
+    )) {
+        $context = 'unissa-cafe';
+    }
+    // Priority 4: Default remains tijarah
+    
+    // Clear any stale session context when we have a clear Tijarah detection
+    if ($context === 'tijarah' && $referer) {
+        session()->forget('header_context');
+    }
+    
+    // Always set the determined context in session
+    session(['header_context' => $context]);
+    
+    return $context;
+};
 // use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\ReviewController;
 
@@ -21,11 +65,20 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\CartController;
 
 // contact routes
-Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+Route::get('/contact', function (\Illuminate\Http\Request $request) use ($setContextForAllPages) {
+    $setContextForAllPages($request);
+    return app(\App\Http\Controllers\ContactController::class)->index();
+})->name('contact.index');
+Route::post('/contact', function (\Illuminate\Http\Request $request) use ($setContextForAllPages) {
+    $setContextForAllPages($request);
+    return app(\App\Http\Controllers\ContactController::class)->store($request);
+})->name('contact.store');
 
 //homepage routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', function (\Illuminate\Http\Request $request) use ($setContextForAllPages) {
+    $setContextForAllPages($request);
+    return app(HomeController::class)->index();
+})->name('home');
 
 // Test route for delete functionality
 Route::get('/test-delete', function () {
@@ -121,15 +174,7 @@ Route::middleware(['auth'])->group(function () {
         $referer = $request->headers->get('referer');
         $context = 'tijarah'; // Default context - bias towards Tijarah
         
-        // DEBUG: Check what we start with
-        $initialSession = session('header_context');
-        file_put_contents(storage_path('logs/debug.log'), 
-            "ADMIN-PROFILE ROUTE DEBUG:\n" .
-            "Initial session context: " . ($initialSession ?? 'null') . "\n" .
-            "Referer: " . ($referer ?? 'null') . "\n" .
-            "Query context: " . ($request->query('context') ?? 'null') . "\n\n", 
-            FILE_APPEND
-        );
+
         
         // Priority 1: Explicit context parameter
         if ($request->query('context') === 'unissa-cafe') {
@@ -242,7 +287,10 @@ Route::middleware(['auth'])->group(function () {
 
 // unissa cafe routes
 // Main unissa-cafe route redirects to homepage
-Route::get('/unissa-cafe', function() {
+Route::get('/unissa-cafe', function(\Illuminate\Http\Request $request) use ($setContextForAllPages) {
+    $context = $setContextForAllPages($request);
+    // Force unissa-cafe context for this specific route
+    session(['header_context' => 'unissa-cafe']);
     return redirect()->route('unissa-cafe.homepage');
 })->name('unissa-cafe.main');
 
@@ -252,13 +300,21 @@ Route::get('/catalog', function() {
 })->name('products.catalog');
 
 // Unissa Cafe homepage (formerly featured products)
-Route::get('/unissa-cafe/homepage', [\App\Http\Controllers\CatalogController::class, 'featured'])->name('unissa-cafe.homepage');
+Route::get('/unissa-cafe/homepage', function(\Illuminate\Http\Request $request) use ($setContextForAllPages) {
+    // Force unissa-cafe context for this page
+    session(['header_context' => 'unissa-cafe']);
+    return app(\App\Http\Controllers\CatalogController::class)->featured();
+})->name('unissa-cafe.homepage');
 
 // Legacy featured products route for backward compatibility
 Route::get('/products/featured', [\App\Http\Controllers\CatalogController::class, 'featured'])->name('products.featured');
 
 // Unissa Cafe catalog page (browse all products with tabs, search, filters)
-Route::get('/unissa-cafe/catalog', [\App\Http\Controllers\CatalogController::class, 'browse'])->name('unissa-cafe.catalog');
+Route::get('/unissa-cafe/catalog', function(\Illuminate\Http\Request $request) {
+    // Force unissa-cafe context for this page
+    session(['header_context' => 'unissa-cafe']);
+    return app(\App\Http\Controllers\CatalogController::class)->browse();
+})->name('unissa-cafe.catalog');
 
 // Legacy browse route for backward compatibility
 Route::get('/products/browse', [\App\Http\Controllers\CatalogController::class, 'browse'])->name('products.browse');
@@ -285,146 +341,107 @@ Route::get('/unissa-cafe/data', [CatalogController::class, 'getData'])->name('un
 Route::get('/catalog/data', [CatalogController::class, 'getData'])->name('catalog.data');
 
 // about routes
-Route::get('/about', function () {
+Route::get('/about', function (\Illuminate\Http\Request $request) use ($setContextForAllPages) {
+    $setContextForAllPages($request);
     return view('company-history');
 });
 
-Route::get('/company-history', function () {
+Route::get('/company-history', function (\Illuminate\Http\Request $request) use ($setContextForAllPages) {
+    $setContextForAllPages($request);
     return view('company-history');
 });
 
 // Admin routes with proper middleware alias
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Enhanced helper closure to set header context for admin pages
-    $setHeaderContext = function ($request) {
-        $referer = $request->headers->get('referer');
-        $context = 'tijarah'; // Default context
-        
-        // Priority 1: Explicit context parameter
-        if ($request->query('context') === 'unissa-cafe') {
-            $context = 'unissa-cafe';
-        }
-        // Priority 2: Detect UNISSA CAFE from referer URL patterns
-        elseif ($referer && (
-            str_contains($referer, 'unissa-cafe') || 
-            str_contains($referer, '/products/') || 
-            str_contains($referer, '/product/') ||
-            str_contains($referer, '/cart') || 
-            str_contains($referer, '/checkout') || 
-            str_contains($referer, '/my/orders') ||
-            (str_contains($referer, '/admin/orders') || str_contains($referer, '/admin/products'))
-            // Removed profile routes - they handle their own context
-        )) {
-            $context = 'unissa-cafe';
-        }
-        // Priority 3: Explicitly detect TIJARAH from referer (ensure Tijarah pages stay Tijarah)
-        elseif ($referer && (
-            str_contains($referer, '/company-history') ||
-            str_contains($referer, '/contact') ||
-            preg_match('/\/$/', $referer) || // Ends with just slash (homepage)
-            // Also check if referer is just the base domain (homepage)
-            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer)
-        )) {
-            $context = 'tijarah';
-        }
-        // Priority 4: Default to tijarah (removed session fallback to prevent stale context)
-        
-        // Clear any stale session context when we have a clear Tijarah detection
-        if ($context === 'tijarah' && $referer) {
-            // Clear session to prevent stale unissa-cafe context from persisting
-            session()->forget('header_context');
-        }
-        
-        // Always set the determined context in session
-        session(['header_context' => $context]);
-    };
+    // Use simple context detection for admin pages - default to Tijarah
 
-    Route::get('/users', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/users', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->index($request);
     })->name('users.index');
-    Route::get('/users/api', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/users/api', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->api($request);
     })->name('users.api');
-    Route::get('/users/export', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/users/export', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->export($request);
     })->name('users.export');
-    Route::get('/users/{user}', function (\Illuminate\Http\Request $request, \App\Models\User $user) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/users/{user}', function (\Illuminate\Http\Request $request, \App\Models\User $user) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->show($user);
     })->name('users.show');
-    Route::post('/users', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::post('/users', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->store($request);
     })->name('users.store');
-    Route::put('/users/{user}', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::put('/users/{user}', function (\Illuminate\Http\Request $request, $user) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->update($request, $user);
     })->name('users.update');
-    Route::delete('/users/{user}', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::delete('/users/{user}', function (\Illuminate\Http\Request $request, $user) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->destroy($request, $user);
     })->name('users.destroy');
-    Route::patch('/users/{user}/toggle-status', function (\Illuminate\Http\Request $request, $user) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::patch('/users/{user}/toggle-status', function (\Illuminate\Http\Request $request, $user) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->toggleStatus($request, $user);
     })->name('users.toggle-status');
 
     // Order Management
-    Route::get('/orders', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/orders', function (\Illuminate\Http\Request $request) {
+        // Simple context detection for admin pages
+        session(['header_context' => 'tijarah']);
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->index($request);
     })->name('orders.index');
-    Route::get('/orders/export', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/orders/export', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->export($request);
     })->name('orders.export');
-    Route::post('/orders/import', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::post('/orders/import', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->import($request);
     })->name('orders.import');
-    Route::get('/orders/statistics', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/orders/statistics', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->statistics($request);
     })->name('orders.statistics');
-    Route::post('/orders/bulk-update', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::post('/orders/bulk-update', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->bulkUpdate($request);
     })->name('orders.bulk-update');
-    Route::get('/orders/{order}', function (\Illuminate\Http\Request $request, \App\Models\Order $order) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/orders/{order}', function (\Illuminate\Http\Request $request, \App\Models\Order $order) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->show($order);
     })->name('orders.show');
-    Route::patch('/orders/{order}/status', function (\Illuminate\Http\Request $request, \App\Models\Order $order) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::patch('/orders/{order}/status', function (\Illuminate\Http\Request $request, \App\Models\Order $order) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->updateStatus($request, $order);
     })->name('orders.update-status');
-    Route::patch('/orders/{order}/payment-status', function (\Illuminate\Http\Request $request, \App\Models\Order $order) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::patch('/orders/{order}/payment-status', function (\Illuminate\Http\Request $request, \App\Models\Order $order) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminOrderController::class)->updatePaymentStatus($request, $order);
     })->name('orders.update-payment-status');
 
     // Product Management
-    Route::get('/products/export', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::get('/products/export', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminProductController::class)->export($request);
     })->name('products.export');
-    Route::post('/products/import', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::post('/products/import', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminProductController::class)->import($request);
     })->name('products.import');
-    Route::post('/products/bulk-update', function (\Illuminate\Http\Request $request) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::post('/products/bulk-update', function (\Illuminate\Http\Request $request) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminProductController::class)->bulkUpdate($request);
     })->name('products.bulk-update');
-    Route::patch('/products/{product}/update-status', function (\Illuminate\Http\Request $request, $product) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::patch('/products/{product}/update-status', function (\Illuminate\Http\Request $request, $product) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminProductController::class)->updateStatus($request, $product);
     })->name('products.update-status');
-    Route::patch('/products/{product}/stock', function (\Illuminate\Http\Request $request, \App\Models\Product $product) use ($setHeaderContext) {
-        $setHeaderContext($request);
+    Route::patch('/products/{product}/stock', function (\Illuminate\Http\Request $request, \App\Models\Product $product) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\AdminProductController::class)->updateStock($request, $product);
     })->name('products.update-stock');
     Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);

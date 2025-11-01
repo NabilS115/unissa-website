@@ -25,17 +25,7 @@
                     $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $headerContext === 'unissa-cafe');
                 }
                 
-                // DEBUGGING: Create debug info
-                $debugInfo = [
-                    'session_context' => $headerContext,
-                    'is_cafe_page' => $isCafePage,
-                    'is_profile_page' => $isProfilePage,
-                    'referer_suggests_tijarah' => $refererSuggestsTijarah,
-                    'should_show_unissa' => $shouldShowUnissaBranding,
-                    'current_url' => request()->url(),
-                    'current_path' => request()->path(),
-                    'referer' => $referer,
-                ];
+
             @endphp
             @if($shouldShowUnissaBranding)
                 Unissa Cafe
