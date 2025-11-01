@@ -314,6 +314,16 @@
       if (expiryInput) expiryInput.addEventListener('input', function(){ formatExpiryDate(this); });
       if (cvvInput) cvvInput.addEventListener('input', function(){ formatCVV(this); });
 
+      // Add event listeners for payment method changes (if they exist on the page)
+      const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
+      if (paymentMethodInputs.length > 0) {
+        paymentMethodInputs.forEach(function(input) {
+          input.addEventListener('change', updatePaymentMethod);
+        });
+        // Initialize payment method display
+        updatePaymentMethod();
+      }
+
       // Checkout / Add to cart button setup (only for authenticated flows)
       if (bs.auth) {
         if (window.checkoutButtonSetup) return; window.checkoutButtonSetup = true;

@@ -441,6 +441,32 @@
                     };
                 </script>
                 <script src="/js/profile.js"></script>
+                
+                <!-- Payment Method Toggle Function -->
+                <script>
+                    function togglePaymentFields() {
+                        const paymentMethod = document.getElementById('payment_method').value;
+                        const cardFields = document.getElementById('card-fields');
+                        const bankFields = document.getElementById('bank-fields');
+                        
+                        // Hide all payment fields first
+                        if (cardFields) cardFields.style.display = 'none';
+                        if (bankFields) bankFields.style.display = 'none';
+                        
+                        // Show relevant fields based on selection
+                        if (paymentMethod === 'credit_card' && cardFields) {
+                            cardFields.style.display = 'block';
+                        } else if (paymentMethod === 'bank_transfer' && bankFields) {
+                            bankFields.style.display = 'block';
+                        }
+                    }
+                    
+                    // Initialize payment fields on page load
+                    document.addEventListener('DOMContentLoaded', function() {
+                        togglePaymentFields();
+                    });
+                </script>
+                
                 <!-- Toast container for AJAX save notifications (top-center to avoid back-to-top overlap) -->
                 <div id="profile-toast" class="hidden fixed top-6 left-1/2 z-50 items-center gap-3 px-4 py-3 rounded-lg text-white shadow-lg opacity-0" style="display:none; transform: translateX(-50%);">
                     <div class="toast-message">Saved</div>

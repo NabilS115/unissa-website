@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Method Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Payment Method Functionality Test</h1>
+
+    <div class="test-section">
+        <h2>Test 1: Edit Profile Payment Method</h2>
+        <label for="payment_method">Payment Method:</label>
+        <select id="payment_method" onchange="togglePaymentFields()">
+            <option value="">Select a payment method</option>
+            <option value="credit_card">Credit/Debit Card</option>
+            <option value="bank_transfer">Bank Transfer</option>
+        </select>
+
+        <div id="card-fields" style="display:none;">
+            <h3>Credit Card Fields</h3>
+            <p>✅ Credit card form should appear when "Credit/Debit Card" is selected</p>
+            <input type="text" placeholder="Cardholder Name">
+            <input type="text" placeholder="Card Number">
+        </div>
+
+        <div id="bank-fields" style="display:none;">
+            <h3>Bank Transfer Fields</h3>
+            <p>✅ Bank transfer form should appear when "Bank Transfer" is selected</p>
+            <select>
+                <option>Select a bank</option>
+                <option>BIBD</option>
+                <option>Baiduri</option>
+            </select>
+            <input type="text" placeholder="Account Number">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Checkout Payment Method</h2>
+        <p>Cash Payment</p>
+        <input type="radio" name="payment_method2" value="cash" onchange="updatePaymentMethod2()"> Cash on Pickup
+        
+        <p>Online Payment</p>
+        <input type="radio" name="payment_method2" value="online" onchange="updatePaymentMethod2()"> Credit/Debit Card
+
+        <div id="cash-payment-info" style="display:none;">
+            <h3>Cash Payment Info</h3>
+            <p>✅ This should appear when "Cash" is selected</p>
+        </div>
+
+        <div id="online-payment-info" style="display:none;">
+            <h3>Online Payment Info</h3>
+            <p>✅ This should appear when "Online" is selected</p>
+        </div>
+
+        <div id="credit-card-form" style="display:none;">
+            <h3>Credit Card Form</h3>
+            <p>✅ Credit card form should appear when "Online" is selected</p>
+            <input type="text" placeholder="Card Number">
+            <input type="text" placeholder="Expiry">
+        </div>
+    </div>
+
+    <script>
+        // Edit Profile Payment Method Toggle Function (same as we added to edit-profile.blade.php)
+        function togglePaymentFields() {
+            const paymentMethod = document.getElementById('payment_method').value;
+            const cardFields = document.getElementById('card-fields');
+            const bankFields = document.getElementById('bank-fields');
+            
+            // Hide all payment fields first
+            if (cardFields) cardFields.style.display = 'none';
+            if (bankFields) bankFields.style.display = 'none';
+            
+            // Show relevant fields based on selection
+            if (paymentMethod === 'credit_card' && cardFields) {
+                cardFields.style.display = 'block';
+            } else if (paymentMethod === 'bank_transfer' && bankFields) {
+                bankFields.style.display = 'block';
+            }
+        }
+
+        // Checkout Payment Method Update Function (similar to checkout pages)
+        function updatePaymentMethod2() {
+            const cashPaymentInfo = document.getElementById('cash-payment-info');
+            const onlinePaymentInfo = document.getElementById('online-payment-info');
+            const creditCardForm = document.getElementById('credit-card-form');
+            const paymentMethods = document.querySelectorAll('input[name="payment_method2"]');
+            
+            paymentMethods.forEach(method => {
+                if (method.checked && method.value === 'cash') {
+                    if (cashPaymentInfo) cashPaymentInfo.style.display = 'block';
+                    if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'none';
+                    if (creditCardForm) creditCardForm.style.display = 'none';
+                } else if (method.checked && method.value === 'online') {
+                    if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
+                    if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'block';
+                    if (creditCardForm) creditCardForm.style.display = 'block';
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            togglePaymentFields();
+            updatePaymentMethod2();
+        });
+    </script>
+
+    <div class="test-section">
+        <h2>Expected Behavior</h2>
+        <ul>
+            <li>✅ When page loads, no payment fields should be visible initially</li>
+            <li>✅ Selecting "Credit/Debit Card" in Test 1 should show credit card fields</li>
+            <li>✅ Selecting "Bank Transfer" in Test 1 should show bank transfer fields</li>
+            <li>✅ Selecting "Cash" in Test 2 should show cash payment info</li>
+            <li>✅ Selecting "Online" in Test 2 should show online payment info and credit card form</li>
+            <li>✅ Changes should work immediately without needing to reload the page</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -539,6 +539,13 @@ input[type="number"] {
                 showError(this, 'cardholder_name_error', validateCardholderName(this.value));
             });
         }
+        
+        // Add event listeners for payment method changes
+        const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
+        paymentMethodInputs.forEach(function(input) {
+            input.addEventListener('change', updatePaymentMethod);
+        });
+        
         // Initialize payment method display
         updatePaymentMethod();
     });
