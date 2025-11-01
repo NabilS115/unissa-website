@@ -1,7 +1,10 @@
 // Header interactions and search suggestions (extracted from Blade)
 // Expects window.__searchSuggestionsUrl and window.__cartCountUrl to be set by Blade bootstrap.
 
+console.log('Header.js is loading...');
+
 (function() {
+    console.log('Header.js IIFE started');
     const SEARCH_URL = window.__searchSuggestionsUrl || '/search/suggestions';
     const CART_COUNT_URL = window.__cartCountUrl || '/api/cart/count';
 
@@ -194,17 +197,124 @@
         }
     };
 
+    // Mobile menu toggle functionality
+    function initializeMobileMenu() {
+        // Wait for DOM to be fully ready
+        if (!document.getElementById('mobile-menu-btn')) {
+            setTimeout(initializeMobileMenu, 100);
+            return;
+        }
+
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+        const mobileCloseBtn = document.getElementById('mobile-close-btn');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+
+        // Simple click handler for mobile menu button
+        if (mobileMenuBtn) {
+            mobileMenuBtn.onclick = function() {
+                console.log('Mobile menu button clicked!');
+                if (mobileMenu) {
+                    mobileMenu.classList.remove('hidden');
+                    console.log('Mobile menu shown');
+                    if (mobileMenuPanel) {
+                        mobileMenuPanel.style.transform = 'translateX(0)';
+                        console.log('Panel transformed');
+                    }
+                }
+                if (menuIcon) menuIcon.classList.add('hidden');
+                if (closeIcon) closeIcon.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            };
+        } else {
+            console.log('Mobile menu button not found!');
+        }
+
+        // Close mobile menu function
+        function closeMobileMenu() {
+            if (mobileMenuPanel) {
+                mobileMenuPanel.style.transform = 'translateX(100%)';
+            }
+            if (menuIcon) menuIcon.classList.remove('hidden');
+            if (closeIcon) closeIcon.classList.add('hidden');
+            document.body.style.overflow = '';
+            
+            setTimeout(() => {
+                if (mobileMenu) mobileMenu.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close button handler
+        if (mobileCloseBtn) {
+            mobileCloseBtn.onclick = closeMobileMenu;
+        }
+
+        // Close when clicking overlay
+        if (mobileMenu) {
+            mobileMenu.onclick = function(event) {
+                if (event.target === mobileMenu) {
+                    closeMobileMenu();
+                }
+            };
+        }
+
+        // Close mobile menu on window resize to desktop size
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) { // md breakpoint
+                closeMobileMenu();
+            }
+        });
+
+        // Sync mobile cart count with desktop
+        const desktopCartCount = document.getElementById('cart-count');
+        const mobileCartCount = document.getElementById('cart-count-mobile');
+        
+        if (desktopCartCount && mobileCartCount) {
+            // Create observer for desktop cart count changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                        mobileCartCount.textContent = desktopCartCount.textContent;
+                        mobileCartCount.style.display = desktopCartCount.style.display;
+                    }
+                });
+            });
+            
+            observer.observe(desktopCartCount, {
+                childList: true,
+                characterData: true,
+                subtree: true
+            });
+            
+            // Initial sync
+            mobileCartCount.textContent = desktopCartCount.textContent;
+            mobileCartCount.style.display = desktopCartCount.style.display;
+        }
+    }
+
     // Initialization
     function init() {
         wireSearch();
         initializeHeaderInteractions();
+        initializeMobileMenu();
         // Load cart count when visible/authenticated
         if (document.visibilityState === 'visible') loadCartCount();
         document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible') loadCartCount(); });
-        document.addEventListener('DOMContentLoaded', loadCartCount);
     }
 
-    // Run init (safe to call multiple times)
-    init();
+    // Run init when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            loadCartCount();
+        });
+    } else {
+        init();
+        loadCartCount();
+    }
+    
+    // Also run with delay for dynamic content
     setTimeout(init, 500);
 })();

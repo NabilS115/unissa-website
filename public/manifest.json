@@ -1,0 +1,12 @@
+{
+  "name": "Unissa Cafe",
+  "short_name": "Unissa",
+  "description": "Premium food and beverage experience by Tijarah Co Sdn Bhd",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d9488",
+  "orientation": "portrait",
+  "categories": ["food", "business", "shopping"],
+  "lang": "en"
+}

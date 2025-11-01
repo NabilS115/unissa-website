@@ -6,6 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Unissa Cafe')</title>
     <meta name="theme-color" content="#0d9488">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Unissa Cafe">
     {{-- Tailwind is built with Vite or npm for all environments. CDN is not used. --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Cropper.js CSS and JS -->
@@ -69,6 +72,73 @@
         /* Alpine.js x-cloak directive */
         [x-cloak] {
             display: none !important;
+        }
+        
+        /* Mobile-specific CSS for viewport and overflow */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+            
+            body {
+                position: relative;
+            }
+            
+            .container, .max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl {
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+            
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+            
+            /* Prevent horizontal scrolling on mobile */
+            * {
+                max-width: 100vw;
+                box-sizing: border-box;
+            }
+            
+            /* Mobile form improvements */
+            input, select, textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+            
+            /* Touch targets should be at least 44px */
+            button, .btn, a[role="button"] {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Fix mobile menu positioning and animations */
+            #mobile-menu {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 9998;
+            }
+            
+            #mobile-menu-panel {
+                transition: transform 0.3s ease-in-out;
+                transform: translateX(100%);
+            }
+            
+            #mobile-menu.show #mobile-menu-panel {
+                transform: translateX(0);
+            }
+            
+            /* Mobile menu button should be above content */
+            #mobile-menu-btn {
+                z-index: 9999;
+                position: relative;
+            }
         }
         .main-content {
             flex: 1 0 auto;
