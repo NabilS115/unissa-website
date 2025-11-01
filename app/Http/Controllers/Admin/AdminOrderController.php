@@ -17,59 +17,69 @@ class AdminOrderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Order::with(['user', 'product']);
+        try {
+            $query = Order::with(['user', 'product']);
 
-        // Apply filters
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            // Apply filters
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('id', 'like', "%{$search}%")
+                      ->orWhere('customer_name', 'like', "%{$search}%")
+                      ->orWhere('customer_email', 'like', "%{$search}%")
+                      ->orWhere('customer_phone', 'like', "%{$search}%")
+                      ->orWhereHas('product', function ($productQuery) use ($search) {
+                          $productQuery->where('name', 'like', "%{$search}%");
+                      })
+                      ->orWhereHas('user', function ($userQuery) use ($search) {
+                          $userQuery->where('name', 'like', "%{$search}%")
+                                    ->orWhere('email', 'like', "%{$search}%");
+                      });
+                });
+            }
+
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
+
+            if ($request->filled('date_to')) {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
+
+            $orders = $query->orderBy('created_at', 'desc')->paginate(20);
+
+            // Get statistics for dashboard
+            $stats = [
+                'total_orders' => Order::count(),
+                'pending_orders' => Order::where('status', Order::STATUS_PENDING)->count(),
+                'confirmed_orders' => Order::where('status', Order::STATUS_CONFIRMED)->count(),
+                'processing_orders' => Order::where('status', Order::STATUS_PROCESSING)->count(),
+                'ready_for_pickup_orders' => Order::where('status', Order::STATUS_READY_FOR_PICKUP)->count(),
+                'picked_up_orders' => Order::where('status', Order::STATUS_PICKED_UP)->count(),
+                'cancelled_orders' => Order::where('status', Order::STATUS_CANCELLED)->count(),
+                'total_revenue' => Order::whereIn('status', [
+                    Order::STATUS_CONFIRMED, 
+                    Order::STATUS_PROCESSING, 
+                    Order::STATUS_READY_FOR_PICKUP,
+                    Order::STATUS_PICKED_UP
+                ])->sum('total_price'),
+                'recent_orders' => Order::where('created_at', '>=', now()->subDays(7))->count(),
+            ];
+
+            return view('admin.orders.index', compact('orders', 'stats'));
+        } catch (\Exception $e) {
+            Log::error('Error loading admin orders page: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => auth()->id(),
+                'request' => $request->all()
+            ]);
+            
+            return back()->with('error', 'Unable to load orders. Please try again or contact support if the issue persists.');
         }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', "%{$search}%")
-                  ->orWhere('customer_name', 'like', "%{$search}%")
-                  ->orWhere('customer_email', 'like', "%{$search}%")
-                  ->orWhere('customer_phone', 'like', "%{$search}%")
-                  ->orWhereHas('product', function ($productQuery) use ($search) {
-                      $productQuery->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('user', function ($userQuery) use ($search) {
-                      $userQuery->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                  });
-            });
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $orders = $query->orderBy('created_at', 'desc')->paginate(20);
-
-        // Get statistics for dashboard
-        $stats = [
-            'total_orders' => Order::count(),
-            'pending_orders' => Order::where('status', Order::STATUS_PENDING)->count(),
-            'confirmed_orders' => Order::where('status', Order::STATUS_CONFIRMED)->count(),
-            'processing_orders' => Order::where('status', Order::STATUS_PROCESSING)->count(),
-            'ready_for_pickup_orders' => Order::where('status', Order::STATUS_READY_FOR_PICKUP)->count(),
-            'picked_up_orders' => Order::where('status', Order::STATUS_PICKED_UP)->count(),
-            'cancelled_orders' => Order::where('status', Order::STATUS_CANCELLED)->count(),
-            'total_revenue' => Order::whereIn('status', [
-                Order::STATUS_CONFIRMED, 
-                Order::STATUS_PROCESSING, 
-                Order::STATUS_READY_FOR_PICKUP,
-                Order::STATUS_PICKED_UP
-            ])->sum('total_price'),
-            'recent_orders' => Order::where('created_at', '>=', now()->subDays(7))->count(),
-        ];
-
-        return view('admin.orders.index', compact('orders', 'stats'));
     }
 
     /**
