@@ -69,50 +69,163 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
     Route::get('/profile', function (\Illuminate\Http\Request $request) {
-        // Determine previous context from referer or session
+        // Enhanced context detection for profile pages
         $referer = $request->headers->get('referer');
-        if ($request->query('context') === 'unissa-cafe') {
-            session(['header_context' => 'unissa-cafe']);
-        } else {
-            $context = session('header_context', 'tijarah');
-            if (
-                ($referer && (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')))
-                || ($referer && str_ends_with($referer, '/edit-profile') && $context === 'unissa-cafe')
-                || ($context === 'unissa-cafe')
-            ) {
-                $context = 'unissa-cafe';
-            } else {
-                $context = 'tijarah';
-            }
-            session(['header_context' => $context]);
+        $context = 'tijarah'; // Default context - bias towards Tijarah
+        
+        // Priority 1: FORCE Tijarah for homepage/company pages - highest priority
+        if ($referer && (
+            str_ends_with($referer, '/') || 
+            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+            str_contains($referer, '/company-history') ||
+            str_contains($referer, '/contact')
+        )) {
+            $context = 'tijarah';
         }
+        // Priority 2: Explicit context parameter (only if not from Tijarah pages)
+        elseif ($request->query('context') === 'unissa-cafe') {
+            $context = 'unissa-cafe';
+        }
+        // Priority 3: Detect UNISSA CAFE from referer URL patterns
+        elseif ($referer && (
+            str_contains($referer, 'unissa-cafe') || 
+            str_contains($referer, '/products/') || 
+            str_contains($referer, '/product/') ||
+            str_contains($referer, '/cart') || 
+            str_contains($referer, '/checkout') || 
+            str_contains($referer, '/my/orders') ||
+            str_contains($referer, '/admin/orders') || 
+            str_contains($referer, '/admin/products')
+        )) {
+            $context = 'unissa-cafe';
+        }
+        // Priority 4: Default remains tijarah
+        
+        // Clear any stale session context when we have a clear Tijarah detection
+        if ($context === 'tijarah' && $referer) {
+            // Clear session to prevent stale unissa-cafe context from persisting
+            session()->forget('header_context');
+        }
+        
+        // Always set the determined context in session
+        session(['header_context' => $context]);
+        
         if (auth()->user()->role === 'admin') {
-            return redirect()->route('admin.profile');
+            // Redirect to admin profile (clean URL without context parameter)
+            return redirect('/admin-profile');
         }
         return view('profile');
     })->name('profile');
     Route::get('/admin-profile', function (\Illuminate\Http\Request $request) {
+        // Enhanced context detection for admin profile pages
         $referer = $request->headers->get('referer');
-        $context = 'tijarah';
-        if ($referer) {
-            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
-                $context = 'unissa-cafe';
-            }
-        } elseif (session('header_context')) {
-            $context = session('header_context');
+        $context = 'tijarah'; // Default context - bias towards Tijarah
+        
+        // DEBUG: Check what we start with
+        $initialSession = session('header_context');
+        file_put_contents(storage_path('logs/debug.log'), 
+            "ADMIN-PROFILE ROUTE DEBUG:\n" .
+            "Initial session context: " . ($initialSession ?? 'null') . "\n" .
+            "Referer: " . ($referer ?? 'null') . "\n" .
+            "Query context: " . ($request->query('context') ?? 'null') . "\n\n", 
+            FILE_APPEND
+        );
+        
+        // Priority 1: Explicit context parameter
+        if ($request->query('context') === 'unissa-cafe') {
+            $context = 'unissa-cafe';
         }
+        // Priority 2: Detect UNISSA CAFE from referer URL patterns
+        elseif ($referer && (
+            str_contains($referer, 'unissa-cafe') || 
+            str_contains($referer, '/products/') || 
+            str_contains($referer, '/product/') ||
+            str_contains($referer, '/cart') || 
+            str_contains($referer, '/checkout') || 
+            str_contains($referer, '/my/orders') ||
+            str_contains($referer, '/admin/orders') || 
+            str_contains($referer, '/admin/products')
+        )) {
+            $context = 'unissa-cafe';
+        }
+        // Priority 3: Explicitly detect TIJARAH from referer (ensure Tijarah pages stay Tijarah)
+        elseif ($referer && (
+            str_contains($referer, '/company-history') ||
+            str_contains($referer, '/contact') ||
+            preg_match('/\/$/', $referer) || // Ends with just slash (homepage)
+            // Also check if referer is just the base domain (homepage)
+            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer)
+        )) {
+            $context = 'tijarah';
+        }
+        // Priority 4: Default remains tijarah (removed session fallback to prevent stale context)
+        
+        // Clear any stale session context when we have a clear Tijarah detection
+        if ($context === 'tijarah' && $referer) {
+            // Clear session to prevent stale unissa-cafe context from persisting
+            session()->forget('header_context');
+        }
+        
+        // FINAL OVERRIDE: Force Tijarah for Tijarah pages regardless of what happened above
+        if ($referer && (
+            str_ends_with($referer, '/') || 
+            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+            str_contains($referer, '/company-history') ||
+            str_contains($referer, '/contact') ||
+            (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe'))
+        )) {
+            $context = 'tijarah';
+        }
+        
+        // Always set the determined context in session
         session(['header_context' => $context]);
+        
         return view('admin-profile');
     })->name('admin.profile');
     Route::get('/edit-profile', function (\Illuminate\Http\Request $request) {
+        // Enhanced context detection for edit profile pages
         $referer = $request->headers->get('referer');
-        $context = 'tijarah';
-        if (
-            ($referer && (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')))
-            || ($referer && str_ends_with($referer, '/profile') && session('header_context') === 'unissa-cafe')
-        ) {
+        $context = 'tijarah'; // Default context - bias towards Tijarah
+        
+        // Priority 1: Explicit context parameter
+        if ($request->query('context') === 'unissa-cafe') {
             $context = 'unissa-cafe';
         }
+        // Priority 2: Detect UNISSA CAFE from referer URL patterns
+        elseif ($referer && (
+            str_contains($referer, 'unissa-cafe') || 
+            str_contains($referer, '/products/') || 
+            str_contains($referer, '/product/') ||
+            str_contains($referer, '/cart') || 
+            str_contains($referer, '/checkout') || 
+            str_contains($referer, '/my/orders') ||
+            str_contains($referer, '/admin/orders') || 
+            str_contains($referer, '/admin/products') ||
+            (str_contains($referer, '/profile?context=unissa-cafe') || str_contains($referer, '/admin-profile?context=unissa-cafe'))
+        )) {
+            $context = 'unissa-cafe';
+        }
+        // Priority 3: Explicitly detect TIJARAH from referer (ensure Tijarah pages stay Tijarah)
+        elseif ($referer && (
+            str_contains($referer, '/company-history') ||
+            str_contains($referer, '/contact') ||
+            preg_match('/\/$/', $referer) || // Ends with just slash (homepage)
+            // Also check if referer is just the base domain (homepage)
+            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+            (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
+            (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
+        )) {
+            $context = 'tijarah';
+        }
+        // Priority 4: Default remains tijarah (removed session fallback to prevent stale context)
+        
+        // Clear any stale session context when we have a clear Tijarah detection
+        if ($context === 'tijarah' && $referer) {
+            // Clear session to prevent stale unissa-cafe context from persisting
+            session()->forget('header_context');
+        }
+        
+        // Always set the determined context in session
         session(['header_context' => $context]);
         return view('edit-profile');
     })->name('edit.profile');
@@ -182,17 +295,47 @@ Route::get('/company-history', function () {
 
 // Admin routes with proper middleware alias
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Helper closure to set header context for admin pages
+    // Enhanced helper closure to set header context for admin pages
     $setHeaderContext = function ($request) {
         $referer = $request->headers->get('referer');
-        $context = 'tijarah';
-        if ($referer) {
-            if (str_contains($referer, 'unissa-cafe') || str_contains($referer, 'products') || str_contains($referer, 'cart') || str_contains($referer, 'checkout') || str_contains($referer, 'my/orders')) {
-                $context = 'unissa-cafe';
-            }
-        } elseif (session('header_context')) {
-            $context = session('header_context');
+        $context = 'tijarah'; // Default context
+        
+        // Priority 1: Explicit context parameter
+        if ($request->query('context') === 'unissa-cafe') {
+            $context = 'unissa-cafe';
         }
+        // Priority 2: Detect UNISSA CAFE from referer URL patterns
+        elseif ($referer && (
+            str_contains($referer, 'unissa-cafe') || 
+            str_contains($referer, '/products/') || 
+            str_contains($referer, '/product/') ||
+            str_contains($referer, '/cart') || 
+            str_contains($referer, '/checkout') || 
+            str_contains($referer, '/my/orders') ||
+            (str_contains($referer, '/admin/orders') || str_contains($referer, '/admin/products'))
+            // Removed profile routes - they handle their own context
+        )) {
+            $context = 'unissa-cafe';
+        }
+        // Priority 3: Explicitly detect TIJARAH from referer (ensure Tijarah pages stay Tijarah)
+        elseif ($referer && (
+            str_contains($referer, '/company-history') ||
+            str_contains($referer, '/contact') ||
+            preg_match('/\/$/', $referer) || // Ends with just slash (homepage)
+            // Also check if referer is just the base domain (homepage)
+            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer)
+        )) {
+            $context = 'tijarah';
+        }
+        // Priority 4: Default to tijarah (removed session fallback to prevent stale context)
+        
+        // Clear any stale session context when we have a clear Tijarah detection
+        if ($context === 'tijarah' && $referer) {
+            // Clear session to prevent stale unissa-cafe context from persisting
+            session()->forget('header_context');
+        }
+        
+        // Always set the determined context in session
         session(['header_context' => $context]);
     };
 

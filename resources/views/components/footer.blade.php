@@ -9,11 +9,28 @@
         <div class="flex flex-col">
             <span class="font-bold text-lg">
                 @php
-                    $footerContext = session('header_context');
-                    $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*');
-                    $isProfile = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+                    $footerContext = session('header_context', 'tijarah');
+                    $referer = request()->headers->get('referer');
+                    $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
+                    $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+                    
+                    // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
+                    $refererSuggestsTijarah = $referer && (
+                        str_ends_with($referer, '/') || 
+                        preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+                        str_contains($referer, '/company-history') ||
+                        str_contains($referer, '/contact') ||
+                        (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
+                        (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
+                    );
+                    
+                    if ($isProfilePage && $refererSuggestsTijarah) {
+                        $shouldShowUnissaBranding = false; // Force Tijarah branding
+                    } else {
+                        $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $footerContext === 'unissa-cafe');
+                    }
                 @endphp
-                @if($isCafe || ($isProfile && $footerContext === 'unissa-cafe'))
+                @if($shouldShowUnissaBranding)
                     Unissa Cafe
                 @else
                     Tijarah Co Sdn Bhd
@@ -23,7 +40,7 @@
     </div>
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
     <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
-            @if($isCafe || ($isProfile && $footerContext === 'unissa-cafe'))
+            @if($shouldShowUnissaBranding)
                 <!-- Unissa Cafe Footer Navigation -->
                 <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
                 <a href="{{ route('unissa-cafe.catalog') }}" class="text-white mb-2 hover:underline">Catalog</a>
@@ -40,7 +57,7 @@
             @php
                 // $isCafe and $isProfile already defined above
             @endphp
-            @if($isCafe || ($isProfile && $footerContext === 'unissa-cafe'))
+            @if($shouldShowUnissaBranding)
                 <div class="flex gap-4 mb-4">
                     <a href="https://www.instagram.com/unissacafe/" class="text-white" title="Instagram" target="_blank" rel="noopener">
                                                 <!-- Refined Instagram SVG -->

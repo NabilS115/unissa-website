@@ -4,21 +4,52 @@
         <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">
             @php
-                $headerContext = session('header_context');
-                $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
-                $isProfile = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+                $headerContext = session('header_context', 'tijarah');
+                $referer = request()->headers->get('referer');
+                $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
+                $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+                
+                // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
+                $refererSuggestsTijarah = $referer && (
+                    str_ends_with($referer, '/') || 
+                    preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+                    str_contains($referer, '/company-history') ||
+                    str_contains($referer, '/contact') ||
+                    (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
+                    (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
+                );
+                
+                if ($isProfilePage && $refererSuggestsTijarah) {
+                    $shouldShowUnissaBranding = false; // Force Tijarah branding
+                } else {
+                    $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $headerContext === 'unissa-cafe');
+                }
+                
+                // DEBUGGING: Create debug info
+                $debugInfo = [
+                    'session_context' => $headerContext,
+                    'is_cafe_page' => $isCafePage,
+                    'is_profile_page' => $isProfilePage,
+                    'referer_suggests_tijarah' => $refererSuggestsTijarah,
+                    'should_show_unissa' => $shouldShowUnissaBranding,
+                    'current_url' => request()->url(),
+                    'current_path' => request()->path(),
+                    'referer' => $referer,
+                ];
             @endphp
-            @if($isCafe || ($isProfile && $headerContext === 'unissa-cafe'))
+            @if($shouldShowUnissaBranding)
                 Unissa Cafe
             @else
                 Tijarah Co Sdn Bhd
             @endif
+            
+
         </h1>
     </div>
     <div class="flex items-center gap-6 ml-12">
         <nav>
             <ul class="flex gap-4 nav-list">
-                @if($isCafe || ($isProfile && $headerContext === 'unissa-cafe'))
+                @if($shouldShowUnissaBranding)
                     <!-- Unissa Cafe Navigation -->
                     <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Home</a></li>
                     <li><a href="{{ route('unissa-cafe.catalog') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/catalog') ? 'font-semibold underline' : '' }}">Catalog</a></li>
@@ -73,7 +104,7 @@
         
         <!-- Cart Icon (only show on cafe pages and for authenticated users) -->
 
-    @if($isCafe || ($isProfile && $headerContext === 'unissa-cafe'))
+    @if($shouldShowUnissaBranding)
             @auth
             <div class="relative mr-4 z-50 overflow-visible" id="cart-group">
                 <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 overflow-visible">
@@ -111,8 +142,22 @@
                     <hr class="my-2">
                     @php
                         $headerContext = session('header_context');
-                        $isCafe = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
-                        $profileUrl = ($isCafe || $headerContext === 'unissa-cafe') ? '/profile?context=unissa-cafe' : '/profile';
+                        $isCafeContext = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*') || request()->is('admin/orders*') || request()->is('admin/products*');
+                        
+                        // OVERRIDE: Don't add context parameter for profile links if we're on Tijarah pages
+                        $currentReferer = request()->headers->get('referer');
+                        $isOnTijarahPages = request()->is('/') || 
+                                          str_contains(request()->path(), 'company-history') || 
+                                          str_contains(request()->path(), 'contact') ||
+                                          (!$isCafeContext);
+                        
+                        $shouldUseUnissaContext = $isCafeContext && !$isOnTijarahPages;
+                        
+                        if (auth()->user()->role === 'admin') {
+                            $profileUrl = $shouldUseUnissaContext ? '/admin-profile?context=unissa-cafe' : '/admin-profile';
+                        } else {
+                            $profileUrl = $shouldUseUnissaContext ? '/profile?context=unissa-cafe' : '/profile';
+                        }
                     @endphp
                     <a href="{{ $profileUrl }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Profile</a>
                     @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/*'))

@@ -9,7 +9,33 @@
         <!-- Edit Profile Card -->
         <div class="bg-white rounded-2xl shadow-xl border border-teal-100 overflow-hidden mb-8">
             <div class="h-32 bg-gradient-to-r from-teal-400 via-teal-500 to-green-500 relative">
-                <a href="{{ route('profile') }}" class="absolute top-4 right-4 inline-flex items-center px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 z-10">
+                @php
+                    $currentContext = session('header_context', 'tijarah');
+                    $referer = request()->headers->get('referer');
+                    $isAdmin = Auth::user()->role === 'admin';
+                    
+                    // OVERRIDE: Check if we came from a Tijarah context profile page
+                    $refererSuggestsTijarah = $referer && (
+                        str_ends_with($referer, '/') || 
+                        preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+                        str_contains($referer, '/company-history') ||
+                        str_contains($referer, '/contact') ||
+                        (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
+                        (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
+                    );
+                    
+                    // Override context if referer suggests Tijarah
+                    if ($refererSuggestsTijarah) {
+                        $currentContext = 'tijarah';
+                    }
+                    
+                    if ($isAdmin) {
+                        $backUrl = $currentContext === 'unissa-cafe' ? '/admin-profile?context=unissa-cafe' : '/admin-profile';
+                    } else {
+                        $backUrl = $currentContext === 'unissa-cafe' ? '/profile?context=unissa-cafe' : '/profile';
+                    }
+                @endphp
+                <a href="{{ $backUrl }}" class="absolute top-4 right-4 inline-flex items-center px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 z-10">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -311,50 +337,90 @@
                 </div>
 
                 <!-- Photo modal (used by /js/profile.js) -->
-                <div id="photo-modal" class="hidden fixed inset-0 z-50 flex items-start md:items-center justify-center bg-black/60 px-4 py-8 overflow-auto" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title">
-                    <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl mx-auto overflow-visible border border-teal-100 animate-fade-in max-h-[calc(100vh-4rem)]">
-                        <div class="flex items-start justify-between p-6 border-b border-teal-100">
+                <div id="photo-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title">
+                    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden border border-teal-100 animate-fade-in max-h-[90vh] flex flex-col">
+                        <div class="flex items-start justify-between p-4 md:p-6 border-b border-teal-100 flex-shrink-0">
                             <h3 id="photo-modal-title" class="text-xl font-semibold text-teal-800">Update profile photo</h3>
                             <button id="photo-modal-close" type="button" class="text-teal-600 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md" aria-label="Close dialog">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
 
-                        <div class="p-6 md:p-8">
-                            <div class="md:flex md:items-start md:gap-8">
-                                <div class="md:w-1/2 flex flex-col items-center">
-                                    <div class="w-48 h-48 rounded-2xl overflow-hidden border border-teal-100 shadow-lg flex items-center justify-center bg-white">
+                        <div class="p-4 md:p-6 overflow-y-auto flex-1">
+                            <div class="flex flex-col lg:flex-row lg:items-start gap-6">
+                                <div class="lg:w-1/3 flex flex-col items-center flex-shrink-0">
+                                    <div class="w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden border border-teal-100 shadow-lg flex items-center justify-center bg-white">
                                         <img id="modal-photo-preview" src="{{ Auth::user()->profile_photo_url }}" alt="Preview" class="w-full h-full object-cover" />
                                     </div>
                                     <p class="mt-3 text-sm text-teal-700 text-center">Preview — how your photo appears across the site.</p>
                                 </div>
 
-                                <div class="md:flex-1 mt-6 md:mt-0">
-                                    <p class="text-sm text-teal-700 mb-4">Select an image file. You can crop and adjust before saving. Recommended size: square, at least 400×400px.</p>
-
-                                    <div class="flex flex-wrap gap-3 items-center">
-                                        <button id="upload-btn" type="button" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium shadow">Upload</button>
-                                        <button id="change-btn" type="button" class="px-4 py-2 bg-white border border-teal-100 text-teal-700 rounded-xl hidden">Change</button>
-                                        <button id="delete-btn" type="button" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl hidden">Delete</button>
-                                        <input id="photo-file-input" type="file" accept="image/*" class="hidden" />
+                                <div class="lg:flex-1">
+                                    <!-- Initial state - file selection -->
+                                    <div id="upload-section" class="">
+                                        <p class="text-sm text-teal-700 mb-4">Select an image file to upload as your profile photo. Recommended size: square, at least 400×400px.</p>
+                                        
+                                        <div class="flex flex-wrap gap-3 items-center">
+                                            <button id="upload-btn" type="button" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium shadow">
+                                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                </svg>
+                                                Choose Image
+                                            </button>
+                                            <button id="change-btn" type="button" class="px-4 py-2 bg-white border border-teal-100 text-teal-700 rounded-xl hidden">
+                                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                                Change Image
+                                            </button>
+                                            <button id="delete-btn" type="button" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl hover:bg-red-100 transition-colors hidden">
+                                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                                Delete Photo
+                                            </button>
+                                            <input id="photo-file-input" type="file" accept="image/*" class="hidden" />
+                                        </div>
                                     </div>
 
+                                    <!-- Loading state -->
                                     <div id="photo-modal-spinner" class="hidden mt-6">
                                         <div class="flex items-center gap-3">
                                             <div class="w-8 h-8 rounded-full border-4 border-teal-200 border-t-teal-600 animate-spin"></div>
-                                            <div class="text-sm text-teal-700 spinner-message">Uploading…</div>
+                                            <div class="text-sm text-teal-700 spinner-message">Processing image...</div>
                                         </div>
                                     </div>
 
-                                    <!-- cropper area (initially hidden) -->
+                                    <!-- Cropper state -->
                                     <div id="cropper-area" class="hidden mt-6">
-                                        <div class="mx-auto cropper-wrapper relative w-full max-w-[420px] min-h-[200px] overflow-visible rounded-xl border border-teal-100 bg-white shadow-sm flex items-center justify-center">
-                                            <img id="cropper-image" src="" alt="Crop" class="max-w-full max-h-[50vh] object-contain" />
+                                        <div class="mb-4">
+                                            <h4 class="text-sm font-medium text-teal-800 mb-2">Crop & Adjust Your Photo</h4>
+                                            <p class="text-sm text-teal-600">Drag to reposition and use the corners to resize the crop area.</p>
                                         </div>
-                                        <div class="mt-4 flex items-center gap-3">
-                                            <button id="crop-upload-btn" type="button" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-medium">Apply crop & upload</button>
-                                            <button id="crop-reset-btn" type="button" class="px-4 py-2 bg-white border border-teal-100 rounded-xl">Reset</button>
-                                            <button id="crop-cancel-btn" type="button" class="px-4 py-2 bg-white border border-gray-200 rounded-xl">Cancel</button>
+                                        
+                                        <div class="mx-auto cropper-wrapper relative w-full max-w-md overflow-hidden rounded-xl border border-teal-100 bg-white shadow-sm">
+                                            <img id="cropper-image" src="" alt="Crop" class="w-full h-auto max-h-[40vh] object-contain" />
+                                        </div>
+                                        
+                                        <div class="mt-4 flex flex-wrap items-center gap-3 pt-4 border-t border-teal-100">
+                                            <button id="crop-upload-btn" type="button" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-medium shadow focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                Save Photo
+                                            </button>
+                                            <button id="crop-reset-btn" type="button" class="px-4 py-2 bg-white border border-teal-200 text-teal-700 rounded-xl hover:bg-teal-50 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                                </svg>
+                                                Reset
+                                            </button>
+                                            <button id="crop-cancel-btn" type="button" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400">
+                                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                                Cancel
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
