@@ -2,6 +2,183 @@
 
 @section('title', 'Checkout - Unissa Cafe')
 
+@push('styles')
+<style>
+/* Comprehensive mobile optimizations for cart checkout page */
+@media (max-width: 768px) {
+    /* Page container mobile fixes */
+    .max-w-6xl {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        margin: 0 !important;
+    }
+    
+    /* Grid layout mobile - single column, reorder sections */
+    .grid.lg\\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    
+    /* Reorder sections on mobile - form first, summary second */
+    .lg\\:col-span-1 {
+        order: 2 !important;
+    }
+    
+    .lg\\:col-span-2 {
+        order: 1 !important;
+    }
+    
+    /* Remove sticky positioning on mobile */
+    .sticky {
+        position: static !important;
+    }
+    
+    /* Card padding mobile adjustments */
+    .checkout-card {
+        padding: 1rem !important;
+        border-radius: 1rem !important;
+    }
+    
+    /* Order summary mobile optimization */
+    .order-summary-card {
+        margin-bottom: 1.5rem !important;
+        padding: 1rem !important;
+    }
+    
+    /* Cart item mobile layout */
+    .cart-item {
+        padding: 0.75rem !important;
+        gap: 0.75rem !important;
+    }
+    
+    .cart-item img {
+        width: 3rem !important;
+        height: 3rem !important;
+    }
+    
+    /* Form elements mobile optimization */
+    .form-input {
+        font-size: 16px !important; /* Prevent zoom on iOS */
+        padding: 0.875rem !important;
+        border-radius: 0.75rem !important;
+    }
+    
+    /* Grid inputs mobile - stack vertically */
+    .md\\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Button mobile sizing */
+    .checkout-btn, .place-order-btn {
+        width: 100% !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+        min-height: 48px !important;
+    }
+    
+    /* Page header mobile */
+    .page-header {
+        margin-bottom: 1.5rem !important;
+        text-align: center !important;
+    }
+    
+    .page-title {
+        font-size: 2rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Section titles mobile */
+    .section-title {
+        font-size: 1.25rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Form sections mobile spacing */
+    .form-section {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Input groups mobile */
+    .input-group {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Total display mobile */
+    .total-display {
+        font-size: 1.25rem !important;
+        padding: 0.75rem !important;
+    }
+    
+    /* Payment method cards mobile */
+    .payment-method {
+        padding: 0.875rem !important;
+        margin-bottom: 0.75rem !important;
+        min-height: 44px !important;
+    }
+    
+    /* Radio button mobile sizing */
+    .radio-input {
+        min-width: 20px !important;
+        min-height: 20px !important;
+    }
+    
+    /* Error messages mobile */
+    .error-message {
+        font-size: 0.875rem !important;
+        margin-top: 0.25rem !important;
+    }
+    
+    /* Empty cart mobile */
+    .empty-cart {
+        padding: 2rem 1rem !important;
+        text-align: center !important;
+    }
+    
+    /* Icon sizing mobile */
+    .section-icon {
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+    }
+    
+    /* Price breakdown mobile */
+    .price-row {
+        justify-content: space-between !important;
+        font-size: 0.875rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .price-total {
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Form validation mobile */
+    .form-field {
+        margin-bottom: 1rem !important;
+    }
+    
+    .field-label {
+        font-size: 0.875rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Loading states mobile */
+    .processing-overlay {
+        border-radius: 1rem !important;
+    }
+    
+    /* Shop now button mobile */
+    .shop-btn {
+        width: 100% !important;
+        padding: 0.875rem 1.5rem !important;
+    }
+}
+</style>
+@endpush
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8">
     <div class="max-w-6xl mx-auto px-4">

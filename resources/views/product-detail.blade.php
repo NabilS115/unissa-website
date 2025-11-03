@@ -94,6 +94,126 @@
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
     }
+    
+    /* Product image mobile fixes */
+    .product-image-container {
+        height: 300px !important;
+        max-height: 300px !important;
+    }
+    
+    .product-image {
+        width: 100% !important;
+        height: 300px !important;
+        object-fit: cover !important;
+        object-position: center !important;
+    }
+    
+    /* Product layout mobile fixes */
+    .lg\\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    
+    /* Container padding adjustments */
+    .px-8 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .px-6 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* Review modal mobile fixes */
+    .review-modal {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        margin: 2rem auto !important;
+    }
+    
+    /* Enhanced mobile layout for entire page */
+    .product-container {
+        padding: 1rem !important;
+        margin: 0 !important;
+    }
+    
+    /* Product info section mobile spacing */
+    .product-info {
+        padding: 1rem !important;
+        gap: 1rem !important;
+    }
+    
+    /* Reviews section mobile optimization */
+    .reviews-section {
+        padding: 1rem !important;
+        margin-top: 2rem !important;
+    }
+    
+    /* Review cards mobile spacing */
+    .review-card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Star ratings mobile sizing */
+    .star-rating {
+        gap: 0.25rem !important;
+    }
+    
+    .star-btn {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    /* Form elements mobile optimization */
+    .form-textarea {
+        min-height: 120px !important;
+        padding: 0.75rem !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Button spacing for mobile */
+    .btn-group {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    .btn-mobile {
+        width: 100% !important;
+        padding: 0.875rem 1rem !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Price display mobile optimization */
+    .price-large {
+        font-size: 1.75rem !important;
+    }
+    
+    /* Quantity controls mobile sizing */
+    .quantity-control {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .quantity-input {
+        width: 60px !important;
+        height: 36px !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Modal backdrop mobile fixes */
+    .modal-backdrop {
+        padding: 1rem !important;
+    }
+    
+    /* Success toast mobile positioning */
+    .success-toast {
+        top: 1rem !important;
+        left: 1rem !important;
+        right: 1rem !important;
+        width: auto !important;
+    }
 }
 
 /* Touch-friendly tap targets */

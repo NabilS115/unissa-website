@@ -962,5 +962,165 @@ document.addEventListener('DOMContentLoaded', function() {
 .alpine-component.alpine-initialized {
     opacity: 1 !important;
 }
+
+/* Mobile-specific fixes for browse page */
+@media (max-width: 768px) {
+    /* Page container mobile optimization */
+    .browse-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Force single column layout on mobile */
+    .max-w-6xl.mx-auto.grid {
+        grid-template-columns: 1fr !important;
+        padding: 0 1rem !important;
+        gap: 1.5rem !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Product card mobile optimization */
+    .food-card, .merch-card {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Image container fixes */
+    .food-card .relative.overflow-hidden,
+    .merch-card .relative.overflow-hidden {
+        height: 220px !important;
+        overflow: hidden !important;
+        border-radius: 0.75rem 0.75rem 0 0 !important;
+    }
+    
+    .food-card img, .merch-card img {
+        width: 100% !important;
+        height: 220px !important;
+        object-fit: cover !important;
+        object-position: center !important;
+    }
+    
+    /* Card content padding adjustments */
+    .food-card .p-6, .merch-card .p-6 {
+        padding: 1rem !important;
+    }
+    
+    /* Price and button spacing */
+    .food-card .space-y-4, .merch-card .space-y-4 {
+        gap: 1rem !important;
+    }
+    
+    /* Hero banner mobile fixes */
+    .hero-banner {
+        height: 250px !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .hero-banner img {
+        height: 250px !important;
+        width: 100% !important;
+        object-fit: cover !important;
+        object-position: center !important;
+    }
+    
+    /* Tab navigation mobile optimization */
+    .tab-navigation {
+        padding: 0 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .tab-button {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.875rem !important;
+        min-height: 44px !important;
+    }
+    
+    /* Tab content spacing */
+    .tab-content {
+        padding: 1rem 0 !important;
+    }
+    
+    /* Filter and search mobile improvements */
+    .filter-controls {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        padding: 0 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .search-bar {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .filter-buttons {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+        justify-content: center !important;
+    }
+    
+    /* Button sizing for mobile */
+    .food-card button, .merch-card button {
+        min-height: 48px !important;
+        font-size: 1rem !important;
+        padding: 0.75rem 1rem !important;
+        width: 100% !important;
+    }
+    
+    /* Rating display mobile optimization */
+    .rating-display {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Category badge mobile sizing */
+    .category-badge {
+        font-size: 0.75rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+    
+    /* Price display mobile optimization */
+    .price-display {
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Pagination mobile fixes */
+    .pagination-container {
+        padding: 1rem !important;
+        justify-content: center !important;
+    }
+    
+    .pagination-btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Admin buttons mobile optimization */
+    .admin-controls {
+        gap: 0.5rem !important;
+    }
+    
+    .admin-btn {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    /* Loading states mobile optimization */
+    .loading-spinner {
+        margin: 2rem auto !important;
+    }
+    
+    /* Empty state mobile fixes */
+    .empty-state {
+        padding: 2rem 1rem !important;
+        text-align: center !important;
+    }
+}
 </style>
 @endsection

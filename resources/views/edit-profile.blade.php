@@ -493,5 +493,192 @@
     button, input, .transition-all {
         transition: all 0.2s ease-in-out;
     }
+    
+    /* Comprehensive mobile optimizations for edit profile page */
+    @media (max-width: 768px) {
+        /* Page container mobile fixes */
+        .max-w-7xl {
+            max-width: 100% !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            margin: 0 !important;
+        }
+        
+        /* Profile card mobile optimization */
+        .profile-card {
+            border-radius: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Header gradient mobile */
+        .profile-header {
+            height: 120px !important;
+        }
+        
+        /* Back button mobile */
+        .back-btn {
+            position: static !important;
+            margin: 1rem !important;
+            width: auto !important;
+        }
+        
+        /* Profile photo mobile */
+        .profile-photo {
+            width: 100px !important;
+            height: 100px !important;
+            margin-top: -50px !important;
+        }
+        
+        /* Layout mobile - stack vertically */
+        .lg\\:flex-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        
+        .lg\\:items-end {
+            align-items: flex-start !important;
+        }
+        
+        /* Form grid mobile */
+        .grid.md\\:grid-cols-2 {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        
+        /* Form inputs mobile */
+        .form-input {
+            font-size: 16px !important; /* Prevent zoom on iOS */
+            padding: 0.875rem !important;
+            border-radius: 0.75rem !important;
+        }
+        
+        /* Textarea mobile */
+        .form-textarea {
+            min-height: 120px !important;
+            font-size: 16px !important;
+            padding: 0.875rem !important;
+        }
+        
+        /* Button mobile sizing */
+        .profile-btn {
+            width: 100% !important;
+            padding: 0.875rem 1.5rem !important;
+            font-size: 1rem !important;
+            min-height: 48px !important;
+        }
+        
+        /* Photo upload mobile */
+        .photo-upload {
+            width: 100% !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        .photo-btn {
+            width: 100% !important;
+            min-height: 44px !important;
+            font-size: 0.875rem !important;
+        }
+        
+        /* Modal mobile optimization */
+        .photo-modal {
+            width: 95vw !important;
+            max-width: 95vw !important;
+            margin: 2rem auto !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+        }
+        
+        /* Modal content mobile */
+        .modal-content {
+            padding: 1rem !important;
+        }
+        
+        /* Form sections mobile spacing */
+        .form-section {
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .section-title {
+            font-size: 1.25rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Input groups mobile */
+        .input-group {
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Label mobile */
+        .field-label {
+            font-size: 0.875rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        /* Error messages mobile */
+        .error-message {
+            font-size: 0.875rem !important;
+            margin-top: 0.25rem !important;
+        }
+        
+        /* Success messages mobile */
+        .success-message {
+            font-size: 0.875rem !important;
+            padding: 0.75rem !important;
+            border-radius: 0.75rem !important;
+        }
+        
+        /* Profile info mobile layout */
+        .profile-info {
+            margin-top: 1rem !important;
+            text-align: left !important;
+        }
+        
+        .profile-name {
+            font-size: 1.5rem !important;
+            line-height: 1.2 !important;
+        }
+        
+        .profile-email {
+            font-size: 1rem !important;
+        }
+        
+        /* Card padding mobile */
+        .card-content {
+            padding: 1rem !important;
+        }
+        
+        /* File upload mobile */
+        .file-upload {
+            padding: 1rem !important;
+            border-radius: 0.75rem !important;
+        }
+        
+        /* Cropper mobile optimization */
+        .cropper-container {
+            max-width: 100% !important;
+            max-height: 300px !important;
+        }
+        
+        /* Form validation mobile */
+        .validation-error {
+            font-size: 0.875rem !important;
+        }
+        
+        /* Loading states mobile */
+        .loading-spinner {
+            margin: 1rem auto !important;
+        }
+        
+        /* Profile stats mobile (if any) */
+        .profile-stats {
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+        }
+        
+        .stat-item {
+            text-align: center !important;
+            padding: 0.75rem !important;
+        }
+    }
 </style>
 @endsection

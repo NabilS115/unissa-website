@@ -1322,5 +1322,131 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+        
+        /* Mobile optimizations for welcome page */
+        @media (max-width: 768px) {
+            /* Hero banner mobile fixes */
+            .hero-banner, .hero-section {
+                height: 280px !important;
+                min-height: 280px !important;
+                margin-bottom: 2rem !important;
+            }
+            
+            .hero-banner img {
+                height: 280px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+                object-position: center !important;
+            }
+            
+            /* Hero content mobile adjustments */
+            .h-80 {
+                height: 280px !important;
+            }
+            
+            /* Remove excessive margins/padding on mobile */
+            .mb-12 {
+                margin-bottom: 2rem !important;
+            }
+            
+            .mb-16 {
+                margin-bottom: 2rem !important;
+            }
+            
+            /* Section spacing adjustments */
+            section {
+                margin-bottom: 2rem !important;
+            }
+            
+            /* Container padding fixes */
+            .max-w-6xl.mx-auto {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                max-width: 100% !important;
+            }
+            
+            /* About section image mobile fixes */
+            .relative.h-64 {
+                height: 200px !important;
+            }
+            
+            .relative.h-64 img {
+                height: 200px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+                object-position: center !important;
+            }
+            
+            /* Gallery carousel mobile fixes */
+            #event-bg-carousel {
+                min-height: 280px !important;
+            }
+            
+            #event-bg-carousel img {
+                height: 280px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+                object-position: center !important;
+            }
+            
+            /* Grid layouts on mobile */
+            .grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+                gap: 1.5rem !important;
+            }
+            
+            .grid-cols-1.lg\\:grid-cols-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+                gap: 1.5rem !important;
+            }
+            
+            /* Contact cards mobile spacing */
+            .contact-card {
+                margin-bottom: 1.5rem !important;
+            }
+            
+            /* Modal content mobile fixes */
+            .modal-content {
+                max-width: 95vw !important;
+                max-height: 90vh !important;
+                margin: 2rem auto !important;
+            }
+            
+            /* Image upload preview mobile fixes */
+            #preview-img {
+                height: 150px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+            }
+            
+            /* Text sizing for mobile */
+            .hero-text {
+                font-size: 2rem !important;
+                line-height: 1.2 !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.125rem !important;
+                line-height: 1.4 !important;
+            }
+            
+            /* Padding adjustments for mobile */
+            .px-4.sm\\:px-6.lg\\:px-8 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .py-16 {
+                padding-top: 3rem !important;
+                padding-bottom: 3rem !important;
+            }
+            
+            .py-20 {
+                padding-top: 3rem !important;
+                padding-bottom: 3rem !important;
+            }
+        }
     </style>
 @endsection

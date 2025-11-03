@@ -1,5 +1,5 @@
 <!-- Reusable Header Component -->
-<header class="w-full bg-teal-600 text-white py-4 px-4 md:px-6 header-fallback z-50 relative">
+<header class="w-full bg-teal-600 text-white py-2 md:py-4 px-4 md:px-6 header-fallback z-50 relative">
     <div class="flex items-center justify-between w-full max-w-full">
         <!-- Logo Section (Left) -->
         <div class="flex items-center gap-2 md:gap-4 logo-section flex-shrink-0">

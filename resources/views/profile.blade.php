@@ -183,4 +183,192 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Comprehensive mobile optimizations for profile page */
+@media (max-width: 768px) {
+    /* Page container mobile fixes */
+    .max-w-7xl {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        margin: 0 !important;
+    }
+    
+    /* Profile header card mobile */
+    .profile-header-card {
+        border-radius: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Header gradient mobile */
+    .profile-header {
+        height: 120px !important;
+    }
+    
+    /* Edit button mobile */
+    .edit-btn {
+        position: static !important;
+        margin: 1rem !important;
+        width: auto !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Profile photo mobile */
+    .profile-photo {
+        width: 100px !important;
+        height: 100px !important;
+        margin-top: -50px !important;
+    }
+    
+    /* Profile info layout mobile */
+    .lg\\:flex-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+    }
+    
+    .lg\\:items-end {
+        align-items: flex-start !important;
+    }
+    
+    /* Profile name mobile */
+    .profile-name {
+        font-size: 1.5rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    /* Profile details mobile */
+    .profile-details {
+        margin-top: 1rem !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* Grid layout mobile */
+    .grid.md\\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    
+    /* Card spacing mobile */
+    .profile-card {
+        padding: 1rem !important;
+        border-radius: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Section titles mobile */
+    .section-title {
+        font-size: 1.25rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Icon sizing mobile */
+    .section-icon {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+    
+    /* Info items mobile */
+    .info-item {
+        padding: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+        border-radius: 0.75rem !important;
+    }
+    
+    /* Button mobile optimization */
+    .profile-btn {
+        width: 100% !important;
+        padding: 0.875rem 1.5rem !important;
+        font-size: 1rem !important;
+        min-height: 48px !important;
+        justify-content: center !important;
+    }
+    
+    /* Browse button mobile */
+    .browse-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 1rem !important;
+    }
+    
+    /* Reviews section mobile */
+    .reviews-section {
+        padding: 1rem !important;
+    }
+    
+    /* Empty state mobile */
+    .empty-state {
+        padding: 2rem 1rem !important;
+        text-align: center !important;
+    }
+    
+    .empty-icon {
+        width: 3rem !important;
+        height: 3rem !important;
+        margin: 0 auto 1rem !important;
+    }
+    
+    .empty-title {
+        font-size: 1.25rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .empty-text {
+        font-size: 0.875rem !important;
+        margin-bottom: 1.5rem !important;
+        max-width: 100% !important;
+    }
+    
+    /* Profile stats mobile (if any) */
+    .profile-stats {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    .stat-item {
+        text-align: center !important;
+        padding: 0.75rem !important;
+        flex: 1 !important;
+    }
+    
+    .stat-number {
+        font-size: 1.25rem !important;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Role badge mobile */
+    .role-badge {
+        font-size: 0.875rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    /* Contact info mobile */
+    .contact-info {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    /* Activity cards mobile */
+    .activity-card {
+        padding: 0.75rem !important;
+        border-radius: 0.75rem !important;
+    }
+    
+    /* Quick actions mobile */
+    .quick-actions {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    .quick-action-btn {
+        width: 100% !important;
+        padding: 1rem !important;
+        justify-content: flex-start !important;
+    }
+}
+</style>
 @endsection

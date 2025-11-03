@@ -15,6 +15,163 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield !important;
 }
+
+/* Comprehensive mobile optimizations for checkout page */
+@media (max-width: 768px) {
+    /* Page container mobile fixes */
+    .max-w-6xl {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        margin: 0 !important;
+    }
+    
+    /* Grid layout mobile - single column */
+    .grid.grid-cols-1.lg\\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    
+    /* Order summary mobile optimization */
+    .order-summary {
+        position: static !important;
+        margin-bottom: 2rem !important;
+        order: 2 !important;
+    }
+    
+    .lg\\:col-span-1 {
+        order: 2 !important;
+    }
+    
+    .lg\\:col-span-2 {
+        order: 1 !important;
+    }
+    
+    /* Card padding mobile adjustments */
+    .checkout-card {
+        padding: 1rem !important;
+        border-radius: 1rem !important;
+    }
+    
+    /* Form elements mobile optimization */
+    .form-input {
+        font-size: 16px !important; /* Prevent zoom on iOS */
+        padding: 0.875rem !important;
+        border-radius: 0.75rem !important;
+    }
+    
+    /* Button mobile sizing */
+    .checkout-btn {
+        width: 100% !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+        min-height: 48px !important;
+    }
+    
+    /* Back button mobile */
+    .back-btn {
+        margin-bottom: 1rem !important;
+        width: auto !important;
+    }
+    
+    /* Page header mobile */
+    .page-header {
+        margin-bottom: 1.5rem !important;
+        text-align: center !important;
+    }
+    
+    .page-title {
+        font-size: 2rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    /* Product image in summary mobile */
+    .product-image {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    
+    /* Quantity controls mobile */
+    .quantity-control {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .quantity-input {
+        width: 60px !important;
+        height: 36px !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Payment method cards mobile */
+    .payment-card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Form sections mobile spacing */
+    .form-section {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .section-title {
+        font-size: 1.25rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Input group mobile */
+    .input-group {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Total display mobile */
+    .total-display {
+        font-size: 1.5rem !important;
+        padding: 1rem !important;
+    }
+    
+    /* Sticky elements mobile - remove stickiness */
+    .sticky {
+        position: static !important;
+    }
+    
+    /* Order details mobile */
+    .order-details {
+        gap: 0.75rem !important;
+    }
+    
+    /* Price breakdown mobile */
+    .price-row {
+        justify-content: space-between !important;
+        font-size: 0.875rem !important;
+    }
+    
+    .price-total {
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Form validation mobile */
+    .error-message {
+        font-size: 0.875rem !important;
+        margin-top: 0.25rem !important;
+    }
+    
+    /* Loading states mobile */
+    .processing-overlay {
+        border-radius: 1rem !important;
+    }
+    
+    /* Radio button groups mobile */
+    .radio-group {
+        gap: 0.75rem !important;
+    }
+    
+    .radio-card {
+        padding: 0.875rem !important;
+        min-height: 44px !important;
+    }
+}
 </style>
 @endpush
 

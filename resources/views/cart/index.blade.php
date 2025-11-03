@@ -264,6 +264,83 @@ input[type="number"] {
     appearance: none;
 }
 
+/* Mobile layout optimizations for cart page */
+@media (max-width: 768px) {
+    /* Cart container spacing */
+    .max-w-6xl {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        margin: 0 !important;
+    }
+    
+    /* Cart item cards mobile optimization */
+    .cart-item-card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Product image sizing */
+    .w-24.h-24 {
+        width: 80px !important;
+        height: 80px !important;
+        flex-shrink: 0;
+    }
+    
+    /* Mobile quantity controls */
+    .quantity-controls {
+        gap: 0.5rem !important;
+    }
+    
+    .quantity-btn {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+    
+    .quantity-input {
+        width: 60px !important;
+        padding: 0.5rem !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Cart summary mobile fixes */
+    .cart-summary {
+        padding: 1rem !important;
+        margin: 1rem 0 !important;
+    }
+    
+    /* Button sizing for mobile */
+    .checkout-btn, .continue-shopping-btn {
+        width: 100% !important;
+        padding: 1rem !important;
+        font-size: 1rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Price display mobile optimization */
+    .price-display {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Remove desktop-only elements */
+    .hidden.sm\\:flex {
+        display: none !important;
+    }
+    
+    /* Mobile-specific layout adjustments */
+    .flex-col.gap-4 {
+        gap: 1rem !important;
+    }
+    
+    /* Cart header mobile spacing */
+    .cart-header {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
 </style>
 
 <script src="/js/cart.js"></script>

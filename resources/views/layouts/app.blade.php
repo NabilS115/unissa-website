@@ -39,10 +39,18 @@
         
         /* Critical layout structure to prevent shifts */
         .header-fallback {
-            min-height: 64px;
+            min-height: 56px;
             background-color: #0d9488;
             display: flex;
             align-items: center;
+        }
+        
+        /* Mobile header adjustments */
+        @media (max-width: 768px) {
+            .header-fallback {
+                min-height: 48px;
+                padding: 0.5rem 1rem;
+            }
         }
         
         /* Skeleton loading for smooth transitions */
@@ -144,26 +152,87 @@
             html, body {
                 overflow-x: hidden;
                 max-width: 100vw;
+                margin: 0;
+                padding: 0;
             }
             
             body {
                 position: relative;
             }
             
+            /* Fix container spacing and alignment */
             .container, .max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl {
                 max-width: 100vw;
                 overflow-x: hidden;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
             }
             
+            /* Content area spacing */
+            main, .main-content, [role="main"] {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                margin: 0 !important;
+            }
+            
+            /* Enhanced image sizing for mobile */
             img {
                 max-width: 100%;
                 height: auto;
+                object-fit: cover;
+            }
+            
+            /* Product card images - prevent stretching */
+            .food-card img, .merch-card img {
+                width: 100% !important;
+                height: 200px !important;
+                object-fit: cover !important;
+                object-position: center !important;
+            }
+            
+            /* Grid layout improvements for mobile */
+            .grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4 {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
+            }
+            
+            .grid-cols-1.md\\:grid-cols-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
             }
             
             /* Prevent horizontal scrolling on mobile */
             * {
                 max-width: 100vw;
                 box-sizing: border-box;
+            }
+            
+            /* Mobile card adjustments */
+            .food-card, .merch-card {
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            /* Mobile padding adjustments */
+            .px-8 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .px-6 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            /* Mobile gap adjustments */
+            .gap-8 {
+                gap: 1rem !important;
+            }
+            
+            .gap-6 {
+                gap: 1rem !important;
             }
             
             /* Mobile form improvements */
@@ -178,6 +247,93 @@
             button, .btn, a[role="button"] {
                 min-height: 44px;
                 min-width: 44px;
+            }
+            
+            /* Banner image mobile fixes */
+            .hero-banner img, [class*="banner"] img {
+                height: 300px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+                object-position: center !important;
+            }
+            
+            /* About section image mobile fixes */
+            .h-64 img {
+                height: 200px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+            }
+            
+            /* Aspect ratio fixes for mobile */
+            .aspect-video, .aspect-square {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .aspect-video img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            /* Text adjustments for mobile */
+            .text-5xl {
+                font-size: 2.5rem !important;
+            }
+            
+            .text-4xl {
+                font-size: 2rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 1.875rem !important;
+            }
+            
+            /* Overall mobile layout fixes */
+            body {
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+            }
+            
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+            }
+            
+            /* Section spacing normalization */
+            section {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Full-width sections (like hero) */
+            .w-full {
+                max-width: 100vw !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            
+            /* Hero section specific fixes */
+            .h-80 {
+                height: 280px !important;
+                margin-bottom: 1.5rem !important;
+            }
+            
+            /* Remove excessive container constraints */
+            .max-w-4xl, .max-w-5xl, .max-w-6xl {
+                max-width: 100% !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
             }
             
             /* Fix mobile menu positioning and animations */
@@ -297,7 +453,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
     @include('components.header')
-    <main class="flex-1">
+    <main class="flex-1 w-full overflow-x-hidden">
         @yield('content')
     </main>
     @include('components.footer')
