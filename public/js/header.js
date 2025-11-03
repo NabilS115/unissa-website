@@ -6,7 +6,14 @@ console.log('Header.js is loading...');
 (function() {
     console.log('Header.js IIFE started');
     const SEARCH_URL = window.__searchSuggestionsUrl || '/search/suggestions';
-    const CART_COUNT_URL = window.__cartCountUrl || '/api/cart/count';
+    const CART_COUNT_URL = window.__cartCountUrl;
+    
+    console.log('🔍 Debug Cart URL:', {
+        cartCountUrl: CART_COUNT_URL,
+        windowCartCountUrl: window.__cartCountUrl,
+        isNull: CART_COUNT_URL === null,
+        isUndefined: CART_COUNT_URL === undefined
+    });
 
     // --- Search suggestions ---
     let searchTimeout;
@@ -169,9 +176,59 @@ console.log('Header.js is loading...');
 
     // --- Cart count ---
     async function loadCartCount() {
+        // Skip cart count loading for unauthenticated users
+        if (!window.__isAuthenticated || !CART_COUNT_URL || CART_COUNT_URL === null) {
+            console.log('[CartCount] Skipping cart count - user not authenticated', { 
+                isAuthenticated: window.__isAuthenticated,
+                CART_COUNT_URL,
+                userId: window.__userId
+            });
+            return;
+        }
+        
+        console.log('[CartCount] Loading cart count for authenticated user:', {
+            userId: window.__userId,
+            url: CART_COUNT_URL,
+            isAuth: window.__isAuthenticated
+        });
+        
         try {
-            const resp = await fetch(CART_COUNT_URL, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            const headers = { 
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            
+            // Only add CSRF token if it exists
+            if (csrfToken) {
+                headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
+            }
+            
+            console.log('[CartCount] Making request with headers:', headers);
+            
+            const resp = await fetch(CART_COUNT_URL, { 
+                method: 'GET',
+                headers: headers,
+                credentials: 'same-origin'
+            });
+            
+            console.log('[CartCount] Response status:', resp.status, resp.statusText);
+            
+            if (!resp.ok) {
+                if (resp.status === 401) {
+                    console.warn('[CartCount] User session expired or invalid - disabling cart count');
+                    // Mark user as not authenticated to prevent further calls
+                    window.__isAuthenticated = false;
+                    window.__cartCountUrl = null;
+                    return;
+                }
+                throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+            }
+            
             const data = await resp.json();
+            console.log('[CartCount] Received data:', data);
+            
             const cartCount = document.getElementById('cart-count');
             if (cartCount) {
                 const oldCount = parseInt(cartCount.textContent) || 0;
@@ -185,15 +242,36 @@ console.log('Header.js is loading...');
             }
         } catch (err) {
             console.error('[CartCount] Error loading cart count:', err);
+            // Hide cart count on error and disable future calls
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.style.display = 'none';
+            }
+            // Mark as not authenticated to prevent repeated failures
+            window.__isAuthenticated = false;
         }
     }
 
     window.updateCartCount = function(newCount) {
+        // Only update cart count for authenticated users
+        if (!window.__isAuthenticated || !CART_COUNT_URL) return;
+        
         const cartCount = document.getElementById('cart-count');
+        const mobileCartCount = document.getElementById('cart-count-mobile');
+        
         if (cartCount) {
-            cartCount.textContent = newCount;
-            cartCount.style.display = newCount > 0 ? 'flex' : 'none';
-            if (newCount > 0) { cartCount.classList.add('updated'); setTimeout(() => cartCount.classList.remove('updated'), 600); }
+            cartCount.textContent = newCount || 0;
+            cartCount.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
+            if (newCount > 0) { 
+                cartCount.classList.add('updated'); 
+                setTimeout(() => cartCount.classList.remove('updated'), 600); 
+            }
+        }
+        
+        // Also update mobile cart count
+        if (mobileCartCount) {
+            mobileCartCount.textContent = newCount || 0;
+            mobileCartCount.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
         }
     };
 
@@ -303,20 +381,34 @@ console.log('Header.js is loading...');
         wireSearch();
         initializeHeaderInteractions();
         initializeMobileMenu();
-        // Load cart count when visible/authenticated
-        if (document.visibilityState === 'visible') loadCartCount();
-        document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible') loadCartCount(); });
+        
+        // Only load cart count for authenticated users
+        if (window.__isAuthenticated && CART_COUNT_URL && document.visibilityState === 'visible') {
+            loadCartCount();
+        }
+        
+        document.addEventListener('visibilitychange', function() { 
+            if (window.__isAuthenticated && CART_COUNT_URL && document.visibilityState === 'visible') {
+                loadCartCount(); 
+            }
+        });
     }
 
     // Run init when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             init();
-            loadCartCount();
+            // Only load cart count if user is authenticated
+            if (window.__isAuthenticated && CART_COUNT_URL) {
+                loadCartCount();
+            }
         });
     } else {
         init();
-        loadCartCount();
+        // Only load cart count if user is authenticated
+        if (window.__isAuthenticated && CART_COUNT_URL) {
+            loadCartCount();
+        }
     }
     
     // Also run with delay for dynamic content

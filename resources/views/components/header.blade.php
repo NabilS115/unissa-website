@@ -64,7 +64,7 @@
         </div>
 
         <!-- Desktop Navigation and Icons - All grouped on the right -->
-        <div class="hidden md:flex items-center gap-4 ml-auto flex-shrink-0">
+        <div class="hidden md:flex items-center gap-4 ml-auto flex-shrink-0" id="desktop-nav">
             <!-- Navigation Links -->
             <nav>
                 <ul class="flex gap-4 nav-list">
@@ -84,8 +84,8 @@
 
             <!-- Search Icon -->
             <div class="relative group" id="searchbar-group">
-                <button id="searchbar-icon" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow" style="width:40px;height:40px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-6 h-6">
+                <button id="searchbar-icon" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow hover:shadow-lg transition-all duration-200" style="width:40px;height:40px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-5 h-5">
                         <circle cx="11" cy="11" r="8" stroke-width="2" stroke="#008080" fill="none"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="#008080" />
                     </svg>
@@ -109,6 +109,7 @@
                 </form>
                 
                 <style>
+                    /* Search dropdown styles */
                     #searchbar-dropdown {
                         opacity: 0;
                         pointer-events: none;
@@ -120,6 +121,16 @@
                         opacity: 1;
                         pointer-events: auto;
                         transform: translateY(0);
+                    }
+                    
+                    /* Ensure search bar is visible on desktop */
+                    @media (min-width: 768px) {
+                        #desktop-nav {
+                            display: flex !important;
+                        }
+                        #searchbar-group {
+                            display: block !important;
+                        }
                     }
                 </style>
                 
@@ -315,30 +326,7 @@
                     </div>
                 @endauth
 
-                <!-- Search Section -->
-                <div class="px-6 py-5 border-b border-gray-200 bg-white">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                        <svg class="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        Quick Search
-                    </h3>
-                    <form action="{{ route('search') }}" method="GET" class="space-y-3">
-                        <input type="text" name="search" placeholder="Search products, reviews..." 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 transition-all">
-                        <div class="flex gap-2">
-                            <select name="scope" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-teal-500">
-                                <option value="all">All Items</option>
-                                <option value="products">Products</option>
-                                <option value="reviews">Reviews</option>
-                            </select>
-                            <button type="submit" class="px-5 py-2.5 bg-teal-600 text-white rounded-lg text-sm font-semibold hover:bg-teal-700 active:scale-95 transition-all shadow-sm">
-                                Go
-                            </button>
-                        </div>
-                    </form>
-                </div>
+
 
                 <!-- Navigation -->
                 <div class="px-6 py-4">
@@ -540,9 +528,10 @@
                         
                         <div class="px-4 space-y-3 pb-6">
                             <a href="/login" class="flex items-center px-4 py-4 bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md">
-                                <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 flex items-center justify-center mr-4">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-4">
+                                    <svg class="w-7 h-7 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="8" r="4" />
+                                        <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
                                     </svg>
                                 </div>
                                 <div>
@@ -551,9 +540,10 @@
                                 </div>
                             </a>
                             <a href="/register" class="flex items-center px-4 py-4 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-xl transition-all duration-200 active:scale-[0.98] border-2 border-gray-200 hover:border-gray-300">
-                                <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center mr-4">
-                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-4">
+                                    <svg class="w-7 h-7 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="8" r="4" />
+                                        <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
                                     </svg>
                                 </div>
                                 <div>
@@ -573,8 +563,17 @@
             window.__searchSuggestionsUrl = '{{ route('search.suggestions') }}';
             @auth
                 window.__cartCountUrl = '{{ route('cart.count') }}';
+                window.__isAuthenticated = true;
+                window.__userId = {{ auth()->id() }};
+                console.log('🔑 User authenticated in Blade:', {
+                    userId: {{ auth()->id() }}, 
+                    cartUrl: '{{ route('cart.count') }}'
+                });
             @else
                 window.__cartCountUrl = null;
+                window.__isAuthenticated = false;
+                window.__userId = null;
+                console.log('🚫 User not authenticated in Blade');
             @endauth
             
             // Global function to close mobile menu (accessible everywhere)
