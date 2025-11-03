@@ -71,15 +71,55 @@
         }
     }
     
+    // Calculate average ratings for merchandise items
+    foreach ($merchandise as &$merchItem) {
+        $productId = null;
+        
+        if (is_object($merchItem) && isset($merchItem->id)) {
+            $productId = $merchItem->id;
+        } elseif (is_array($merchItem) && isset($merchItem['id'])) {
+            $productId = $merchItem['id'];
+        }
+        
+        if ($productId) {
+            $reviews = \App\Models\Review::where('product_id', $productId)->get();
+            $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+
+            foreach ($reviews as $review) {
+                $rating = (int) $review->rating;
+                if ($rating >= 1 && $rating <= 5) {
+                    $ratings[$rating]++;
+                }
+            }
+            
+            $totalRatings = array_sum($ratings);
+            $averageRating = 0;
+            
+            if ($totalRatings > 0) {
+                $weightedSum = 0;
+                foreach ($ratings as $star => $count) {
+                    $weightedSum += $star * $count;
+                }
+                $averageRating = $weightedSum / $totalRatings;
+            }
+            
+            if (is_object($merchItem)) {
+                $merchItem->calculated_rating = number_format($averageRating, 1);
+            } else {
+                $merchItem['calculated_rating'] = number_format($averageRating, 1);
+                $merchItem = (object)$merchItem;
+            }
+        }
+    }
+    
     // Separate categories for food and merch
     $foodCategories = \App\Models\Product::where('type', 'food')->pluck('category')->unique()->values()->all();
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
 @endphp
 
-<div x-data="foodMerchComponent()" x-cloak>
+<div x-data="foodMerchComponent()" x-cloak class="alpine-component" id="browse-container">
 
     <!-- Menu Controls Header -->
-                    <!-- Menu Controls Header -->
                 <div class="w-full bg-teal-600 text-white sticky top-0 z-40 border-t border-teal-500">
         <div class="max-w-7xl mx-auto px-6">
             <!-- Second Row: Search, Filters, and Controls -->
@@ -776,6 +816,69 @@ window.__productBrowse = {
     activeTab: @json(session('active_tab') ?? null),
     highlightProduct: @json(session('highlight_product') ?? null)
 };
+
+// Ensure Alpine component is visible after initialization
+document.addEventListener('alpine:init', () => {
+    console.log('🔄 Browse page Alpine.js initializing...');
+});
+
+document.addEventListener('alpine:initialized', () => {
+    console.log('✅ Browse page Alpine.js initialized');
+    
+    // Update debug status
+    const statusEl = document.getElementById('alpine-status');
+    if (statusEl) statusEl.textContent = 'Initialized ✅';
+    
+    // Make sure the browse component is visible
+    const browseComponent = document.querySelector('.alpine-component');
+    if (browseComponent) {
+        browseComponent.classList.add('alpine-initialized');
+        browseComponent.style.opacity = '1';
+        browseComponent.style.display = 'block';
+    }
+    
+    // Remove x-cloak after initialization
+    setTimeout(() => {
+        document.querySelectorAll('[x-cloak]').forEach(el => {
+            el.removeAttribute('x-cloak');
+            el.style.opacity = '1';
+        });
+    }, 100);
+});
+
+// Fallback initialization
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 Browse page DOM loaded');
+    
+    // If Alpine hasn't initialized after 3 seconds, force show content
+    setTimeout(() => {
+        const browseComponent = document.getElementById('browse-container');
+        if (browseComponent && browseComponent.hasAttribute('x-cloak')) {
+            console.log('⚠️ Forcing browse component visibility');
+            browseComponent.removeAttribute('x-cloak');
+            browseComponent.style.opacity = '1';
+            browseComponent.style.display = 'block';
+            browseComponent.classList.add('alpine-initialized');
+        }
+    }, 3000);
+    
+    // Also try to initialize manually if foodMerchComponent exists
+    if (typeof window.foodMerchComponent === 'function') {
+        console.log('✅ foodMerchComponent function is available');
+        
+        setTimeout(() => {
+            const browseComponent = document.getElementById('browse-container');
+            if (browseComponent && !browseComponent.classList.contains('alpine-initialized')) {
+                console.log('🔧 Manually initializing browse component');
+                browseComponent.removeAttribute('x-cloak');
+                browseComponent.style.opacity = '1';
+                browseComponent.style.display = 'block';
+            }
+        }, 1000);
+    } else {
+        console.error('❌ foodMerchComponent function not found');
+    }
+});
 </script>
 <script src="/js/product-list.js"></script>
 @endpush
@@ -840,6 +943,24 @@ window.__productBrowse = {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Fix for Alpine.js component display */
+.alpine-component[x-cloak] {
+    display: none !important;
+}
+
+.alpine-component {
+    opacity: 1 !important;
+}
+
+/* Override global Alpine CSS that might be hiding content */
+[x-data].alpine-component {
+    opacity: 1 !important;
+}
+
+.alpine-component.alpine-initialized {
+    opacity: 1 !important;
 }
 </style>
 @endsection

@@ -337,7 +337,7 @@
                 </div>
 
                 <!-- Photo modal (used by /js/profile.js) -->
-                <div id="photo-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title">
+                <div id="photo-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title">
                     <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden border border-teal-100 animate-fade-in max-h-[90vh] flex flex-col">
                         <div class="flex items-start justify-between p-4 md:p-6 border-b border-teal-100 flex-shrink-0">
                             <h3 id="photo-modal-title" class="text-xl font-semibold text-teal-800">Update profile photo</h3>

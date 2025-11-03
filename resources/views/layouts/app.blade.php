@@ -11,15 +11,80 @@
     <meta name="apple-mobile-web-app-title" content="Unissa Cafe">
     {{-- Tailwind is built with Vite or npm for all environments. CDN is not used. --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Global Error Handler -->
+    <script src="/js/error-handler.js"></script>
+    <!-- Alpine.js Optimizer -->
+    <script src="/js/alpine-optimizer.js"></script>
+    <!-- Livewire Navigation Optimizer -->
+    <script src="/js/livewire-optimizer.js"></script>
     <!-- Cropper.js CSS and JS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <style>
-        /* Critical minimal styles to avoid flashes before Tailwind CSS loads */
-        /* These are intentionally tiny and safe to include inline */
-        html, body { background-color: #fdfdfc; }
+        /* Critical styles to prevent FOUC and layout shifts */
+        html, body { 
+            background-color: #fdfdfc; 
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        /* Prevent flash of unstyled content */
+        body { opacity: 0; transition: opacity 0.3s ease; }
+        body.loaded { opacity: 1; }
+        
         /* Prevent full-screen overlays from briefly displaying before JS/CSS runs */
         [data-initial-hidden] { display: none !important; }
+        [x-cloak] { display: none !important; }
+        
+        /* Critical layout structure to prevent shifts */
+        .header-fallback {
+            min-height: 64px;
+            background-color: #0d9488;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Skeleton loading for smooth transitions */
+        .content-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Livewire loading states */
+        .livewire-loading {
+            cursor: wait;
+        }
+        
+        .livewire-loading * {
+            pointer-events: none;
+        }
+        
+        /* Smooth page transitions */
+        body {
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Fix for Alpine.js flashing - but allow page-specific overrides */
+        [x-data]:not(.alpine-component) {
+            opacity: 0;
+        }
+        
+        [x-data].alpine-initialized {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Always show alpine-component class immediately */
+        .alpine-component {
+            opacity: 1 !important;
+        }
 
         /* Fallback styles in case Tailwind doesn't load */
         .header-fallback {
@@ -213,5 +278,40 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Externalized: layout overlay unguard logic -->
     <script src="/js/layout-unguard.js"></script>
+    
+    <!-- Page load handler to prevent flash -->
+    <script>
+        // Show content once everything is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+        
+        // Fallback in case DOMContentLoaded already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            document.body.classList.add('loaded');
+        }
+        
+        // Handle page navigation flashing (for SPA-like behavior)
+        let isNavigating = false;
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[href]');
+            if (link && !link.target && !link.download && link.href.startsWith(window.location.origin)) {
+                isNavigating = true;
+                document.body.style.opacity = '0.7';
+                setTimeout(() => {
+                    if (isNavigating) {
+                        document.body.style.opacity = '1';
+                        isNavigating = false;
+                    }
+                }, 100);
+            }
+        });
+        
+        // Reset navigation state on page load
+        window.addEventListener('beforeunload', () => {
+            isNavigating = false;
+            document.body.style.opacity = '1';
+        });
+    </script>
 </body>
 </html>

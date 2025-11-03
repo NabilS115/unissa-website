@@ -1,7 +1,7 @@
 
 <!-- Edit Review Modal (now outside reviews loop) -->
-<div id="edit-review-modal" data-initial-hidden class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+<div id="edit-review-modal" data-initial-hidden class="fixed top-0 left-0 w-full h-full backdrop-blur-sm flex items-center justify-center" style="display: none; z-index: 9999;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 my-4 relative max-h-[90vh] overflow-y-auto">
         <div class="p-8">
             <button id="close-edit-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -47,8 +47,8 @@
                 </div>
             </form>
         </div>
+        </div>
     </div>
-
 </div>
 
 @push('scripts')
@@ -604,8 +604,8 @@ input[type="number"]::-ms-clear {
 </div>
 
 <!-- Write Review Modal -->
-<div id="review-modal" data-initial-hidden class="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50 hidden p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+<div id="review-modal" data-initial-hidden class="fixed top-0 left-0 w-full h-full backdrop-blur-sm flex items-center justify-center" style="display: none; z-index: 9999;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 my-4 relative max-h-[90vh] overflow-y-auto">
         <div class="p-8">
             <button id="close-review-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -653,6 +653,7 @@ input[type="number"]::-ms-clear {
                     </button>
                 </div>
             </form>
+        </div>
         </div>
     </div>
 </div>

@@ -43,17 +43,16 @@
               }
             });
             if (editRatingText) editRatingText.textContent = editRatingTexts[rating-1];
-            editReviewModal.classList.remove('hidden');
-            editReviewModal.classList.add('flex');
+            editReviewModal.style.display = 'flex';
           }
         };
       });
 
       if (closeEditReviewModal && editReviewModal) {
-        closeEditReviewModal.onclick = () => { editReviewModal.classList.remove('flex'); editReviewModal.classList.add('hidden'); };
+        closeEditReviewModal.onclick = () => { editReviewModal.style.display = 'none'; };
       }
       if (cancelEditReview && editReviewModal) {
-        cancelEditReview.onclick = () => { editReviewModal.classList.remove('flex'); editReviewModal.classList.add('hidden'); };
+        cancelEditReview.onclick = () => { editReviewModal.style.display = 'none'; };
       }
 
       if (editStarBtns.length > 0 && editRatingInput && editRatingText) {
@@ -120,7 +119,7 @@
             formData.append('rating', parseInt(rating));
             formData.append('review', reviewText.trim());
             const response = await fetch(`/reviews/${reviewId}`, { method: 'POST', body: formData });
-            if (response.ok) { if (editReviewModal) { editReviewModal.classList.add('hidden'); } window.location.reload(); } else { const text = await response.text(); console.error('Server response:', text); alert('Failed to update review. Please try again.'); }
+            if (response.ok) { if (editReviewModal) { editReviewModal.style.display = 'none'; } window.location.reload(); } else { const text = await response.text(); console.error('Server response:', text); alert('Failed to update review. Please try again.'); }
           } catch (error) { console.error('Network error:', error); alert('Network error. Please check your connection and try again.'); }
           finally { if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; } }
         };
@@ -135,11 +134,17 @@
 
       const modal = document.getElementById('review-modal');
       const writeReviewBtn = document.getElementById('write-review-btn');
-      if (writeReviewBtn && modal) { writeReviewBtn.onclick = () => { modal.classList.remove('hidden'); }; }
+      
+      if (writeReviewBtn && modal) { 
+        writeReviewBtn.onclick = (e) => { 
+          e.preventDefault();
+          modal.style.display = 'flex'; 
+        };
+      }
       const closeReviewModal = document.getElementById('close-review-modal');
       const cancelReview = document.getElementById('cancel-review');
-      if (closeReviewModal && modal) { closeReviewModal.onclick = () => { modal.classList.add('hidden'); }; }
-      if (cancelReview && modal) { cancelReview.onclick = () => { modal.classList.add('hidden'); }; }
+      if (closeReviewModal && modal) { closeReviewModal.onclick = () => { modal.style.display = 'none'; }; }
+      if (cancelReview && modal) { cancelReview.onclick = () => { modal.style.display = 'none'; }; }
 
       const reviewForm = document.getElementById('review-form');
       if (reviewForm) {
@@ -158,7 +163,7 @@
             formData.append('review', reviewText.trim());
             const productId = bs.productId || null;
             const response = await fetch(`/product/${productId}/add-review`, { method: 'POST', body: formData });
-            if (response.ok) { if (modal) modal.classList.add('hidden'); window.location.reload(); } else { const text = await response.text(); console.error('Server response:', text); alert('Failed to submit review. Please try again.'); }
+            if (response.ok) { if (modal) modal.style.display = 'none'; window.location.reload(); } else { const text = await response.text(); console.error('Server response:', text); alert('Failed to submit review. Please try again.'); }
           } catch (error) { console.error('Network error:', error); alert('Network error. Please check your connection and try again.'); }
           finally { if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; } }
         };

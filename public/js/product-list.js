@@ -7,7 +7,9 @@
 
   // Expose Alpine component factory on window
   window.foodMerchComponent = function() {
+    console.log('🔄 Initializing foodMerchComponent');
     const data = bs();
+    console.log('📊 Component data:', data);
     return {
       tab: data.activeTab || (new URLSearchParams(window.location.search).get('tab') || 'food'),
       food: data.food || [],
@@ -29,6 +31,9 @@
       editingProduct: null,
 
       init() {
+        console.log('✅ foodMerchComponent initialized successfully');
+        console.log('🍕 Food items:', this.food.length);
+        console.log('🛍️ Merchandise items:', this.merchandise.length);
         this.showAddModal = false;
         this.showEditModal = false;
         if (data.highlightProduct) {
