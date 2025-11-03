@@ -44,12 +44,16 @@
                 <!-- Unissa Cafe Footer Navigation -->
                 <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
                 <a href="{{ route('unissa-cafe.catalog') }}" class="text-white mb-2 hover:underline">Catalog</a>
+                <a href="{{ route('privacy-policy') }}" class="text-white mb-2 hover:underline">Privacy Policy</a>
+                <a href="{{ route('terms-of-service') }}" class="text-white mb-2 hover:underline">Terms of Service</a>
                 <a href="/" class="text-white hover:underline">← Back to Tijarah</a>
             @else
                 <!-- Tijarah Footer Navigation -->
                 <a href="/" class="text-white mb-2 hover:underline">Home</a>
                 <a href="/company-history" class="text-white mb-2 hover:underline">About</a>
-                <a href="/contact" class="text-white hover:underline">Contact Us</a>
+                <a href="/contact" class="text-white mb-2 hover:underline">Contact Us</a>
+                <a href="{{ route('privacy-policy') }}" class="text-white mb-2 hover:underline">Privacy Policy</a>
+                <a href="{{ route('terms-of-service') }}" class="text-white hover:underline">Terms of Service</a>
             @endif
         </div>
         <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col items-center min-w-[200px]">
