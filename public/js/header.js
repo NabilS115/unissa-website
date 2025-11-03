@@ -208,32 +208,39 @@ console.log('Header.js is loading...');
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileMenuPanel = document.getElementById('mobile-menu-panel');
-        const mobileCloseBtn = document.getElementById('mobile-close-btn');
         const menuIcon = document.getElementById('menu-icon');
         const closeIcon = document.getElementById('close-icon');
 
-        // Simple click handler for mobile menu button
+        // Mobile menu button toggle handler
         if (mobileMenuBtn) {
             mobileMenuBtn.onclick = function() {
                 console.log('Mobile menu button clicked!');
-                if (mobileMenu) {
-                    mobileMenu.classList.remove('hidden');
-                    console.log('Mobile menu shown');
-                    if (mobileMenuPanel) {
-                        mobileMenuPanel.style.transform = 'translateX(0)';
-                        console.log('Panel transformed');
+                const isMenuOpen = !mobileMenu.classList.contains('hidden');
+                
+                if (isMenuOpen) {
+                    // Close the menu
+                    window.closeMobileMenu();
+                } else {
+                    // Open the menu
+                    if (mobileMenu) {
+                        mobileMenu.classList.remove('hidden');
+                        console.log('Mobile menu shown');
+                        if (mobileMenuPanel) {
+                            mobileMenuPanel.style.transform = 'translateX(0)';
+                            console.log('Panel transformed');
+                        }
                     }
+                    if (menuIcon) menuIcon.classList.add('hidden');
+                    if (closeIcon) closeIcon.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
                 }
-                if (menuIcon) menuIcon.classList.add('hidden');
-                if (closeIcon) closeIcon.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
             };
         } else {
             console.log('Mobile menu button not found!');
         }
 
-        // Close mobile menu function
-        function closeMobileMenu() {
+        // Close mobile menu function (make it global)
+        window.closeMobileMenu = function() {
             if (mobileMenuPanel) {
                 mobileMenuPanel.style.transform = 'translateX(100%)';
             }
@@ -244,18 +251,15 @@ console.log('Header.js is loading...');
             setTimeout(() => {
                 if (mobileMenu) mobileMenu.classList.add('hidden');
             }, 300);
-        }
+        };
 
-        // Close button handler
-        if (mobileCloseBtn) {
-            mobileCloseBtn.onclick = closeMobileMenu;
-        }
+        // Note: Close button removed, users can tap backdrop or use window resize behavior
 
         // Close when clicking overlay
         if (mobileMenu) {
             mobileMenu.onclick = function(event) {
                 if (event.target === mobileMenu) {
-                    closeMobileMenu();
+                    window.closeMobileMenu();
                 }
             };
         }
@@ -263,7 +267,7 @@ console.log('Header.js is loading...');
         // Close mobile menu on window resize to desktop size
         window.addEventListener('resize', function() {
             if (window.innerWidth >= 768) { // md breakpoint
-                closeMobileMenu();
+                window.closeMobileMenu();
             }
         });
 

@@ -281,10 +281,10 @@
     </div>
         
         <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-[9998] md:hidden hidden">
-            <div class="fixed right-0 top-0 h-full w-80 max-w-[90vw] bg-white shadow-2xl transition-transform duration-300 ease-out overflow-y-auto" id="mobile-menu-panel" style="transform: translateX(100%)"
+        <div id="mobile-menu" class="fixed inset-0 backdrop-blur-sm z-[9998] md:hidden hidden" style="background-color: rgba(0, 0, 0, 0.1);">
+            <div class="fixed right-0 top-0 h-screen w-80 max-w-[90vw] bg-white shadow-2xl transition-transform duration-300 ease-out flex flex-col" id="mobile-menu-panel" style="transform: translateX(100%)">
                 <!-- Mobile Menu Header -->
-                <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-4 py-4 flex items-center justify-between">
+                <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-4 py-4 flex items-center flex-shrink-0">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 bg-red-600 border-2 border-white rounded-sm"></div>
                         <span class="font-bold text-white text-lg">
@@ -295,12 +295,10 @@
                             @endif
                         </span>
                     </div>
-                    <button id="mobile-close-btn" class="w-10 h-10 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 flex items-center justify-center transition-all duration-200 active:scale-95">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
                 </div>
+
+                <!-- Scrollable Content Area -->
+                <div class="flex-1 overflow-y-auto">
 
                 <!-- User Info -->
                 @auth
@@ -566,6 +564,7 @@
                         </div>
                     @endauth
                 </nav>
+                </div> <!-- End scrollable content -->
             </div>
         </div>
         
@@ -578,53 +577,65 @@
                 window.__cartCountUrl = null;
             @endauth
             
-            // Simple mobile menu fallback
+            // Global function to close mobile menu (accessible everywhere)
+            window.closeMobileMenu = function() {
+                console.log('🔴 Closing mobile menu...');
+                const mobileMenu = document.getElementById('mobile-menu');
+                const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+                const menuIcon = document.getElementById('menu-icon');
+                const closeIcon = document.getElementById('close-icon');
+                
+                if (mobileMenuPanel) mobileMenuPanel.style.transform = 'translateX(100%)';
+                if (menuIcon) menuIcon.classList.remove('hidden');
+                if (closeIcon) closeIcon.classList.add('hidden');
+                document.body.style.overflow = '';
+                
+                setTimeout(() => {
+                    if (mobileMenu) mobileMenu.classList.add('hidden');
+                }, 300);
+            };
+            
+            // Setup mobile menu functionality
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOM loaded, setting up mobile menu...');
+                console.log('🔧 DOM loaded, setting up mobile menu...');
                 
                 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
                 const mobileMenu = document.getElementById('mobile-menu');
                 const mobileMenuPanel = document.getElementById('mobile-menu-panel');
-                const mobileCloseBtn = document.getElementById('mobile-close-btn');
                 const menuIcon = document.getElementById('menu-icon');
                 const closeIcon = document.getElementById('close-icon');
                 
-                console.log('Mobile menu elements found:', {
+                console.log('📱 Mobile menu elements found:', {
                     btn: !!mobileMenuBtn,
                     menu: !!mobileMenu,
                     panel: !!mobileMenuPanel,
-                    closeBtn: !!mobileCloseBtn
+                    menuIcon: !!menuIcon,
+                    closeIcon: !!closeIcon
                 });
                 
-                if (mobileMenuBtn && mobileMenu && mobileMenuPanel) {
-                    mobileMenuBtn.addEventListener('click', function() {
-                        console.log('Mobile menu button clicked!');
-                        mobileMenu.classList.remove('hidden');
-                        mobileMenuPanel.style.transform = 'translateX(0)';
-                        if (menuIcon) menuIcon.classList.add('hidden');
-                        if (closeIcon) closeIcon.classList.remove('hidden');
-                    });
-                    
-                    function closeMobileMenu() {
-                        console.log('Closing mobile menu...');
-                        mobileMenuPanel.style.transform = 'translateX(100%)';
-                        if (menuIcon) menuIcon.classList.remove('hidden');
-                        if (closeIcon) closeIcon.classList.add('hidden');
-                        setTimeout(() => {
-                            mobileMenu.classList.add('hidden');
-                        }, 300);
-                    }
-                    
-                    if (mobileCloseBtn) {
-                        mobileCloseBtn.addEventListener('click', closeMobileMenu);
-                    }
-                    
-                    mobileMenu.addEventListener('click', function(event) {
-                        if (event.target === mobileMenu) {
-                            closeMobileMenu();
-                        }
-                    });
+                // Open menu function
+                function openMobileMenu() {
+                    console.log('📱 Opening mobile menu...');
+                    if (mobileMenu) mobileMenu.classList.remove('hidden');
+                    if (mobileMenuPanel) mobileMenuPanel.style.transform = 'translateX(0)';
+                    if (menuIcon) menuIcon.classList.add('hidden');
+                    if (closeIcon) closeIcon.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
                 }
+                
+                // Menu button click handled by header.js
+                
+                // Note: Close button removed, users can tap backdrop or use ESC key
+                
+                // Backdrop click handled by header.js
+                
+                // ESC key to close menu
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        console.log('⌨️ ESC pressed, closing menu...');
+                        window.closeMobileMenu();
+                    }
+                });
             });
         </script>
         <script src="/js/header.js"></script>

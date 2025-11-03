@@ -72,6 +72,50 @@
 
 @push('styles')
 <style>
+/* Mobile-first responsive optimizations */
+@media (max-width: 640px) {
+    .xl\:sticky {
+        position: static !important;
+    }
+    
+    .sticky {
+        position: static !important;
+    }
+    
+    .aspect-square {
+        aspect-ratio: 4/3;
+    }
+    
+    .min-h-screen {
+        min-height: 100vh;
+    }
+    
+    .bg-gray-50 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+}
+
+/* Touch-friendly tap targets */
+@media (hover: none) {
+    button, .cursor-pointer {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Improved text contrast for mobile */
+@media (max-width: 640px) {
+    .text-gray-600 {
+        color: rgb(75 85 99);
+    }
+    
+    .text-sm {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+}
+
 /* Aggressively remove ALL spinner arrows from number inputs */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -157,15 +201,15 @@ input[type="number"]::-ms-clear {
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 relative">
         @if(session('success'))
-            <div id="success-toast" class="absolute top-0 left-0 mt-8 ml-8 z-50 max-w-xs w-fit pointer-events-none flex">
-                <div class="bg-green-500 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-3 border-2 border-green-600 animate-fade-in-up pointer-events-auto relative w-fit">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <div id="success-toast" class="absolute top-0 left-2 sm:left-8 mt-4 sm:mt-8 z-50 max-w-xs w-fit pointer-events-none flex">
+                <div class="bg-green-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl shadow-xl flex items-center gap-2 sm:gap-3 border-2 border-green-600 animate-fade-in-up pointer-events-auto relative w-fit text-sm sm:text-base">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     <span class="font-semibold">{{ session('success') }}</span>
-                    <button id="close-success-toast" class="absolute top-2 right-2 text-white/70 hover:text-white transition-colors text-lg leading-none px-1 py-0.5 rounded focus:outline-none" aria-label="Close notification">&times;</button>
+                    <button id="close-success-toast" class="absolute top-1 sm:top-2 right-1 sm:right-2 text-white/70 hover:text-white transition-colors text-lg leading-none px-1 py-0.5 rounded focus:outline-none" aria-label="Close notification">&times;</button>
                 </div>
             </div>
             <style>
@@ -178,38 +222,39 @@ input[type="number"]::-ms-clear {
             
         @endif
         <!-- Breadcrumb and Back Button -->
-        <div class="mb-8">
-            <button onclick="goBack()" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200 transition-all duration-200 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <div class="mb-4 sm:mb-6 lg:mb-8">
+            <button onclick="goBack()" class="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-white text-gray-700 rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200 transition-all duration-200 font-medium text-sm sm:text-base">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
-                <span id="back-button-text">Back</span>
+                <span id="back-button-text" class="hidden sm:inline">Back</span>
+                <span class="sm:hidden">← Back</span>
             </button>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
             <!-- Left: Product Information -->
             <div class="xl:col-span-1">
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden sticky top-8">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden xl:sticky xl:top-8">
                     <!-- Product Image -->
-                    <div class="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+                    <div class="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}"
-                             class="w-full h-full object-cover rounded-xl shadow-md" />
+                             class="w-full h-full object-cover rounded-lg sm:rounded-xl shadow-md" />
                     </div>
                     
                     <!-- Product Details -->
-                    <div class="p-6">
+                    <div class="p-4 sm:p-6">
                         <div class="mb-2">
-                            <span class="inline-block px-3 py-1 text-xs font-semibold text-white bg-gradient-to-r from-teal-500 to-green-500 rounded-full">
+                            <span class="inline-block px-2 sm:px-3 py-1 text-xs font-semibold text-white bg-gradient-to-r from-teal-500 to-green-500 rounded-full">
                                 {{ ucfirst($product->type ?? 'Product') }}
                             </span>
                         </div>
-                        <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ $product->name }}</h1>
-                        <p class="text-gray-600 leading-relaxed mb-6">{{ $product->desc }}</p>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 leading-tight">{{ $product->name }}</h1>
+                        <p class="text-gray-600 leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">{{ $product->desc }}</p>
                         
                         <!-- Category Badge -->
-                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-gray-100 rounded-full text-xs sm:text-sm text-gray-700">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
                             </svg>
                             {{ $product->category }}
@@ -222,19 +267,19 @@ input[type="number"]::-ms-clear {
             <div class="xl:col-span-2 space-y-8">
                 <!-- Quick Order Section -->
                 @auth
-                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
                     <!-- Header Section -->
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-8 py-6 border-b border-green-100">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-green-100">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <div class="flex items-center gap-2 sm:gap-3">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl font-bold text-gray-900">Add to Cart</h2>
-                                    <p class="text-gray-600 text-sm mt-1">Select quantity and add to your cart</p>
+                                    <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Add to Cart</h2>
+                                    <p class="text-gray-600 text-xs sm:text-sm mt-1 hidden sm:block">Select quantity and add to your cart</p>
                                 </div>
                             </div>
                             <div @class([
@@ -268,25 +313,26 @@ input[type="number"]::-ms-clear {
                     </div>
 
                     <!-- Quick Order Content -->
-                    <div class="p-8">
+                    <div class="p-4 sm:p-6 lg:p-8">
                         <!-- Pricing & Quantity Section -->
-                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 mb-8">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8">
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                                 </svg>
-                                Select Quantity & Proceed
+                                <span class="hidden sm:inline">Select Quantity & Proceed</span>
+                                <span class="sm:hidden">Order Details</span>
                             </h3>
                             
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                 <!-- Price Display -->
-                                <div class="space-y-4">
-                                    <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                                <div class="space-y-3 sm:space-y-4">
+                                    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-5 border border-gray-200 shadow-sm">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-sm font-medium text-gray-600">Unit Price</span>
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-2xl font-bold text-green-600" id="unit-price">${{ number_format($product->price ?? 0, 2) }}</span>
-                                                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">each</span>
+                                            <span class="text-xs sm:text-sm font-medium text-gray-600">Unit Price</span>
+                                            <div class="flex items-center gap-1 sm:gap-2">
+                                                <span class="text-lg sm:text-2xl font-bold text-green-600" id="unit-price">${{ number_format($product->price ?? 0, 2) }}</span>
+                                                <span class="text-xs text-gray-500 bg-gray-100 px-1 sm:px-2 py-1 rounded-full">each</span>
                                             </div>
                                         </div>
                                     </div>
@@ -306,29 +352,29 @@ input[type="number"]::-ms-clear {
                                 </div>
                                 
                                 <!-- Quantity Controls -->
-                                <div class="space-y-4">
-                                    <label for="quantity" class="block text-sm font-medium text-gray-700">Select Quantity</label>
-                                    <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-                                        <div class="flex items-center justify-center gap-4">
+                                <div class="space-y-3 sm:space-y-4">
+                                    <label for="quantity" class="block text-xs sm:text-sm font-medium text-gray-700">Select Quantity</label>
+                                    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-5 border border-gray-200 shadow-sm">
+                                        <div class="flex items-center justify-center gap-2 sm:gap-4">
                                             <button type="button" id="decrease-qty" 
                                                 {{ !$product->isAvailable() ? 'disabled' : '' }}
-                                                class="w-12 h-12 rounded-xl border-2 flex items-center justify-center font-bold transition-all duration-200
+                                                class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl border-2 flex items-center justify-center font-bold transition-all duration-200
                                                 {{ $product->isAvailable() ? 'border-gray-300 text-gray-600 hover:border-green-500 hover:bg-green-50 hover:text-green-600' : 'border-gray-200 text-gray-400 cursor-not-allowed' }}">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/>
                                                 </svg>
                                             </button>
-                                            <div class="flex-1 max-w-24">
+                                            <div class="flex-1 max-w-16 sm:max-w-24">
                                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="quantity" name="quantity" value="1"
                                                        {{ !$product->isAvailable() ? 'disabled' : '' }}
-                                                       class="w-full text-center text-2xl font-bold border-2 rounded-xl px-4 py-3 transition-all quantity-input
+                                                       class="w-full text-center text-lg sm:text-2xl font-bold border-2 rounded-lg sm:rounded-xl px-2 sm:px-4 py-2 sm:py-3 transition-all quantity-input
                                                        {{ $product->isAvailable() ? 'border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500' : 'border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed' }}">
                                             </div>
                                             <button type="button" id="increase-qty" 
                                                 {{ !$product->isAvailable() ? 'disabled' : '' }}
-                                                class="w-12 h-12 rounded-xl border-2 flex items-center justify-center font-bold transition-all duration-200
+                                                class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl border-2 flex items-center justify-center font-bold transition-all duration-200
                                                 {{ $product->isAvailable() ? 'border-gray-300 text-gray-600 hover:border-green-500 hover:bg-green-50 hover:text-green-600' : 'border-gray-200 text-gray-400 cursor-not-allowed' }}">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                                                 </svg>
                                             </button>
@@ -434,23 +480,23 @@ input[type="number"]::-ms-clear {
                         }
                     @endphp
 
-                    <div class="flex items-start justify-between mb-8">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
                         <div>
-                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Customer Reviews</h2>
-                            <p class="text-gray-600">Based on {{ $totalRatings }} {{ $totalRatings === 1 ? 'review' : 'reviews' }}</p>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Customer Reviews</h2>
+                            <p class="text-gray-600 text-sm sm:text-base">Based on {{ $totalRatings }} {{ $totalRatings === 1 ? 'review' : 'reviews' }}</p>
                         </div>
                         @auth
-                            <button id="write-review-btn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-semibold rounded-xl shadow-lg hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 transform hover:scale-105">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <button id="write-review-btn" class="inline-flex items-center gap-1 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 transform hover:scale-105 text-sm sm:text-base">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                                 </svg>
                                 Write a Review
                             </button>
                         @else
-                            <div class="text-center">
-                                <p class="text-gray-600 mb-3">Want to share your experience?</p>
-                                <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="text-center sm:text-right">
+                                <p class="text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base">Want to share your experience?</p>
+                                <a href="{{ route('login') }}" class="inline-flex items-center gap-1 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gray-900 text-white font-semibold rounded-lg sm:rounded-xl hover:bg-gray-800 transition-colors text-sm sm:text-base">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
                                     Login to Review
@@ -459,7 +505,7 @@ input[type="number"]::-ms-clear {
                         @endauth
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                         <!-- Overall Rating -->
                         <div class="text-center">
                             <div class="text-6xl font-bold text-gray-900 mb-2">

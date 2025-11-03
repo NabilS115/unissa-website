@@ -188,15 +188,43 @@
                 right: 0;
                 bottom: 0;
                 z-index: 9998;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                background-color: rgba(255, 255, 255, 0.1);
             }
             
             #mobile-menu-panel {
                 transition: transform 0.3s ease-in-out;
                 transform: translateX(100%);
+                height: 100vh;
+                max-height: 100vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
             }
             
             #mobile-menu.show #mobile-menu-panel {
                 transform: translateX(0);
+            }
+            
+            /* Ensure mobile menu content doesn't overflow */
+            #mobile-menu-panel .overflow-y-auto {
+                max-height: calc(100vh - 80px); /* Account for header */
+                scrollbar-width: thin;
+            }
+            
+            /* CSS-only close button fallback */
+            #mobile-close-btn:active {
+                transform: scale(0.9);
+            }
+            
+            /* Make close button more prominent and easier to click */
+            #mobile-close-btn {
+                min-width: 44px !important;
+                min-height: 44px !important;
+                cursor: pointer;
+                user-select: none;
+                -webkit-tap-highlight-color: transparent;
             }
             
             /* Mobile menu button should be above content */
