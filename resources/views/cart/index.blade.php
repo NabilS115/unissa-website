@@ -6,19 +6,19 @@
 <div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Clean Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-emerald-600 mb-4 leading-tight">Your Shopping Cart</h1>
-            <p class="text-lg text-gray-600">Review your selected items and proceed to secure checkout</p>
+        <div class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-emerald-600 mb-3 leading-tight">Your Shopping Cart</h1>
+            <p class="text-base md:text-lg text-gray-600">Review your selected items and proceed to secure checkout</p>
         </div>
 
         @if($cartItems->isEmpty())
             <!-- Elegant Empty Cart -->
-            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-16 text-center">
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-16 text-center">
                 <!-- Empty cart SVG icon removed as requested -->
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
-                <p class="text-lg text-gray-600 mb-10 max-w-md mx-auto">Discover our amazing products and start building your perfect order</p>
-                <a href="{{ route('unissa-cafe.catalog') }}" class="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:from-teal-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
+                <p class="text-base md:text-lg text-gray-600 mb-8 md:mb-10 max-w-md mx-auto">Discover our amazing products and start building your perfect order</p>
+                <a href="{{ route('unissa-cafe.catalog') }}" class="inline-flex items-center gap-3 px-8 py-3 md:px-10 md:py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:from-teal-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                     Start Shopping
@@ -29,8 +29,8 @@
                 <!-- Modern Cart Items -->
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-                        <div class="flex items-center justify-between mb-8">
-                            <h2 class="text-3xl font-bold text-gray-800">Cart Items <span class="text-2xl text-teal-600">({{ $cartItems->count() }})</span></h2>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-0">Cart Items <span class="text-xl md:text-2xl text-teal-600">({{ $cartItems->count() }})</span></h2>
                             <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -267,57 +267,102 @@ input[type="number"] {
 /* Mobile layout optimizations for cart page */
 @media (max-width: 768px) {
     /* Cart container spacing */
-    .max-w-6xl {
+    .max-w-7xl {
         max-width: 100% !important;
         padding-left: 1rem !important;
         padding-right: 1rem !important;
         margin: 0 !important;
     }
     
+    /* Header text sizing */
+    .text-3xl {
+        font-size: 1.875rem !important;
+    }
+    
+    /* Cart grid - single column on mobile */
+    .grid.lg\\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    
     /* Cart item cards mobile optimization */
-    .cart-item-card {
+    .bg-gradient-to-r.from-gray-50.to-white {
         padding: 1rem !important;
         margin-bottom: 1rem !important;
+        border-radius: 1rem !important;
     }
     
     /* Product image sizing */
     .w-24.h-24 {
-        width: 80px !important;
-        height: 80px !important;
+        width: 64px !important;
+        height: 64px !important;
         flex-shrink: 0;
+        border-radius: 0.75rem !important;
+    }
+    
+    /* Product title sizing */
+    .text-xl.font-bold {
+        font-size: 1.125rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Price and category sizing */
+    .text-lg.font-semibold {
+        font-size: 1rem !important;
     }
     
     /* Mobile quantity controls */
-    .quantity-controls {
-        gap: 0.5rem !important;
+    .w-10.h-10 {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
     }
     
-    .quantity-btn {
-        width: 40px !important;
-        height: 40px !important;
-        min-width: 40px !important;
-        min-height: 40px !important;
-    }
-    
-    .quantity-input {
+    .w-20.text-center {
         width: 60px !important;
         padding: 0.5rem !important;
-        font-size: 1rem !important;
+        font-size: 0.875rem !important;
     }
     
     /* Cart summary mobile fixes */
-    .cart-summary {
-        padding: 1rem !important;
-        margin: 1rem 0 !important;
+    .bg-white.rounded-3xl.shadow-xl {
+        padding: 1.5rem !important;
+        margin: 0 !important;
+        border-radius: 1rem !important;
+    }
+    
+    /* Order summary mobile */
+    .text-3xl.font-bold {
+        font-size: 1.5rem !important;
+    }
+    
+    .text-2xl.font-bold {
+        font-size: 1.25rem !important;
     }
     
     /* Button sizing for mobile */
-    .checkout-btn, .continue-shopping-btn {
-        width: 100% !important;
-        padding: 1rem !important;
+    .w-full.inline-flex {
+        padding: 0.875rem 1.5rem !important;
         font-size: 1rem !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.75rem !important;
+        border-radius: 1rem !important;
     }
+    
+    /* Remove excessive padding on mobile */
+    .py-12 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+    
+    /* Trust badges mobile */
+    .flex.items-center.justify-center.gap-4 {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        text-align: center !important;
+    }
+}
     
     /* Price display mobile optimization */
     .price-display {
