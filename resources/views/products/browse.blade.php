@@ -2,6 +2,63 @@
 
 @section('title', 'Unissa Cafe - Catalog')
 
+@push('styles')
+<style>
+/* PROFESSIONAL MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+    .food-card, .merch-card {
+        margin-bottom: 16px !important;
+        min-height: 320px !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    
+    .food-card img, .merch-card img {
+        height: 180px !important;
+        max-height: 180px !important;
+        object-fit: cover !important;
+        width: 100% !important;
+        object-position: center !important;
+    }
+    
+    .food-card .p-2\.5, .merch-card .p-2\.5 {
+        padding: 16px !important;
+        flex-grow: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+    }
+    
+    .food-card button, .merch-card button {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+        border-radius: 8px !important;
+        min-width: 70px !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+    }
+    
+    .food-card h4, .merch-card h4 {
+        font-size: 16px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .food-card p, .merch-card p {
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 12px !important;
+    }
+    
+    /* Better grid spacing */
+    .grid {
+        gap: 16px !important;
+        padding: 16px !important;
+    }
+}
+</style>
+@endpush
+
 @section('content')
 @php
     $food = $food ?? [];
@@ -657,15 +714,15 @@
         <!-- Food Cards -->
         <template x-if="tab === 'food'">
             <div class="tab-content animate-fade-in">
-            <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.id">
-                    <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer food-card transform hover:-translate-y-2"
+                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer food-card transform hover:-translate-y-1 md:hover:-translate-y-2" style="margin-bottom: 12px !important;"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          :data-product-id="food.id"
                          @click="navigateToReview(food.id)">
                         <div class="relative overflow-hidden">
-                            <img :src="food.img" :alt="food.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
-                            <div class="absolute top-4 left-4">
+                            <img :src="food.img" :alt="food.name" class="w-full object-cover group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-fit: cover !important; object-position: center !important;">
+                            <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="food.category"></span>
                             </div>
                             <template x-if="food.calculated_rating && food.calculated_rating > 0">
@@ -687,14 +744,16 @@
                             </div>
                             @endif
                         </div>
-                        <div class="p-6">
-                            <h4 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors" x-text="food.name"></h4>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-2" x-text="food.desc"></p>
+                        <div class="p-2.5 md:p-6">
+                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="food.name"></h4>
+                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2" x-text="food.desc"></p>
                             <template x-if="food.price">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xl font-bold text-teal-600">$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
-                                    <button class="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white px-4 py-2 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                                        Order Now
+                                <div class="mt-auto">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
+                                    </div>
+                                    <button class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                                        Order
                                     </button>
                                 </div>
                             </template>
@@ -732,15 +791,15 @@
         <!-- Merchandise Cards -->
         <template x-if="tab === 'merch'">
             <div class="tab-content animate-fade-in">
-            <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 mb-20">
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-8 mb-20">
                 <template x-for="merch in pagedMerch" :key="merch.id">
-                    <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer merch-card transform hover:-translate-y-2"
+                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer merch-card transform hover:-translate-y-1 md:hover:-translate-y-2" style="margin-bottom: 12px !important;"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          :data-product-id="merch.id"
                          @click="navigateToReview(merch.id)">
                         <div class="relative overflow-hidden">
-                            <img :src="merch.img" :alt="merch.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
-                            <div class="absolute top-4 left-4">
+                            <img :src="merch.img" :alt="merch.name" class="w-full object-cover group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-fit: cover !important; object-position: center !important;">
+                            <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="merch.category"></span>
                             </div>
                             <template x-if="merch.calculated_rating && merch.calculated_rating > 0">
@@ -762,14 +821,16 @@
                             </div>
                             @endif
                         </div>
-                        <div class="p-6">
-                            <h4 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors" x-text="merch.name"></h4>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-2" x-text="merch.desc"></p>
+                        <div class="p-2.5 md:p-6">
+                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="merch.name"></h4>
+                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2" x-text="merch.desc"></p>
                             <template x-if="merch.price">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xl font-bold text-teal-600">$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
-                                    <button class="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white px-4 py-2 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                                        Order Now
+                                <div class="mt-auto">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
+                                    </div>
+                                    <button class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                                        Order
                                     </button>
                                 </div>
                             </template>
@@ -1120,6 +1181,62 @@ document.addEventListener('DOMContentLoaded', function() {
     .empty-state {
         padding: 2rem 1rem !important;
         text-align: center !important;
+    }
+    
+    /* Force mobile product card styles */
+    @media screen and (max-width: 767px) {
+        .food-card, .merch-card {
+            margin-bottom: 0.75rem !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            border-radius: 0.75rem !important;
+            transform: none !important;
+        }
+        
+        .food-card:hover, .merch-card:hover {
+            transform: translateY(-2px) !important;
+        }
+        
+        .food-card img, .merch-card img {
+            height: 9rem !important; /* h-36 = 144px */
+        }
+        
+        .food-card > div:last-child, .merch-card > div:last-child {
+            padding: 0.625rem !important;
+        }
+        
+        .food-card h4, .merch-card h4 {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+            margin-bottom: 0.25rem !important;
+        }
+        
+        .food-card p, .merch-card p {
+            font-size: 0.75rem !important;
+            line-height: 1rem !important;
+            margin-bottom: 0.5rem !important;
+            overflow: hidden !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 1 !important;
+            -webkit-box-orient: vertical !important;
+        }
+        
+        .food-card button, .merch-card button {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            border-radius: 0.375rem !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .food-card span[class*="text-"], .merch-card span[class*="text-"] {
+            font-size: 1rem !important;
+        }
+        
+        /* Grid adjustments */
+        .max-w-6xl.mx-auto.grid {
+            gap: 0.75rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
     }
 }
 </style>

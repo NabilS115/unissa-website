@@ -8,7 +8,7 @@
             @php
                 $headerContext = session('header_context', 'tijarah');
                 $referer = request()->headers->get('referer');
-                $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
+                $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*') || request()->is('unissa-cafe/catalog');
                 $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
                 
                 // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
@@ -31,7 +31,7 @@
             @endphp
                 @if($shouldShowUnissaBranding)
                     <span class="hidden sm:inline">Unissa Cafe</span>
-                    <span class="sm:hidden">Unissa</span>
+                    <span class="sm:hidden">Unissa Cafe</span>
                 @else
                     <span class="hidden sm:inline">Tijarah Co Sdn Bhd</span>
                     <span class="sm:hidden">Tijarah</span>
