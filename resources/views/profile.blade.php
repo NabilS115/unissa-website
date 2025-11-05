@@ -4,34 +4,34 @@
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style="max-width: 100%; padding-left: 12px; padding-right: 12px; margin: 0;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- User Header Card -->
-        <div class="bg-white rounded-2xl shadow-xl border border-teal-100 overflow-hidden mb-8 profile-header-card" style="border-radius: 16px; margin-bottom: 24px;">
-            <div class="h-32 bg-gradient-to-r from-teal-400 via-teal-500 to-green-500 relative profile-header" style="height: 100px;">
-                <button type="button" onclick="window.location.href='/edit-profile'" class="absolute top-4 right-4 px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 z-10 edit-btn" style="top: 12px; right: 12px; padding: 8px 12px; font-size: 14px; min-height: 40px;" aria-label="Edit Profile">
+        <div class="bg-white rounded-2xl shadow-xl border border-teal-100 overflow-hidden mb-8">
+            <div class="h-32 bg-gradient-to-r from-teal-400 via-teal-500 to-green-500 relative">
+                <button type="button" onclick="window.location.href='/edit-profile'" class="absolute top-4 right-4 px-4 py-2 bg-white border border-teal-200 text-teal-700 font-semibold rounded-xl shadow hover:bg-teal-50 hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 z-10" aria-label="Edit Profile">
                     Edit Profile
                 </button>
             </div>
-            <div class="relative px-8 pb-8" style="padding-left: 16px; padding-right: 16px; padding-bottom: 16px;">
-                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16" style="flex-direction: column; align-items: flex-start; justify-content: flex-start; margin-top: -40px;">
-                    <div class="flex flex-col lg:flex-row lg:items-end gap-6" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+            <div class="relative px-8 pb-8">
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between -mt-16">
+                    <div class="flex flex-col lg:flex-row lg:items-end gap-6">
                         <div class="relative">
                 @if(Auth::check())
-                    <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white profile-photo" style="width: 80px; height: 80px; border-width: 3px;">
+                    <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
                 @endif
                         </div>
-                        <div class="lg:mb-4" style="margin-bottom: 0;">
+                        <div class="lg:mb-4">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
                                 <div class="flex flex-col gap-0 mb-2">
                                     <div class="flex items-center gap-3">
-                                        <h1 class="text-3xl font-bold text-gray-900 profile-name" style="font-size: 22px; line-height: 1.3; margin-bottom: 8px;">@if(Auth::check()){{ Auth::user()->name }}@else Dr. Ahmad bin Ali @endif</h1>
+                                        <h1 class="text-3xl font-bold text-gray-900">@if(Auth::check()){{ Auth::user()->name }}@else Dr. Ahmad bin Ali @endif</h1>
                                     </div>
-                                    <div class="flex items-center gap-2 text-gray-600 mt-2 profile-details" style="margin-top: 8px;">
+                                    <div class="flex items-center gap-2 text-gray-600 mt-2">
                                         <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
                                             <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
                                         </svg>
-                                        <span class="font-medium role-badge" style="font-size: 13px; padding: 6px 10px;">@if(Auth::check()){{ Auth::user()->role }}@else Lecturer / Student / Staff @endif</span>
+                                        <span class="font-medium">@if(Auth::check()){{ Auth::user()->role }}@else Lecturer / Student / Staff @endif</span>
                                     </div>
                                 </div>
                             </div>
@@ -41,60 +41,56 @@
             </div>
         </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" style="grid-template-columns: 1fr; gap: 20px;">
-            <!-- Left Column: Profile Details -->
-            <div class="space-y-6">
-                <!-- Personal Information Card -->
-                <div class="bg-white rounded-2xl shadow-lg p-6 profile-card" style="padding: 16px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center section-icon" style="width: 32px; height: 32px; flex-shrink: 0;">
-                            <svg class="w-6 h-6 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-bold text-gray-900 section-title" style="font-size: 18px; margin-bottom: 16px; line-height: 1.4;">Personal Information</h2>
+        <!-- Main Content -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <!-- Personal Information Card -->
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900">Personal Information</h2>
+                </div>
+                    
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border-l-4 border-teal-400 pl-4">
+                        <div class="text-sm font-medium text-gray-500 mb-1">Full Name</div>
+                        <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->name }}@else Dr. Ahmad bin Ali @endif</div>
                     </div>
                     
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-teal-400 pl-4 info-item">
-                            <div class="text-sm font-medium text-gray-500 mb-1">Full Name</div>
-                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->name }}@else Dr. Ahmad bin Ali @endif</div>
-                        </div>
-                        
-                        <div class="border-l-4 border-blue-400 pl-4 info-item">
-                            <div class="text-sm font-medium text-gray-500 mb-1">Email Address</div>
-                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->email }}@else name@unissa.edu.bn @endif</div>
-                        </div>
-                        
-                        <div class="border-l-4 border-green-400 pl-4 info-item">
-                            <div class="text-sm font-medium text-gray-500 mb-1">Phone Number</div>
-                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->phone }}@else +673 xxxx xxxx @endif</div>
-                        </div>
-                        
-                        <div class="border-l-4 border-purple-400 pl-4 info-item">
-                            <div class="text-sm font-medium text-gray-500 mb-1">Faculty / Department</div>
-                            <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->department }}@else Faculty of Usuluddin @endif</div>
-                        </div>
+                    <div class="border-l-4 border-blue-400 pl-4">
+                        <div class="text-sm font-medium text-gray-500 mb-1">Email Address</div>
+                        <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->email }}@else name@unissa.edu.bn @endif</div>
+                    </div>
+                    
+                    <div class="border-l-4 border-green-400 pl-4">
+                        <div class="text-sm font-medium text-gray-500 mb-1">Phone Number</div>
+                        <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->phone }}@else +673 xxxx xxxx @endif</div>
+                    </div>
+                    
+                    <div class="border-l-4 border-purple-400 pl-4">
+                        <div class="text-sm font-medium text-gray-500 mb-1">Faculty / Department</div>
+                        <div class="text-gray-900 font-medium">@if(Auth::check()){{ Auth::user()->department }}@else Faculty of Usuluddin @endif</div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Right Column: Reviews -->
-            <div>
-                <div class="bg-white rounded-2xl shadow-lg p-8 reviews-section">
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center section-icon">
-                                <svg class="w-7 h-7 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900 section-title">My Reviews</h2>
-                                <p class="text-gray-600">@if(Auth::check()){{ Auth::user()->reviews->count() }} {{ Auth::user()->reviews->count() === 1 ? 'review' : 'reviews' }} shared @else 0 reviews shared @endif</p>
-                            </div>
+            <!-- Reviews Section -->
+            <div class="mt-8">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                            </svg>
                         </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">My Reviews</h2>
+                            <p class="text-gray-600">@if(Auth::check()){{ Auth::user()->reviews->count() }} {{ Auth::user()->reviews->count() === 1 ? 'review' : 'reviews' }} shared @else 0 reviews shared @endif</p>
+                        </div>
+                    </div>
                         
                         @if(Auth::check() && Auth::user()->reviews->count() > 1)
                             <div class="flex items-center gap-2 text-sm text-gray-500">
@@ -182,23 +178,14 @@
                             </a>
                         </div>
                     @endif
-                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Comprehensive mobile optimizations for profile page */
+/* Mobile optimizations for profile page */
 @media (max-width: 768px) {
-    /* Page container mobile fixes */
-    .max-w-7xl {
-        max-width: 100% !important;
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
-        margin: 0 !important;
-    }
-    
     /* Main container mobile */
     .min-h-screen {
         padding-top: 1rem !important;
@@ -211,35 +198,7 @@
         margin-bottom: 1.5rem !important;
     }
     
-    /* Header gradient mobile */
-    .profile-header {
-        height: 100px !important;
-    }
-    
-    /* Edit button mobile */
-    .edit-btn {
-        position: absolute !important;
-        top: 0.75rem !important;
-        right: 0.75rem !important;
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.875rem !important;
-        min-height: 40px !important;
-    }
-    
-    /* Profile photo mobile */
-    .profile-photo {
-        width: 80px !important;
-        height: 80px !important;
-        margin-top: -40px !important;
-        border-width: 3px !important;
-    }
-    
-    /* Profile info layout mobile */
-    .lg\\:flex-row {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 1rem !important;
-    }
+
     
     .lg\\:items-end {
         align-items: flex-start !important;
@@ -249,113 +208,14 @@
         justify-content: flex-start !important;
     }
     
-    /* Profile name mobile */
-    .profile-name {
-        font-size: 1.375rem !important;
-        line-height: 1.3 !important;
-        margin-bottom: 0.5rem !important;
-    }
+
     
-    /* Profile details mobile */
-    .profile-details {
-        margin-top: 0.5rem !important;
-        margin-bottom: 0 !important;
-    }
-    
-    /* Role badge mobile */
-    .role-badge {
-        font-size: 0.8rem !important;
-        padding: 0.375rem 0.625rem !important;
-    }
-    
-    /* Grid layout mobile */
-    .grid.md\\:grid-cols-2 {
-        grid-template-columns: 1fr !important;
-        gap: 1.25rem !important;
-    }
-    
-    /* Card spacing mobile */
-    .profile-card {
-        padding: 1rem !important;
-        border-radius: 1rem !important;
-        margin-bottom: 1.25rem !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    /* Section titles mobile */
-    .section-title {
-        font-size: 1.125rem !important;
-        margin-bottom: 1rem !important;
-        line-height: 1.4 !important;
-    }
-    
-    /* Icon sizing mobile */
-    .section-icon {
-        width: 2rem !important;
-        height: 2rem !important;
-        flex-shrink: 0 !important;
-    }
-    
-    /* Info items mobile */
-    .info-item {
-        padding: 0.75rem !important;
-        margin-bottom: 0.875rem !important;
-        border-radius: 0.5rem !important;
-        background-color: rgba(249, 250, 251, 0.5) !important;
-    }
-    
-    /* Button mobile optimization */
-    .profile-btn {
-        width: 100% !important;
-        padding: 0.875rem 1.5rem !important;
-        font-size: 1rem !important;
-        min-height: 48px !important;
-        justify-content: center !important;
-        border-radius: 0.75rem !important;
-    }
-    
-    /* Browse button mobile */
-    .browse-btn {
-        width: 100% !important;
-        justify-content: center !important;
-        padding: 0.875rem 1.25rem !important;
-        min-height: 48px !important;
-        font-size: 0.95rem !important;
-        border-radius: 0.75rem !important;
-    }
-    
-    /* Reviews section mobile - only visual styling, don't break layout */
-    .reviews-section {
-        padding: 1rem !important;
-        border-radius: 1rem !important;
-    }
-    
-    /* Reviews section header mobile */
-    .reviews-section .section-title {
-        font-size: 1.125rem !important;
-    }
-    
-    .reviews-section .section-icon {
-        width: 2rem !important;
-        height: 2rem !important;
-    }
-    
-    .reviews-section .w-7.h-7 {
-        width: 1rem !important;
-        height: 1rem !important;
-    }
-    
-    .reviews-section p {
-        font-size: 0.875rem !important;
-    }
+
     
     /* Mobile-only carousel fixes */
     @media (max-width: 768px) {
         #reviews-carousel {
-            margin-left: 0.5rem !important;
-            margin-right: 0.5rem !important;
             overflow: hidden !important;
-            width: calc(100vw - 1rem) !important;
         }
         
         #reviews-track {
@@ -402,171 +262,13 @@
             width: calc(100% - 0.5rem) !important;
         }
     }
-    
-    /* Navigation arrows mobile */
-    .reviews-section button[onclick*="moveReview"] {
-        width: 2.5rem !important;
-        height: 2.5rem !important;
-        z-index: 30 !important;
-    }
-    
-    /* Navigation dots mobile */
-    .review-dot {
-        width: 0.75rem !important;
-        height: 0.75rem !important;
-    }
-    
-    .review-dot.bg-teal-500 {
-        width: 1.5rem !important;
-    }
-    
-    /* Reviews display area mobile - VERY compact */
-    .reviews-section .bg-gray-50.rounded-xl {
-        padding: 0.5rem !important;
-        min-height: 180px !important;
-    }
-    
-    /* Review cards mobile - super compact */
-    .reviews-section .bg-white.rounded-xl {
-        padding: 0.75rem !important;
-        border-radius: 0.5rem !important;
-    }
-    
-    /* Review content mobile - much smaller text */
-    .reviews-section .text-lg {
-        font-size: 0.8rem !important;
-        line-height: 1.3 !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .reviews-section .text-xl {
-        font-size: 0.9rem !important;
-        line-height: 1.2 !important;
-    }
-    
-    .reviews-section .w-5.h-5 {
-        width: 0.75rem !important;
-        height: 0.75rem !important;
-    }
-    
-    /* Rating stars container mobile - very compact */
-    .reviews-section .flex.items-center.gap-1 {
-        padding: 0.25rem 0.375rem !important;
-        gap: 0.125rem !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Product info section mobile - super compact */
-    .reviews-section .bg-gradient-to-br {
-        padding: 0.375rem !important;
-        border-radius: 0.25rem !important;
-        margin-top: 0.5rem !important;
-    }
-    
-    /* Review text mobile - very compact */
-    .reviews-section .max-w-2xl {
-        max-width: 100% !important;
-        padding: 0 !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .reviews-section .text-center.mb-6 {
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Rating number mobile */
-    .reviews-section .text-lg.font-semibold {
-        font-size: 0.8rem !important;
-    }
-    
-    /* Product info text mobile */
-    .reviews-section .text-xs {
-        font-size: 0.7rem !important;
-    }
+
+
     
     .reviews-section .text-sm {
         font-size: 0.75rem !important;
     }
-    
-    .reviews-section .font-semibold {
-        font-size: 0.8rem !important;
-    }
-    
-    /* Empty state mobile */
-    .empty-state {
-        padding: 1.5rem 1rem !important;
-        text-align: center !important;
-    }
-    
-    .empty-icon {
-        width: 3rem !important;
-        height: 3rem !important;
-        margin: 0 auto 1rem !important;
-    }
-    
-    .empty-title {
-        font-size: 1.125rem !important;
-        margin-bottom: 0.5rem !important;
-        line-height: 1.4 !important;
-    }
-    
-    .empty-text {
-        font-size: 0.875rem !important;
-        margin-bottom: 1.5rem !important;
-        max-width: 100% !important;
-        line-height: 1.5 !important;
-        padding: 0 0.5rem !important;
-    }
-    
-    /* Profile stats mobile (if any) */
-    .profile-stats {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-    }
-    
-    .stat-item {
-        text-align: center !important;
-        padding: 0.75rem !important;
-        flex: 1 !important;
-    }
-    
-    .stat-number {
-        font-size: 1.25rem !important;
-    }
-    
-    .stat-label {
-        font-size: 0.875rem !important;
-    }
-    
-    /* Role badge mobile */
-    .role-badge {
-        font-size: 0.875rem !important;
-        padding: 0.5rem 0.75rem !important;
-    }
-    
-    /* Contact info mobile */
-    .contact-info {
-        flex-direction: column !important;
-        gap: 0.5rem !important;
-    }
-    
-    /* Activity cards mobile */
-    .activity-card {
-        padding: 0.75rem !important;
-        border-radius: 0.75rem !important;
-    }
-    
-    /* Quick actions mobile */
-    .quick-actions {
-        grid-template-columns: 1fr !important;
-        gap: 0.75rem !important;
-    }
-    
-    .quick-action-btn {
-        width: 100% !important;
-        padding: 1rem !important;
-        justify-content: flex-start !important;
-    }
+
 }
 </style>
 @endsection
