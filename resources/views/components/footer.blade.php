@@ -112,6 +112,3 @@
         </div>
     </div>
 </footer>
-        </div>
-    </div>
-</footer>

@@ -292,7 +292,7 @@ input[type="number"]::-ms-clear {
     display: none !important;
 }
     pointer-events: none;
-}
+
 
 .quantity-input[type=number] {
     -moz-appearance: textfield !important;
@@ -319,7 +319,7 @@ input[type="number"]::-ms-clear {
 @endpush
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="bg-gray-50 py-8">
 
     <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 relative">
         @if(session('success'))
@@ -355,7 +355,7 @@ input[type="number"]::-ms-clear {
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
             <!-- Left: Product Information -->
             <div class="xl:col-span-1">
-                <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden xl:sticky xl:top-8">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
                     <!-- Product Image -->
                     <div class="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}"

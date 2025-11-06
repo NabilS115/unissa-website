@@ -453,7 +453,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
     @include('components.header')
-    <main class="flex-1 w-full overflow-x-hidden">
+    <main class="flex-1 w-full">
         @yield('content')
     </main>
     @include('components.footer')
