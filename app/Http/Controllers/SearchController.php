@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class SearchController extends Controller
 {
@@ -18,39 +19,47 @@ class SearchController extends Controller
             return response()->json([]);
         }
         
-        $suggestions = [];
+        // Create cache key based on query and scope
+        $cacheKey = "search.suggestions." . md5($query . $scope . (auth()->id() ?? 'guest'));
         
-        switch ($scope) {
-            case 'products':
-                $suggestions = $this->getProductSuggestions($query);
-                break;
-            case 'reviews':
-                $suggestions = $this->getReviewSuggestions($query);
-                break;
-            case 'users':
-                if (auth()->check() && auth()->user()->role === 'admin') {
-                    $suggestions = $this->getUserSuggestions($query);
-                }
-                break;
-            case 'all':
-            default:
-                $suggestions = array_merge(
-                    $this->getProductSuggestions($query, 5),
-                    $this->getReviewSuggestions($query, 3)
-                );
-                if (auth()->check() && auth()->user()->role === 'admin') {
-                    $suggestions = array_merge($suggestions, $this->getUserSuggestions($query, 2));
-                }
-                break;
-        }
+        $suggestions = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($query, $scope) {
+            $suggestions = [];
+            
+            switch ($scope) {
+                case 'products':
+                    $suggestions = $this->getProductSuggestions($query);
+                    break;
+                case 'reviews':
+                    $suggestions = $this->getReviewSuggestions($query);
+                    break;
+                case 'users':
+                    if (auth()->check() && auth()->user()->role === 'admin') {
+                        $suggestions = $this->getUserSuggestions($query);
+                    }
+                    break;
+                case 'all':
+                default:
+                    $suggestions = array_merge(
+                        $this->getProductSuggestions($query, 5),
+                        $this->getReviewSuggestions($query, 3)
+                    );
+                    if (auth()->check() && auth()->user()->role === 'admin') {
+                        $suggestions = array_merge($suggestions, $this->getUserSuggestions($query, 2));
+                    }
+                    break;
+            }
+            
+            return array_slice($suggestions, 0, 10);
+        });
         
-        return response()->json(array_slice($suggestions, 0, 10));
+        return response()->json($suggestions);
     }
     
     public function search(Request $request)
     {
         $query = $request->get('search', '');
         $scope = $request->get('scope', 'all');
+        $page = $request->get('page', 1);
         $perPage = 12;
         
         $results = [
@@ -64,33 +73,50 @@ class SearchController extends Controller
         ];
         
         if (strlen($query) >= 2) {
-            switch ($scope) {
-                case 'products':
-                    $results['products'] = $this->searchProducts($query)->paginate($perPage);
-                    $results['total'] = $results['products']->total();
-                    break;
-                case 'reviews':
-                    $results['reviews'] = $this->searchReviews($query)->paginate($perPage);
-                    $results['total'] = $results['reviews']->total();
-                    break;
-                case 'users':
-                    if (auth()->check() && auth()->user()->role === 'admin') {
-                        $results['users'] = $this->searchUsers($query)->paginate($perPage);
-                        $results['total'] = $results['users']->total();
-                    }
-                    break;
-                case 'all':
-                default:
-                    $results['products'] = $this->searchProducts($query)->paginate(8);
-                    $results['reviews'] = $this->searchReviews($query)->paginate(6);
-                    if (auth()->check() && auth()->user()->role === 'admin') {
-                        $results['users'] = $this->searchUsers($query)->paginate(4);
-                        $results['total'] = $results['products']->total() + $results['reviews']->total() + $results['users']->total();
-                    } else {
-                        $results['total'] = $results['products']->total() + $results['reviews']->total();
-                    }
-                    break;
-            }
+            // Create cache key for search results
+            $cacheKey = "search.results." . md5($query . $scope . $page . (auth()->id() ?? 'guest'));
+            
+            $cachedResults = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($query, $scope, $perPage) {
+                $searchResults = [];
+                
+                switch ($scope) {
+                    case 'products':
+                        $products = $this->searchProducts($query)->paginate($perPage);
+                        $searchResults['products'] = $products;
+                        $searchResults['total'] = $products->total();
+                        break;
+                    case 'reviews':
+                        $reviews = $this->searchReviews($query)->paginate($perPage);
+                        $searchResults['reviews'] = $reviews;
+                        $searchResults['total'] = $reviews->total();
+                        break;
+                    case 'users':
+                        if (auth()->check() && auth()->user()->role === 'admin') {
+                            $users = $this->searchUsers($query)->paginate($perPage);
+                            $searchResults['users'] = $users;
+                            $searchResults['total'] = $users->total();
+                        }
+                        break;
+                    case 'all':
+                    default:
+                        $products = $this->searchProducts($query)->paginate(8);
+                        $reviews = $this->searchReviews($query)->paginate(6);
+                        $searchResults['products'] = $products;
+                        $searchResults['reviews'] = $reviews;
+                        if (auth()->check() && auth()->user()->role === 'admin') {
+                            $users = $this->searchUsers($query)->paginate(4);
+                            $searchResults['users'] = $users;
+                            $searchResults['total'] = $products->total() + $reviews->total() + $users->total();
+                        } else {
+                            $searchResults['total'] = $products->total() + $reviews->total();
+                        }
+                        break;
+                }
+                
+                return $searchResults;
+            });
+            
+            $results = array_merge($results, $cachedResults);
         }
         
         return view('search.results', $results);

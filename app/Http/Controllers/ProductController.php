@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -67,9 +68,17 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // Show product even if not available, but indicate status
-        $product->load('reviews');
-        return view('product-detail', compact('product'));
+        // Cache product details with reviews for 20 minutes
+        $cacheKey = "product.detail.{$product->id}";
+        
+        $productWithReviews = Cache::remember($cacheKey, now()->addMinutes(20), function () use ($product) {
+            // Load reviews with user data for better performance
+            return $product->load(['reviews.user' => function ($query) {
+                $query->select('id', 'name'); // Only select needed fields
+            }]);
+        });
+        
+        return view('product-detail', ['product' => $productWithReviews]);
     }
 
     /**

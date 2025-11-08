@@ -8,6 +8,7 @@ use App\Models\Review;
 use App\Models\ReviewHelpful;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 
 class ReviewController extends Controller
@@ -30,6 +31,10 @@ class ReviewController extends Controller
         $review->rating = $request->rating;
         $review->review = $request->review;
         $review->save();
+        
+        // Clear review-related caches
+        $this->clearReviewCaches($review->product_id);
+        
         return response()->json([
             'success' => true,
             'message' => 'Review updated successfully!',
@@ -50,6 +55,9 @@ class ReviewController extends Controller
             'rating' => $request->rating,
             'review' => $request->review,
         ]);
+
+        // Clear review-related caches
+        $this->clearReviewCaches($request->product_id);
 
         return response()->json([
             'success' => true,
@@ -80,6 +88,9 @@ class ReviewController extends Controller
             'rating' => $request->rating,
             'review' => $request->review,
         ]);
+
+        // Clear review-related caches
+        $this->clearReviewCaches($id);
 
         return back()->with('success', 'Your review has been submitted successfully!');
     }
@@ -169,9 +180,30 @@ class ReviewController extends Controller
         // Delete the review
         $review->delete();
 
+        // Clear review-related caches
+        $this->clearReviewCaches($review->product_id);
+
         return response()->json([
             'success' => true,
             'message' => 'Review deleted successfully.'
         ]);
+    }
+    
+    /**
+     * Clear review-related caches when reviews are modified
+     */
+    private function clearReviewCaches($productId)
+    {
+        $product = Product::find($productId);
+        if ($product) {
+            // Clear product detail cache (includes reviews)
+            Cache::forget("product.detail.{$productId}");
+            
+            // Clear featured products caches (reviews affect rating-based sorting)
+            Cache::forget("products.featured.{$product->type}");
+            
+            // Clear testimonials cache
+            Cache::forget('reviews.testimonials');
+        }
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class AdminProductController extends Controller
 {
@@ -566,19 +567,21 @@ class AdminProductController extends Controller
     }
 
     /**
-     * Get product statistics for dashboard.
+     * Get cached product statistics for admin dashboard
      */
     private function getProductStatistics(): array
     {
-        return [
-            'total_products' => Product::count(),
-            'available_products' => Product::where('status', Product::STATUS_ACTIVE)->count(),
-            'inactive_products' => Product::where('status', Product::STATUS_INACTIVE)->count(),
-            'out_of_stock' => Product::where('status', Product::STATUS_OUT_OF_STOCK)->count(),
-            'low_stock' => Product::lowStock()->count(),
-            'discontinued' => Product::where('status', Product::STATUS_DISCONTINUED)->count(),
-            'recent_products' => Product::where('created_at', '>=', now()->subDays(7))->count(),
-        ];
+        return Cache::remember('admin.product.stats', now()->addMinutes(10), function () {
+            return [
+                'total_products' => Product::count(),
+                'available_products' => Product::where('status', Product::STATUS_ACTIVE)->count(),
+                'inactive_products' => Product::where('status', Product::STATUS_INACTIVE)->count(),
+                'out_of_stock' => Product::where('status', Product::STATUS_OUT_OF_STOCK)->count(),
+                'low_stock' => Product::lowStock()->count(),
+                'discontinued' => Product::where('status', Product::STATUS_DISCONTINUED)->count(),
+                'recent_products' => Product::where('created_at', '>=', now()->subDays(7))->count(),
+            ];
+        });
     }
 
     /**
