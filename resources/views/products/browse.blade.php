@@ -11,6 +11,7 @@
         min-height: 320px !important;
         display: flex !important;
         flex-direction: column !important;
+        height: auto !important;
     }
     
     .food-card img, .merch-card img {
@@ -36,6 +37,7 @@
         min-width: 70px !important;
         font-weight: 600 !important;
         white-space: nowrap !important;
+        margin-top: auto !important;
     }
     
     .food-card h4, .merch-card h4 {
@@ -48,12 +50,22 @@
         font-size: 13px !important;
         line-height: 1.4 !important;
         margin-bottom: 12px !important;
+        flex-grow: 1 !important;
     }
     
     /* Better grid spacing */
     .grid {
         gap: 16px !important;
         padding: 16px !important;
+    }
+    
+    /* Ensure equal card heights */
+    .max-w-6xl.mx-auto.grid {
+        align-items: stretch !important;
+    }
+    
+    .max-w-6xl.mx-auto.grid > * {
+        height: 100% !important;
     }
 }
 </style>
@@ -716,7 +728,7 @@
             <div class="tab-content animate-fade-in">
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-8 mb-20">
                 <template x-for="food in pagedFoods" :key="food.id">
-                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer food-card transform hover:-translate-y-1 md:hover:-translate-y-2" style="margin-bottom: 12px !important;"
+                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer food-card transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          :data-product-id="food.id"
                          @click="navigateToReview(food.id)">
@@ -744,9 +756,9 @@
                             </div>
                             @endif
                         </div>
-                        <div class="p-2.5 md:p-6">
+                        <div class="p-2.5 md:p-6 flex flex-col flex-grow">
                             <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="food.name"></h4>
-                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2" x-text="food.desc"></p>
+                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow" x-text="food.desc"></p>
                             <template x-if="food.price">
                                 <div class="mt-auto">
                                     <div class="flex items-center justify-between mb-3">
@@ -793,7 +805,7 @@
             <div class="tab-content animate-fade-in">
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-8 mb-20">
                 <template x-for="merch in pagedMerch" :key="merch.id">
-                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer merch-card transform hover:-translate-y-1 md:hover:-translate-y-2" style="margin-bottom: 12px !important;"
+                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer merch-card transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
                          :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
                          :data-product-id="merch.id"
                          @click="navigateToReview(merch.id)">
@@ -821,9 +833,9 @@
                             </div>
                             @endif
                         </div>
-                        <div class="p-2.5 md:p-6">
+                        <div class="p-2.5 md:p-6 flex flex-col flex-grow">
                             <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="merch.name"></h4>
-                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2" x-text="merch.desc"></p>
+                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow" x-text="merch.desc"></p>
                             <template x-if="merch.price">
                                 <div class="mt-auto">
                                     <div class="flex items-center justify-between mb-3">
@@ -1048,6 +1060,9 @@ document.addEventListener('DOMContentLoaded', function() {
         width: 100% !important;
         margin: 0 !important;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
     }
     
     /* Image container fixes */
@@ -1068,6 +1083,9 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Card content padding adjustments */
     .food-card .p-6, .merch-card .p-6 {
         padding: 1rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        flex-grow: 1 !important;
     }
     
     /* Price and button spacing */
@@ -1190,6 +1208,9 @@ document.addEventListener('DOMContentLoaded', function() {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
             border-radius: 0.75rem !important;
             transform: none !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: auto !important;
         }
         
         .food-card:hover, .merch-card:hover {
@@ -1202,6 +1223,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         .food-card > div:last-child, .merch-card > div:last-child {
             padding: 0.625rem !important;
+            display: flex !important;
+            flex-direction: column !important;
+            flex-grow: 1 !important;
         }
         
         .food-card h4, .merch-card h4 {
@@ -1218,6 +1242,7 @@ document.addEventListener('DOMContentLoaded', function() {
             display: -webkit-box !important;
             -webkit-line-clamp: 1 !important;
             -webkit-box-orient: vertical !important;
+            flex-grow: 1 !important;
         }
         
         .food-card button, .merch-card button {
@@ -1225,6 +1250,7 @@ document.addEventListener('DOMContentLoaded', function() {
             font-size: 0.75rem !important;
             border-radius: 0.375rem !important;
             flex-shrink: 0 !important;
+            margin-top: auto !important;
         }
         
         .food-card span[class*="text-"], .merch-card span[class*="text-"] {
