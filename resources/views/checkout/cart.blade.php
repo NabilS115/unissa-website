@@ -323,34 +323,77 @@
                                 <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
                                     <input type="radio" name="payment_method" value="bank_transfer" class="text-teal-600 focus:ring-teal-500 w-5 h-5" {{ old('payment_method', Auth::user()->payment_method) === 'bank_transfer' ? 'checked' : '' }}>
                                     <div class="ml-4">
-                                        <div class="font-semibold text-gray-800">Bank Transfer</div>
-                                        <div class="text-sm text-gray-600">Pay via local bank transfer</div>
+                                        <div class="font-semibold text-gray-800">BIBD Bank Transfer</div>
+                                        <div class="text-sm text-gray-600">Pay via BIBD online banking or mobile app</div>
                                     </div>
                                 </label>
                             </div>
 
                             <!-- Bank Transfer Fields -->
-                            <div id="bank-transfer-fields" class="mt-4 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-xl" style="display:none;">
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="bank_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Bank Name</label>
-                                        <select name="bank_name" id="bank_name" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] bg-white">
-                                            <option value="">Select a bank</option>
-                                            <option value="BIBD" {{ old('bank_name', Auth::user()->bank_name) == 'BIBD' ? 'selected' : '' }}>BIBD</option>
-                                            <option value="Baiduri" {{ old('bank_name', Auth::user()->bank_name) == 'Baiduri' ? 'selected' : '' }}>Baiduri</option>
-                                            <option value="Standard Chartered" {{ old('bank_name', Auth::user()->bank_name) == 'Standard Chartered' ? 'selected' : '' }}>Standard Chartered</option>
-                                            <option value="TAIB" {{ old('bank_name', Auth::user()->bank_name) == 'TAIB' ? 'selected' : '' }}>TAIB</option>
-                                        </select>
+                            <div id="bank-transfer-fields" class="mt-4 p-6 bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-xl" style="display:none;">
+                                <div class="mb-6">
+                                    <h4 class="text-lg font-semibold text-teal-800 mb-3 flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h6a1 1 0 001-1v-6a1 1 0 00-1-1h-6z"/>
+                                        </svg>
+                                        UNISSA Bank Transfer Details
+                                    </h4>
+                                    
+                                    <div class="bg-white rounded-lg p-4 border border-teal-200 mb-4">
+                                        <div class="space-y-3 text-sm">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-semibold text-gray-700">Bank:</span>
+                                                <span class="text-teal-700 font-medium">BIBD (Bank Islam Brunei Darussalam)</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-semibold text-gray-700">Account Name:</span>
+                                                <span class="text-teal-700 font-medium">UNISSA Café</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-semibold text-gray-700">Account Number:</span>
+                                                <span class="font-mono bg-teal-100 px-3 py-1 rounded text-teal-800 font-bold">[UNISSA's Real Account Number]</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-semibold text-gray-700">Amount:</span>
+                                                <span class="text-xl font-bold text-green-600">${{ number_format($totalPrice ?? 0, 2) }}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label for="bank_account" class="block text-sm font-semibold text-[#0d9488] mb-2">Account Number</label>
-                                        <input name="bank_account" id="bank_account" type="text" autocomplete="off" value="{{ old('bank_account', Auth::user()->bank_account) }}" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Account number" maxlength="16" pattern="^[0-9]{16}$" oninput="validateBankAccount(this)" />
-                                        <p id="bank-account-validation" class="mt-2 text-sm"></p>
+                                    
+                                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                                        <h6 class="font-semibold text-amber-800 mb-2 flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            BIBD Transfer Instructions:
+                                        </h6>
+                                        <ul class="text-sm text-amber-700 space-y-1">
+                                            <li>• Transfer exactly <strong>${{ number_format($totalPrice ?? 0, 2) }}</strong> from your BIBD account</li>
+                                            <li>• Use your <strong>phone number</strong> as transfer reference</li>
+                                            <li>• Transfer is instant between BIBD accounts</li>
+                                            <li>• Keep your transfer receipt for verification</li>
+                                            <li>• Payment confirmation within 1 hour (business hours)</li>
+                                            <li>• For urgent matters, WhatsApp us: <strong>+673 8123456</strong></li>
+                                        </ul>
                                     </div>
                                 </div>
-
-                                <label for="bank_reference" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Reference</label>
-                                <input name="bank_reference" id="bank_reference" type="text" autocomplete="off" value="{{ old('bank_reference', Auth::user()->bank_reference) }}" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Reference (optional)" />
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="bank_name" class="block text-sm font-semibold text-teal-700 mb-2">Bank</label>
+                                        <div class="w-full px-4 py-3 border border-teal-300 rounded-xl bg-gray-50 text-teal-800 font-medium">
+                                            BIBD (Bank Islam Brunei Darussalam)
+                                        </div>
+                                        <input type="hidden" name="bank_name" value="BIBD" />
+                                        <p class="text-xs text-teal-600 mt-1">We only accept BIBD transfers for faster processing</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="bank_reference" class="block text-sm font-semibold text-teal-700 mb-2">Transfer Reference *</label>
+                                        <input name="bank_reference" id="bank_reference" type="text" autocomplete="off" value="{{ old('bank_reference', Auth::user()->phone) }}" class="w-full px-4 py-3 border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 text-teal-800 placeholder-teal-400 bg-white" placeholder="Use your phone number (e.g., 8123456)" required />
+                                        <p class="text-xs text-teal-600 mt-1">This helps us identify your payment quickly</p>
+                                    </div>
+                                </div>
                             </div>
                             @error('payment_method')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -358,8 +401,41 @@
                         </div>
 
                         <!-- Cash Payment Info -->
-                        <div id="cash-payment-info" class="mb-6 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-xl">
-                            <p class="text-sm text-teal-700">Please bring the exact amount (${{ number_format($totalPrice, 2) }}) when collecting your order. We'll prepare your order and notify you when it's ready for pickup.</p>
+                        <div id="cash-payment-info" class="mb-6 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
+                            <h4 class="text-lg font-semibold text-green-800 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 2v3H9V6h7z"/>
+                                    <path d="M7 10v3H4v-3h3z"/>
+                                </svg>
+                                Cash Payment - Easy & Convenient
+                            </h4>
+                            
+                            <div class="bg-white rounded-lg p-4 border border-green-200 mb-4">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-lg font-semibold text-gray-700">Total Amount:</span>
+                                    <span class="text-2xl font-bold text-green-600">${{ number_format($totalPrice, 2) }}</span>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    <p class="mb-2"><strong>Pickup Location:</strong> UNISSA Café, [Your Address]</p>
+                                    <p><strong>Business Hours:</strong> Monday-Sunday, 8:00 AM - 8:00 PM</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-100 border border-green-300 rounded-lg p-4">
+                                <h6 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Cash Payment Instructions:
+                                </h6>
+                                <ul class="text-sm text-green-700 space-y-1">
+                                    <li>• Prepare exact amount: <strong>${{ number_format($totalPrice, 2) }}</strong></li>
+                                    <li>• We'll notify you when your order is ready</li>
+                                    <li>• Bring your order confirmation (email/SMS)</li>
+                                    <li>• Payment due upon pickup</li>
+                                    <li>• Contact us: <strong>+673 8123456</strong> for any questions</li>
+                                </ul>
+                            </div>
                         </div>
 
                         <!-- Credit Card Form -->
@@ -399,6 +475,58 @@
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card Payment Info -->
+                        <div id="credit-payment-info" class="mb-6 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl" style="display: none;">
+                            <h4 class="text-lg font-semibold text-purple-800 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4 4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h16v3H4V6zm0 5h16v7H4v-7z"/>
+                                </svg>
+                                Credit/Debit Card Payment
+                            </h4>
+                            
+                            <div class="bg-white rounded-lg p-4 border border-purple-200 mb-4">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-lg font-semibold text-gray-700">Total Amount:</span>
+                                    <span class="text-2xl font-bold text-purple-600">${{ number_format($totalPrice, 2) }}</span>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                        <svg class="w-8 h-5 mr-3" viewBox="0 0 48 32">
+                                            <rect width="48" height="32" rx="4" fill="#1434CB"/>
+                                            <text x="24" y="20" text-anchor="middle" fill="white" font-size="8" font-weight="bold">VISA</text>
+                                        </svg>
+                                        <span class="text-sm text-gray-700">Visa</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                        <svg class="w-8 h-5 mr-3" viewBox="0 0 48 32">
+                                            <rect width="48" height="32" rx="4" fill="#EB001B"/>
+                                            <circle cx="18" cy="16" r="8" fill="#FF5F00"/>
+                                            <circle cx="30" cy="16" r="8" fill="#F79E1B"/>
+                                        </svg>
+                                        <span class="text-sm text-gray-700">Mastercard</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-purple-100 border border-purple-300 rounded-lg p-4">
+                                <h6 class="font-semibold text-purple-800 mb-2 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Secure Online Payment:
+                                </h6>
+                                <ul class="text-sm text-purple-700 space-y-1">
+                                    <li>• Safe & secure payment processing</li>
+                                    <li>• Instant confirmation upon successful payment</li>
+                                    <li>• Payment processed immediately</li>
+                                    <li>• Order will be prepared after payment verification</li>
+                                    <li>• Contact us: <strong>+673 8123456</strong> for payment support</li>
+                                </ul>
                             </div>
                         </div>
 

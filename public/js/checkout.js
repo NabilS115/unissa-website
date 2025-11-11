@@ -76,8 +76,11 @@
         const cashEl = document.getElementById('cash-payment-info');
         const cardEl = document.getElementById('credit-card-form');
         const bankEl = document.getElementById('bank-transfer-fields');
+        const creditInfoEl = document.getElementById('credit-payment-info');
+        
         if (cashEl) cashEl.style.display = (method === 'cash') ? 'block' : 'none';
         if (cardEl) cardEl.style.display = (method === 'online') ? 'block' : 'none';
+        if (creditInfoEl) creditInfoEl.style.display = (method === 'online') ? 'block' : 'none';
         if (bankEl) bankEl.style.display = (method === 'bank_transfer') ? 'block' : 'none';
     }
 

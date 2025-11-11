@@ -649,6 +649,7 @@ input[type="number"] {
     function updatePaymentMethod() {
         const cashPaymentInfo = document.getElementById('cash-payment-info');
         const onlinePaymentInfo = document.getElementById('online-payment-info');
+        const paypalPaymentInfo = document.getElementById('paypal-payment-info');
         const creditCardForm = document.getElementById('credit-card-form');
         const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
         const submitButton = document.querySelector('button[type="submit"] span');
@@ -656,13 +657,21 @@ input[type="number"] {
             if (method.checked && method.value === 'cash') {
                 if (cashPaymentInfo) cashPaymentInfo.style.display = 'block';
                 if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'none';
+                if (paypalPaymentInfo) paypalPaymentInfo.style.display = 'none';
                 if (creditCardForm) creditCardForm.style.display = 'none';
                 if (submitButton) submitButton.textContent = 'Complete Order';
             } else if (method.checked && method.value === 'online') {
                 if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
                 if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'block';
+                if (paypalPaymentInfo) paypalPaymentInfo.style.display = 'none';
                 if (creditCardForm) creditCardForm.style.display = 'block';
                 if (submitButton) submitButton.textContent = 'Pay Now & Complete Order';
+            } else if (method.checked && method.value === 'paypal') {
+                if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
+                if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'none';
+                if (paypalPaymentInfo) paypalPaymentInfo.style.display = 'block';
+                if (creditCardForm) creditCardForm.style.display = 'none';
+                if (submitButton) submitButton.textContent = 'Place Order';
             }
         });
     }

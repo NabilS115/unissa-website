@@ -240,13 +240,14 @@ window.__adminOrders = {
                                                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                                                     @endif
                                                 </svg>
-                                                <span style="white-space:nowrap;">{{ $order->payment_method === 'bank_transfer' ? 'Bank Transfer' : ucfirst($order->payment_method) }}</span>
+                                                <span style="white-space:nowrap;">{{ $order->payment_method_display }}</span>
                                             </div>
                                             <div class="text-sm text-gray-500 mt-1">
                                                 Status: 
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
                                                     @if($order->payment_status === 'paid') text-green-700 bg-green-100
                                                     @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
+                                                    @elseif($order->payment_status === 'refunded') text-purple-700 bg-purple-100
                                                     @else text-red-700 bg-red-100
                                                     @endif">
                                                     {{ ucfirst($order->payment_status) }}

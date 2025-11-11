@@ -40,6 +40,7 @@
                         'pending' => 'bg-yellow-100 text-yellow-800',
                         'paid' => 'bg-green-100 text-green-800',
                         'failed' => 'bg-red-100 text-red-800',
+                        'refunded' => 'bg-purple-100 text-purple-800',
                     ];
                 @endphp
                 
@@ -175,7 +176,7 @@
                 <div class="space-y-4">
                     <div>
                         <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Payment Method</p>
-                        <p class="text-lg font-semibold text-gray-800">{{ $order->payment_method === 'bank_transfer' ? 'Bank Transfer' : ucfirst($order->payment_method) }}</p>
+                        <p class="text-lg font-semibold text-gray-800">{{ $order->payment_method_display }}</p>
                     </div>
                     
                     <div>
@@ -216,6 +217,7 @@
 
         <!-- Actions -->
         <div class="text-center">
+            
             @if($order->canBeCancelled())
                 <form action="{{ route('user.orders.cancel', $order) }}" method="POST" class="inline-block mr-4">
                     @csrf

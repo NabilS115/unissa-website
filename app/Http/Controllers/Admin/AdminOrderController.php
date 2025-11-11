@@ -104,10 +104,26 @@ class AdminOrderController extends Controller
 
         $oldStatus = $order->status;
         $newStatus = $request->status;
+        $oldPaymentStatus = $order->payment_status;
 
+        // Update order status
         $order->update([
             'status' => $newStatus
         ]);
+
+        // Automatically update payment status when order is cancelled
+        if ($newStatus === Order::STATUS_CANCELLED) {
+            $newPaymentStatus = ($oldPaymentStatus === Order::PAYMENT_STATUS_PAID) 
+                ? Order::PAYMENT_STATUS_REFUNDED 
+                : Order::PAYMENT_STATUS_FAILED;
+            
+            $order->update([
+                'payment_status' => $newPaymentStatus
+            ]);
+
+            // Log payment status change due to cancellation
+            \Log::info("Order {$order->id} payment status automatically changed from {$oldPaymentStatus} to {$newPaymentStatus} due to order cancellation by admin " . auth()->user()->id);
+        }
 
         // Log status change (you could create an order_status_logs table for this)
         \Log::info("Order {$order->id} status changed from {$oldStatus} to {$newStatus} by admin " . auth()->user()->id);

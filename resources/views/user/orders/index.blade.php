@@ -83,6 +83,7 @@
                                                     'pending' => 'bg-yellow-100 text-yellow-800',
                                                     'paid' => 'bg-green-100 text-green-800',
                                                     'failed' => 'bg-red-100 text-red-800',
+                                                    'refunded' => 'bg-purple-100 text-purple-800',
                                                 ];
                                             @endphp
                                             
@@ -113,7 +114,7 @@
                                         </div>
                                         <div>
                                             <p class="text-xs text-gray-500 uppercase tracking-wide">Payment</p>
-                                            <p class="text-sm font-semibold text-gray-800">{{ $order->payment_method === 'bank_transfer' ? 'Bank Transfer' : ucfirst($order->payment_method) }}</p>
+                                            <p class="text-sm font-semibold text-gray-800">{{ $order->payment_method_display }}</p>
                                         </div>
                                     </div>
                                     

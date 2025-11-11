@@ -223,14 +223,13 @@
                                     class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Billing address" />
                             </div>
                             <div id="bank-fields" style="display:none;">
-                                <label for="bank_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Bank Name</label>
-                                <select name="bank_name" id="bank_name" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] bg-white">
-                                    <option value="">Select a bank</option>
-                                    <option value="BIBD" {{ old('bank_name', Auth::user()->bank_name) == 'BIBD' ? 'selected' : '' }}>BIBD</option>
-                                    <option value="Baiduri" {{ old('bank_name', Auth::user()->bank_name) == 'Baiduri' ? 'selected' : '' }}>Baiduri</option>
-                                    <option value="Standard Chartered" {{ old('bank_name', Auth::user()->bank_name) == 'Standard Chartered' ? 'selected' : '' }}>Standard Chartered</option>
-                                    <option value="TAIB" {{ old('bank_name', Auth::user()->bank_name) == 'TAIB' ? 'selected' : '' }}>TAIB</option>
-                                </select>
+                                <label for="bank_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Bank</label>
+                                <div class="w-full px-4 py-3 border border-[#0d9488] rounded-xl bg-gray-50 text-[#0d9488] font-medium">
+                                    BIBD (Bank Islam Brunei Darussalam)
+                                </div>
+                                <input type="hidden" name="bank_name" value="BIBD" />
+                                <p class="text-xs text-[#0d9488] mt-1">We only accept BIBD transfers for faster processing</p>
+                                
                                 <label for="bank_account" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Account Number</label>
                                 <input name="bank_account" id="bank_account" type="text" autocomplete="off"
                                     value="{{ old('bank_account', Auth::user()->bank_account) }}"

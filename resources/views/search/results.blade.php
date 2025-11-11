@@ -2,6 +2,26 @@
 
 @section('title', 'Search Results - ' . $query)
 
+@php
+use Illuminate\Support\Str;
+
+// Helper function to highlight search terms
+$highlightText = function($text, $searchTerms) {
+    if (empty($searchTerms) || empty($text)) {
+        return $text;
+    }
+    
+    foreach ($searchTerms as $term) {
+        if (strlen($term) >= 2) {
+            $pattern = '/(' . preg_quote($term, '/') . ')/i';
+            $text = preg_replace($pattern, '<mark class="bg-yellow-200 text-gray-900 font-medium px-1 rounded">$1</mark>', $text);
+        }
+    }
+    
+    return $text;
+};
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -166,24 +186,6 @@
         @endif
     </div>
 </div>
-
-@php
-// Helper function to highlight search terms
-$highlightText = function($text, $searchTerms) {
-    if (empty($searchTerms) || empty($text)) {
-        return $text;
-    }
-    
-    foreach ($searchTerms as $term) {
-        if (strlen($term) >= 2) {
-            $pattern = '/(' . preg_quote($term, '/') . ')/i';
-            $text = preg_replace($pattern, '<mark class="bg-yellow-200 text-gray-900 font-medium px-1 rounded">$1</mark>', $text);
-        }
-    }
-    
-    return $text;
-};
-@endphp
 
 <style>
 .line-clamp-2 {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserOrderController extends Controller
 {
@@ -53,9 +54,20 @@ class UserOrderController extends Controller
                 ->with('error', 'Cannot cancel this order. It may already be in progress or completed.');
         }
 
-        // Update order status to cancelled
+        // Update order status to cancelled and payment status to refunded
         $order->update([
-            'status' => Order::STATUS_CANCELLED
+            'status' => Order::STATUS_CANCELLED,
+            'payment_status' => Order::PAYMENT_STATUS_REFUNDED
+        ]);
+
+        // Log the automatic payment status update
+        Log::info('Customer cancelled order - automatically updated payment status', [
+            'order_id' => $order->id,
+            'customer_id' => $order->user_id,
+            'old_status' => $order->getOriginal('status'),
+            'new_status' => Order::STATUS_CANCELLED,
+            'old_payment_status' => $order->getOriginal('payment_status'),
+            'new_payment_status' => Order::PAYMENT_STATUS_REFUNDED
         ]);
 
         // Restore stock if product tracks stock

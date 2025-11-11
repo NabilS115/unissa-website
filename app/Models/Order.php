@@ -24,6 +24,7 @@ class Order extends Model
         'notes',
         'payment_method',
         'payment_status',
+        'payment_reference',
     ];
 
     /**
@@ -48,6 +49,7 @@ class Order extends Model
     const PAYMENT_STATUS_PENDING = 'pending';
     const PAYMENT_STATUS_PAID = 'paid';
     const PAYMENT_STATUS_FAILED = 'failed';
+    const PAYMENT_STATUS_REFUNDED = 'refunded';
 
     /**
      * Get all possible order statuses
@@ -84,6 +86,7 @@ class Order extends Model
             self::PAYMENT_STATUS_PENDING => 'Pending',
             self::PAYMENT_STATUS_PAID => 'Paid',
             self::PAYMENT_STATUS_FAILED => 'Failed',
+            self::PAYMENT_STATUS_REFUNDED => 'Refunded',
         ];
     }
 
@@ -125,5 +128,18 @@ class Order extends Model
     public function canBeCancelled(): bool
     {
         return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED, self::STATUS_PROCESSING]);
+    }
+
+    /**
+     * Get formatted payment method display name
+     */
+    public function getPaymentMethodDisplayAttribute(): string
+    {
+        return match($this->payment_method) {
+            'cash' => 'Cash on Pickup',
+            'online' => 'Credit/Debit Card',
+            'bank_transfer' => 'Bank Transfer',
+            default => ucfirst($this->payment_method)
+        };
     }
 }

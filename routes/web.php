@@ -503,6 +503,7 @@ Route::middleware(['auth'])->prefix('my')->name('user.')->group(function () {
     Route::get('/orders/{order}', [App\Http\Controllers\UserOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/cancel', [App\Http\Controllers\UserOrderController::class, 'cancel'])->name('orders.cancel');
     Route::delete('/cart', [App\Http\Controllers\CartController::class, 'clearCart'])->name('cart.clear');
+    
     Route::get('/api/cart/test', function() {
         return response()->json([
             'authenticated' => auth()->check(),

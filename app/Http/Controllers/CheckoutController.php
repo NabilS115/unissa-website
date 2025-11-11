@@ -58,6 +58,9 @@ class CheckoutController extends Controller
             'card_expiry' => 'required_if:payment_method,online|nullable|string',
             'card_cvv' => 'required_if:payment_method,online|nullable|string',
             'cardholder_name' => 'required_if:payment_method,online|nullable|string|max:255',
+            // Bank transfer fields (required only for bank transfer payments)
+            'bank_name' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
+            'bank_reference' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
             'same_as_customer' => 'nullable|boolean',
         ]);
 
@@ -84,9 +87,12 @@ class CheckoutController extends Controller
         }
 
         // Set payment status based on payment method
-        $paymentStatus = $validated['payment_method'] === 'cash' 
-            ? Order::PAYMENT_STATUS_PENDING  // Cash will be paid on pickup
-            : Order::PAYMENT_STATUS_PAID; // Online payments are marked as paid immediately (simulated payment)
+        $paymentStatus = match($validated['payment_method']) {
+            'cash' => Order::PAYMENT_STATUS_PENDING,        // Cash paid on pickup
+            'bank_transfer' => Order::PAYMENT_STATUS_PENDING, // Requires manual verification
+            'online' => Order::PAYMENT_STATUS_PENDING,      // Requires actual payment processing
+            default => Order::PAYMENT_STATUS_PENDING
+        };
 
         $order = Order::create([
             'user_id' => Auth::id(),
@@ -102,6 +108,9 @@ class CheckoutController extends Controller
             'status' => Order::STATUS_PENDING,
             'payment_method' => $validated['payment_method'],
             'payment_status' => $paymentStatus,
+            'payment_reference' => $validated['payment_method'] === 'bank_transfer' && isset($validated['bank_reference']) 
+                ? $validated['bank_name'] . ' - ' . $validated['bank_reference'] 
+                : null,
         ]);
 
         // Send order confirmation email
@@ -113,9 +122,12 @@ class CheckoutController extends Controller
         }
 
         // Set success message based on payment method
-        $successMessage = $validated['payment_method'] === 'online' 
-            ? 'Your order has been placed and payment processed successfully! We\'ll prepare your order for pickup.'
-            : 'Your order has been placed successfully! Payment will be collected at pickup.';
+        $successMessage = match($validated['payment_method']) {
+            'online' => 'Your order has been placed! Credit card payment will be processed securely. We\'ll notify you when ready for pickup. Contact: +673 8123456',
+            'bank_transfer' => 'Your order has been placed! Please transfer $' . number_format($totalPrice, 2) . ' to UNISSA Café via BIBD (Account: [Your Real Account Number]). Use your phone number as reference. WhatsApp confirmation to +673 8123456',
+            'cash' => 'Your order has been placed successfully! Please bring exact amount ($' . number_format($totalPrice, 2) . ') when collecting your order. Contact: +673 8123456',
+            default => 'Your order has been placed successfully! Contact us at +673 8123456 for any questions.'
+        };
 
         return redirect()->route('unissa-cafe.homepage')
             ->with('success', $successMessage . " Order ID: #{$order->id}");
@@ -165,10 +177,14 @@ class CheckoutController extends Controller
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
             'payment_method' => 'required|in:cash,online,bank_transfer',
+            // Credit card fields (required only for online payments)
             'card_number' => 'required_if:payment_method,online|nullable|string|min:13|max:19',
             'card_expiry' => 'required_if:payment_method,online|nullable|string|size:5',
             'card_cvv' => 'required_if:payment_method,online|nullable|string|min:3|max:4',
             'cardholder_name' => 'required_if:payment_method,online|nullable|string|max:255',
+            // Bank transfer fields (required only for bank transfer payments)
+            'bank_name' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
+            'bank_reference' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
             'pickup_notes' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:500',
         ]);
@@ -195,7 +211,12 @@ class CheckoutController extends Controller
             }
         }
 
-        $paymentStatus = $validated['payment_method'] === 'online' ? Order::PAYMENT_STATUS_PAID : Order::PAYMENT_STATUS_PENDING;
+        $paymentStatus = match($validated['payment_method']) {
+            'cash' => Order::PAYMENT_STATUS_PENDING,        // Cash paid on pickup
+            'bank_transfer' => Order::PAYMENT_STATUS_PENDING, // Requires manual verification
+            'online' => Order::PAYMENT_STATUS_PENDING,      // Requires actual payment processing
+            default => Order::PAYMENT_STATUS_PENDING
+        };
         $orders = [];
 
         // Create separate orders for each cart item
@@ -215,6 +236,11 @@ class CheckoutController extends Controller
                 'payment_method' => $validated['payment_method'],
                 'payment_status' => $paymentStatus,
             ];
+
+            // Add payment reference for bank transfer
+            if ($validated['payment_method'] === 'bank_transfer' && isset($validated['bank_reference'])) {
+                $orderData['payment_reference'] = $validated['bank_name'] . ' - ' . $validated['bank_reference'];
+            }
 
             $order = Order::create($orderData);
             $orders[] = $order;
@@ -239,9 +265,12 @@ class CheckoutController extends Controller
         // Clear the cart after successful order
         \App\Models\Cart::where('user_id', Auth::id())->delete();
 
-        $successMessage = $validated['payment_method'] === 'online' 
-            ? 'Your order has been placed and payment processed successfully! We\'ll prepare your order for pickup.'
-            : 'Your order has been placed successfully! Payment will be collected at pickup.';
+        $successMessage = match($validated['payment_method']) {
+            'online' => 'Your orders have been placed! Credit card payment will be processed securely. We\'ll notify you when ready for pickup. Contact: +673 8123456',
+            'bank_transfer' => 'Your orders have been placed! Please transfer $' . number_format($totalPrice, 2) . ' to UNISSA Café via BIBD (Account: [Your Real Account Number]). Use your phone number as reference. WhatsApp confirmation to +673 8123456',
+            'cash' => 'Your orders have been placed successfully! Please bring exact amount ($' . number_format($totalPrice, 2) . ') when collecting your order. Contact: +673 8123456',
+            default => 'Your orders have been placed successfully! Contact us at +673 8123456 for any questions.'
+        };
 
         return redirect()->route('unissa-cafe.homepage')
             ->with('success', $successMessage . " {$orderCount} order(s) created with total amount: $" . number_format($totalPrice, 2));
