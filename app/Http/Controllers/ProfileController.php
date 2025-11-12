@@ -37,6 +37,7 @@ class ProfileController extends Controller
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
                 'phone' => ['nullable', 'string', 'max:30'],
+                'department' => ['nullable', 'string', 'max:255'],
             ]);
 
             \Log::info('Validation passed:', $validated);
@@ -44,6 +45,7 @@ class ProfileController extends Controller
             $user->name = $validated['name'];
             $user->email = $validated['email'];
             $user->phone = $validated['phone'] ?? null;
+            $user->department = $validated['department'] ?? null;
             $user->save();
 
             \Log::info('Profile updated successfully for user: ' . $user->id);
@@ -61,6 +63,7 @@ class ProfileController extends Controller
                     'data' => [
                         'name' => $user->name,
                         'email' => $user->email,
+                        'department' => $user->department,
                     ],
                 ]);
             }

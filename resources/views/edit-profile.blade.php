@@ -134,7 +134,8 @@
                         <label for="department" class="block text-sm font-medium text-gray-500 mb-1">Faculty / Department</label>
                         <input name="department" id="department" type="text" autocomplete="organization" 
                                value="{{ old('department', Auth::user()->department) }}"
-                               class="w-full px-4 py-3 border {{ $errors->has('department') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. Faculty of Usuluddin" />
+                               class="w-full px-4 py-3 border {{ $errors->has('department') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" placeholder="e.g. Faculty of Usuluddin" oninput="validateDepartment()" />
+                        <p id="department-validation" class="mt-2 text-sm"></p>
                         @if ($errors->has('department'))
                             <p class="mt-2 text-sm text-red-600">{{ $errors->first('department') }}</p>
                         @endif
