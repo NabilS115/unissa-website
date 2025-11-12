@@ -28,6 +28,14 @@ class Order extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     */
+    protected $appends = [
+        'payment_method_display',
+        'payment_status_display'
+    ];
+
+    /**
      * Order status constants
      */
     const STATUS_PENDING = 'pending';

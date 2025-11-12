@@ -176,15 +176,32 @@
                 <div class="space-y-4">
                     <div>
                         <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Payment Method</p>
-                        <p class="text-lg font-semibold text-gray-800">{{ $order->payment_method_display }}</p>
+                        <p class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            @if($order->payment_method === 'bank_transfer')
+                                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                                </svg>
+                            @elseif($order->payment_method === 'cash')
+                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                            @else
+                                <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9z"/>
+                                </svg>
+                            @endif
+                            {{ $order->payment_method_display }}
+                        </p>
                     </div>
                     
+                    @if($order->payment_status)
                     <div>
                         <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Payment Status</p>
                         <span class="inline-block px-3 py-1 text-sm font-medium rounded-full {{ $paymentStatusColors[$order->payment_status] ?? 'bg-gray-100 text-gray-800' }}">
-                            {{ ucfirst($order->payment_status) }}
+                            {{ $order->payment_status_display ?? ucfirst($order->payment_status) }}
                         </span>
                     </div>
+                    @endif
                     
                     <div>
                         <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Total Amount</p>

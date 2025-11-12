@@ -146,6 +146,11 @@
                         <div>
                             <span class="text-sm text-gray-500">Name:</span>
                             <p class="font-medium">{{ $order->customer_name }}</p>
+                            @if($order->user)
+                                <p class="text-xs text-gray-500">Registered user since {{ $order->user->created_at->format('M Y') }}</p>
+                            @else
+                                <p class="text-xs text-gray-500">Guest customer</p>
+                            @endif
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Email:</span>
@@ -164,56 +169,48 @@
                             </p>
                         </div>
                         <div>
-                            <span class="text-sm text-gray-500">Pickup Notes:</span>
-                            <p class="font-medium text-sm">{{ $order->pickup_notes ?: 'No special pickup instructions' }}</p>
-                        </div>
-                        <div>
                             <span class="text-sm text-gray-500">Payment Method:</span>
                             <div class="flex items-center mt-1">
                                 <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                                     @if($order->payment_method === 'cash') text-green-700 bg-green-50
-                                    @else text-blue-700 bg-blue-50
+                                    @elseif($order->payment_method === 'bank_transfer') text-blue-700 bg-blue-50
+                                    @else text-purple-700 bg-purple-50
                                     @endif">
                                     <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                                         @if($order->payment_method === 'cash')
-                                            <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 2v3H9V6h7z"/>
-                                            <path d="M7 10v3H4v-3h3z"/>
+                                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
+                                        @elseif($order->payment_method === 'bank_transfer')
+                                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
                                         @else
-                                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9z"/>
                                         @endif
                                     </svg>
-                                    {{ ucfirst($order->payment_method) }}
+                                    {{ $order->payment_method_display }}
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <span class="text-sm text-gray-500">Payment Status:</span>
-                            <div class="mt-1">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                    @if($order->payment_status === 'paid') text-green-700 bg-green-100
-                                    @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
-                                    @else text-red-700 bg-red-100
-                                    @endif">
-                                    @if($order->payment_status === 'paid')
-                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                        </svg>
-                                    @elseif($order->payment_status === 'pending')
-                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                                        </svg>
-                                    @else
-                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                        </svg>
-                                    @endif
-                                    {{ ucfirst($order->payment_status) }}
-                                </span>
-                                @if($order->payment_method === 'cash' && $order->payment_status === 'pending')
-                                    <p class="text-xs text-gray-500 mt-1">Payment due on pickup</p>
-                                @endif
-                            </div>
+                            <span class="text-sm text-gray-500">Payment Status: </span>
+                            <select id="payment-status-select" 
+                                    onchange="updatePaymentStatus()" 
+                                    class="payment-status-select border border-gray-200 rounded px-2 py-1 text-xs font-medium
+                                        @if($order->payment_status === 'paid') text-green-700 bg-green-100
+                                        @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
+                                        @elseif($order->payment_status === 'refunded') text-purple-700 bg-purple-100
+                                        @else text-red-700 bg-red-100
+                                        @endif"
+                                    data-order-id="{{ $order->id }}"
+                                    data-current-status="{{ $order->payment_status }}">
+                                @foreach(App\Models\Order::getPaymentStatuses() as $value => $label)
+                                    <option value="{{ $value }}" {{ $order->payment_status == $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+                        @if($order->payment_method === 'cash' && $order->payment_status === 'pending')
+                            <p class="text-xs text-gray-500 mt-1">Payment due on pickup</p>
+                        @endif
                         @if($order->notes)
                             <div>
                                 <span class="text-sm text-gray-500">Order Notes:</span>
@@ -221,14 +218,6 @@
                             </div>
                         @endif
                     </div>
-
-                    @if($order->user)
-                        <div class="mt-4 pt-4 border-t border-gray-200">
-                            <span class="text-sm text-gray-500">Registered User:</span>
-                            <p class="font-medium">{{ $order->user->name }}</p>
-                            <p class="text-sm text-gray-500">Member since {{ $order->user->created_at->format('M Y') }}</p>
-                        </div>
-                    @endif
                 </div>
 
                 <!-- Order Summary -->
