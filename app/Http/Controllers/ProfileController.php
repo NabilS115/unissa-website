@@ -48,7 +48,13 @@ class ProfileController extends Controller
 
             \Log::info('Profile updated successfully for user: ' . $user->id);
 
-            if ($request->ajax() || $request->wantsJson()) {
+            // Check for AJAX request more explicitly
+            $isAjax = $request->ajax() || 
+                     $request->wantsJson() || 
+                     $request->header('X-Requested-With') === 'XMLHttpRequest' ||
+                     $request->header('Content-Type') === 'application/json';
+
+            if ($isAjax) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Profile updated successfully!',
@@ -61,13 +67,23 @@ class ProfileController extends Controller
             return Redirect::route('edit.profile')->with('profile-updated', true);
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation failed:', $e->errors());
-            if ($request->ajax() || $request->wantsJson()) {
+            $isAjax = $request->ajax() || 
+                     $request->wantsJson() || 
+                     $request->header('X-Requested-With') === 'XMLHttpRequest' ||
+                     $request->header('Content-Type') === 'application/json';
+                     
+            if ($isAjax) {
                 return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $e->errors()], 422);
             }
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             \Log::error('Profile update error: ' . $e->getMessage());
-            if ($request->ajax() || $request->wantsJson()) {
+            $isAjax = $request->ajax() || 
+                     $request->wantsJson() || 
+                     $request->header('X-Requested-With') === 'XMLHttpRequest' ||
+                     $request->header('Content-Type') === 'application/json';
+                     
+            if ($isAjax) {
                 return response()->json(['success' => false, 'message' => 'Failed to update profile. Please try again.'], 500);
             }
             return back()->with('error', 'Failed to update profile. Please try again.')->withInput();
