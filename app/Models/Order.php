@@ -138,8 +138,19 @@ class Order extends Model
         return match($this->payment_method) {
             'cash' => 'Cash on Pickup',
             'online' => 'Credit/Debit Card',
-            'bank_transfer' => 'Bank Transfer',
+            'bank_transfer' => 'BIBD Bank Transfer',
             default => ucfirst($this->payment_method)
+        };
+    }
+
+    public function getPaymentStatusDisplayAttribute(): string
+    {
+        return match($this->payment_status) {
+            'pending' => 'Pending',
+            'paid' => 'Paid',
+            'failed' => 'Failed',
+            'refunded' => 'Refunded',
+            default => ucfirst(str_replace('_', ' ', $this->payment_status))
         };
     }
 }

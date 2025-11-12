@@ -243,15 +243,19 @@ window.__adminOrders = {
                                                 <span style="white-space:nowrap;">{{ $order->payment_method_display }}</span>
                                             </div>
                                             <div class="text-sm text-gray-500 mt-1">
-                                                Status: 
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                                Payment Status: 
+                                                <select class="payment-status-select border border-gray-200 rounded px-2 py-1 text-xs font-medium
                                                     @if($order->payment_status === 'paid') text-green-700 bg-green-100
                                                     @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
                                                     @elseif($order->payment_status === 'refunded') text-purple-700 bg-purple-100
                                                     @else text-red-700 bg-red-100
-                                                    @endif">
-                                                    {{ ucfirst($order->payment_status) }}
-                                                </span>
+                                                    @endif"
+                                                    data-order-id="{{ $order->id }}"
+                                                    data-current-status="{{ $order->payment_status }}">
+                                                    @foreach(App\Models\Order::getPaymentStatuses() as $value => $label)
+                                                        <option value="{{ $value }}" {{ $order->payment_status == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                     </td>

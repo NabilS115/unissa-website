@@ -14,6 +14,17 @@
     return colors[status] || 'text-gray-700 bg-gray-50';
   };
 
+  // Expose helper to get CSS classes for payment statuses
+  window.getPaymentStatusColorClass = function(paymentStatus) {
+    const colors = {
+      'paid': 'text-green-700 bg-green-100',
+      'pending': 'text-yellow-700 bg-yellow-100',
+      'refunded': 'text-purple-700 bg-purple-100',
+      'failed': 'text-red-700 bg-red-100'
+    };
+    return colors[paymentStatus] || 'text-gray-700 bg-gray-100';
+  };
+
   window.showNotification = function(message, type) {
     try {
       const notification = document.createElement('div');
@@ -67,6 +78,47 @@
             }
           } catch (error) {
             console.error('Status update error:', error);
+            this.value = originalValue;
+            showNotification('Network error occurred', 'error');
+          }
+        });
+        select.setAttribute('data-original', select.value);
+      });
+
+      // Payment status update handling
+      document.querySelectorAll('.payment-status-select').forEach(select => {
+        select.addEventListener('change', async function() {
+          const orderId = this.dataset.orderId;
+          const newPaymentStatus = this.value;
+          const originalValue = this.getAttribute('data-original') || this.value;
+          try {
+            const baseUrl = window.location.origin;
+            const updateUrl = `${baseUrl}/admin/orders/${orderId}/payment-status`;
+            const csrf = (bs && bs.csrf) || (document.querySelector('meta[name="csrf-token"]') && document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            const response = await fetch(updateUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: JSON.stringify({ payment_status: newPaymentStatus, _method: 'PATCH' })
+            });
+            const data = await response.json().catch(()=>({}));
+            if (response.ok && data.success) {
+              this.value = newPaymentStatus;
+              this.className = this.className.replace(/text-\w+-700 bg-\w+-100/g, '');
+              const colorClass = getPaymentStatusColorClass(newPaymentStatus);
+              this.className += ` ${colorClass}`;
+              showNotification(data.message || 'Payment status updated successfully', 'success');
+              this.setAttribute('data-original', newPaymentStatus);
+            } else {
+              this.value = originalValue;
+              showNotification((data && data.message) ? data.message : 'Failed to update payment status', 'error');
+            }
+          } catch (error) {
+            console.error('Payment status update error:', error);
             this.value = originalValue;
             showNotification('Network error occurred', 'error');
           }
