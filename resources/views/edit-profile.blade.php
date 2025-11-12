@@ -338,7 +338,7 @@
 
                 <!-- Photo modal (used by /js/profile.js) -->
                 <div id="photo-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title">
-                    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden border border-teal-100 animate-fade-in max-h-[90vh] flex flex-col">
+                    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden border border-teal-100 max-h-[90vh] flex flex-col">
                         <div class="flex items-start justify-between p-4 md:p-6 border-b border-teal-100 flex-shrink-0">
                             <h3 id="photo-modal-title" class="text-xl font-semibold text-teal-800">Update profile photo</h3>
                             <button id="photo-modal-close" type="button" class="text-teal-600 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md" aria-label="Close dialog">
@@ -472,19 +472,6 @@
                     <div class="toast-message">Saved</div>
                 </div>
     <style>
-    @keyframes fade-in {
-        from {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    .animate-fade-in {
-        animation: fade-in 0.3s ease-out;
-    }
     /* Enhanced form focus states */
     .form-input:focus {
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
