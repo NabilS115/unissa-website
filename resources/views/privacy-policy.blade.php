@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Privacy Policy - UNISSA')
+@section('title', 'Unissa Cafe - Privacy Policy')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">

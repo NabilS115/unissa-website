@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout - Unissa Cafe')
+@section('title', 'Unissa Cafe - Checkout')
 
 @push('styles')
 <style>

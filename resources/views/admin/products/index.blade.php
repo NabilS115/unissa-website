@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product Management')
+@section('title', 'Unissa Cafe - Product Management')
 
 @section('content')
 <!-- Admin products JS extracted to an external file -->

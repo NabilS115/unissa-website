@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'UNISSA - Welcome')
+@section('title', 'Tijarah')
 
 @section('content')
     <!-- Hero Banner Section -->

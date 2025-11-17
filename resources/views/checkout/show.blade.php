@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout - ' . $product->name)
+@section('title', 'Unissa Cafe - Checkout - ' . $product->name)
 
 @push('styles')
 <style>

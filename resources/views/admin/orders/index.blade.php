@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Order Management')
+@section('title', 'Unissa Cafe - Order Management')
 
 @section('content')
 <!-- Admin orders JS moved to a dedicated external file for maintainability and reuse -->

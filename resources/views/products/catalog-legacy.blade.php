@@ -17,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>UNISSA Catalog - LEGACY</title>
+    <title>Unissa Cafe - Catalog - LEGACY</title>
     <meta name="theme-color" content="#0d9488">
     {{-- Tailwind CDN removed for production. Use main layout for styles. --}}
     <style>

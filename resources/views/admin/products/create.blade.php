@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Product')
+@section('title', 'Unissa Cafe - Create Product')
 
 @push('head')
 <!-- CropperJS CSS -->

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Profile')
+@section('title', 'Unissa Cafe - Admin Profile')
 
 @push('styles')
 <style>

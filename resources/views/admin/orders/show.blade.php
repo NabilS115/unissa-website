@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Order Details - #' . $order->id)
+@section('title', 'Unissa Cafe - Order Details - #' . $order->id)
 
 @section('content')
 <!-- Bootstrap + external admin orders show JS -->

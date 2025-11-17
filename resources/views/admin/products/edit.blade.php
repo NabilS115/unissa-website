@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Product - ' . $product->name)
+@section('title', 'Unissa Cafe - Edit Product - ' . $product->name)
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 py-8">

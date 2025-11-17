@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product Details - ' . $product->name)
+@section('title', 'Unissa Cafe - Product Details - ' . $product->name)
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
