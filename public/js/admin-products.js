@@ -45,8 +45,6 @@
     } catch(e){ console.error('notification error', e); }
   };
 
-  window.testJS = function(){ showNotification('JavaScript is working! Delete function is ready.', 'success'); };
-
   window.updateProductStatus = async function(productId, newStatus){
     try{
       const csrf = (bs && bs.csrf) || (document.querySelector('meta[name="csrf-token"]') && document.querySelector('meta[name="csrf-token"]').getAttribute('content'));

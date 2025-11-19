@@ -892,16 +892,9 @@ window.__productBrowse = {
 
 // Ensure Alpine component is visible after initialization
 document.addEventListener('alpine:init', () => {
-    console.log('🔄 Browse page Alpine.js initializing...');
 });
 
 document.addEventListener('alpine:initialized', () => {
-    console.log('✅ Browse page Alpine.js initialized');
-    
-    // Update debug status
-    const statusEl = document.getElementById('alpine-status');
-    if (statusEl) statusEl.textContent = 'Initialized ✅';
-    
     // Make sure the browse component is visible
     const browseComponent = document.querySelector('.alpine-component');
     if (browseComponent) {

@@ -288,7 +288,6 @@
         
         function refreshAllCarousels() {
             // Clean, simple refresh without triggers that cause loops
-            console.log('Refreshing carousels...');
             
             try {
                 // Reset carousel positions to starting state
@@ -313,7 +312,7 @@
                     resetEventInterval();
                 }
                 
-                console.log('Carousels refreshed successfully');
+
                 
                 // Force recalculation of container dimensions  
                 const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
@@ -324,14 +323,13 @@
                 }
                 
             } catch (error) {
-                console.log('Error in carousel refresh:', error);
+                // Error handling - continue silently
             }
         }
 
         // Simplified authentication handling - no automatic monitoring
         function checkAuthStateChange() {
             // Disabled to prevent infinite loops
-            console.log('Auth state check disabled to prevent loops');
         }
 
         // Smart authentication state monitoring - only check when needed
@@ -348,7 +346,6 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.authenticated !== currentAuthState || data.role !== currentUserRole) {
-                        console.log('Authentication state changed, refreshing carousels...');
                         currentAuthState = data.authenticated;
                         currentUserRole = data.role;
                         
@@ -375,7 +372,6 @@
             if (form.action && (form.action.includes('/login') || form.action.includes('/logout'))) {
                 // After login/logout form submission, check auth state and refresh
                 setTimeout(() => {
-                    console.log('Login/logout form submitted, checking auth state...');
                     checkAndRefreshOnAuthChange();
                 }, 1000);
             }
@@ -399,15 +395,6 @@
         // Enhanced gallery data from database or default
         let galleryData = @json($galleryImages ?? []);
         
-        // Debug backend data loading
-        console.log('=== BACKEND DATA DEBUG ===');
-        console.log('Raw galleryData:', galleryData);
-        console.log('Gallery count:', galleryData ? galleryData.length : 0);
-        
-
-        
-        console.log('Gallery data loaded:', galleryData);
-        
         // Map gallery data to the expected format
         let eventImages = [];
         if (galleryData && galleryData.length > 0) {
@@ -430,15 +417,9 @@
 
         // Carousel functions
         function renderEventBgCarousel() {
-            console.log('Running renderEventBgCarousel...');
             const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
             const bgTrack = document.getElementById('event-bg-track');
-            
-            console.log('Gallery render check:', {
-                galleryContainer: !!galleryContainer,
-                bgTrack: !!bgTrack,
-                eventImages: eventImages ? eventImages.length : 'no eventImages'
-            });
+
             
             if (!galleryContainer || !bgTrack) {
                 console.error('Gallery elements missing for rendering');
@@ -446,14 +427,12 @@
             }
             
             if (!eventImages || eventImages.length === 0) {
-                console.log('No gallery images, showing empty state');
                 // Show empty state instead of hiding
                 galleryContainer.style.display = 'block';
                 showGalleryEmptyState();
                 return;
             }
-            
-            console.log('Rendering gallery with', eventImages.length, 'images');
+
 
             galleryContainer.style.display = 'block';
             hideGalleryEmptyState();
@@ -609,14 +588,7 @@
             const imageInput = document.getElementById(`${prefix}image-upload`);
             const imagePreview = document.getElementById(`${prefix}image-preview`);
             const previewImg = document.getElementById(`${prefix}preview-img`);
-            
-            console.log('Setting up image upload for type:', type);
-            console.log('Looking for elements:', {
-                dropZone: dropZoneId,
-                imageInput: `${prefix}image-upload`,
-                imagePreview: `${prefix}image-preview`,
-                previewImg: `${prefix}preview-img`
-            });
+
             
             if (!dropZone || !imageInput || !imagePreview || !previewImg) {
                 console.error('Required elements not found for image upload setup', {
@@ -718,7 +690,6 @@
             // Use event delegation so buttons work even if DOM nodes are replaced dynamically
             document.addEventListener('click', function(e) {
                 try {
-                    console.log('Gallery delegation click:', {target: e.target && e.target.tagName, href: (e.target && e.target.getAttribute) ? e.target.getAttribute('href') : null});
                     const addBtn = e.target.closest && e.target.closest('#add-gallery-btn');
                     if (addBtn) {
                         e.preventDefault();
@@ -849,7 +820,6 @@
 
                 waitForElements(['gallery-drop-zone', 'image-upload', 'image-preview', 'preview-img', 'gallery-form'], 3000)
                     .then(() => {
-                        console.log('Gallery modal elements ready - initializing upload');
                         try { setupImageUpload('gallery'); } catch (e) { console.error('setupImageUpload error', e); }
 
                         const galleryForm = document.getElementById('gallery-form');
@@ -862,18 +832,12 @@
                             e.preventDefault();
                             const formData = new FormData(e.target);
                             formData.set('is_active', formData.get('is_active') ? '1' : '0');
-                            
-                            console.log('Submitting gallery form...');
-                            console.log('Form data entries:');
-                            for (let [key, value] of formData.entries()) {
-                                console.log(key, value);
-                            }
+
                             
                             try {
                                 const url = isEdit ? `/gallery/${gallery.id}` : '/gallery';
                                 if (isEdit) formData.append('_method', 'PUT');
-                                
-                                console.log('Sending request to:', url);
+
                                 
                                 const response = await fetch(url, {
                                     method: 'POST',
@@ -884,11 +848,7 @@
                                     body: formData
                                 });
 
-                                console.log('Response status:', response.status);
-                                console.log('Response headers:', response.headers);
-                                
                                 const result = await response.json();
-                                console.log('Response data:', result);
                                 
                                 if (response.ok) {
                                     alert(result.message);
@@ -982,7 +942,6 @@
 
             async function loadGalleryForManagement() {
                         try {
-                            console.log('Loading gallery for management via GET /gallery');
                             const response = await fetch('/gallery', {
                                 headers: {
                                     'Accept': 'application/json',
@@ -990,12 +949,9 @@
                                 }
                             });
 
-                            console.log('Gallery management response status:', response.status);
-
                             const text = await response.text();
                             let json = null;
                             try { json = JSON.parse(text); } catch (e) { /* not json */ }
-                            console.log('Gallery management response body:', json ?? text);
 
                             if (response.ok) {
                                 const galleries = json || [];
@@ -1215,18 +1171,10 @@
 
         // Initialize gallery carousel with proper timing
         window.initializeGalleryCarousel = function() {
-            console.log('Initializing gallery carousel...');
-            
             // Check if required elements exist
             const bgTrack = document.getElementById('event-bg-track');
             const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
-            
-            console.log('Gallery elements check:', {
-                bgTrack: !!bgTrack,
-                galleryContainer: !!galleryContainer,
-                eventImages: eventImages ? eventImages.length : 'undefined',
-                galleryData: galleryData ? galleryData.length : 'undefined'
-            });
+
             
             if (!bgTrack || !galleryContainer) {
                 console.error('Gallery carousel elements not found!');
@@ -1266,13 +1214,11 @@
             
             // Add manual trigger that can be called from anywhere
             window.triggerCarouselRefresh = function() {
-                console.log('Manual carousel refresh triggered');
                 refreshAllCarousels();
             };
             
                 // Add a safe auth state refresh trigger
                 window.refreshAfterLogin = function() {
-                    console.log('Post-login carousel refresh');
                     setTimeout(() => {
                         currentAuthState = true; // Assume logged in
                         refreshAllCarousels();
@@ -1285,7 +1231,6 @@
             window.addEventListener('load', function() {
                 if (!carouselInitialized) {
                     carouselInitialized = true;
-                    console.log('Ensuring carousels are properly initialized...');
                     
                     setTimeout(() => {
                         if (typeof window.initializeGalleryCarousel === 'function') {
@@ -1295,17 +1240,7 @@
                 }
             });        // Safety net disabled - all automatic refresh disabled
 
-        // Debug: log pointer events on gallery control buttons to diagnose click issues
-        try {
-            const dbgAdd = document.getElementById('add-gallery-btn');
-            const dbgManage = document.getElementById('manage-gallery-btn');
-            if (dbgAdd) dbgAdd.addEventListener('pointerdown', (e) => { console.log('DBG: add-gallery-btn pointerdown', e.type, e); });
-            if (dbgAdd) dbgAdd.addEventListener('click', (e) => { console.log('DBG: add-gallery-btn click', e.type); });
-            if (dbgManage) dbgManage.addEventListener('pointerdown', (e) => { console.log('DBG: manage-gallery-btn pointerdown', e.type, e); });
-            if (dbgManage) dbgManage.addEventListener('click', (e) => { console.log('DBG: manage-gallery-btn click', e.type); });
-        } catch (err) {
-            console.error('DBG: failed to attach debug listeners to gallery buttons', err);
-        }
+
     </script>
 
     <style>

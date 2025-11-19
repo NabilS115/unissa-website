@@ -35,12 +35,6 @@
     } catch (e) { console.error('showNotification error', e); }
   };
 
-  window.testOrderManagementFunctions = function() {
-    console.log('Testing order management functionality...');
-    showNotification('Order management functions are loaded!', 'success');
-    return 'Order management functions are available';
-  };
-
   document.addEventListener('DOMContentLoaded', function() {
     safe(function(){
       const bs = window.__adminOrders || {};

@@ -1085,10 +1085,6 @@
     <div class="w-full text-center py-8" x-show="(tab === 'food' ? sortedFoods : sortedMerch).length === 0">
         <p class="text-gray-500 text-lg">No products found.</p>
     </div>
-
-    {{-- Debug output for merchandise --}}
-    {{-- <pre>{{ print_r($merchandise, true) }}</pre> --}}
-    {{-- Remove after confirming data is present --}}
 </div>
 {{-- End catalog content --}}
 
@@ -1703,20 +1699,6 @@ document.addEventListener('alpine:init', () => {
                 }
                 return '0.0';
             },
-
-            // Debug method - call this from browser console: window.debugCatalog()
-            debugState() {
-                return {
-                    tab: this.tab,
-                    foodDataLength: this.food?.length || 0,
-                    merchDataLength: this.merchandise?.length || 0,
-                    foodSearchInput: this.foodSearchInput,
-                    foodSearch: this.foodSearch,
-                    showFoodPredictions: this.showFoodPredictions,
-                    sortedFoodsLength: this.sortedFoods?.length || 0,
-                    pagedFoodsLength: this.pagedFoods?.length || 0
-                };
-            },
             
             // Enhanced search method with backend option
             async performSearch() {
@@ -1871,11 +1853,6 @@ document.addEventListener('alpine:init', () => {
             toggleSearchMode() {
                 this.useBackendSearch = !this.useBackendSearch;
                 console.log('Search mode:', this.useBackendSearch ? 'Backend' : 'Frontend');
-            },
-
-            // Expose debug method globally
-            init() {
-                window.debugCatalog = () => this.debugState();
             },
             
             // Optimized watchers with debouncing
