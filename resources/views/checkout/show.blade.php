@@ -318,7 +318,7 @@ input[type="number"] {
                     <!-- Pickup Information -->
                     <div class="bg-white rounded-2xl shadow-lg p-8">
                         <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
@@ -326,19 +326,19 @@ input[type="number"] {
                         </h2>
 
                         <!-- Pickup Location Info -->
-                        <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
-                            <h3 class="font-semibold text-purple-800 mb-2 flex items-center gap-1">
+                        <div class="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-6">
+                            <h3 class="font-semibold text-teal-800 mb-2 flex items-center gap-1">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
                                 Pickup Location
                             </h3>
-                            <p class="text-purple-700 text-sm">
+                            <p class="text-teal-700 text-sm">
                                 <strong>Unissa Café</strong><br>
                                 123 Main Street<br>
                                 City Center, State 12345<br>
-                                <span class="text-purple-600 font-medium">📞 Phone: (555) 123-4567</span>
+                                <span class="text-teal-600 font-medium">📞 Phone: (555) 123-4567</span>
                             </p>
                         </div>
 
@@ -361,7 +361,7 @@ input[type="number"] {
                     <!-- Payment Method -->
                     <div class="bg-white rounded-2xl shadow-lg p-8">
                         <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
                             Payment Method
@@ -401,11 +401,11 @@ input[type="number"] {
                                 <label class="relative cursor-pointer">
                                     <input type="radio" name="payment_method" value="online" 
                                            class="sr-only peer" onclick="updatePaymentMethod()">
-                                    <div class="w-full p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-300 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
+                                    <div class="w-full p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-teal-300 peer-checked:border-teal-500 peer-checked:bg-teal-50 transition-all duration-200">
                                         <div class="flex items-center gap-4">
                                             <div class="flex-shrink-0">
-                                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                                                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                                     </svg>
                                                 </div>
@@ -414,10 +414,10 @@ input[type="number"] {
                                                 <h4 class="font-semibold text-gray-900">Pay Online</h4>
                                                 <p class="text-sm text-gray-600 mt-1">Credit/Debit Card, PayPal</p>
                                                 <div class="flex items-center gap-1 mt-2">
-                                                    <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                                     </svg>
-                                                    <span class="text-xs text-blue-600 font-medium">Secure & Fast</span>
+                                                    <span class="text-xs text-teal-600 font-medium">Secure & Fast</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -446,7 +446,7 @@ input[type="number"] {
                             </div>
 
                             <!-- Online Payment Info -->
-                            <div id="online-payment-info" class="bg-blue-50 border border-blue-200 rounded-xl p-4" style="display: none;">
+                            <div id="online-payment-info" class="bg-teal-50 border border-teal-200 rounded-xl p-4" style="display: none;">
                                 <div class="flex items-start gap-3">
                                     <div class="flex-shrink-0 mt-0.5">
                                         <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -469,7 +469,7 @@ input[type="number"] {
                             <!-- Credit Card Form -->
                             <div id="credit-card-form" class="bg-white border border-gray-200 rounded-xl p-6" style="display: none;">
                                 <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                     </svg>
                                     Payment Information
@@ -525,7 +525,7 @@ input[type="number"] {
                                     <div class="pt-2">
                                         <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="checkbox" id="same_as_customer" name="same_as_customer" checked 
-                                                   class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                                   class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
                                             <span class="text-sm text-gray-700">Billing address same as customer information</span>
                                         </label>
                                     </div>

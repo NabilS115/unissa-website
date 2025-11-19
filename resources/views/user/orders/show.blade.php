@@ -29,8 +29,8 @@
                 @php
                     $statusColors = [
                         'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                        'confirmed' => 'bg-blue-100 text-blue-800 border-blue-200',
-                        'processing' => 'bg-purple-100 text-purple-800 border-purple-200',
+                        'confirmed' => 'bg-teal-100 text-teal-800 border-teal-200',
+                        'processing' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
                         'ready_for_pickup' => 'bg-orange-100 text-orange-800 border-orange-200',
                         'picked_up' => 'bg-emerald-100 text-emerald-800 border-emerald-200',
                         'cancelled' => 'bg-red-100 text-red-800 border-red-200',
@@ -40,7 +40,7 @@
                         'pending' => 'bg-yellow-100 text-yellow-800',
                         'paid' => 'bg-green-100 text-green-800',
                         'failed' => 'bg-red-100 text-red-800',
-                        'refunded' => 'bg-purple-100 text-purple-800',
+                        'refunded' => 'bg-gray-100 text-gray-800',
                     ];
                 @endphp
                 

@@ -55,7 +55,7 @@
                 <!-- Admin Controls for Current Image -->
                 <div class="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <div class="flex gap-2">
-                        <button id="edit-current-gallery-btn" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors" title="Edit Image">
+                        <button id="edit-current-gallery-btn" class="w-10 h-10 bg-teal-500 hover:bg-teal-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors" title="Edit Image">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -1018,7 +1018,7 @@
                     status.textContent = gallery.is_active ? 'Active' : 'Inactive';
 
                     const order = document.createElement('span');
-                    order.className = 'px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full';
+                    order.className = 'px-2 py-1 text-xs bg-teal-100 text-teal-800 rounded-full';
                     order.textContent = 'Order: ' + (gallery.sort_order ?? '0');
 
                     meta.appendChild(status);
@@ -1045,7 +1045,7 @@
                     });
 
                     const editBtn = document.createElement('button');
-                    editBtn.className = 'px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors';
+                    editBtn.className = 'px-3 py-1 text-xs bg-teal-100 text-teal-800 rounded hover:bg-teal-200 transition-colors';
                     editBtn.textContent = 'Edit';
                     editBtn.addEventListener('click', function() {
                         closeManageGalleryModal();

@@ -437,7 +437,7 @@ input[type="number"]::-ms-clear {
                         <!-- Pricing & Quantity Section -->
                         <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8">
                             <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                                 </svg>
                                 <span class="hidden sm:inline">Select Quantity & Proceed</span>
@@ -457,13 +457,13 @@ input[type="number"]::-ms-clear {
                                         </div>
                                     </div>
                                     
-                                    <div class="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl p-5 text-white shadow-lg">
+                                    <div class="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl p-5 text-white shadow-lg">
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <span class="text-sm font-medium text-blue-100">Total Amount</span>
+                                                <span class="text-sm font-medium text-teal-100">Total Amount</span>
                                                 <div class="flex items-baseline gap-2 mt-1">
                                                     <span class="text-3xl font-bold" id="total-price">${{ number_format($product->price ?? 0, 2) }}</span>
-                                                    <span class="text-sm text-blue-200">USD</span>
+                                                    <span class="text-sm text-teal-200">USD</span>
                                                 </div>
                                             </div>
                                             <!-- Removed decorative white circle -->
@@ -703,7 +703,7 @@ input[type="number"]::-ms-clear {
                                                 @if($isLongReview)
                                                     <span class="review-text-{{ $review->id }} block">{{ $truncatedText }}...</span>
                                                     <span class="review-full-{{ $review->id }} hidden">{{ $reviewText }}</span>
-                                                    <button class="read-more-btn text-blue-600 hover:text-blue-800 font-medium ml-1 mt-2" 
+                                                    <button class="read-more-btn text-teal-600 hover:text-teal-800 font-medium ml-1 mt-2" 
                                                             data-review-id="{{ $review->id }}">Read more</button>
                                                 @else
                                                     <span class="block">{{ $reviewText }}</span>
@@ -713,14 +713,14 @@ input[type="number"]::-ms-clear {
                                             <div class="flex items-center gap-4 text-sm text-gray-500">
                                                 @if(Auth::user())
                                                     @if(Auth::user()->id === $review->user_id)
-                                                        <button class="edit-review-btn text-blue-600 hover:text-blue-800 font-medium transition-colors mr-3" data-review-id="{{ $review->id }}" data-rating="{{ $review->rating }}" data-review="{{ e($review->review) }}">
+                                                        <button class="edit-review-btn text-teal-600 hover:text-teal-800 font-medium transition-colors mr-3" data-review-id="{{ $review->id }}" data-rating="{{ $review->rating }}" data-review="{{ e($review->review) }}">
                                                             Edit Review
                                                         </button>
                                                         <button class="delete-review-btn text-red-600 hover:text-red-800 font-medium transition-colors" data-id="{{ $review->id }}">
                                                             Delete Review
                                                         </button>
                                                     @else
-                                                        <button class="helpful-btn flex items-center gap-1 hover:text-gray-700 transition-colors {{ Auth::user() && $review->isHelpfulBy(Auth::user()) ? 'text-blue-600' : 'text-gray-500' }}" data-review-id="{{ $review->id }}">
+                                                        <button class="helpful-btn flex items-center gap-1 hover:text-gray-700 transition-colors {{ Auth::user() && $review->isHelpfulBy(Auth::user()) ? 'text-teal-600' : 'text-gray-500' }}" data-review-id="{{ $review->id }}">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
                                                             </svg>

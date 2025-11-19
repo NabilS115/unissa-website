@@ -40,7 +40,7 @@
                             </div>
                             <div class="p-6">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $product->type === 'food' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800' }}">
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $product->type === 'food' ? 'bg-green-100 text-green-800' : 'bg-teal-100 text-teal-800' }}">
                                         {{ ucfirst($product->type) }}
                                     </span>
                                     <span class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">

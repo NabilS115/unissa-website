@@ -78,8 +78,8 @@
                     <!-- Timeline Item 3 -->
                     <div class="flex gap-6 group">
                         <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                                <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center group-hover:bg-teal-200 transition-colors">
+                                <svg class="w-6 h-6 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
                                     <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
                                 </svg>
@@ -87,7 +87,7 @@
                         </div>
                         <div class="flex-1">
                             <div class="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-shadow">
-                                <h3 class="text-xl font-bold text-blue-700 mb-3">2000s - Digital Era</h3>
+                                <h3 class="text-xl font-bold text-teal-700 mb-3">2000s - Digital Era</h3>
                                 <p class="text-gray-700 leading-relaxed">
                                     The turn of the millennium marked a new era: we embraced technology, launched our first website, and began sourcing sustainable ingredients from trusted farmers. Our commitment to community was unwavering—we sponsored food drives, supported local schools, and hosted annual cultural festivals celebrating Bruneian cuisine.
                                 </p>
@@ -98,15 +98,15 @@
                     <!-- Timeline Item 4 -->
                     <div class="flex gap-6 group">
                         <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                                <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center group-hover:bg-teal-200 transition-colors">
+                                <svg class="w-6 h-6 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
                                 </svg>
                             </div>
                         </div>
                         <div class="flex-1">
                             <div class="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-shadow">
-                                <h3 class="text-xl font-bold text-purple-700 mb-3">Today - Excellence & Innovation</h3>
+                                <h3 class="text-xl font-bold text-teal-700 mb-3">Today - Excellence & Innovation</h3>
                                 <p class="text-gray-700 leading-relaxed">
                                     Today, our company stands as a beacon of culinary excellence in Brunei and beyond. We continue to innovate, blending tradition with modernity, and remain dedicated to our founding values. Every meal we serve is a tribute to our journey—a story of resilience, creativity, and the joy of bringing people together around the table.
                                 </p>
@@ -135,12 +135,12 @@
                     </div>
                     <div class="md:w-1/2 p-8 flex flex-col justify-center">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                                <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-purple-700">Integrity</h3>
+                            <h3 class="text-2xl font-bold text-teal-700">Integrity</h3>
                         </div>
                         <p class="text-gray-700 leading-relaxed">We uphold the highest standards of honesty and transparency in all our operations, building trust with every interaction.</p>
                     </div>
@@ -177,12 +177,12 @@
                     </div>
                     <div class="md:w-1/2 p-8 flex flex-col justify-center">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                                <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-blue-700">Innovation</h3>
+                            <h3 class="text-2xl font-bold text-teal-700">Innovation</h3>
                         </div>
                         <p class="text-gray-700 leading-relaxed">We embrace creativity and forward-thinking to continually improve our offerings and stay ahead of culinary trends.</p>
                     </div>

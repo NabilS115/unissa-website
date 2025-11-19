@@ -23,7 +23,7 @@
             <div class="review-text-container">
                 <p class="review-text-{{ $review->id }} mb-0 text-lg">"{{ $truncatedText }}..."</p>
                 <p class="review-full-{{ $review->id }} hidden mb-0 text-lg">"{{ $reviewText }}"</p>
-                <button class="read-more-btn text-blue-600 hover:text-blue-800 font-medium text-sm mt-4 inline-flex items-center gap-1 transition-colors" 
+                <button class="read-more-btn text-teal-600 hover:text-teal-800 font-medium text-sm mt-4 inline-flex items-center gap-1 transition-colors" 
                         data-review-id="{{ $review->id }}">
                     <span>Read more</span>
                     <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -35,16 +35,16 @@ window.__adminProducts = {
                     <h1 class="text-3xl font-bold text-gray-900">Product Management</h1>
                     <p class="text-gray-600 mt-2">Manage inventory, stock levels, and product availability</p>
                     <div class="flex items-center gap-2 mt-3">
-                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                         </svg>
-                        <p class="text-sm text-blue-600">
+                        <p class="text-sm text-teal-600">
                             <strong>Smart Status:</strong> Products with stock tracking automatically manage "Available" ↔ "Out of Stock" status. You can still manually set "Inactive" or "Discontinued" as needed.
                         </p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('admin.products.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <a href="{{ route('admin.products.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                         </svg>

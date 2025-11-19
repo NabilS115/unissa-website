@@ -630,7 +630,7 @@
                             <div class="relative overflow-hidden">
                                 <img id="edit-cropped-preview" class="w-full h-36 object-cover">
                                 <div class="absolute top-2 left-2">
-                                    <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">Updated</span>
+                                    <span class="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full">Updated</span>
                                 </div>
                             </div>
                             <div class="p-3">
@@ -667,11 +667,11 @@
                         </div>
 
                         <!-- Current Stock Information (if tracking is enabled) -->
-                        <div x-show="editingProduct?.track_stock == 1" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div x-show="editingProduct?.track_stock == 1" class="bg-teal-50 border border-teal-200 rounded-lg p-4">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-blue-900" x-text="`Current Stock: ${editingProduct?.stock_quantity || 0}`"></p>
-                                    <p class="text-xs text-blue-700" x-text="`Last updated: ${editingProduct?.last_restocked_at || 'Never'}`"></p>
+                                    <p class="text-sm font-medium text-teal-900" x-text="`Current Stock: ${editingProduct?.stock_quantity || 0}`"></p>
+                                    <p class="text-xs text-teal-700" x-text="`Last updated: ${editingProduct?.last_restocked_at || 'Never'}`"></p>
                                 </div>
                                 <div>
                                     <template x-if="editingProduct?.stock_quantity <= editingProduct?.low_stock_threshold && editingProduct?.stock_quantity > 0">
@@ -747,7 +747,7 @@
                             </template>
                             @if(auth()->user()?->role === 'admin')
                             <div class="absolute bottom-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <button @click.stop="editProduct(food)" class="w-12 h-6 bg-blue-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-blue-700 transition-colors">
+                                <button @click.stop="editProduct(food)" class="w-12 h-6 bg-teal-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-teal-700 transition-colors">
                                     Edit
                                 </button>
                                 <button @click.stop="deleteProduct(food.id)" class="w-12 h-6 bg-red-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-red-700 transition-colors">
@@ -824,7 +824,7 @@
                             </template>
                             @if(auth()->user()?->role === 'admin')
                             <div class="absolute bottom-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <button @click.stop="editProduct(merch)" class="w-12 h-6 bg-blue-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-blue-700 transition-colors">
+                                <button @click.stop="editProduct(merch)" class="w-12 h-6 bg-teal-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-teal-700 transition-colors">
                                     Edit
                                 </button>
                                 <button @click.stop="deleteProduct(merch.id)" class="w-12 h-6 bg-red-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-red-700 transition-colors">

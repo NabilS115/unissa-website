@@ -480,7 +480,7 @@
 
                         <!-- Credit Card Payment Info -->
                         <div id="credit-payment-info" class="mb-6 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl" style="display: none;">
-                            <h4 class="text-lg font-semibold text-purple-800 mb-3 flex items-center">
+                            <h4 class="text-lg font-semibold text-teal-800 mb-3 flex items-center">
                                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M4 4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h16v3H4V6zm0 5h16v7H4v-7z"/>
                                 </svg>
@@ -490,7 +490,7 @@
                             <div class="bg-white rounded-lg p-4 border border-purple-200 mb-4">
                                 <div class="flex justify-between items-center mb-3">
                                     <span class="text-lg font-semibold text-gray-700">Total Amount:</span>
-                                    <span class="text-2xl font-bold text-purple-600">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-2xl font-bold text-teal-600">${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -513,14 +513,14 @@
                                 </div>
                             </div>
                             
-                            <div class="bg-purple-100 border border-purple-300 rounded-lg p-4">
-                                <h6 class="font-semibold text-purple-800 mb-2 flex items-center">
+                            <div class="bg-teal-100 border border-teal-300 rounded-lg p-4">
+                                <h6 class="font-semibold text-teal-800 mb-2 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     Secure Online Payment:
                                 </h6>
-                                <ul class="text-sm text-purple-700 space-y-1">
+                                <ul class="text-sm text-teal-700 space-y-1">
                                     <li>• Safe & secure payment processing</li>
                                     <li>• Instant confirmation upon successful payment</li>
                                     <li>• Payment processed immediately</li>
