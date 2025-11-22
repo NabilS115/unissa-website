@@ -21,9 +21,16 @@
 <meta name="twitter:title" content="{{ $title ?? config('app.name') }}">
 <meta name="twitter:description" content="{{ $description ?? 'Business with Barakah - Promoting halal, ethical, and impactful entrepreneurship' }}">
 
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+@php
+    // Basic favicon detection for components using head partial
+    $isUnissaCafe = str_contains(request()->fullUrl(), 'unissa-cafe') || 
+                   str_contains(request()->path(), 'unissa-cafe');
+    $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'favicon.ico';
+@endphp
+
+<!-- Basic favicon fallback -->
+<link rel="icon" href="/{{ $faviconFile }}" type="image/png">
+<link rel="shortcut icon" href="/{{ $faviconFile }}" type="image/png">
 
 <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
 <link rel="dns-prefetch" href="https://fonts.bunny.net">

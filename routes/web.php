@@ -5,6 +5,40 @@ Route::post('logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+// Dynamic Favicon Routes
+Route::get('/favicon.ico', function () {
+    $referer = request()->headers->get('referer');
+    $isUnissaContext = str_contains(request()->fullUrl(), 'unissa-cafe') ||
+                      str_contains($referer ?? '', 'unissa-cafe') ||
+                      session('current_context') === 'unissa-cafe';
+    
+    $faviconPath = $isUnissaContext ? 
+        public_path('images/UNISSA_CAFE.png') : 
+        public_path('images/TIJARAH_CO_SDN_BHD.png');
+    
+    return response()->file($faviconPath, [
+        'Content-Type' => 'image/png',
+        'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        'Pragma' => 'no-cache',
+        'Expires' => '0'
+    ]);
+})->name('dynamic.favicon');
+
+Route::get('/unissa-favicon.ico', function () {
+    return response()->file(public_path('images/UNISSA_CAFE.png'), [
+        'Content-Type' => 'image/png',
+        'Cache-Control' => 'no-cache, no-store, must-revalidate'
+    ]);
+});
+
+Route::get('/tijarah-favicon.ico', function () {
+    return response()->file(public_path('images/TIJARAH_CO_SDN_BHD.png'), [
+        'Content-Type' => 'image/png',
+        'Cache-Control' => 'no-cache, no-store, must-revalidate'
+    ]);
+});
+
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProfileController;

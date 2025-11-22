@@ -11,7 +11,7 @@
   <!-- White circular background with shadow (matching Tailwind rounded-full bg-white) -->
   <circle cx="32" cy="32" r="30" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#shadow)"/>
   
-  <!-- Tijarah logo centered with proper padding (matching header w-16 h-16 proportions) -->
-  <image href="/images/TIJARAH_CO_SDN_BHD.png" x="8" y="8" width="48" height="48" 
+  <!-- Unissa logo centered with proper padding (matching header w-16 h-16 proportions) -->
+  <image href="/images/UNISSA_CAFE.png" x="8" y="8" width="48" height="48" 
          preserveAspectRatio="xMidYMid meet" clip-path="circle(22px at 32px 32px)"/>
 </svg>

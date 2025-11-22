@@ -9,6 +9,20 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Unissa Cafe">
+
+    @php
+        // Simple, clean favicon system
+        $isUnissaCafe = str_contains(request()->fullUrl(), 'unissa-cafe') || 
+                       str_contains(request()->path(), 'unissa-cafe');
+        $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'favicon.ico';
+        $brandContext = $isUnissaCafe ? 'UNISSA' : 'TIJARAH';
+    @endphp
+
+    <!-- Clean favicon implementation -->
+    <link rel="icon" href="/{{ $faviconFile }}?v={{ time() }}" type="image/png" sizes="32x32">
+    <link rel="shortcut icon" href="/{{ $faviconFile }}?v={{ time() }}" type="image/png">
+    <link rel="apple-touch-icon" href="/{{ $faviconFile }}?v={{ time() }}">
+
     {{-- Tailwind is built with Vite or npm for all environments. CDN is not used. --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Global Error Handler -->

@@ -231,7 +231,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Phone</h3>
-                    <p class="text-gray-600 text-sm">+XXX XXX XXXX</p>
+                    <p class="text-gray-600 text-sm">+673 123 4567</p>
                 </div>
 
                 <!-- Email -->
@@ -242,7 +242,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Email</h3>
-                    <p class="text-gray-600 text-sm">info@somethingcompany.com</p>
+                    <p class="text-gray-600 text-sm">tijarahco@unissa.edu.bn</p>
                 </div>
 
                 <!-- Hours -->
