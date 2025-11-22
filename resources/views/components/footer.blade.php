@@ -84,7 +84,7 @@
                 </div>
             @else
                 <div class="flex gap-4 mb-4">
-                    <a href="https://www.instagram.com/tijarahco/" class="text-white" title="Instagram" target="_blank" rel="noopener">
+                    <a href="" class="text-white" title="Instagram" target="_blank" rel="noopener">
                                                 <!-- Refined Instagram SVG -->
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -92,7 +92,7 @@
                                                     <circle cx="17" cy="7" r="1.2" fill="currentColor"/>
                                                 </svg>
                     </a>
-                    <a href="https://www.facebook.com/tijarahco/" class="text-white" title="Facebook" target="_blank" rel="noopener">
+                    <a href="" class="text-white" title="Facebook" target="_blank" rel="noopener">
                         <!-- Facebook Official SVG -->
                         <svg width="24" height="24" viewBox="0 0 320 512" fill="currentColor"><path d="M279.14 288l14.22-92.66h-88.91V127.89c0-25.35 12.42-50.06 52.24-50.06H293V6.26S259.5 0 225.36 0c-73.22 0-121.36 44.38-121.36 124.72V195.3H22.89V288h81.11v224h100.2V288z"/></svg>
                     </a>
