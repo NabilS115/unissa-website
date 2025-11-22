@@ -29,15 +29,15 @@
         .logo {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #0d9488, #14b8a6);
-            border-radius: 12px;
             margin: 0 auto 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 24px;
+        }
+        .logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
         .header h1 {
             color: #0d9488;
@@ -236,8 +236,10 @@
     <div class="email-container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">U</div>
-            <h1>Order Confirmed!</h1>
+            <div class="logo">
+                <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo">
+            </div>
+            <h1>Order Confirmation</h1>
             <p>Thank you for your order at Unissa Cafe</p>
         </div>
 

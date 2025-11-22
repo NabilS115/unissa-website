@@ -1,34 +1,41 @@
 <!-- Reusable Header Component -->
+@php
+    $headerContext = session('header_context', 'tijarah');
+    $referer = request()->headers->get('referer');
+    $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*') || request()->is('unissa-cafe/catalog');
+    $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+    
+    // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
+    $refererSuggestsTijarah = $referer && (
+        str_ends_with($referer, '/') || 
+        preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+        str_contains($referer, '/company-history') ||
+        str_contains($referer, '/contact') ||
+        (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
+        (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
+    );
+    
+    if ($isProfilePage && $refererSuggestsTijarah) {
+        $shouldShowUnissaBranding = false; // Force Tijarah branding
+    } else {
+        $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $headerContext === 'unissa-cafe');
+    }
+@endphp
+
 <header class="w-full bg-teal-600 text-white py-2 md:py-4 px-4 md:px-6 header-fallback z-50 relative">
     <div class="flex items-center justify-between w-full max-w-full">
         <!-- Logo Section (Left) -->
         <div class="flex items-center gap-2 md:gap-4 logo-section flex-shrink-0">
-            <div class="w-8 h-8 md:w-10 md:h-10 bg-red-600 border-2 md:border-4 border-black flex items-center justify-center"></div>
+            @if($shouldShowUnissaBranding)
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
+                    <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain">
+                </div>
+            @else
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
+                    <img src="{{ asset('images/TIJARAH_CO_SDN_BHD.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
+                </div>
+            @endif
             <h1 class="text-lg md:text-3xl font-bold" style="font-weight: bold; margin: 0;">
-            @php
-                $headerContext = session('header_context', 'tijarah');
-                $referer = request()->headers->get('referer');
-                $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*') || request()->is('unissa-cafe/catalog');
-                $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
-                
-                // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
-                $refererSuggestsTijarah = $referer && (
-                    str_ends_with($referer, '/') || 
-                    preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
-                    str_contains($referer, '/company-history') ||
-                    str_contains($referer, '/contact') ||
-                    (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
-                    (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
-                );
-                
-                if ($isProfilePage && $refererSuggestsTijarah) {
-                    $shouldShowUnissaBranding = false; // Force Tijarah branding
-                } else {
-                    $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $headerContext === 'unissa-cafe');
-                }
-                
-
-            @endphp
                 @if($shouldShowUnissaBranding)
                     <span class="hidden sm:inline">Unissa Cafe</span>
                     <span class="sm:hidden">Unissa Cafe</span>

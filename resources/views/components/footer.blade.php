@@ -4,32 +4,39 @@
 <script src="/js/footer.js"></script>
 
 <footer class="w-full bg-teal-600 text-white py-8 px-4 flex flex-col md:flex-row items-center justify-between gap-8" style="background-color:#0d9488;">
+    @php
+        $footerContext = session('header_context', 'tijarah');
+        $referer = request()->headers->get('referer');
+        $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
+        $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+        
+        // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
+        $refererSuggestsTijarah = $referer && (
+            str_ends_with($referer, '/') || 
+            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
+            str_contains($referer, '/company-history') ||
+            str_contains($referer, '/contact') ||
+            (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
+            (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
+        );
+        
+        if ($isProfilePage && $refererSuggestsTijarah) {
+            $shouldShowUnissaBranding = false; // Force Tijarah branding
+        } else {
+            $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $footerContext === 'unissa-cafe');
+        }
+    @endphp
+    
     <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bg-red-600 border-4 border-black flex items-center justify-center mr-2"></div>
+        <div class="w-16 h-16 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
+            @if($shouldShowUnissaBranding)
+                <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain">
+            @else
+                <img src="{{ asset('images/TIJARAH_CO_SDN_BHD.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
+            @endif
+        </div>
         <div class="flex flex-col">
             <span class="font-bold text-lg">
-                @php
-                    $footerContext = session('header_context', 'tijarah');
-                    $referer = request()->headers->get('referer');
-                    $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
-                    $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
-                    
-                    // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
-                    $refererSuggestsTijarah = $referer && (
-                        str_ends_with($referer, '/') || 
-                        preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
-                        str_contains($referer, '/company-history') ||
-                        str_contains($referer, '/contact') ||
-                        (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
-                        (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
-                    );
-                    
-                    if ($isProfilePage && $refererSuggestsTijarah) {
-                        $shouldShowUnissaBranding = false; // Force Tijarah branding
-                    } else {
-                        $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $footerContext === 'unissa-cafe');
-                    }
-                @endphp
                 @if($shouldShowUnissaBranding)
                     Unissa Cafe
                 @else
