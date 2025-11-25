@@ -125,52 +125,12 @@
                 <!-- Content -->
                 <div class="p-8 lg:p-12">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
                         <h2 class="text-3xl font-bold text-teal-700">About Tijarah Co</h2>
                     </div>
                     
                     <p class="text-gray-700 text-lg leading-relaxed mb-6">
                         Welcome to Tijarah Co Sdn Bhd, established under UNISSA, is dedicated to fostering entrepreneurship, innovation, and halal trade. We provide a platform for students, alumni, and the community to develop businesses, showcase products, and grow sustainably in line with Islamic values.
                     </p>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Premium Quality</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Fresh Ingredients</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Expert Curation</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Customer Satisfaction</span>
-                        </div>
-                    </div>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="/about" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
@@ -191,12 +151,11 @@
                     </div>
                 </div>
                 
-                <!-- Image -->
-                <div class="relative h-64 lg:h-full">
-                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80" 
-                         alt="About UNISSA - Quality Food Experience" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-l from-transparent to-teal-600/20"></div>
+                <!-- Tijarah Logo -->
+                <div class="relative h-64 lg:h-full flex items-center justify-center">
+                    <div class="w-80 h-80 md:w-96 md:h-96 bg-white rounded-full p-5 shadow-lg flex items-center justify-center">
+                        <img src="{{ asset('images/TIJARAH_CO_SDN_BHD.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
+                    </div>
                 </div>
             </div>
         </div>

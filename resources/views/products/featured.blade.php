@@ -22,13 +22,6 @@
         
         <div class="relative z-10 text-center px-4">
             <div class="mb-6 animate-fade-in-up">
-                <div class="inline-flex items-center gap-3 mb-4">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                        </svg>
-                    </div>
-                </div>
                 <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
                     Welcome to 
                     <span class="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
@@ -45,16 +38,10 @@
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                 <a href="{{ route('unissa-cafe.catalog') }}?tab=food" 
                    class="group inline-flex items-center gap-3 bg-white text-teal-600 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
-                    <svg class="w-6 h-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                    </svg>
                     Browse Food Menu
                 </a>
                 <a href="{{ route('unissa-cafe.catalog') }}?tab=merch" 
                    class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
-                    <svg class="w-6 h-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
                     Shop Merchandise
                 </a>
             </div>
@@ -277,7 +264,7 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div class="absolute top-4 left-4">
                             <span class="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                                ⭐ Featured
+                                Featured
                             </span>
                         </div>
                         <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -338,7 +325,7 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div class="absolute top-4 left-4">
                             <span class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                                🏷️ Featured
+                                Featured
                             </span>
                         </div>
                         <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
