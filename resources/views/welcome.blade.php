@@ -152,7 +152,7 @@
                 </div>
                 
                 <!-- Tijarah Logo -->
-                <div class="relative h-64 lg:h-full flex items-center justify-center">
+                <div class="relative h-64 lg:h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100">
                     <div class="w-80 h-80 md:w-96 md:h-96 bg-white rounded-full p-5 shadow-lg flex items-center justify-center">
                         <img src="{{ asset('images/TIJARAH_CO_SDN_BHD.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
                     </div>
