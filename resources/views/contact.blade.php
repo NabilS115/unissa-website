@@ -66,12 +66,12 @@
                     <span class="text-2xl">📞</span>
                     <span class="font-bold">Phone</span>
                 </div>
-                <div class="ml-8 text-gray-700 mb-2">+XXX XXX XXXX</div>
+                <div class="ml-8 text-gray-700 mb-2">+673 123 4567</div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="text-2xl">✉️</span>
                     <span class="font-bold">Email</span>
                 </div>
-                <div class="ml-8 text-gray-700 mb-2">info@somethingcompany.com</div>
+                <div class="ml-8 text-gray-700 mb-2">tijarahco@unissa.edu.bn</div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="text-2xl">🕒</span>
                     <span class="font-bold">Hours</span>
