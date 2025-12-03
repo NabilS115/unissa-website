@@ -474,6 +474,28 @@
     @stack('scripts')
     {{-- Alpine.js should only be included once. --}}
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Immediate cart count update function fallback -->
+    <script>
+    // Provide immediate updateCartCount function before header.js loads
+    window.updateCartCount = window.updateCartCount || function(newCount) {
+        console.log('Fallback updateCartCount called with:', newCount);
+        const cartBadge = document.getElementById('cart-count');
+        const mobileCartBadge = document.getElementById('cart-count-mobile');
+        
+        if (cartBadge) {
+            cartBadge.textContent = newCount || 0;
+            cartBadge.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
+            console.log('Fallback updated desktop cart badge to:', newCount);
+        }
+        if (mobileCartBadge) {
+            mobileCartBadge.textContent = newCount || 0;
+            mobileCartBadge.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
+            console.log('Fallback updated mobile cart badge to:', newCount);
+        }
+    };
+    </script>
+    
     <!-- Externalized: layout overlay unguard logic -->
     <script src="/js/layout-unguard.js"></script>
     

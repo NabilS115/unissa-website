@@ -764,8 +764,8 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
                                     </div>
-                                    <button class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
-                                        Order
+                                    <button @click.stop="addToCart(food.id, food.name, food.price)" class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                                        Add to Cart
                                     </button>
                                 </div>
                             </template>
@@ -841,8 +841,8 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
                                     </div>
-                                    <button class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
-                                        Order
+                                    <button @click.stop="addToCart(merch.id, merch.name, merch.price)" class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                                        Add to Cart
                                     </button>
                                 </div>
                             </template>

@@ -121,6 +121,186 @@
 
       clearSearch() { if (this.tab === 'food') { this.foodSearch = ''; this.foodSearchInput = ''; this.currentFoodPage = 1; } else { this.merchSearch = ''; this.merchSearchInput = ''; this.currentMerchPage = 1; } },
 
+      addToCart(productId, productName, productPrice) {
+        // Get CSRF token
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        
+        if (!token) {
+          console.error('CSRF token not found');
+          alert('Error: Security token not found. Please refresh the page.');
+          return;
+        }
+        
+        // Find the button that was clicked
+        const clickedButton = event.target;
+        
+        // Store original button state
+        const originalText = clickedButton.textContent;
+        const originalClasses = clickedButton.className;
+        
+        // Change button to "Adding..." state
+        clickedButton.textContent = 'Adding...';
+        clickedButton.disabled = true;
+        clickedButton.className = originalClasses.replace(/from-teal-600 via-emerald-600 to-cyan-600/, 'from-gray-500 via-gray-600 to-gray-700');
+
+        // Check if user is authenticated (simple check for auth elements)
+        const isAuthenticated = document.querySelector('[data-user-authenticated]') || 
+                               document.querySelector('.user-menu') || 
+                               !document.querySelector('[href*="login"]') ||
+                               window.__userAuthenticated === true;
+
+        if (!isAuthenticated) {
+          // User not logged in
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'info',
+              title: 'Login Required',
+              text: 'Please log in to add items to your cart.',
+              showCancelButton: true,
+              confirmButtonText: 'Login',
+              cancelButtonText: 'Cancel'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/login';
+              }
+            });
+          } else {
+            if (confirm('Please log in to add items to your cart. Go to login page?')) {
+              window.location.href = '/login';
+            }
+          }
+          
+          // Reset button on authentication error
+          clickedButton.textContent = originalText;
+          clickedButton.className = originalClasses;
+          clickedButton.disabled = false;
+          return;
+        }
+
+        // Make AJAX request to add to cart
+        fetch('/cart/add-simple', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: 1
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Show success notification
+            if (typeof Swal !== 'undefined') {
+              const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', Swal.stopTimer)
+                  toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+              });
+
+              Toast.fire({
+                icon: 'success',
+                title: data.message,
+                text: `${productName} - $${parseFloat(productPrice).toFixed(2)}`
+              });
+            } else {
+              alert(data.message);
+            }
+            
+            // Update cart count if cart badge exists
+            if (data.cart_count !== undefined) {
+              console.log('Cart count received:', data.cart_count);
+              console.log('updateCartCount function available:', typeof window.updateCartCount);
+              
+              // Use the global updateCartCount function if available
+              if (typeof window.updateCartCount === 'function') {
+                window.updateCartCount(data.cart_count);
+              } else {
+                // Fallback: update cart badges directly
+                console.log('Using fallback cart count update');
+                const cartBadge = document.getElementById('cart-count');
+                const mobileCartBadge = document.getElementById('cart-count-mobile');
+                
+                console.log('Cart badges found:', { desktop: !!cartBadge, mobile: !!mobileCartBadge });
+                
+                if (cartBadge) {
+                  cartBadge.textContent = data.cart_count;
+                  cartBadge.style.display = data.cart_count > 0 ? 'flex' : 'none';
+                  console.log('Updated desktop cart badge to:', data.cart_count);
+                }
+                if (mobileCartBadge) {
+                  mobileCartBadge.textContent = data.cart_count;
+                  mobileCartBadge.style.display = data.cart_count > 0 ? 'flex' : 'none';
+                  console.log('Updated mobile cart badge to:', data.cart_count);
+                }
+                
+                // Try again after a short delay in case the function loads later
+                setTimeout(() => {
+                  if (typeof window.updateCartCount === 'function') {
+                    console.log('updateCartCount now available, using it');
+                    window.updateCartCount(data.cart_count);
+                  }
+                }, 100);
+              }
+            }
+            
+            // Update button to success state
+            clickedButton.textContent = 'Added to Cart!';
+            clickedButton.className = originalClasses.replace(/from-teal-600 via-emerald-600 to-cyan-600/, 'from-green-500 via-emerald-600 to-green-600');
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+              clickedButton.textContent = originalText;
+              clickedButton.className = originalClasses;
+              clickedButton.disabled = false;
+            }, 2000);
+          } else {
+            // Show error notification
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Failed to add item to cart'
+              });
+            } else {
+              alert(data.message || 'Failed to add item to cart');
+            }
+            
+            // Reset button on error
+            clickedButton.textContent = originalText;
+            clickedButton.className = originalClasses;
+            clickedButton.disabled = false;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to add item to cart. Please try again.'
+            });
+          } else {
+            alert('Failed to add item to cart. Please try again.');
+          }
+          
+          // Reset button on error
+          clickedButton.textContent = originalText;
+          clickedButton.className = originalClasses;
+          clickedButton.disabled = false;
+        });
+      },
+
       navigateToReview(id) { window.location.href = `/product/${id}`; },
 
       highlightProduct(productId) {

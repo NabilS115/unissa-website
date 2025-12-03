@@ -267,14 +267,6 @@
                                 Featured
                             </span>
                         </div>
-                        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
-                                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </div>
-                        </div>
                     </div>
                     <div class="p-6">
                         <div class="mb-3">
@@ -293,8 +285,8 @@
                                 <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
                                 <span class="text-sm text-gray-500 ml-1">each</span>
                             </div>
-                            <button class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                                Order Now
+                            <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                                Add to Cart
                             </button>
                         </div>
                         @endif
@@ -328,14 +320,6 @@
                                 Featured
                             </span>
                         </div>
-                        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </div>
-                        </div>
                     </div>
                     <div class="p-6">
                         <div class="mb-3">
@@ -354,8 +338,8 @@
                                 <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
                                 <span class="text-sm text-gray-500 ml-1">each</span>
                             </div>
-                            <button class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                                Order Now
+                            <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                                Add to Cart
                             </button>
                         </div>
                         @endif
@@ -575,4 +559,188 @@ html {
     }
 }
 </style>
+
+<script>
+function addToCart(productId, productName, productPrice) {
+    // Get CSRF token
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    
+    if (!token) {
+        console.error('CSRF token not found');
+        alert('Error: Security token not found. Please refresh the page.');
+        return;
+    }
+
+    // Find the button that was clicked by looking for the button in the current product card
+    const productCard = event.target.closest('.group');
+    const addToCartButton = productCard?.querySelector('button');
+    
+    // Store original button state
+    let originalText = '';
+    let originalClasses = '';
+    
+    if (addToCartButton) {
+        originalText = addToCartButton.textContent;
+        originalClasses = addToCartButton.className;
+        
+        // Change button to "Adding..." state
+        addToCartButton.textContent = 'Adding...';
+        addToCartButton.disabled = true;
+        addToCartButton.className = originalClasses.replace(/from-teal-600 to-emerald-600/, 'from-gray-500 to-gray-600');
+    }
+
+    // Check if user is logged in
+    @auth
+        // Make AJAX request to add to cart
+        fetch('/cart/add-simple', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success notification
+                if (typeof Swal !== 'undefined') {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.message,
+                        text: `${productName} - $${parseFloat(productPrice).toFixed(2)}`
+                    });
+                } else {
+                    alert(data.message);
+                }
+                
+                // Update cart count if cart badge exists
+                if (data.cart_count !== undefined) {
+                    console.log('Cart count received:', data.cart_count);
+                    console.log('updateCartCount function available:', typeof window.updateCartCount);
+                    
+                    // Use the global updateCartCount function if available
+                    if (typeof window.updateCartCount === 'function') {
+                        window.updateCartCount(data.cart_count);
+                    } else {
+                        // Fallback: update cart badges directly
+                        console.log('Using fallback cart count update');
+                        const cartBadge = document.getElementById('cart-count');
+                        const mobileCartBadge = document.getElementById('cart-count-mobile');
+                        
+                        console.log('Cart badges found:', { desktop: !!cartBadge, mobile: !!mobileCartBadge });
+                        
+                        if (cartBadge) {
+                            cartBadge.textContent = data.cart_count;
+                            cartBadge.style.display = data.cart_count > 0 ? 'flex' : 'none';
+                            console.log('Updated desktop cart badge to:', data.cart_count);
+                        }
+                        if (mobileCartBadge) {
+                            mobileCartBadge.textContent = data.cart_count;
+                            mobileCartBadge.style.display = data.cart_count > 0 ? 'flex' : 'none';
+                            console.log('Updated mobile cart badge to:', data.cart_count);
+                        }
+                        
+                        // Try again after a short delay in case the function loads later
+                        setTimeout(() => {
+                            if (typeof window.updateCartCount === 'function') {
+                                console.log('updateCartCount now available, using it');
+                                window.updateCartCount(data.cart_count);
+                            }
+                        }, 100);
+                    }
+                }
+                
+                // Update button to success state
+                if (addToCartButton) {
+                    addToCartButton.textContent = 'Added to Cart!';
+                    addToCartButton.className = originalClasses.replace(/from-teal-600 to-emerald-600/, 'from-green-500 to-emerald-500');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        addToCartButton.textContent = originalText;
+                        addToCartButton.className = originalClasses;
+                        addToCartButton.disabled = false;
+                    }, 2000);
+                }
+            } else {
+                // Show error notification
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to add item to cart'
+                    });
+                } else {
+                    alert(data.message || 'Failed to add item to cart');
+                }
+            }
+            
+            // Reset button on error
+            if (addToCartButton) {
+                addToCartButton.textContent = originalText;
+                addToCartButton.className = originalClasses;
+                addToCartButton.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to add item to cart. Please try again.'
+                });
+            } else {
+                alert('Failed to add item to cart. Please try again.');
+            }
+            
+            // Reset button on error
+            if (addToCartButton) {
+                addToCartButton.textContent = originalText;
+                addToCartButton.className = originalClasses;
+                addToCartButton.disabled = false;
+            }
+        });
+    @else
+        // User not logged in - redirect to login
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'info',
+                title: 'Login Required',
+                text: 'Please log in to add items to your cart.',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+        } else {
+            if (confirm('Please log in to add items to your cart. Go to login page?')) {
+                window.location.href = '/login';
+            }
+        }
+    @endauth
+}
+</script>
+
 @endsection
