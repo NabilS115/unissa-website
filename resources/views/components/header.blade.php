@@ -304,7 +304,15 @@
                 <!-- Mobile Menu Header -->
                 <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-4 py-4 flex items-center flex-shrink-0">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-red-600 border-2 border-white rounded-sm"></div>
+                        @if($shouldShowUnissaBranding)
+                            <div class="w-8 h-8 bg-white rounded-full p-0.5 shadow-sm flex items-center justify-center">
+                                <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain">
+                            </div>
+                        @else
+                            <div class="w-8 h-8 bg-white rounded-full p-0.5 shadow-sm flex items-center justify-center">
+                                <img src="{{ asset('images/TIJARAH_CO_SDN_BHD.png') }}" alt="Tijarah Co Logo" class="w-full h-full object-contain">
+                            </div>
+                        @endif
                         <span class="font-bold text-white text-lg">
                             @if($shouldShowUnissaBranding)
                                 Unissa Cafe
