@@ -70,6 +70,18 @@
 
 @section('title', 'Unissa Cafe - Product Details')
 
+{{-- Preload critical product image to prevent flash --}}
+@section('head')
+<link rel="preload" href="{{ $product->img ?? '' }}" as="image">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d9488">
+@endsection
+
+@push('head')
+<!-- Preload critical product image to prevent flash -->
+<link rel="preload" href="{{ $product->img ?? '' }}" as="image">
+@endpush
+
 @push('styles')
 <style>
 /* Mobile-first responsive optimizations */
@@ -97,15 +109,52 @@
     
     /* Product image mobile fixes */
     .product-image-container {
-        height: 300px !important;
-        max-height: 300px !important;
+        height: 400px !important;
+        max-height: 400px !important;
+        position: relative;
     }
     
     .product-image {
         width: 100% !important;
-        height: 300px !important;
-        object-fit: cover !important;
+        height: 400px !important;
+        object-fit: contain !important;
         object-position: center !important;
+        background: white;
+    }
+    
+    #product-image {
+        transition: opacity 0.3s ease;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+        image-rendering: auto;
+    }
+    
+    #image-loader {
+        transition: opacity 0.3s ease;
+    }
+    
+    @media (min-width: 640px) {
+        .product-image-container {
+            height: 500px !important;
+            max-height: 500px !important;
+        }
+        
+        .product-image {
+            height: 500px !important;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .product-image-container {
+            height: auto !important;
+            max-height: none !important;
+            aspect-ratio: 1 / 1;
+        }
+        
+        .product-image {
+            height: 100% !important;
+        }
     }
     
     /* Product layout mobile fixes */
@@ -319,6 +368,20 @@ input[type="number"]::-ms-clear {
 @endpush
 
 @section('content')
+
+<!-- Image Zoom Modal -->
+<div id="image-modal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm z-50 flex items-center justify-center p-4" style="display: none;">
+    <div class="relative max-w-7xl max-h-full">
+        <button onclick="closeImageModal()" class="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <img id="modal-image" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+        <p class="absolute -bottom-12 left-0 text-white text-sm opacity-75">Click outside image to close</p>
+    </div>
+</div>
+
 <div class="bg-gray-50 py-8">
 
     <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 relative">
@@ -357,9 +420,27 @@ input[type="number"]::-ms-clear {
             <div class="xl:col-span-1">
                 <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
                     <!-- Product Image -->
-                    <div class="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
+                    <div class="aspect-square bg-white p-4 sm:p-6 lg:p-8 product-image-container" id="image-container" style="border: 1px solid #f3f4f6;">
+                        <!-- Loading placeholder -->
+                        <div id="image-loader" class="w-full h-full bg-gray-100 rounded-lg sm:rounded-xl flex items-center justify-center">
+                            <div class="text-gray-400">
+                                <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                                </svg>
+                                <p class="text-sm">Loading high quality image...</p>
+                            </div>
+                        </div>
                         <img src="{{ $product->img }}" alt="{{ $product->name }}"
-                             class="w-full h-full object-cover rounded-lg sm:rounded-xl shadow-md" />
+                             id="product-image"
+                             class="w-full h-full object-contain rounded-lg sm:rounded-xl shadow-md cursor-pointer hover:shadow-lg transition-all duration-300"
+                             style="display: none; background: white;"
+                             loading="eager"
+                             decoding="sync"
+                             fetchpriority="high"
+                             onclick="openImageModal()"
+                             title="Click to view larger image"
+                             onload="showProductImage()"
+                             onerror="handleImageError()" />
                     </div>
                     
                     <!-- Product Details -->
@@ -826,6 +907,81 @@ input[type="number"]::-ms-clear {
 
 @push('scripts')
 <script>
+// Image loading handlers
+function showProductImage() {
+    const image = document.getElementById('product-image');
+    const loader = document.getElementById('image-loader');
+    if (image && loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+            image.style.display = 'block';
+            image.style.opacity = '1';
+        }, 300);
+    }
+}
+
+function handleImageError() {
+    const image = document.getElementById('product-image');
+    const loader = document.getElementById('image-loader');
+    if (image && loader) {
+        loader.innerHTML = `
+            <div class="text-gray-400 text-center">
+                <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                </svg>
+                <p class="text-sm">Image unavailable</p>
+            </div>
+        `;
+    }
+}
+
+// Image zoom modal functions
+function openImageModal() {
+    const productImage = document.getElementById('product-image');
+    const modal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    
+    if (productImage && modal && modalImage) {
+        modalImage.src = productImage.src;
+        modalImage.alt = productImage.alt;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('image-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close modal when clicking outside the image
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('image-modal');
+    if (modal && e.target === modal) {
+        closeImageModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeImageModal();
+    }
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // If image is already cached and loaded, show it immediately
+    const image = document.getElementById('product-image');
+    if (image && image.complete && image.naturalHeight !== 0) {
+        showProductImage();
+    }
+});
+
 window.__productDetail = {
     csrfToken: '{{ csrf_token() }}',
     productId: {{ $product->id ?? 'null' }},

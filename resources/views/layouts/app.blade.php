@@ -11,6 +11,10 @@
     <meta name="apple-mobile-web-app-title" content="Unissa Cafe">
     <meta name="msapplication-navbutton-color" content="#fdfdfc">
     <meta name="apple-mobile-web-app-status-bar-style" content="#fdfdfc">
+    
+    <!-- Cache optimization meta tags -->
+    <meta http-equiv="Cache-Control" content="public, max-age=31536000">
+    <meta http-equiv="Expires" content="Thu, 31 Dec 2026 23:59:59 GMT">
 
     @php
         // Simple, clean favicon system
@@ -27,6 +31,14 @@
 
     {{-- Tailwind is built with Vite or npm for all environments. CDN is not used. --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <!-- Preload critical resources for better caching -->
+    <link rel="preload" href="{{ Vite::asset('resources/css/app.css') }}" as="style">
+    <link rel="preload" href="{{ Vite::asset('resources/js/app.js') }}" as="script">
+    
     <!-- Global Error Handler -->
     <script src="/js/error-handler.js"></script>
     <!-- Alpine.js Optimizer -->
@@ -86,19 +98,21 @@
             pointer-events: none;
         }
         
-        /* Smooth page transitions */
+        /* Smooth page transitions - but don't conflict with Alpine */
         body {
-            transition: opacity 0.3s ease;
+            background-color: #fdfdfc;
         }
         
-        /* Fix for Alpine.js flashing - but allow page-specific overrides */
-        [x-data]:not(.alpine-component) {
-            opacity: 0;
-        }
+        /* Fix for Alpine.js flashing */
+        [x-cloak] { display: none !important; }
         
-        [x-data].alpine-initialized {
-            opacity: 1;
-            transition: opacity 0.3s ease;
+        /* Fix for Alpine.js flashing */
+        [x-cloak] { display: none !important; }
+        
+        /* Ensure Alpine components become visible once initialized */
+        [x-data] {
+            opacity: 1 !important;
+            display: block !important;
         }
         
         /* Always show alpine-component class immediately */
@@ -497,42 +511,6 @@
     <!-- Externalized: layout overlay unguard logic -->
     <script src="/js/layout-unguard.js"></script>
     
-    <!-- Page load handler to prevent flash -->
-    <script>
-        // Show content once everything is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.classList.add('loaded');
-        });
-        
-        // Fallback in case DOMContentLoaded already fired
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            document.body.classList.add('loaded');
-        }
-        
-        // Handle page navigation flashing (for SPA-like behavior)
-        let isNavigating = false;
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('a[href]');
-            if (link && !link.target && !link.download && link.href.startsWith(window.location.origin)) {
-                isNavigating = true;
-                document.body.style.opacity = '0.7';
-                setTimeout(() => {
-                    if (isNavigating) {
-                        document.body.style.opacity = '1';
-                        isNavigating = false;
-                    }
-                }, 100);
-            }
-        });
-        
-        // Reset navigation state on page load
-        window.addEventListener('beforeunload', () => {
-            isNavigating = false;
-            document.body.style.opacity = '1';
-        });
-    </script>
-    </script>
-    </script>
-    </script>
+    <!-- Optimized navigation handler -->\n    <script>\n        // Prevent page flash during navigation\n        let navigationInProgress = false;\n        \n        // Faster page showing and Alpine.js initialization\n        function initializePage() {\n            // Remove x-cloak from all elements\n            document.querySelectorAll('[x-cloak]').forEach(el => {\n                el.removeAttribute('x-cloak');\n                el.style.display = 'block';\n                el.style.opacity = '1';\n            });\n            \n            // Mark Alpine components as initialized\n            document.querySelectorAll('[x-data]').forEach(el => {\n                el.setAttribute('data-alpine-initialized', 'true');\n                el.style.opacity = '1';\n                el.style.display = 'block';\n            });\n            \n            // Mark page as loaded for any systems that need it\n            document.body.classList.add('loaded');\n        }\n        \n        // Initialize immediately if possible\n        if (document.readyState === 'loading') {\n            document.addEventListener('DOMContentLoaded', initializePage);\n        } else {\n            initializePage();\n        }\n        \n        // Also initialize when Alpine is ready\n        document.addEventListener('alpine:init', initializePage);\n        \n        // Fallback - force initialization after 1 second\n        setTimeout(initializePage, 1000);\n        \n        // Optimized navigation handling\n        document.addEventListener('click', function(e) {\n            const link = e.target.closest('a[href]');\n            if (link && \n                !link.target && \n                !link.download && \n                !link.href.includes('#') &&\n                link.href.startsWith(window.location.origin) &&\n                link.href !== window.location.href) {\n                \n                navigationInProgress = true;\n                \n                // Let browser handle navigation naturally - no opacity changes\n                // The preloaded resources will make this faster\n            }\n        });\n        \n        // Handle browser navigation (back/forward)\n        window.addEventListener('pageshow', function(e) {\n            navigationInProgress = false;\n            initializePage();\n        });\n        \n        // Reset state on page unload\n        window.addEventListener('beforeunload', function() {\n            navigationInProgress = false;\n        });\n    </script>
 </body>
 </html>

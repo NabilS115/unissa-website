@@ -4,6 +4,18 @@
 
 @push('styles')
 <style>
+/* Ensure main container is visible immediately to prevent flash */
+#browse-container {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+/* Hide modals by default with CSS, not x-cloak */
+[data-initial-hidden] {
+    display: none !important;
+}
+
 /* PROFESSIONAL MOBILE OPTIMIZATION */
 @media (max-width: 768px) {
     .food-card, .merch-card {
@@ -186,7 +198,7 @@
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
 @endphp
 
-<div x-data="foodMerchComponent()" x-cloak class="alpine-component" id="browse-container">
+<div x-data="foodMerchComponent()" class="alpine-component" id="browse-container">
 
     <!-- Menu Controls Header -->
                 <div class="w-full bg-teal-600 text-white sticky top-0 z-40 border-t border-teal-500">
@@ -300,7 +312,7 @@
     <!-- Admin Modals and Loading Overlays -->
     @if(auth()->user()?->role === 'admin')
     <!-- Add Product Modal -->
-    <div x-show="showAddModal" x-cloak data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+    <div x-show="showAddModal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4" style="display: none;">
         <form method="POST" action="{{ route('unissa-cafe.products.store') }}" enctype="multipart/form-data"
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
             @csrf
@@ -490,7 +502,7 @@
 
     <!-- Edit Product Modal -->
     @if(auth()->check() && auth()->user()->role === 'admin')
-    <div x-show="showEditModal" x-cloak data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+    <div x-show="showEditModal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4" style="display: none;">
         <form method="POST" :action="`/catalog/edit/${editingProduct?.id || ''}`" enctype="multipart/form-data"
               @submit="showEditModal = false" 
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
@@ -714,7 +726,7 @@
     @endif
 
     <!-- Loading Overlay -->
-    <div x-show="isLoading" x-cloak data-initial-hidden class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40">
+    <div x-show="isLoading" data-initial-hidden class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40" style="display: none;">
         <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
             <div class="rounded-full h-12 w-12 border-4 border-teal-200 border-t-teal-600 mb-4"></div>
             <p class="text-gray-600 font-medium">Switching catalog...</p>
@@ -895,6 +907,8 @@ document.addEventListener('alpine:init', () => {
 });
 
 document.addEventListener('alpine:initialized', () => {
+    console.log('🚀 Alpine fully initialized');
+    
     // Make sure the browse component is visible
     const browseComponent = document.querySelector('.alpine-component');
     if (browseComponent) {
@@ -902,47 +916,18 @@ document.addEventListener('alpine:initialized', () => {
         browseComponent.style.opacity = '1';
         browseComponent.style.display = 'block';
     }
-    
-    // Remove x-cloak after initialization
-    setTimeout(() => {
-        document.querySelectorAll('[x-cloak]').forEach(el => {
-            el.removeAttribute('x-cloak');
-            el.style.opacity = '1';
-        });
-    }, 100);
 });
 
-// Fallback initialization
+// Ensure immediate visibility - no waiting for Alpine
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 Browse page DOM loaded');
     
-    // If Alpine hasn't initialized after 3 seconds, force show content
-    setTimeout(() => {
-        const browseComponent = document.getElementById('browse-container');
-        if (browseComponent && browseComponent.hasAttribute('x-cloak')) {
-            console.log('⚠️ Forcing browse component visibility');
-            browseComponent.removeAttribute('x-cloak');
-            browseComponent.style.opacity = '1';
-            browseComponent.style.display = 'block';
-            browseComponent.classList.add('alpine-initialized');
-        }
-    }, 3000);
-    
-    // Also try to initialize manually if foodMerchComponent exists
-    if (typeof window.foodMerchComponent === 'function') {
-        console.log('✅ foodMerchComponent function is available');
-        
-        setTimeout(() => {
-            const browseComponent = document.getElementById('browse-container');
-            if (browseComponent && !browseComponent.classList.contains('alpine-initialized')) {
-                console.log('🔧 Manually initializing browse component');
-                browseComponent.removeAttribute('x-cloak');
-                browseComponent.style.opacity = '1';
-                browseComponent.style.display = 'block';
-            }
-        }, 1000);
-    } else {
-        console.error('❌ foodMerchComponent function not found');
+    // Show content immediately
+    const browseComponent = document.getElementById('browse-container');
+    if (browseComponent) {
+        browseComponent.style.opacity = '1';
+        browseComponent.style.display = 'block';
+        browseComponent.classList.add('alpine-initialized');
     }
 });
 </script>
