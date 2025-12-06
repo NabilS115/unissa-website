@@ -184,7 +184,7 @@
                         <tr>
                             <td colspan="6" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center">
-                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mb-4"></div>
+                                    <div class="rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>
                                     <p class="text-gray-600">Loading users...</p>
                                 </div>
                             </td>
@@ -202,7 +202,7 @@
 </div>
 
 <!-- Add/Edit User Modal -->
-<div id="user-modal" data-initial-hidden class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+<div id="user-modal" data-initial-hidden class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 hidden">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
         <div class="p-6">
             <div class="flex items-center justify-between mb-6">

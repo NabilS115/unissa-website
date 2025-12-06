@@ -31,13 +31,12 @@
             </div>
             <div class="flex items-center gap-3">
                 <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 shadow-sm
-                    @if($order->status === 'pending') bg-yellow-50 text-yellow-800
-                    @elseif($order->status === 'confirmed') bg-blue-50 text-blue-800
-                    @elseif($order->status === 'processing') bg-purple-50 text-purple-800
-                    @elseif($order->status === 'ready_for_pickup') bg-orange-50 text-orange-800
-                    @elseif($order->status === 'picked_up') bg-green-50 text-green-800
-                    @elseif($order->status === 'cancelled') bg-red-50 text-red-800
-                    @endif">
+                    {{ $order->status === 'pending' ? 'bg-yellow-50 text-yellow-800' : 
+                       ($order->status === 'confirmed' ? 'bg-blue-50 text-blue-800' : 
+                       ($order->status === 'processing' ? 'bg-purple-50 text-purple-800' : 
+                       ($order->status === 'ready_for_pickup' ? 'bg-orange-50 text-orange-800' : 
+                       ($order->status === 'picked_up' ? 'bg-green-50 text-green-800' : 
+                       ($order->status === 'cancelled' ? 'bg-red-50 text-red-800' : 'bg-gray-50 text-gray-800'))))) }}">
                     {{ str_replace('_', ' ', ucwords($order->status, '_')) }}
                 </span>
             </div>
@@ -51,13 +50,12 @@
                         @if($status !== $order->status)
                             <button onclick="updateOrderStatus('{{ $status }}')"
                                 class="px-3 py-1 text-xs font-semibold rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2
-                                    @if($status === 'pending') border-yellow-300 text-yellow-700 hover:bg-yellow-50
-                                    @elseif($status === 'confirmed') border-blue-300 text-blue-700 hover:bg-blue-50
-                                    @elseif($status === 'processing') border-purple-300 text-purple-700 hover:bg-purple-50
-                                    @elseif($status === 'ready_for_pickup') border-orange-300 text-orange-700 hover:bg-orange-50
-                                    @elseif($status === 'picked_up') border-green-300 text-green-700 hover:bg-green-50
-                                    @elseif($status === 'cancelled') border-red-300 text-red-700 hover:bg-red-50
-                                    @endif">
+                                    {{ $status === 'pending' ? 'border-yellow-300 text-yellow-700 hover:bg-yellow-50' : 
+                                       ($status === 'confirmed' ? 'border-blue-300 text-blue-700 hover:bg-blue-50' : 
+                                       ($status === 'processing' ? 'border-purple-300 text-purple-700 hover:bg-purple-50' : 
+                                       ($status === 'ready_for_pickup' ? 'border-orange-300 text-orange-700 hover:bg-orange-50' : 
+                                       ($status === 'picked_up' ? 'border-green-300 text-green-700 hover:bg-green-50' : 
+                                       ($status === 'cancelled' ? 'border-red-300 text-red-700 hover:bg-red-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'))))) }}">
                                 Mark as {{ $label }}
                             </button>
                         @endif
@@ -172,10 +170,8 @@
                             <span class="text-sm text-gray-500">Payment Method:</span>
                             <div class="flex items-center mt-1">
                                 <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                    @if($order->payment_method === 'cash') text-green-700 bg-green-50
-                                    @elseif($order->payment_method === 'bank_transfer') text-blue-700 bg-blue-50
-                                    @else text-purple-700 bg-purple-50
-                                    @endif">
+                                    {{ $order->payment_method === 'cash' ? 'text-green-700 bg-green-50' : 
+                                       ($order->payment_method === 'bank_transfer' ? 'text-blue-700 bg-blue-50' : 'text-purple-700 bg-purple-50') }}">
                                     <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                                         @if($order->payment_method === 'cash')
                                             <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
@@ -194,11 +190,9 @@
                             <select id="payment-status-select" 
                                     onchange="updatePaymentStatus()" 
                                     class="payment-status-select border border-gray-200 rounded px-2 py-1 text-xs font-medium
-                                        @if($order->payment_status === 'paid') text-green-700 bg-green-100
-                                        @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
-                                        @elseif($order->payment_status === 'refunded') text-purple-700 bg-purple-100
-                                        @else text-red-700 bg-red-100
-                                        @endif"
+                                        {{ $order->payment_status === 'paid' ? 'text-green-700 bg-green-100' : 
+                                           ($order->payment_status === 'pending' ? 'text-yellow-700 bg-yellow-100' : 
+                                           ($order->payment_status === 'refunded' ? 'text-purple-700 bg-purple-100' : 'text-red-700 bg-red-100')) }}"
                                     data-order-id="{{ $order->id }}"
                                     data-current-status="{{ $order->payment_status }}">
                                 @foreach(App\Models\Order::getPaymentStatuses() as $value => $label)
@@ -257,10 +251,8 @@
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-sm text-gray-600">Current Status:</span>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                    @if($order->payment_status === 'paid') text-green-700 bg-green-100
-                                    @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
-                                    @else text-red-700 bg-red-100
-                                    @endif">
+                                    {{ $order->payment_status === 'paid' ? 'text-green-700 bg-green-100' : 
+                                       ($order->payment_status === 'pending' ? 'text-yellow-700 bg-yellow-100' : 'text-red-700 bg-red-100') }}">
                                     {{ ucfirst($order->payment_status) }}
                                 </span>
                             </div>

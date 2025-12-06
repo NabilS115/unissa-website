@@ -283,7 +283,7 @@ if (currentAuthState && currentUserRole === 'admin') {
         container.id = 'manage-gallery-modal';
         container.setAttribute('data-initial-hidden', '');
         container.className = 'fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4';
-        container.innerHTML = `<div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto"><div class="p-6"><div class="flex items-center justify-between mb-6"><h3 class="text-2xl font-bold text-gray-900">Manage Gallery Images</h3><button onclick="closeManageGalleryModal()" class="text-gray-400 hover:text-gray-600">Close</button></div><div id="gallery-list" class="space-y-4"><div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading images...</p></div></div></div></div>`;
+        container.innerHTML = `<div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto"><div class="p-6"><div class="flex items-center justify-between mb-6"><h3 class="text-2xl font-bold text-gray-900">Manage Gallery Images</h3><button onclick="closeManageGalleryModal()" class="text-gray-400 hover:text-gray-600">Close</button></div><div id="gallery-list" class="space-y-4"><div class="text-center py-8"><div class="rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading images...</p></div></div></div></div>`;
         document.body.appendChild(container);
         const inserted = document.getElementById('manage-gallery-modal');
         if (inserted) { inserted.removeAttribute('data-initial-hidden'); inserted.classList.remove('hidden'); inserted.style.display = 'flex'; }

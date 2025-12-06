@@ -42,14 +42,13 @@
                                     <p class="text-gray-600 text-sm">Placed on {{ $order->created_at->format('M d, Y \a\t g:i A') }}</p>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full
-                                        @if($order->status === 'pending') bg-yellow-100 text-yellow-800
-                                        @elseif($order->status === 'confirmed') bg-teal-100 text-teal-800
-                                        @elseif($order->status === 'processing') bg-yellow-100 text-yellow-800
-                                        @elseif($order->status === 'completed') bg-green-100 text-green-800
-                                        @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                                        @else bg-gray-100 text-gray-800
-                                        @endif">
+                                    <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full {{ 
+                                        $order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                        ($order->status === 'confirmed' ? 'bg-teal-100 text-teal-800' :
+                                        ($order->status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                                        ($order->status === 'completed' ? 'bg-green-100 text-green-800' :
+                                        ($order->status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))))
+                                    }}">
                                         {{ ucfirst($order->status) }}
                                     </span>
                                 </div>

@@ -40,14 +40,7 @@
 }
 
 @layer base {
-
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
-    }
+    *,\n    ::after,\n    ::before,\n    ::backdrop,\n    ::file-selector-button {\n        border-color: var(--color-gray-200, currentColor);\n    }
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {

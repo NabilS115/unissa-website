@@ -9,6 +9,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Unissa Cafe">
+    <meta name="msapplication-navbutton-color" content="#fdfdfc">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#fdfdfc">
 
     @php
         // Simple, clean favicon system
@@ -42,10 +44,6 @@
             padding: 0;
             font-family: system-ui, -apple-system, sans-serif;
         }
-        
-        /* Prevent flash of unstyled content */
-        body { opacity: 0; transition: opacity 0.3s ease; }
-        body.loaded { opacity: 1; }
         
         /* Prevent full-screen overlays from briefly displaying before JS/CSS runs */
         [data-initial-hidden] { display: none !important; }
@@ -532,6 +530,9 @@
             isNavigating = false;
             document.body.style.opacity = '1';
         });
+    </script>
+    </script>
+    </script>
     </script>
 </body>
 </html>

@@ -411,7 +411,7 @@ input[type="number"]::-ms-clear {
                             ])>
                                 <div @class([
                                     'w-2 h-2 rounded-full',
-                                    'bg-green-500 animate-pulse' => $product->isAvailable(),
+                                    'bg-green-500' => $product->isAvailable(),
                                     'bg-red-500' => $product->status === 'out_of_stock',
                                     'bg-gray-500' => $product->status === 'inactive',
                                     'bg-yellow-500' => !$product->isAvailable() && $product->status !== 'out_of_stock' && $product->status !== 'inactive',

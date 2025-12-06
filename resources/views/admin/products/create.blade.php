@@ -123,7 +123,8 @@
                             <div class="space-y-2">
                                 <label for="name" class="block text-sm font-semibold text-gray-800">Product Name *</label>
                                 <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 @error('name') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                       class="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 transition-all duration-200
+                                              {{ $errors->has('name') ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500/20' }}">
                                 @error('name')
                                     <p class="text-sm text-red-600 flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -146,7 +147,8 @@
                             <div class="space-y-2">
                                 <label for="category" class="block text-sm font-semibold text-gray-800">Category *</label>
                                 <input type="text" name="category" id="category" value="{{ old('category') }}" required list="categories"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 @error('category') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                       class="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 transition-all duration-200
+                                              {{ $errors->has('category') ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500/20' }}">
                                 <datalist id="categories">
                                     @foreach($categories as $category)
                                         <option value="{{ $category }}">
@@ -166,7 +168,8 @@
                             <div class="space-y-2">
                                 <label for="type" class="block text-sm font-semibold text-gray-800">Type *</label>
                                 <select name="type" id="type" required
-                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 @error('type') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                        class="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 transition-all duration-200
+                                               {{ $errors->has('type') ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500/20' }}">
                                     <option value="">Select Type</option>
                                     <option value="food" {{ old('type') == 'food' ? 'selected' : '' }}>Food</option>
                                     <option value="merch" {{ old('type') == 'merch' ? 'selected' : '' }}>Merchandise</option>
@@ -189,7 +192,8 @@
                                         <span class="text-gray-500 text-lg font-medium">$</span>
                                     </div>
                                     <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01" min="0" required
-                                           class="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 @error('price') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                           class="w-full pl-8 pr-4 py-3 border-2 rounded-xl focus:ring-4 transition-all duration-200
+                                                  {{ $errors->has('price') ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500/20' }}">
                                 </div>
                                 @error('price')
                                     <p class="text-sm text-red-600 flex items-center gap-1">
@@ -205,7 +209,8 @@
                             <div class="space-y-2">
                                 <label for="status" class="block text-sm font-semibold text-gray-800">Status *</label>
                                 <select name="status" id="status" required
-                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 @error('status') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                        class="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 transition-all duration-200
+                                               {{ $errors->has('status') ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500/20' }}">
                                     @foreach(App\Models\Product::getStatuses() as $value => $label)
                                         <option value="{{ $value }}" {{ old('status', 'active') == $value ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach
@@ -224,7 +229,8 @@
                             <div class="space-y-2">
                                 <label for="low_stock_threshold" class="block text-sm font-semibold text-gray-800">Low Stock Threshold *</label>
                                 <input type="number" name="low_stock_threshold" id="low_stock_threshold" value="{{ old('low_stock_threshold', 10) }}" min="0" required
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 @error('low_stock_threshold') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                       class="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 transition-all duration-200
+                                              {{ $errors->has('low_stock_alert') ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500/20' }}"
                                 @error('low_stock_threshold')
                                     <p class="text-sm text-red-600 flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -240,7 +246,7 @@
                         <div class="lg:col-span-2 space-y-2">
                             <label for="desc" class="block text-sm font-semibold text-gray-800">Description *</label>
                             <textarea name="desc" id="desc" rows="4" required
-                                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 resize-none @error('desc') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">{{ old('desc') }}</textarea>
+                                      class="w-full px-4 py-3 border-2 {{ $errors->has('desc') ? 'border-red-400' : 'border-gray-200' }} rounded-xl {{ $errors->has('desc') ? 'focus:border-red-500' : 'focus:border-teal-500' }} focus:ring-4 {{ $errors->has('desc') ? 'focus:ring-red-500/20' : 'focus:ring-teal-500/20' }} transition-all duration-200 resize-none">{{ old('desc') }}</textarea>
                             @error('desc')
                                 <p class="text-sm text-red-600 flex items-center gap-1">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -356,7 +362,7 @@
                                 <div id="stock_quantity_field" class="space-y-2">
                                     <label for="stock_quantity" class="block text-sm font-semibold text-gray-800">Initial Stock Quantity</label>
                                     <input type="number" name="stock_quantity" id="stock_quantity" value="{{ old('stock_quantity', 0) }}" min="0"
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 transition-all duration-200 @error('stock_quantity') border-red-400 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                           class="w-full px-4 py-3 border-2 {{ $errors->has('stock_quantity') ? 'border-red-400' : 'border-gray-200' }} rounded-xl {{ $errors->has('stock_quantity') ? 'focus:border-red-500' : 'focus:border-teal-500' }} focus:ring-4 {{ $errors->has('stock_quantity') ? 'focus:ring-red-500/20' : 'focus:ring-teal-500/20' }} transition-all duration-200">
                                     <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
                                         💡 <strong>Tip:</strong> Status will automatically be set to "Out of Stock" if quantity is 0, or "Available" if quantity > 0
                                     </p>

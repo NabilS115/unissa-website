@@ -229,9 +229,7 @@ window.__adminOrders = {
                                     <td class="px-6 py-4">
                                         <div>
                                             <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                                @if($order->payment_method === 'cash') text-green-700 bg-green-50
-                                                @else text-blue-700 bg-blue-50
-                                                @endif">
+                                                {{ $order->payment_method === 'cash' ? 'text-green-700 bg-green-50' : 'text-blue-700 bg-blue-50' }}">
                                                 <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                                                     @if($order->payment_method === 'cash')
                                                         <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 2v3H9V6h7z"/>
@@ -245,11 +243,9 @@ window.__adminOrders = {
                                             <div class="text-sm text-gray-500 mt-1">
                                                 Payment Status: 
                                                 <select class="payment-status-select border border-gray-200 rounded px-2 py-1 text-xs font-medium
-                                                    @if($order->payment_status === 'paid') text-green-700 bg-green-100
-                                                    @elseif($order->payment_status === 'pending') text-yellow-700 bg-yellow-100
-                                                    @elseif($order->payment_status === 'refunded') text-purple-700 bg-purple-100
-                                                    @else text-red-700 bg-red-100
-                                                    @endif"
+                                                    {{ $order->payment_status === 'paid' ? 'text-green-700 bg-green-100' : 
+                                                       ($order->payment_status === 'pending' ? 'text-yellow-700 bg-yellow-100' : 
+                                                       ($order->payment_status === 'refunded' ? 'text-purple-700 bg-purple-100' : 'text-red-700 bg-red-100')) }}"
                                                     data-order-id="{{ $order->id }}"
                                                     data-current-status="{{ $order->payment_status }}">
                                                     @foreach(App\Models\Order::getPaymentStatuses() as $value => $label)
@@ -261,13 +257,12 @@ window.__adminOrders = {
                                     </td>
                                     <td class="px-6 py-4">
                                         <select class="status-select border border-gray-300 rounded-lg px-3 py-2 text-sm
-                                            @if($order->status === 'pending') text-yellow-700 bg-yellow-50
-                                            @elseif($order->status === 'confirmed') text-blue-700 bg-blue-50
-                                            @elseif($order->status === 'processing') text-purple-700 bg-purple-50
-                                            @elseif($order->status === 'ready_for_pickup') text-orange-700 bg-orange-50
-                                            @elseif($order->status === 'picked_up') text-green-700 bg-green-50
-                                            @elseif($order->status === 'cancelled') text-red-700 bg-red-50
-                                            @endif" 
+                                            {{ $order->status === 'pending' ? 'text-yellow-700 bg-yellow-50' : 
+                                               ($order->status === 'confirmed' ? 'text-blue-700 bg-blue-50' : 
+                                               ($order->status === 'processing' ? 'text-purple-700 bg-purple-50' : 
+                                               ($order->status === 'ready_for_pickup' ? 'text-orange-700 bg-orange-50' : 
+                                               ($order->status === 'picked_up' ? 'text-green-700 bg-green-50' : 
+                                               ($order->status === 'cancelled' ? 'text-red-700 bg-red-50' : 'text-gray-700 bg-gray-50'))))) }}" 
                                             data-order-id="{{ $order->id }}">
                                             @foreach(App\Models\Order::getStatuses() as $value => $label)
                                                 <option value="{{ $value }}" {{ $order->status == $value ? 'selected' : '' }}>{{ $label }}</option>

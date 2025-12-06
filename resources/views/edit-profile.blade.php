@@ -386,7 +386,7 @@
                                     <!-- Loading state -->
                                     <div id="photo-modal-spinner" class="hidden mt-6">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full border-4 border-teal-200 border-t-teal-600 animate-spin"></div>
+                                            <div class="w-8 h-8 rounded-full border-4 border-teal-200 border-t-teal-600"></div>
                                             <div class="text-sm text-teal-700 spinner-message">Processing image...</div>
                                         </div>
                                     </div>

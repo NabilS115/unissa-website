@@ -23,7 +23,7 @@
   async function loadUsers(){
     const tableBody = document.getElementById('users-table-body');
     if(!tableBody) return;
-    tableBody.innerHTML = `\n        <tr>\n            <td colspan="6" class="px-6 py-12 text-center">\n                <div class="flex flex-col items-center">\n                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mb-4"></div>\n                    <p class="text-gray-600">Loading users...</p>\n                </div>\n            </td>\n        </tr>\n    `;
+    tableBody.innerHTML = `\n        <tr>\n            <td colspan="6" class="px-6 py-12 text-center">\n                <div class="flex flex-col items-center">\n                    <div class="rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>\n                    <p class="text-gray-600">Loading users...</p>\n                </div>\n            </td>\n        </tr>\n    `;
 
     try{
       const params = new URLSearchParams({ page: currentPage, search: currentSearch, role: currentRoleFilter, status: currentStatusFilter });

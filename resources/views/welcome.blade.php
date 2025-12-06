@@ -876,7 +876,7 @@
                                 
                                 <div id="gallery-list" class="space-y-4">
                                     <div class="text-center py-8">
-                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
+                                        <div class="rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mx-auto"></div>
                                         <p class="text-gray-600 mt-2">Loading images...</p>
                                     </div>
                                 </div>

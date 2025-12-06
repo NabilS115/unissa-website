@@ -270,11 +270,10 @@ window.__adminProducts = {
                                         <div class="flex items-center gap-1">
                                             <select onchange="updateProductStatus({{ $product->id }}, this.value)" 
                                                     class="text-xs px-2 py-1 rounded border-0 font-medium focus:ring-2 focus:ring-blue-500
-                                                    @if($product->status === 'active' && $product->isInStock()) bg-green-100 text-green-800
-                                                    @elseif($product->status === 'out_of_stock' || ($product->status === 'active' && !$product->isInStock())) bg-red-100 text-red-800
-                                                    @elseif($product->status === 'inactive') bg-gray-100 text-gray-800
-                                                    @elseif($product->status === 'discontinued') bg-red-100 text-red-800
-                                                    @endif">
+                                                    {{ ($product->status === 'active' && $product->isInStock()) ? 'bg-green-100 text-green-800' : 
+                                                       (($product->status === 'out_of_stock' || ($product->status === 'active' && !$product->isInStock())) ? 'bg-red-100 text-red-800' : 
+                                                       ($product->status === 'inactive' ? 'bg-gray-100 text-gray-800' : 
+                                                       ($product->status === 'discontinued' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))) }}">
                                                 @foreach(\App\Models\Product::getStatuses() as $value => $label)
                                                     @php
                                                         $isDisabled = false;

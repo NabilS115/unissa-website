@@ -27,28 +27,28 @@
                 
                 <label class="font-semibold">Name</label>
                 <input type="text" name="name" value="{{ old('name') }}" 
-                       class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('name') border-red-500 @enderror" required>
+                       class="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 {{ $errors->has('name') ? 'border-red-500' : 'border-teal-300' }}" required>
                 @error('name')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
 
                 <label class="font-semibold">Email</label>
                 <input type="email" name="email" value="{{ old('email') }}" 
-                       class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('email') border-red-500 @enderror" required>
+                       class="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 {{ $errors->has('email') ? 'border-red-500' : 'border-teal-300' }}" required>
                 @error('email')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
 
                 <label class="font-semibold">Subject</label>
                 <input type="text" name="subject" value="{{ old('subject') }}" 
-                       class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('subject') border-red-500 @enderror">
+                       class="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 {{ $errors->has('subject') ? 'border-red-500' : 'border-teal-300' }}">
                 @error('subject')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
 
                 <label class="font-semibold">Message</label>
                 <textarea name="message" rows="4" 
-                          class="border border-teal-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 @error('message') border-red-500 @enderror" required>{{ old('message') }}</textarea>
+                          class="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 {{ $errors->has('message') ? 'border-red-500' : 'border-teal-300' }}" required>{{ old('message') }}</textarea>
                 @error('message')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
