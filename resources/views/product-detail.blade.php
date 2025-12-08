@@ -130,10 +130,6 @@
         image-rendering: auto;
     }
     
-    #image-loader {
-        transition: opacity 0.3s ease;
-    }
-    
     @media (min-width: 640px) {
         .product-image-container {
             height: 500px !important;
@@ -420,27 +416,12 @@ input[type="number"]::-ms-clear {
             <div class="xl:col-span-1">
                 <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
                     <!-- Product Image -->
-                    <div class="aspect-square bg-white p-4 sm:p-6 lg:p-8 product-image-container" id="image-container" style="border: 1px solid #f3f4f6;">
-                        <!-- Loading placeholder -->
-                        <div id="image-loader" class="w-full h-full bg-gray-100 rounded-lg sm:rounded-xl flex items-center justify-center">
-                            <div class="text-gray-400">
-                                <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-                                </svg>
-                                <p class="text-sm">Loading high quality image...</p>
-                            </div>
-                        </div>
+                    <div class="aspect-square bg-white p-4 sm:p-6 lg:p-8 product-image-container" style="border: 1px solid #f3f4f6;">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}"
-                             id="product-image"
                              class="w-full h-full object-contain rounded-lg sm:rounded-xl shadow-md cursor-pointer hover:shadow-lg transition-all duration-300"
-                             style="display: none; background: white;"
-                             loading="eager"
-                             decoding="sync"
-                             fetchpriority="high"
+                             style="background: white;"
                              onclick="openImageModal()"
-                             title="Click to view larger image"
-                             onload="showProductImage()"
-                             onerror="handleImageError()" />
+                             title="Click to view larger image" />
                     </div>
                     
                     <!-- Product Details -->
@@ -907,38 +888,9 @@ input[type="number"]::-ms-clear {
 
 @push('scripts')
 <script>
-// Image loading handlers
-function showProductImage() {
-    const image = document.getElementById('product-image');
-    const loader = document.getElementById('image-loader');
-    if (image && loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-            image.style.display = 'block';
-            image.style.opacity = '1';
-        }, 300);
-    }
-}
-
-function handleImageError() {
-    const image = document.getElementById('product-image');
-    const loader = document.getElementById('image-loader');
-    if (image && loader) {
-        loader.innerHTML = `
-            <div class="text-gray-400 text-center">
-                <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-                </svg>
-                <p class="text-sm">Image unavailable</p>
-            </div>
-        `;
-    }
-}
-
 // Image zoom modal functions
 function openImageModal() {
-    const productImage = document.getElementById('product-image');
+    const productImage = document.querySelector('img[alt="{{ $product->name }}"]');
     const modal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     
@@ -970,15 +922,6 @@ document.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeImageModal();
-    }
-});
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // If image is already cached and loaded, show it immediately
-    const image = document.getElementById('product-image');
-    if (image && image.complete && image.naturalHeight !== 0) {
-        showProductImage();
     }
 });
 

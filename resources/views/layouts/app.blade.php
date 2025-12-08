@@ -511,6 +511,71 @@
     <!-- Externalized: layout overlay unguard logic -->
     <script src="/js/layout-unguard.js"></script>
     
-    <!-- Optimized navigation handler -->\n    <script>\n        // Prevent page flash during navigation\n        let navigationInProgress = false;\n        \n        // Faster page showing and Alpine.js initialization\n        function initializePage() {\n            // Remove x-cloak from all elements\n            document.querySelectorAll('[x-cloak]').forEach(el => {\n                el.removeAttribute('x-cloak');\n                el.style.display = 'block';\n                el.style.opacity = '1';\n            });\n            \n            // Mark Alpine components as initialized\n            document.querySelectorAll('[x-data]').forEach(el => {\n                el.setAttribute('data-alpine-initialized', 'true');\n                el.style.opacity = '1';\n                el.style.display = 'block';\n            });\n            \n            // Mark page as loaded for any systems that need it\n            document.body.classList.add('loaded');\n        }\n        \n        // Initialize immediately if possible\n        if (document.readyState === 'loading') {\n            document.addEventListener('DOMContentLoaded', initializePage);\n        } else {\n            initializePage();\n        }\n        \n        // Also initialize when Alpine is ready\n        document.addEventListener('alpine:init', initializePage);\n        \n        // Fallback - force initialization after 1 second\n        setTimeout(initializePage, 1000);\n        \n        // Optimized navigation handling\n        document.addEventListener('click', function(e) {\n            const link = e.target.closest('a[href]');\n            if (link && \n                !link.target && \n                !link.download && \n                !link.href.includes('#') &&\n                link.href.startsWith(window.location.origin) &&\n                link.href !== window.location.href) {\n                \n                navigationInProgress = true;\n                \n                // Let browser handle navigation naturally - no opacity changes\n                // The preloaded resources will make this faster\n            }\n        });\n        \n        // Handle browser navigation (back/forward)\n        window.addEventListener('pageshow', function(e) {\n            navigationInProgress = false;\n            initializePage();\n        });\n        \n        // Reset state on page unload\n        window.addEventListener('beforeunload', function() {\n            navigationInProgress = false;\n        });\n    </script>
+    <!-- Optimized navigation handler -->
+    <script>
+        // Prevent page flash during navigation
+        let navigationInProgress = false;
+        
+        // Faster page showing and Alpine.js initialization
+        function initializePage() {
+            // Remove x-cloak from all elements
+            document.querySelectorAll('[x-cloak]').forEach(el => {
+                el.removeAttribute('x-cloak');
+                el.style.display = 'block';
+                el.style.opacity = '1';
+            });
+            
+            // Mark Alpine components as initialized
+            document.querySelectorAll('[x-data]').forEach(el => {
+                el.setAttribute('data-alpine-initialized', 'true');
+                el.style.opacity = '1';
+                el.style.display = 'block';
+            });
+            
+            // Mark page as loaded for any systems that need it
+            document.body.classList.add('loaded');
+        }
+        
+        // Initialize immediately if possible
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }
+        
+        // Also initialize when Alpine is ready
+        document.addEventListener('alpine:init', initializePage);
+        
+        // Fallback - force initialization after 1 second
+        setTimeout(initializePage, 1000);
+        
+        // Optimized navigation handling
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[href]');
+            if (link && 
+                !link.target && 
+                !link.download && 
+                !link.href.includes('#') &&
+                link.href.startsWith(window.location.origin) &&
+                link.href !== window.location.href) {
+                
+                navigationInProgress = true;
+                
+                // Let browser handle navigation naturally - no opacity changes
+                // The preloaded resources will make this faster
+            }
+        });
+        
+        // Handle browser navigation (back/forward)
+        window.addEventListener('pageshow', function(e) {
+            navigationInProgress = false;
+            initializePage();
+        });
+        
+        // Reset state on page unload
+        window.addEventListener('beforeunload', function() {
+            navigationInProgress = false;
+        });
+    </script>
 </body>
 </html>
