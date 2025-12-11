@@ -20,13 +20,13 @@
         // Simple, clean favicon system
         $isUnissaCafe = str_contains(request()->fullUrl(), 'unissa-cafe') || 
                        str_contains(request()->path(), 'unissa-cafe');
-        $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'tijarah-favicon.ico';
+        $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'tijarahco_sdn_bhd_logo.ico';
         $brandContext = $isUnissaCafe ? 'UNISSA' : 'TIJARAH';
     @endphp
 
     <!-- Clean favicon implementation -->
-    <link rel="icon" href="/{{ $faviconFile }}?v={{ time() }}" type="image/png" sizes="32x32">
-    <link rel="shortcut icon" href="/{{ $faviconFile }}?v={{ time() }}" type="image/png">
+    <link rel="icon" href="/{{ $faviconFile }}?v={{ time() }}" type="image/x-icon" sizes="32x32">
+    <link rel="shortcut icon" href="/{{ $faviconFile }}?v={{ time() }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="/{{ $faviconFile }}?v={{ time() }}">
 
     {{-- Tailwind is built with Vite or npm for all environments. CDN is not used. --}}
