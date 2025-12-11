@@ -32,7 +32,7 @@
                 </div>
             @else
                 <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
-                    <img src="{{ asset('images/TIJARAH_CO_SDN_BHD.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
+                    <img src="{{ asset('images/tijarahco_sdn_bhd_logo.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
                 </div>
             @endif
             <h1 class="text-lg md:text-3xl font-bold" style="font-weight: bold; margin: 0;">
@@ -310,7 +310,7 @@
                             </div>
                         @else
                             <div class="w-8 h-8 bg-white rounded-full p-0.5 shadow-sm flex items-center justify-center">
-                                <img src="{{ asset('images/TIJARAH_CO_SDN_BHD.png') }}" alt="Tijarah Co Logo" class="w-full h-full object-contain">
+                                <img src="{{ asset('images/tijarahco_sdn_bhd_logo.png') }}" alt="Tijarah Co Logo" class="w-full h-full object-contain">
                             </div>
                         @endif
                         <span class="font-bold text-white text-lg">

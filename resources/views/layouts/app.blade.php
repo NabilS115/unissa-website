@@ -20,7 +20,7 @@
         // Simple, clean favicon system
         $isUnissaCafe = str_contains(request()->fullUrl(), 'unissa-cafe') || 
                        str_contains(request()->path(), 'unissa-cafe');
-        $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'favicon.ico';
+        $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'tijarah-favicon.ico';
         $brandContext = $isUnissaCafe ? 'UNISSA' : 'TIJARAH';
     @endphp
 
