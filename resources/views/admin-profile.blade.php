@@ -2,7 +2,7 @@
 
 @php
     $context = session('header_context', 'tijarah');
-    $pageTitle = $context === 'unissa-cafe' ? 'Unissa Cafe - Admin Profile' : 'Tijarah - Admin Profile';
+    $pageTitle = $context === 'unissa-cafe' ? 'Unissa Cafe - Admin Profile' : 'Tijarah Co - Admin Profile';
 @endphp
 
 @section('title', $pageTitle)

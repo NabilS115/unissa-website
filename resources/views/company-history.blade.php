@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tijarah - About')
+@section('title', 'Tijarah Co - About')
 
 @section('content')
 <div class="min-h-screen bg-gray-50">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tijarah - Contact Us')
+@section('title', 'Tijarah Co - Contact Us')
 
 @section('content')
 <div class="w-full flex flex-col items-center bg-white min-h-screen pt-8">

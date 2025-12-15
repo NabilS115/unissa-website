@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tijarah')
+@section('title', 'Tijarah Co')
 
 @section('content')
     <!-- Hero Banner Section -->
