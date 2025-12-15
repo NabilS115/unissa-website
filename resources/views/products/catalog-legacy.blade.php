@@ -166,7 +166,7 @@
         <div class="w-16 h-16 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
             <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain">
         </div>
-        <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">Tijarah Co Sdn Bhd</h1>
+        <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">TIJARAH CO SDN BHD</h1>
     </div>
     <div class="flex items-center gap-6 ml-12">
         <nav>

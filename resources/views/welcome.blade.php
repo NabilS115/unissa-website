@@ -129,7 +129,7 @@
                     </div>
                     
                     <p class="text-gray-700 text-lg leading-relaxed mb-6">
-                        Welcome to Tijarah Co Sdn Bhd, established under UNISSA, is dedicated to fostering entrepreneurship, innovation, and halal trade. We provide a platform for students, alumni, and the community to develop businesses, showcase products, and grow sustainably in line with Islamic values.
+                        Welcome to TIJARAH CO SDN BHD, established under UNISSA, is dedicated to fostering entrepreneurship, innovation, and halal trade. We provide a platform for students, alumni, and the community to develop businesses, showcase products, and grow sustainably in line with Islamic values.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
@@ -152,9 +152,9 @@
                 </div>
                 
                 <!-- Tijarah Logo -->
-                <div class="relative h-64 lg:h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100">
-                    <div class="w-80 h-80 md:w-96 md:h-96 p-5 flex items-center justify-center">
-                        <img src="{{ asset('images/tijarahco_sdn_bhd.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
+                <div class="relative h-64 lg:h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100 p-4">
+                    <div class="w-full max-w-sm md:max-w-md lg:max-w-lg aspect-square flex items-center justify-center">
+                        <img src="{{ asset('images/tijarahco_sdn_bhd.png') }}" alt="TIJARAH CO SDN BHD Logo" class="w-full h-full object-contain" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -166,7 +166,6 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl lg:text-4xl font-bold text-teal-800 mb-4">Get In Touch</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Ready to connect? We're here to help with any questions about our products or services.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -218,9 +217,6 @@
 
             <!-- Call to Action -->
             <div class="text-center">
-                <div class="mb-6">
-                    <p class="text-gray-600 mb-4">Have questions about our products or want to place an order?</p>
-                </div>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="/contact" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                                                 <!-- Refined Mail/Message Icon -->
@@ -402,7 +398,7 @@
             firstClone.className = "min-w-full h-full";
             const lastImageUrl = eventImages[eventImages.length - 1].image;
             firstClone.style.backgroundImage = `url('${lastImageUrl}')`;
-            firstClone.style.backgroundSize = 'cover';
+            firstClone.style.backgroundSize = window.innerWidth < 768 ? 'contain' : 'cover';
             firstClone.style.backgroundPosition = 'center';
             firstClone.style.backgroundRepeat = 'no-repeat';
             bgTrack.appendChild(firstClone);
@@ -412,7 +408,7 @@
                 const slide = document.createElement('div');
                 slide.className = "min-w-full h-full";
                 slide.style.backgroundImage = `url('${item.image}')`;
-                slide.style.backgroundSize = 'cover';
+                slide.style.backgroundSize = window.innerWidth < 768 ? 'contain' : 'cover';
                 slide.style.backgroundPosition = 'center';
                 slide.style.backgroundRepeat = 'no-repeat';
                 bgTrack.appendChild(slide);
@@ -423,7 +419,7 @@
             lastClone.className = "min-w-full h-full";
             const firstImageUrl = eventImages[0].image;
             lastClone.style.backgroundImage = `url('${firstImageUrl}')`;
-            lastClone.style.backgroundSize = 'cover';
+            lastClone.style.backgroundSize = window.innerWidth < 768 ? 'contain' : 'cover';
             lastClone.style.backgroundPosition = 'center';
             lastClone.style.backgroundRepeat = 'no-repeat';
             bgTrack.appendChild(lastClone);

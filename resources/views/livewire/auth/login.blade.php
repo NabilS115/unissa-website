@@ -25,7 +25,7 @@ new #[Layout('components.layouts.auth', ['title' => 'Login'])] class extends Com
      */
     public function title(): string
     {
-        return 'Login - ' . config('app.name', 'Laravel');
+        return 'Login - Tijarah';
     }
 
     /**

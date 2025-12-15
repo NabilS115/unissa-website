@@ -25,7 +25,11 @@
     // Basic favicon detection for components using head partial
     $isUnissaCafe = str_contains(request()->fullUrl(), 'unissa-cafe') || 
                    str_contains(request()->path(), 'unissa-cafe');
-    $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'favicon.ico';
+    $isAuthPage = str_contains(request()->path(), 'login') || 
+                  str_contains(request()->path(), 'register') ||
+                  str_contains(request()->path(), 'password');
+    // Use UNISSA favicon for auth pages and cafe pages, default favicon for others
+    $faviconFile = ($isUnissaCafe || $isAuthPage) ? 'unissa-favicon.ico' : 'favicon.ico';
 @endphp
 
 <!-- Basic favicon fallback -->

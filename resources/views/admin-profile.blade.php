@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Unissa Cafe - Admin Profile')
+@php
+    $context = session('header_context', 'tijarah');
+    $pageTitle = $context === 'unissa-cafe' ? 'Unissa Cafe - Admin Profile' : 'Tijarah - Admin Profile';
+@endphp
+
+@section('title', $pageTitle)
 
 @push('styles')
 <style>

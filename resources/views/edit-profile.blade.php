@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Profile')
+@php
+    $context = session('header_context', 'tijarah');
+    $pageTitle = $context === 'unissa-cafe' ? 'Unissa Cafe - Edit Profile' : 'Tijarah - Edit Profile';
+@endphp
+
+@section('title', $pageTitle)
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8">

@@ -745,7 +745,7 @@
                          :data-product-id="food.id"
                          @click="navigateToReview(food.id)">
                         <div class="relative overflow-hidden">
-                            <img :src="food.img" :alt="food.name" class="w-full object-cover group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-fit: cover !important; object-position: center !important;">
+                            <img :src="food.img" :alt="food.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
                             <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="food.category"></span>
                             </div>
@@ -822,7 +822,7 @@
                          :data-product-id="merch.id"
                          @click="navigateToReview(merch.id)">
                         <div class="relative overflow-hidden">
-                            <img :src="merch.img" :alt="merch.name" class="w-full object-cover group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-fit: cover !important; object-position: center !important;">
+                            <img :src="merch.img" :alt="merch.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
                             <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="merch.category"></span>
                             </div>

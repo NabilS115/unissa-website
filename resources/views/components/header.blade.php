@@ -27,12 +27,12 @@
         <!-- Logo Section (Left) -->
         <div class="flex items-center gap-2 md:gap-4 logo-section flex-shrink-0">
             @if($shouldShowUnissaBranding)
-                <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
-                    <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain">
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-2 shadow-md flex items-center justify-center overflow-hidden">
+                    <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.style.display='none'">
                 </div>
             @else
-                <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
-                    <img src="{{ asset('images/tijarahco_sdn_bhd_logo.png') }}" alt="Tijarah Co Sdn Bhd Logo" class="w-full h-full object-contain">
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-2 shadow-md flex items-center justify-center overflow-hidden">
+                    <img src="{{ asset('images/tijarahco_sdn_bhd_logo.png') }}" alt="TIJARAH CO SDN BHD Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.style.display='none'">
                 </div>
             @endif
             <h1 class="text-lg md:text-3xl font-bold" style="font-weight: bold; margin: 0;">
@@ -40,7 +40,7 @@
                     <span class="hidden sm:inline">Unissa Cafe</span>
                     <span class="sm:hidden">Unissa Cafe</span>
                 @else
-                    <span class="hidden sm:inline">Tijarah Co Sdn Bhd</span>
+                    <span class="hidden sm:inline">TIJARAH CO SDN BHD</span>
                     <span class="sm:hidden">Tijarah</span>
                 @endif
             </h1>

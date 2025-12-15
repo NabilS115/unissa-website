@@ -19,7 +19,7 @@
                 </div>
                 <div class="flex items-center">
                     <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                    Tijarah Co Sdn Bhd & Unissa Cafe
+                    TIJARAH CO SDN BHD & Unissa Cafe
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
                                 </p>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-gray-900 mb-2">Tijarah Co Sdn Bhd</h4>
+                                <h4 class="font-semibold text-gray-900 mb-2">TIJARAH CO SDN BHD</h4>
                                 <p class="text-sm text-gray-600">
                                     Email: privacy@tijarah.com<br>
                                     Business Hours: 8:00 AM - 6:00 PM (Mon-Fri)

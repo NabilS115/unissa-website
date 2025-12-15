@@ -20,7 +20,7 @@ new #[Layout('components.layouts.auth', ['title' => 'Register'])] class extends 
      */
     public function title(): string
     {
-        return 'Register - ' . config('app.name', 'Laravel');
+        return 'Register - Tijarah';
     }
 
     /**
