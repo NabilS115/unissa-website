@@ -3,14 +3,27 @@
 @section('title', 'Tijarah Co - About')
 
 @section('content')
+    @if(auth()->check() && auth()->user()->role === 'admin')
+        <!-- Admin Edit Button -->
+        <div class="fixed top-20 right-4 z-50">
+            <a href="{{ route('content.about') }}" 
+               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white rounded-2xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+               style="background-color: #0d9488 !important;">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Edit Page
+            </a>
+        </div>
+    @endif
 <div class="min-h-screen bg-gray-50">
     <!-- Hero Banner Section -->
     <section class="w-full h-80 flex flex-col items-center justify-center mb-16 relative overflow-hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80" alt="Company Banner" class="absolute inset-0 w-full h-full object-cover">
+        <img src="{!! \App\Models\ContentBlock::get('about_hero_image', 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80', 'text', 'about') !!}" alt="Company Banner" class="absolute inset-0 w-full h-full object-cover">
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">Our Story & Values</h1>
-            <p class="text-lg md:text-xl text-white drop-shadow-md">Discover our journey and what drives us forward</p>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{!! \App\Models\ContentBlock::get('about_title', 'Our Story & Values', 'text', 'about') !!}</h1>
+            <p class="text-lg md:text-xl text-white drop-shadow-md">{!! \App\Models\ContentBlock::get('about_subtitle', 'Discover our journey and what drives us forward', 'text', 'about') !!}</p>
         </div>
     </section>
 
@@ -20,123 +33,144 @@
             <!-- Board Header -->
             <div class="bg-gradient-to-r from-teal-500 to-green-500 px-8 py-12">
                 <div class="max-w-4xl mx-auto">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-                            </svg>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-3xl md:text-4xl font-extrabold text-white">{!! \App\Models\ContentBlock::get('board_title', 'Board of Directors', 'text', 'about') !!}</h2>
+                            </div>
+                            <div class="text-white/90 text-sm">
+                                {!! \App\Models\ContentBlock::get('board_subtitle', 'Meet the visionary leaders driving our company forward', 'text', 'about') !!}
+                            </div>
                         </div>
-                        <h2 class="text-3xl md:text-4xl font-extrabold text-white">Board of Directors</h2>
-                    </div>
-                    <div class="text-white/90 text-sm">
-                        Meet the visionary leaders driving our company forward
+                        @auth
+                            @if(auth()->user()->is_admin)
+                                <a href="{{ route('content.about') }}" 
+                                   class="inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Edit Board
+                                </a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
             </div>
 
-            <!-- Board Members -->
+            <!-- Board Content -->
             <div class="p-8 md:p-12">
                 <div class="max-w-6xl mx-auto">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        
                         <!-- Chairman -->
                         <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
                             <div class="text-center">
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
-                                    DC
+                                @php
+                                    $member1Image = \App\Models\ContentBlock::get('board_member1_image', '', 'text', 'about');
+                                    $member1Initials = \App\Models\ContentBlock::get('board_member1_initials', 'DC', 'text', 'about');
+                                @endphp
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                    @if($member1Image)
+                                        <img src="{{ $member1Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
+                                    @else
+                                        {!! $member1Initials !!}
+                                    @endif
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Dato' Chairman</h3>
-                                <p class="text-blue-600 font-semibold mb-3">Chairman & Founder</p>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Visionary leader with over 40 years of experience in the food industry. Founded the company with a passion for authentic Bruneian cuisine and quality service.
-                                </p>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">{!! \App\Models\ContentBlock::get('board_member1_name', 'Dato\' Chairman', 'text', 'about') !!}</h3>
+                                <p class="text-blue-600 font-semibold mb-3">{!! \App\Models\ContentBlock::get('board_member1_title', 'Chairman & Founder', 'text', 'about') !!}</p>
                             </div>
                         </div>
 
                         <!-- CEO -->
                         <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
                             <div class="text-center">
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-teal-500 to-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
-                                    MS
+                                @php
+                                    $member2Image = \App\Models\ContentBlock::get('board_member2_image', '', 'text', 'about');
+                                    $member2Initials = \App\Models\ContentBlock::get('board_member2_initials', 'MS', 'text', 'about');
+                                @endphp
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-teal-500 to-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                    @if($member2Image)
+                                        <img src="{{ $member2Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
+                                    @else
+                                        {!! $member2Initials !!}
+                                    @endif
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Md. Saiful</h3>
-                                <p class="text-teal-600 font-semibold mb-3">Chief Executive Officer</p>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Strategic leader driving innovation and growth. Expert in operations management and business development with a focus on sustainable practices.
-                                </p>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">{!! \App\Models\ContentBlock::get('board_member2_name', 'Md. Saiful', 'text', 'about') !!}</h3>
+                                <p class="text-teal-600 font-semibold mb-3">{!! \App\Models\ContentBlock::get('board_member2_title', 'Chief Executive Officer', 'text', 'about') !!}</p>
                             </div>
                         </div>
 
                         <!-- CFO -->
                         <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
                             <div class="text-center">
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
-                                    AF
+                                @php
+                                    $member3Image = \App\Models\ContentBlock::get('board_member3_image', '', 'text', 'about');
+                                    $member3Initials = \App\Models\ContentBlock::get('board_member3_initials', 'AF', 'text', 'about');
+                                @endphp
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                    @if($member3Image)
+                                        <img src="{{ $member3Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
+                                    @else
+                                        {!! $member3Initials !!}
+                                    @endif
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Ahmad Farid</h3>
-                                <p class="text-purple-600 font-semibold mb-3">Chief Financial Officer</p>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Financial strategist with expertise in corporate finance and risk management. Ensures fiscal responsibility and sustainable growth initiatives.
-                                </p>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">{!! \App\Models\ContentBlock::get('board_member3_name', 'Ahmad Farid', 'text', 'about') !!}</h3>
+                                <p class="text-purple-600 font-semibold mb-3">{!! \App\Models\ContentBlock::get('board_member3_title', 'Chief Financial Officer', 'text', 'about') !!}</p>
                             </div>
-                        </div>
-
-                        <!-- Head of Operations -->
-                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
-                            <div class="text-center">
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
-                                    SL
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Sarah Lim</h3>
-                                <p class="text-orange-600 font-semibold mb-3">Head of Operations</p>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Operations expert ensuring smooth daily operations and quality control. Passionate about customer satisfaction and operational excellence.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Head of Marketing -->
-                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
-                            <div class="text-center">
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
-                                    RH
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Rahman Hassan</h3>
-                                <p class="text-green-600 font-semibold mb-3">Head of Marketing</p>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Creative marketing professional driving brand awareness and customer engagement through innovative digital strategies and community outreach.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Head of Technology -->
-                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
-                            <div class="text-center">
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
-                                    AT
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Ali Talib</h3>
-                                <p class="text-indigo-600 font-semibold mb-3">Head of Technology</p>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Technology leader driving digital transformation and innovation. Ensures our tech infrastructure supports business growth and customer experience.
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-                    
-                    <!-- Mission Statement -->
-                    <div class="mt-12 text-center">
-                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-4">Our Leadership Vision</h3>
-                            <p class="text-gray-700 leading-relaxed max-w-4xl mx-auto">
-                                Our diverse and experienced board of directors brings together decades of expertise in food service, business management, and innovation. 
-                                United by our shared commitment to excellence, sustainability, and community service, we work together to guide Tijarah Co towards a future 
-                                where authentic cuisine meets modern innovation, creating value for our customers, employees, and the communities we serve.
-                            </p>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Overview Section -->
+    <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="bg-white rounded-2xl shadow-lg p-8 lg:p-12">
+            <div class="text-gray-700 text-lg leading-relaxed mb-8">
+                {!! \App\Models\ContentBlock::get('about_overview', '<p>Founded with a vision to bridge the gap between traditional business practices and modern innovation, <strong>Tijarah Co</strong> has established itself as a trusted partner for organizations seeking to navigate the complexities of today\'s dynamic marketplace.</p>', 'html', 'about') !!}
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision Section -->
+    <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h3 class="text-2xl font-bold text-teal-700 mb-4">Our Mission</h3>
+                <div class="text-gray-700 leading-relaxed">
+                    {!! \App\Models\ContentBlock::get('about_mission', '<p>To empower businesses through innovative solutions, ethical practices, and sustainable growth strategies that create lasting value for all stakeholders.</p>', 'html', 'about') !!}
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h3 class="text-2xl font-bold text-teal-700 mb-4">Our Vision</h3>
+                <div class="text-gray-700 leading-relaxed">
+                    {!! \App\Models\ContentBlock::get('about_vision', '<p>To be the leading catalyst for business transformation in the region, fostering a community where tradition meets innovation.</p>', 'html', 'about') !!}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Values Section -->
+    <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="bg-white rounded-2xl shadow-lg p-8 lg:p-12">
+            <h3 class="text-3xl font-bold text-teal-700 mb-6">Our Values</h3>
+            <div class="text-gray-700 leading-relaxed">
+                {!! \App\Models\ContentBlock::get('about_values', '<ul><li><strong>Integrity:</strong> We operate with transparency and honesty in all our dealings</li><li><strong>Innovation:</strong> We embrace new ideas and technologies to drive progress</li><li><strong>Excellence:</strong> We strive for the highest standards in everything we do</li><li><strong>Collaboration:</strong> We believe in the power of partnership and teamwork</li></ul>', 'html', 'about') !!}
+            </div>
+        </div>
+    </section>
+
+    <!-- Company History Section -->
+    <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="bg-white rounded-2xl shadow-lg p-8 lg:p-12">
+            <h3 class="text-3xl font-bold text-teal-700 mb-6">Our Journey</h3>
+            <div class="text-gray-700 leading-relaxed">
+                {!! \App\Models\ContentBlock::get('about_history', '<p>Our journey began with a simple yet powerful vision: to create meaningful connections between businesses, communities, and opportunities. Over the years, we have grown from a startup with big dreams to a respected player in the business ecosystem.</p>', 'html', 'about') !!}
             </div>
         </div>
     </section>

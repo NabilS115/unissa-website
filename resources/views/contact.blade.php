@@ -3,10 +3,28 @@
 @section('title', 'Tijarah Co - Contact Us')
 
 @section('content')
+    @if(auth()->check() && auth()->user()->role === 'admin')
+        <!-- Admin Edit Button -->
+        <div class="fixed top-20 right-4 z-50">
+            <a href="{{ route('content.contact') }}" 
+               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white rounded-2xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+               style="background-color: #0d9488 !important;">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Edit Page
+            </a>
+        </div>
+    @endif
 <div class="w-full flex flex-col items-center bg-white min-h-screen pt-8">
     <div class="w-full max-w-5xl mx-auto">
-        <h2 class="text-3xl font-bold text-teal-700 mb-2 text-center">Contact Us</h2>
-        <p class="text-lg text-gray-600 mb-8 text-center">Have questions? We're here to help.</p>
+        <h2 class="text-3xl font-bold text-teal-700 mb-2 text-center">{!! \App\Models\ContentBlock::get('contact_title', 'Contact Us', 'text', 'contact') !!}</h2>
+        <p class="text-lg text-gray-600 mb-8 text-center">{!! \App\Models\ContentBlock::get('contact_subtitle', 'Get in touch with us', 'text', 'contact') !!}</p>
+        
+        <!-- Form Description -->
+        <div class="text-gray-700 text-center mb-8">
+            {!! \App\Models\ContentBlock::get('contact_form_description', '<p>We would love to hear from you! Send us a message and we will respond as soon as possible.</p>', 'html', 'contact') !!}
+        </div>
         <!-- Success/Error Messages -->
         @if(session('success'))
             <div class="max-w-5xl mx-auto mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
@@ -61,22 +79,24 @@
                     <span class="text-2xl">📍</span>
                     <span class="font-bold">Address</span>
                 </div>
-                <div class="ml-8 text-gray-700 mb-2">Universiti Islam Sultan Sharif Ali, Simpang 347,<br>Jalan Pasar Gadong, Bandar Seri Begawan, Brunei</div>
+                <div class="ml-8 text-gray-700 mb-2">{!! \App\Models\ContentBlock::get('contact_address', 'Universiti Islam Sultan Sharif Ali, Simpang 347,<br>Jalan Pasar Gadong, Bandar Seri Begawan, Brunei', 'html', 'contact') !!}</div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="text-2xl">📞</span>
                     <span class="font-bold">Phone</span>
                 </div>
-                <div class="ml-8 text-gray-700 mb-2">+673 123 4567</div>
+                <div class="ml-8 text-gray-700 mb-2">{!! \App\Models\ContentBlock::get('contact_phone', '+673 123 4567', 'text', 'contact') !!}</div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="text-2xl">✉️</span>
                     <span class="font-bold">Email</span>
                 </div>
-                <div class="ml-8 text-gray-700 mb-2">tijarahco@unissa.edu.bn</div>
+                <div class="ml-8 text-gray-700 mb-2">{!! \App\Models\ContentBlock::get('contact_email', 'tijarahco@unissa.edu.bn', 'text', 'contact') !!}</div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="text-2xl">🕒</span>
                     <span class="font-bold">Hours</span>
                 </div>
-                <div class="ml-8 text-gray-700 mb-2">Mon-Thu & Sat, 9:00am - 4:30pm</div>
+                <div class="ml-8 text-gray-700 mb-2">
+                    {!! \App\Models\ContentBlock::get('contact_business_hours', '<p><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM<br><strong>Saturday:</strong> 9:00 AM - 2:00 PM<br><strong>Sunday:</strong> Closed</p>', 'html', 'contact') !!}
+                </div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="text-2xl">📱</span>
                     <span class="font-bold">Follow Us</span>

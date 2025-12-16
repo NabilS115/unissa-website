@@ -19,6 +19,46 @@ class ContentController extends Controller
         return view('admin.content.edithomepage');
     }
 
+    public function contact()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editcontact');
+    }
+
+    public function about()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editabout');
+    }
+
+    public function privacy()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editprivacy');
+    }
+
+    public function terms()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editterms');
+    }
+
     public function updateHomepage(Request $request)
     {
         // Only allow admin access
@@ -34,11 +74,105 @@ class ContentController extends Controller
         foreach ($validated['content'] as $key => $content) {
             // Only update if content is not empty
             if (!empty(trim($content))) {
-                ContentBlock::set($key, $content, 'html', 'homepage');
+                // Determine content type based on field
+                $contentType = (str_contains($key, 'address') || str_contains($key, 'hours')) ? 'html' : 'html';
+                ContentBlock::set($key, $content, $contentType, 'homepage');
             }
         }
 
         return response()->json(['success' => true, 'message' => 'Homepage content updated successfully!']);
+    }
+
+    public function updateContact(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+            'content.*' => 'nullable|string'
+        ]);
+
+        foreach ($validated['content'] as $key => $content) {
+            // Only update if content is not empty
+            if (!empty(trim($content))) {
+                ContentBlock::set($key, $content, 'html', 'contact');
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Contact page content updated successfully!']);
+    }
+
+    public function updateAbout(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+            'content.*' => 'nullable|string'
+        ]);
+
+        foreach ($validated['content'] as $key => $content) {
+            // Skip removal markers - they're handled by checking empty image content
+            if (str_contains($key, '_removed')) {
+                continue;
+            }
+            
+            // Handle all content - save with appropriate type for rendering
+            $contentType = (str_contains($key, 'subtitle') || str_contains($key, 'address')) ? 'html' : 'html';
+            ContentBlock::set($key, $content, $contentType, 'about');
+        }
+
+        return response()->json(['success' => true, 'message' => 'About page content updated successfully!']);
+    }
+
+    public function updatePrivacy(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+            'content.*' => 'nullable|string'
+        ]);
+
+        foreach ($validated['content'] as $key => $content) {
+            // Only update if content is not empty
+            if (!empty(trim($content))) {
+                ContentBlock::set($key, $content, 'html', 'privacy');
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Privacy policy updated successfully!']);
+    }
+
+    public function updateTerms(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+            'content.*' => 'nullable|string'
+        ]);
+
+        foreach ($validated['content'] as $key => $content) {
+            // Only update if content is not empty
+            if (!empty(trim($content))) {
+                ContentBlock::set($key, $content, 'html', 'terms');
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Terms of service updated successfully!']);
     }
 
     public function uploadImage(Request $request)

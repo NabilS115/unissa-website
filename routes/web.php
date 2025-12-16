@@ -496,6 +496,14 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/admin/content/homepage', [App\Http\Controllers\ContentController::class, 'homepage'])->name('content.homepage');
     Route::post('/admin/content/homepage', [App\Http\Controllers\ContentController::class, 'updateHomepage'])->name('content.homepage.update');
+    Route::get('/admin/content/contact', [App\Http\Controllers\ContentController::class, 'contact'])->name('content.contact');
+    Route::post('/admin/content/contact', [App\Http\Controllers\ContentController::class, 'updateContact'])->name('content.contact.update');
+    Route::get('/admin/content/about', [App\Http\Controllers\ContentController::class, 'about'])->name('content.about');
+    Route::post('/admin/content/about', [App\Http\Controllers\ContentController::class, 'updateAbout'])->name('content.about.update');
+    Route::get('/admin/content/privacy', [App\Http\Controllers\ContentController::class, 'privacy'])->name('content.privacy');
+    Route::post('/admin/content/privacy', [App\Http\Controllers\ContentController::class, 'updatePrivacy'])->name('content.privacy.update');
+    Route::get('/admin/content/terms', [App\Http\Controllers\ContentController::class, 'terms'])->name('content.terms');
+    Route::post('/admin/content/terms', [App\Http\Controllers\ContentController::class, 'updateTerms'])->name('content.terms.update');
     Route::post('/admin/content/upload-image', [App\Http\Controllers\ContentController::class, 'uploadImage'])->name('content.upload.image');
 });
 

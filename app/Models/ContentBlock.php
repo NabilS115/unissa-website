@@ -40,6 +40,17 @@ class ContentBlock extends Model
      */
     public static function set($key, $content, $type = 'text', $page = 'homepage', $section = null)
     {
+        // Handle image removal - if content is null or empty for image fields, 
+        // either delete the record or set to empty string
+        if (empty($content) && (str_contains($key, 'image') || str_contains($key, '_image'))) {
+            // For image fields, delete the record entirely when removing
+            static::where('key', $key)->delete();
+            return null;
+        }
+
+        // Ensure content is never null - use empty string as minimum
+        $content = $content ?? '';
+
         return static::updateOrCreate(
             ['key' => $key],
             [
