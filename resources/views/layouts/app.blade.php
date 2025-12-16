@@ -57,6 +57,31 @@
             font-family: system-ui, -apple-system, sans-serif;
         }
         
+        /* Table styling for CKEditor content */
+        .text-gray-700 table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #d1d5db;
+            margin-bottom: 1rem;
+        }
+        .text-gray-700 table th {
+            border: 1px solid #d1d5db;
+            background-color: #f3f4f6;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        .text-gray-700 table td {
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1rem;
+        }
+        .text-gray-700 table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .text-gray-700 table tr:hover {
+            background-color: #f3f4f6;
+        }
+        
         /* Prevent full-screen overlays from briefly displaying before JS/CSS runs */
         [data-initial-hidden] { display: none !important; }
         [x-cloak] { display: none !important; }

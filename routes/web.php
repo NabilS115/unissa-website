@@ -492,6 +492,13 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/gallery/{gallery}/toggle-active', [GalleryController::class, 'toggleActive'])->name('gallery.toggle-active');
 });
 
+// Content management routes (admin only)
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/admin/content/homepage', [App\Http\Controllers\ContentController::class, 'homepage'])->name('content.homepage');
+    Route::post('/admin/content/homepage', [App\Http\Controllers\ContentController::class, 'updateHomepage'])->name('content.homepage.update');
+    Route::post('/admin/content/upload-image', [App\Http\Controllers\ContentController::class, 'uploadImage'])->name('content.upload.image');
+});
+
 // Cart routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');

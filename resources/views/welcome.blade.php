@@ -3,12 +3,25 @@
 @section('title', 'Tijarah Co')
 
 @section('content')
+    @if(auth()->check() && auth()->user()->role === 'admin')
+        <!-- Admin Edit Button -->
+        <div class="fixed top-20 right-4 z-50">
+            <a href="{{ route('content.homepage') }}" 
+               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white rounded-2xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+               style="background-color: #0d9488 !important;">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Edit Homepage
+            </a>
+        </div>
+    @endif
     <!-- Hero Banner Section -->
     <section class="w-full h-80 flex flex-col items-center justify-center mb-12 relative overflow-hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80" alt="Food Banner" class="absolute inset-0 w-full h-full object-cover">
+        <img src="{!! \App\Models\ContentBlock::get('hero_background_image', 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80', 'text', 'homepage') !!}" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover">
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">Business with Barakah</h1>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{!! \App\Models\ContentBlock::get('hero_title', 'Business with Barakah', 'text', 'homepage') !!}</h1>
             <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">Promoting halal, ethical, and impactful entrepreneurship through UNISSA’s Tijarah Co.</p>
             <a href="{{ route('unissa-cafe.homepage') }}" class="inline-flex items-center px-6 py-3 bg-teal-600 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                 Visit Unissa Cafe
@@ -24,18 +37,14 @@
         @if(auth()->check() && auth()->user()->role === 'admin')
             <div class="flex justify-end mb-8">
                 <div class="flex gap-2">
-                    <button id="add-gallery-btn" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-2xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <button id="add-gallery-btn" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-2xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color: #059669 !important;">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         Add Image
                     </button>
-                    <button id="manage-gallery-btn" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white rounded-2xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <button id="manage-gallery-btn" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white rounded-2xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color: #0d9488 !important;">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <style>
-                        #add-gallery-btn { background-color: #059669 !important; }
-                        #manage-gallery-btn { background-color: #0d9488 !important; }
-                    </style>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         Manage Images
@@ -45,7 +54,7 @@
         @endif
         
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden relative group" style="min-height: 420px;">
-            <div id="event-bg-carousel" class="absolute inset-0 w-full h-full overflow-hidden z-0">
+            <div id="event-bg-carousel" class="absolute inset-0 w-full h-full overflow-hidden z-0" style="display: none;">
                 <div id="event-bg-track" class="flex w-full h-full transition-transform duration-700">
                     <!-- Slides will be rendered by JS -->
                 </div>
@@ -69,19 +78,19 @@
                 </div>
             @endif
             
-            <!-- Empty State for Gallery -->
-            <div id="gallery-empty-state" class="hidden w-full h-full items-center justify-center p-8" style="min-height: 420px;">
+            <!-- Empty State for Gallery - Show by default -->
+            <div id="gallery-empty-state" class="flex w-full h-full items-center justify-center p-8" style="min-height: 420px;">
                 <div class="text-center max-w-md mx-auto">
                     <div class="mb-6">
                         <svg class="w-20 h-20 mx-auto text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3">Gallery Coming Soon</h3>
-                    <p class="text-gray-500 mb-6">This is where beautiful images will be showcased to give visitors a glimpse of our offerings.</p>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3">Photo Gallery</h3>
+                    <p class="text-gray-500 mb-6">This section will showcase beautiful images from our company and activities.</p>
                     @if(auth()->check() && auth()->user()->role === 'admin')
-                        <button onclick="document.getElementById('add-gallery-btn').click()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white rounded-2xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="background-color:#0d9488;">
+                        <button onclick="document.getElementById('add-gallery-btn').click()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white rounded-2xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             Add Your First Image
@@ -91,13 +100,13 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Images will appear here soon
+                            Gallery coming soon
                         </div>
                     @endif
                 </div>
             </div>
 
-            <div class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px;">
+            <div id="gallery-carousel-controls" class="w-full flex items-center justify-center relative bg-transparent py-8 z-10" style="min-height: 420px; display: none;">
                 <!-- Carousel Controls (right) -->
                 <button id="event-carousel-next"
                     class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 text-2xl hover:text-teal-800 transition-colors focus:outline-none rounded bg-white shadow p-2 z-20">
@@ -128,9 +137,9 @@
                         <h2 class="text-3xl font-bold text-teal-700">About Tijarah Co</h2>
                     </div>
                     
-                    <p class="text-gray-700 text-lg leading-relaxed mb-6">
-                        Welcome to TIJARAH CO SDN BHD, established under UNISSA, is dedicated to fostering entrepreneurship, innovation, and halal trade. We provide a platform for students, alumni, and the community to develop businesses, showcase products, and grow sustainably in line with Islamic values.
-                    </p>
+                    <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                        {!! \App\Models\ContentBlock::get('about_content', '<p>Welcome to TIJARAH CO SDN BHD, established under UNISSA, is dedicated to fostering entrepreneurship, innovation, and halal trade. We provide a platform for students, alumni, and the community to develop businesses, showcase products, and grow sustainably in line with Islamic values.</p>', 'html', 'homepage') !!}
+                    </div>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="/about" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
@@ -154,7 +163,7 @@
                 <!-- Tijarah Logo -->
                 <div class="relative h-64 lg:h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100 p-4">
                     <div class="w-full max-w-sm md:max-w-md lg:max-w-lg aspect-square flex items-center justify-center">
-                        <img src="{{ asset('images/tijarahco_sdn_bhd.png') }}" alt="TIJARAH CO SDN BHD Logo" class="w-full h-full object-contain" loading="lazy">
+                        <img src="{{ asset(\App\Models\ContentBlock::get('about_logo', 'images/tijarahco_sdn_bhd.png', 'text', 'homepage')) }}" alt="TIJARAH CO SDN BHD Logo" class="w-full h-full object-contain" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -165,7 +174,7 @@
     <section class="w-full bg-gradient-to-br from-teal-50 to-emerald-50 py-16 mb-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-teal-800 mb-4">Get In Touch</h2>
+                <h2 class="text-3xl lg:text-4xl font-bold text-teal-800 mb-4">{!! \App\Models\ContentBlock::get('contact_title', 'Get In Touch', 'text', 'homepage') !!}</h2>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -178,7 +187,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Address</h3>
-                    <p class="text-gray-600 text-sm">Universiti Islam Sultan Sharif Ali<br>Simpang 347, Jalan Pasar Gadong<br>Bandar Seri Begawan, Brunei</p>
+                    <div class="text-gray-600 text-sm">{!! \App\Models\ContentBlock::get('contact_address', 'Universiti Islam Sultan Sharif Ali<br>Simpang 347, Jalan Pasar Gadong<br>Bandar Seri Begawan, Brunei', 'html', 'homepage') !!}</div>
                 </div>
 
                 <!-- Phone -->
@@ -189,7 +198,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Phone</h3>
-                    <p class="text-gray-600 text-sm">+673 123 4567</p>
+                    <p class="text-gray-600 text-sm">{!! \App\Models\ContentBlock::get('contact_phone', '+673 123 4567', 'text', 'homepage') !!}</p>
                 </div>
 
                 <!-- Email -->
@@ -200,7 +209,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Email</h3>
-                    <p class="text-gray-600 text-sm">tijarahco@unissa.edu.bn</p>
+                    <p class="text-gray-600 text-sm">{!! \App\Models\ContentBlock::get('contact_email', 'tijarahco@unissa.edu.bn', 'text', 'homepage') !!}</p>
                 </div>
 
                 <!-- Hours -->
@@ -211,7 +220,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Hours</h3>
-                    <p class="text-gray-600 text-sm">Mon-Thu & Sat<br>9:00am - 4:30pm</p>
+                    <div class="text-gray-600 text-sm">{!! \App\Models\ContentBlock::get('contact_hours', 'Mon-Thu & Sat<br>9:00am - 4:30pm', 'html', 'homepage') !!}</div>
                 </div>
             </div>
 
@@ -276,6 +285,15 @@
                     galleryContainer.style.height = '';
                     void galleryContainer.offsetHeight; // Trigger reflow
                 }
+                
+                // Ensure gallery management buttons are working after refresh
+                setTimeout(() => {
+                    if (typeof attachGalleryHandlers === 'function') {
+                        attachGalleryHandlers();
+                    } else if (typeof ensureGalleryButtons === 'function') {
+                        ensureGalleryButtons();
+                    }
+                }, 100);
                 
             } catch (error) {
                 // Error handling - continue silently
@@ -470,6 +488,15 @@
                 };
                 dotsEl.appendChild(dot);
             }
+            
+            // Ensure gallery management buttons are working after rendering
+            setTimeout(() => {
+                if (typeof attachGalleryHandlers === 'function') {
+                    attachGalleryHandlers();
+                } else if (typeof ensureGalleryButtons === 'function') {
+                    ensureGalleryButtons();
+                }
+            }, 100);
         }
 
         function goToEventSlide(idx) {
@@ -517,27 +544,29 @@
         // Gallery empty state functions
         function showGalleryEmptyState() {
             const emptyState = document.getElementById('gallery-empty-state');
-            const carouselContent = document.querySelector('#event-bg-carousel').parentNode.querySelector('.w-full.flex.items-center');
+            const carouselControls = document.getElementById('gallery-carousel-controls');
             const carouselBg = document.getElementById('event-bg-carousel');
             
             if (emptyState) {
                 emptyState.classList.remove('hidden');
                 emptyState.classList.add('flex');
+                emptyState.style.display = 'flex';
             }
-            if (carouselContent) carouselContent.style.display = 'none';
+            if (carouselControls) carouselControls.style.display = 'none';
             if (carouselBg) carouselBg.style.display = 'none';
         }
 
         function hideGalleryEmptyState() {
             const emptyState = document.getElementById('gallery-empty-state');
-            const carouselContent = document.querySelector('#event-bg-carousel').parentNode.querySelector('.w-full.flex.items-center');
+            const carouselControls = document.getElementById('gallery-carousel-controls');
             const carouselBg = document.getElementById('event-bg-carousel');
             
             if (emptyState) {
                 emptyState.classList.add('hidden');
                 emptyState.classList.remove('flex');
+                emptyState.style.display = 'none';
             }
-            if (carouselContent) carouselContent.style.display = 'flex';
+            if (carouselControls) carouselControls.style.display = 'flex';
             if (carouselBg) carouselBg.style.display = 'block';
         }
 
@@ -670,46 +699,66 @@
         }
 
         @if(auth()->check() && auth()->user()->role === 'admin')
-            // Admin gallery management functions
-            // Use event delegation so buttons work even if DOM nodes are replaced dynamically
-            document.addEventListener('click', function(e) {
-                try {
-                    const addBtn = e.target.closest && e.target.closest('#add-gallery-btn');
-                    if (addBtn) {
+            // Gallery management button handlers - simple and direct
+            function attachGalleryHandlers() {
+                console.log('Attaching gallery handlers...');
+                
+                const addBtn = document.getElementById('add-gallery-btn');
+                const manageBtn = document.getElementById('manage-gallery-btn');
+                const editBtn = document.getElementById('edit-current-gallery-btn');
+                const deleteBtn = document.getElementById('delete-current-gallery-btn');
+                
+                if (addBtn) {
+                    console.log('Found add button, attaching listener');
+                    addBtn.onclick = function(e) {
                         e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Add button clicked!');
                         showGalleryModal();
-                        return;
-                    }
-
-                    const manageBtn = e.target.closest && e.target.closest('#manage-gallery-btn');
-                    if (manageBtn) {
+                    };
+                    addBtn.style.pointerEvents = 'auto';
+                    addBtn.style.zIndex = '1000';
+                }
+                
+                if (manageBtn) {
+                    console.log('Found manage button, attaching listener');
+                    manageBtn.onclick = function(e) {
                         e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Manage button clicked!');
                         showGalleryManagementModal();
-                        return;
-                    }
-
-                    const editBtn = e.target.closest && e.target.closest('#edit-current-gallery-btn');
-                    if (editBtn) {
+                    };
+                    manageBtn.style.pointerEvents = 'auto';
+                    manageBtn.style.zIndex = '1000';
+                }
+                
+                if (editBtn) {
+                    editBtn.onclick = function(e) {
                         e.preventDefault();
                         if (eventImages[currentEvent] && eventImages[currentEvent].id) {
                             showGalleryModal(eventImages[currentEvent]);
                         }
-                        return;
-                    }
-
-                    const delBtn = e.target.closest && e.target.closest('#delete-current-gallery-btn');
-                    if (delBtn) {
+                    };
+                }
+                
+                if (deleteBtn) {
+                    deleteBtn.onclick = function(e) {
                         e.preventDefault();
                         if (eventImages[currentEvent] && eventImages[currentEvent].id) {
                             deleteGalleryImage(eventImages[currentEvent].id);
                         }
-                        return;
-                    }
-                } catch (err) {
-                    console.error('Gallery delegation error:', err);
+                    };
                 }
-            }, {capture: true});
-
+                
+                console.log('Gallery handlers attached!');
+            }
+            
+            // Ensure buttons work on page load
+            document.addEventListener('DOMContentLoaded', attachGalleryHandlers);
+            setTimeout(attachGalleryHandlers, 100);
+            
+            // Make this function globally available
+            window.ensureGalleryButtons = attachGalleryHandlers;
             function showGalleryModal(gallery = null) {
                 const isEdit = gallery !== null;
                 
@@ -844,6 +893,14 @@
                                     if (typeof renderEventBgCarousel === 'function') {
                                         renderEventBgCarousel();
                                     }
+                                    // Ensure gallery management buttons work after refresh
+                                    setTimeout(() => {
+                                        if (typeof attachGalleryHandlers === 'function') {
+                                            attachGalleryHandlers();
+                                        } else if (typeof ensureGalleryButtons === 'function') {
+                                            ensureGalleryButtons();
+                                        }
+                                    }, 200);
                                     // If management modal is open, refresh it too
                                     if (document.getElementById('manage-gallery-modal')) {
                                         loadGalleryForManagement();
@@ -888,6 +945,14 @@
                                         if (typeof renderEventBgCarousel === 'function') {
                                             renderEventBgCarousel();
                                         }
+                                        // Ensure gallery management buttons work after refresh
+                                        setTimeout(() => {
+                                            if (typeof attachGalleryHandlers === 'function') {
+                                                attachGalleryHandlers();
+                                            } else if (typeof ensureGalleryButtons === 'function') {
+                                                ensureGalleryButtons();
+                                            }
+                                        }, 200);
                                         // If management modal is open, refresh it too
                                         if (document.getElementById('manage-gallery-modal')) {
                                             loadGalleryForManagement();
@@ -1150,6 +1215,14 @@
                         if (typeof renderEventBgCarousel === 'function') {
                             renderEventBgCarousel();
                         }
+                        // Ensure gallery management buttons work after refresh
+                        setTimeout(() => {
+                            if (typeof attachGalleryHandlers === 'function') {
+                                attachGalleryHandlers();
+                            } else if (typeof ensureGalleryButtons === 'function') {
+                                ensureGalleryButtons();
+                            }
+                        }, 200);
                         // If management modal is open, refresh it too
                         if (document.getElementById('manage-gallery-modal')) {
                             loadGalleryForManagement();
@@ -1197,16 +1270,22 @@
                 return;
             }
             
+            // Always render the carousel to handle empty state properly
             if (typeof renderEventBgCarousel === 'function') {
                 renderEventBgCarousel();
             } else {
                 console.error('renderEventBgCarousel function not defined');
+                // If no render function, show empty state by default
+                showGalleryEmptyState();
             }
             
-            if (typeof resetEventInterval === 'function') {
-                resetEventInterval();
-            } else {
-                console.error('resetEventInterval function not defined');
+            // Only start interval if there are images
+            if (eventImages && eventImages.length > 0) {
+                if (typeof resetEventInterval === 'function') {
+                    resetEventInterval();
+                } else {
+                    console.error('resetEventInterval function not defined');
+                }
             }
         };
         
