@@ -33,7 +33,7 @@ class CatalogController extends Controller
                 'name' => 'required|string|max:255',
                 'desc' => 'required|string',
                 'category' => 'required|string|max:255',
-                'type' => 'required|in:food,merch',
+                'type' => 'required|in:food,merch,others',
                 'price' => 'required|numeric|min:0',
                 'img' => 'nullable|image|max:20480',
                 'cropped_image' => 'nullable|string',
@@ -189,7 +189,7 @@ class CatalogController extends Controller
             'name' => 'required|string|max:255',
             'desc' => 'required|string',
             'category' => 'required|string|max:255',
-            'type' => 'required|in:food,merch',
+            'type' => 'required|in:food,merch,others',
             'price' => 'required|numeric|min:0',
             'img' => 'nullable|image|max:20480',
             'cropped_image' => 'nullable|string',
@@ -316,6 +316,21 @@ class CatalogController extends Controller
                 ->get();
         });
         
+        $others = Cache::remember('products.featured.others', now()->addHour(), function () {
+            return \App\Models\Product::where('type', 'others')
+                ->where('is_active', true)
+                ->with(['reviews' => function ($query) {
+                    $query->select('product_id', 'rating');
+                }])
+                ->withAvg('reviews', 'rating')
+                ->withCount('reviews')
+                ->having('reviews_count', '>', 0)
+                ->orderByDesc('reviews_avg_rating')
+                ->orderByDesc('reviews_count')
+                ->limit(6)
+                ->get();
+        });
+        
         // Get recent reviews for testimonials (latest 3 reviews with rating 4 or 5)
         $reviews = Cache::remember('reviews.testimonials', now()->addMinutes(20), function () {
             return Review::with(['user', 'product'])
@@ -325,7 +340,7 @@ class CatalogController extends Controller
                 ->get();
         });
         
-        return view('products.featured', compact('food', 'merchandise', 'reviews'));
+        return view('products.featured', compact('food', 'merchandise', 'others', 'reviews'));
     }
 
     public function browse()
@@ -349,6 +364,15 @@ class CatalogController extends Controller
                 ->get();
         });
         
+        $others = Cache::remember('products.browse.others', now()->addMinutes(30), function () {
+            return \App\Models\Product::where('type', 'others')
+                ->where('is_active', true)
+                ->with(['reviews' => function ($query) {
+                    $query->select('product_id', 'rating');
+                }])
+                ->get();
+        });
+        
         $categories = Cache::remember('products.categories', now()->addHour(), function () {
             return \App\Models\Product::where('is_active', true)
                 ->pluck('category')
@@ -357,7 +381,7 @@ class CatalogController extends Controller
                 ->all();
         });
         
-        return view('products.browse', compact('food', 'merchandise', 'categories'));
+        return view('products.browse', compact('food', 'merchandise', 'others', 'categories'));
     }
 
     public function destroy($id)
@@ -465,11 +489,13 @@ class CatalogController extends Controller
         // Clear browse page caches
         Cache::forget('products.browse.food');
         Cache::forget('products.browse.merch');
+        Cache::forget('products.browse.others');
         Cache::forget('products.categories');
         
         // Clear featured products caches
         Cache::forget('products.featured.food');
         Cache::forget('products.featured.merch');
+        Cache::forget('products.featured.others');
         
         // Clear admin statistics cache
         Cache::forget('admin.product.stats');

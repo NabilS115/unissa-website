@@ -149,6 +149,9 @@ class GalleryController extends Controller
         }
 
         try {
+            // Store the sort_order of the item being deleted
+            $deletedOrder = $gallery->sort_order;
+
             // Delete the image file
             if ($gallery->image_url && Storage::disk('public')->exists($gallery->image_url)) {
                 Storage::disk('public')->delete($gallery->image_url);
@@ -156,6 +159,18 @@ class GalleryController extends Controller
 
             // Delete the gallery record
             $gallery->delete();
+
+            // Reorder remaining items to fill the gap
+            // Update all items with sort_order greater than the deleted item
+            Gallery::where('sort_order', '>', $deletedOrder)
+                ->decrement('sort_order');
+
+            // Alternatively, reorder all items sequentially starting from 0
+            $remainingItems = Gallery::orderBy('sort_order')->get();
+            foreach ($remainingItems as $index => $item) {
+                $item->sort_order = $index;
+                $item->save();
+            }
 
             return response()->json(['message' => 'Image deleted successfully!']);
         } catch (\Exception $e) {

@@ -14,16 +14,25 @@
       tab: data.activeTab || (new URLSearchParams(window.location.search).get('tab') || 'food'),
       food: data.food || [],
       merchandise: data.merchandise || [],
+      others: data.others || [],
       foodSearch: '',
       merchSearch: '',
+      othersSearch: '',
       foodSearchInput: '',
       merchSearchInput: '',
+      othersSearchInput: '',
+      showFoodPredictions: false,
+      showMerchPredictions: false,
+      showOthersPredictions: false,
       foodFilter: 'All',
       merchFilter: 'All',
+      othersFilter: 'All',
       foodSort: '',
       merchSort: '',
+      othersSort: '',
       currentFoodPage: 1,
       currentMerchPage: 1,
+      currentOthersPage: 1,
       itemsPerPage: 12,
       isLoading: false,
       showAddModal: false,
@@ -34,6 +43,7 @@
         console.log('✅ foodMerchComponent initialized successfully');
         console.log('🍕 Food items:', this.food.length);
         console.log('🛍️ Merchandise items:', this.merchandise.length);
+        console.log('📦 Others items:', this.others.length);
         this.showAddModal = false;
         this.showEditModal = false;
         if (data.highlightProduct) {
@@ -103,8 +113,40 @@
         return result;
       },
 
+      get pagedOthers() {
+        let filtered = this.filteredOthers;
+        let start = (this.currentOthersPage - 1) * this.itemsPerPage;
+        return filtered.slice(start, start + this.itemsPerPage);
+      },
+
+      get filteredOthers() {
+        let result = this.others;
+        if (this.othersSearch && this.othersSearch.trim() !== '') {
+          result = result.filter(item =>
+            (item.name||'').toLowerCase().includes(this.othersSearch.toLowerCase()) ||
+            (item.desc||'').toLowerCase().includes(this.othersSearch.toLowerCase()) ||
+            (item.category||'').toLowerCase().includes(this.othersSearch.toLowerCase())
+          );
+        }
+        if (this.othersFilter !== 'All') {
+          result = result.filter(item => item.category === this.othersFilter);
+        }
+        if (this.othersSort) {
+          result = [...result].sort((a,b) => {
+            switch(this.othersSort) {
+              case 'name': return (a.name||'').localeCompare(b.name||'');
+              case 'category': return (a.category||'').localeCompare(b.category||'');
+              case 'rating': return parseFloat(b.calculated_rating||0) - parseFloat(a.calculated_rating||0);
+              default: return 0;
+            }
+          });
+        }
+        return result;
+      },
+
       get totalFoodPages() { return Math.ceil(this.filteredFood.length / this.itemsPerPage); },
       get totalMerchPages() { return Math.ceil(this.filteredMerch.length / this.itemsPerPage); },
+      get totalOthersPages() { return Math.ceil(this.filteredOthers.length / this.itemsPerPage); },
 
       switchTab(newTab) {
         if (this.tab === newTab) return;
@@ -115,11 +157,33 @@
       },
 
       performSearch() {
-        if (this.tab === 'food') { this.foodSearch = this.foodSearchInput; this.currentFoodPage = 1; }
-        else { this.merchSearch = this.merchSearchInput; this.currentMerchPage = 1; }
+        if (this.tab === 'food') { 
+          this.foodSearch = this.foodSearchInput; 
+          this.currentFoodPage = 1; 
+        } else if (this.tab === 'merch') { 
+          this.merchSearch = this.merchSearchInput; 
+          this.currentMerchPage = 1; 
+        } else if (this.tab === 'others') {
+          this.othersSearch = this.othersSearchInput;
+          this.currentOthersPage = 1;
+        }
       },
 
-      clearSearch() { if (this.tab === 'food') { this.foodSearch = ''; this.foodSearchInput = ''; this.currentFoodPage = 1; } else { this.merchSearch = ''; this.merchSearchInput = ''; this.currentMerchPage = 1; } },
+      clearSearch() { 
+        if (this.tab === 'food') { 
+          this.foodSearch = ''; 
+          this.foodSearchInput = ''; 
+          this.currentFoodPage = 1; 
+        } else if (this.tab === 'merch') { 
+          this.merchSearch = ''; 
+          this.merchSearchInput = ''; 
+          this.currentMerchPage = 1; 
+        } else if (this.tab === 'others') {
+          this.othersSearch = '';
+          this.othersSearchInput = '';
+          this.currentOthersPage = 1;
+        }
+      },
 
       addToCart(productId, productName, productPrice) {
         // Get CSRF token
@@ -316,6 +380,7 @@
 
       setFoodPage(page) { this.currentFoodPage = page; },
       setMerchPage(page) { this.currentMerchPage = page; },
+      setOthersPage(page) { this.currentOthersPage = page; },
 
       editProduct(product) { this.editingProduct = product; this.showEditModal = true; },
 

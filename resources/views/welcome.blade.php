@@ -350,6 +350,35 @@
         // Enhanced gallery data from database or default
         let galleryData = @json($galleryImages ?? []);
         
+        // Function to reload gallery data from server
+        async function loadEventImages() {
+            try {
+                const response = await fetch('/gallery');
+                if (response.ok) {
+                    const data = await response.json();
+                    galleryData = data;
+                    
+                    // Update eventImages array
+                    if (galleryData && galleryData.length > 0) {
+                        eventImages = galleryData.map(item => {
+                            return {
+                                id: item.id,
+                                image: item.image_url,
+                                active: item.is_active,
+                                order: item.sort_order
+                            };
+                        });
+                    } else {
+                        eventImages = [];
+                    }
+                } else {
+                    console.error('Failed to load gallery data');
+                }
+            } catch (error) {
+                console.error('Error loading gallery data:', error);
+            }
+        }
+        
         // Map gallery data to the expected format
         let eventImages = [];
         if (galleryData && galleryData.length > 0) {
@@ -686,7 +715,9 @@
                 
                 let nextSortOrder = 0;
                 if (!isEdit && galleryData && galleryData.length > 0) {
-                    const maxOrder = Math.max(...galleryData.map(item => item.sort_order || 0));
+                    // Sort existing items by order and find the next sequential number
+                    const sortedData = galleryData.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+                    const maxOrder = Math.max(...sortedData.map(item => item.sort_order || 0));
                     nextSortOrder = maxOrder + 1;
                 }
                 
@@ -808,7 +839,15 @@
                                 if (response.ok) {
                                     alert(result.message);
                                     closeGalleryModal();
-                                    window.location.reload();
+                                    // Auto-refresh gallery data and UI
+                                    await loadEventImages();
+                                    if (typeof renderEventBgCarousel === 'function') {
+                                        renderEventBgCarousel();
+                                    }
+                                    // If management modal is open, refresh it too
+                                    if (document.getElementById('manage-gallery-modal')) {
+                                        loadGalleryForManagement();
+                                    }
                                 } else {
                                     console.error('Error response:', result);
                                     alert(result.message || 'Failed to save image.');
@@ -844,7 +883,15 @@
                                     if (response.ok) {
                                         alert(result.message);
                                         closeGalleryModal();
-                                        window.location.reload();
+                                        // Auto-refresh gallery data and UI
+                                        await loadEventImages();
+                                        if (typeof renderEventBgCarousel === 'function') {
+                                            renderEventBgCarousel();
+                                        }
+                                        // If management modal is open, refresh it too
+                                        if (document.getElementById('manage-gallery-modal')) {
+                                            loadGalleryForManagement();
+                                        }
                                     } else {
                                         alert(result.message || 'Failed to save image.');
                                     }
@@ -1069,7 +1116,13 @@
                     const result = await response.json();
 
                     if (response.ok) {
-                        loadGalleryForManagement(); // Refresh the list
+                        // Refresh gallery data and all UI components
+                        await loadEventImages();
+                        if (typeof renderEventBgCarousel === 'function') {
+                            renderEventBgCarousel();
+                        }
+                        // Refresh the management list with updated order numbers
+                        loadGalleryForManagement();
                     } else {
                         alert(result.message || 'Failed to delete image.');
                     }
@@ -1092,7 +1145,15 @@
 
                     if (response.ok) {
                         alert('Image deleted successfully!');
-                        window.location.reload();
+                        // Auto-refresh gallery data and UI
+                        await loadEventImages();
+                        if (typeof renderEventBgCarousel === 'function') {
+                            renderEventBgCarousel();
+                        }
+                        // If management modal is open, refresh it too
+                        if (document.getElementById('manage-gallery-modal')) {
+                            loadGalleryForManagement();
+                        }
                     } else {
                         alert('Failed to delete image.');
                     }

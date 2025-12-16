@@ -14,6 +14,133 @@
         </div>
     </section>
 
+    <!-- Board of Directors Section -->
+    <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <!-- Board Header -->
+            <div class="bg-gradient-to-r from-teal-500 to-green-500 px-8 py-12">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-white">Board of Directors</h2>
+                    </div>
+                    <div class="text-white/90 text-sm">
+                        Meet the visionary leaders driving our company forward
+                    </div>
+                </div>
+            </div>
+
+            <!-- Board Members -->
+            <div class="p-8 md:p-12">
+                <div class="max-w-6xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Chairman -->
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
+                                    DC
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">Dato' Chairman</h3>
+                                <p class="text-blue-600 font-semibold mb-3">Chairman & Founder</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Visionary leader with over 40 years of experience in the food industry. Founded the company with a passion for authentic Bruneian cuisine and quality service.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- CEO -->
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-teal-500 to-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
+                                    MS
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">Md. Saiful</h3>
+                                <p class="text-teal-600 font-semibold mb-3">Chief Executive Officer</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Strategic leader driving innovation and growth. Expert in operations management and business development with a focus on sustainable practices.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- CFO -->
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
+                                    AF
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">Ahmad Farid</h3>
+                                <p class="text-purple-600 font-semibold mb-3">Chief Financial Officer</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Financial strategist with expertise in corporate finance and risk management. Ensures fiscal responsibility and sustainable growth initiatives.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Head of Operations -->
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
+                                    SL
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">Sarah Lim</h3>
+                                <p class="text-orange-600 font-semibold mb-3">Head of Operations</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Operations expert ensuring smooth daily operations and quality control. Passionate about customer satisfaction and operational excellence.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Head of Marketing -->
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
+                                    RH
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">Rahman Hassan</h3>
+                                <p class="text-green-600 font-semibold mb-3">Head of Marketing</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Creative marketing professional driving brand awareness and customer engagement through innovative digital strategies and community outreach.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Head of Technology -->
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow">
+                                    AT
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">Ali Talib</h3>
+                                <p class="text-indigo-600 font-semibold mb-3">Head of Technology</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Technology leader driving digital transformation and innovation. Ensures our tech infrastructure supports business growth and customer experience.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Mission Statement -->
+                    <div class="mt-12 text-center">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">Our Leadership Vision</h3>
+                            <p class="text-gray-700 leading-relaxed max-w-4xl mx-auto">
+                                Our diverse and experienced board of directors brings together decades of expertise in food service, business management, and innovation. 
+                                United by our shared commitment to excellence, sustainability, and community service, we work together to guide Tijarah Co towards a future 
+                                where authentic cuisine meets modern innovation, creating value for our customers, employees, and the communities we serve.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Company History Section -->
     <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden">

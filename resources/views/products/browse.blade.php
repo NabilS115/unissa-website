@@ -193,9 +193,10 @@
         }
     }
     
-    // Separate categories for food and merch
+    // Separate categories for food, merch, and others
     $foodCategories = \App\Models\Product::where('type', 'food')->pluck('category')->unique()->values()->all();
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
+    $otherCategories = \App\Models\Product::where('type', 'others')->pluck('category')->unique()->values()->all();
 @endphp
 
 <div x-data="foodMerchComponent()" class="alpine-component" id="browse-container">
@@ -211,6 +212,7 @@
                         <div class="inline-flex rounded-lg bg-teal-700 p-1 shadow-sm">
                             <button type="button" @click="switchTab('food')" :class="tab === 'food' ? 'bg-white text-teal-700' : 'bg-transparent text-white'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Food</button>
                             <button type="button" @click="switchTab('merch')" :class="tab === 'merch' ? 'bg-white text-teal-700' : 'bg-transparent text-white'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Merch</button>
+                            <button type="button" @click="switchTab('others')" :class="tab === 'others' ? 'bg-white text-teal-700' : 'bg-transparent text-white'" class="px-4 py-1.5 rounded-lg font-medium focus:outline-none transition-all duration-200 text-sm">Others</button>
                         </div>
                     </div>
 
@@ -219,6 +221,7 @@
                         <div class="relative">
                             <input x-show="tab === 'food'" type="text" placeholder="Search food..." x-model="foodSearchInput" @focus="showFoodPredictions = true" @input="showFoodPredictions = foodSearchInput.length > 0" @blur="setTimeout(() => { showFoodPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-white rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-white text-sm bg-white text-teal-700" />
                             <input x-show="tab === 'merch'" type="text" placeholder="Search merchandise..." x-model="merchSearchInput" @focus="showMerchPredictions = true" @input="showMerchPredictions = merchSearchInput.length > 0" @blur="setTimeout(() => { showMerchPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-white rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-white text-sm bg-white text-teal-700" />
+                            <input x-show="tab === 'others'" type="text" placeholder="Search others..." x-model="othersSearchInput" @focus="showOthersPredictions = true" @input="showOthersPredictions = othersSearchInput.length > 0" @blur="setTimeout(() => { showOthersPredictions = false; }, 100)" @keyup.enter="performSearch()" class="w-full border border-white rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-white text-sm bg-white text-teal-700" />
                             <button @click="performSearch()" class="absolute right-8 top-1/2 -translate-y-1/2 p-1">
                                 <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                             </button>
@@ -226,6 +229,9 @@
                                 <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                             </button>
                             <button x-show="tab === 'merch' && (merchSearch || merchSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-1" title="Clear search">
+                                <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                            <button x-show="tab === 'others' && (othersSearch || othersSearchInput)" @click="clearSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 p-1" title="Clear search">
                                 <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                             </button>
                         </div>
@@ -244,6 +250,15 @@
                                 <template x-for="item in merchandise" :key="item.id">
                                     <template x-if="item.name.toLowerCase().includes(merchSearchInput.toLowerCase())">
                                         <li @mousedown.prevent="merchSearchInput = item.name; showMerchPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm text-teal-700" x-text="item.name"></li>
+                                    </template>
+                                </template>
+                            </ul>
+                        </template>
+                        <template x-if="tab === 'others' && othersSearchInput && showOthersPredictions">
+                            <ul class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                                <template x-for="item in others" :key="item.id">
+                                    <template x-if="item.name.toLowerCase().includes(othersSearchInput.toLowerCase())">
+                                        <li @mousedown.prevent="othersSearchInput = item.name; showOthersPredictions = false; performSearch()" class="px-4 py-2 hover:bg-teal-50 cursor-pointer text-sm text-teal-700" x-text="item.name"></li>
                                     </template>
                                 </template>
                             </ul>
@@ -277,6 +292,14 @@
                                     <option value="rating">Rating</option>
                                 </select>
                             </template>
+                            <template x-if="tab === 'others'">
+                                <select x-model="othersSort" class="bg-transparent outline-none border-none text-teal-700 font-medium text-sm cursor-pointer">
+                                    <option value="">Default</option>
+                                    <option value="name">Name (A-Z)</option>
+                                    <option value="category">Category</option>
+                                    <option value="rating">Rating</option>
+                                </select>
+                            </template>
                         </div>
                         </div>
                     </div>
@@ -298,6 +321,14 @@
                                 <button type="button" @click="merchFilter = 'All'" :class="merchFilter === 'All' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">All</button>
                                 @foreach ($merchCategories as $cat)
                                 <button type="button" @click="merchFilter = '{{ $cat }}'" :class="merchFilter === '{{ $cat }}' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">{{ $cat }}</button>
+                                @endforeach
+                            </div>
+                        </template>
+                        <template x-if="tab === 'others'">
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" @click="othersFilter = 'All'" :class="othersFilter === 'All' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">All</button>
+                                @foreach ($otherCategories as $cat)
+                                <button type="button" @click="othersFilter = '{{ $cat }}'" :class="othersFilter === '{{ $cat }}' ? 'bg-white text-teal-700' : 'bg-teal-700 text-white border border-white'" class="px-3 py-1 rounded-full font-medium text-sm hover:bg-white hover:text-teal-700 transition">{{ $cat }}</button>
                                 @endforeach
                             </div>
                         </template>
@@ -355,6 +386,7 @@
                             <option value="">Select Type</option>
                             <option value="food">Food</option>
                             <option value="merch">Merchandise</option>
+                            <option value="others">Others</option>
                         </select>
                     </div>
                     
@@ -550,6 +582,7 @@
                             <option value="">Select Type</option>
                             <option value="food" :selected="editingProduct?.type === 'food'">Food</option>
                             <option value="merch" :selected="editingProduct?.type === 'merch'">Merchandise</option>
+                            <option value="others" :selected="editingProduct?.type === 'others'">Others</option>
                         </select>
                     </div>
                     
@@ -888,6 +921,62 @@
             </div>
             </div>
         </template>
+
+        <!-- Others Cards -->
+        <template x-show="tab === 'others'">
+            <div x-show="pagedOthers.length === 0" class="text-center py-16">
+                <div class="max-w-md mx-auto">
+                    <div class="text-6xl mb-4">📦</div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+                    <p class="text-gray-500">We're working on adding more products to this category. Check back soon!</p>
+                </div>
+            </div>
+            <div x-show="pagedOthers.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <template x-for="other in pagedOthers" :key="other.id">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 group"
+                         @click="openProductModal(other)"
+                         :class="{'ring-2 ring-yellow-400 shadow-yellow-200': highlightedProductId && highlightedProductId == other.id}">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100">
+                            <img :src="other.display_image" :alt="other.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-2 text-gray-800" x-text="other.name"></h3>
+                            <p class="text-gray-600 mb-3 text-sm line-clamp-3" x-text="other.description"></p>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
+                            </div>
+                            <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <!-- Others Pagination -->
+            <div class="flex justify-center mb-12" x-show="totalOthersPages > 1">
+                <nav class="flex items-center space-x-2">
+                    <button @click="currentOthersPage > 1 && setOthersPage(currentOthersPage - 1)"
+                            :disabled="currentOthersPage <= 1"
+                            :class="currentOthersPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
+                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        Previous
+                    </button>
+                    <template x-for="page in Array.from({length: totalOthersPages}, (_, i) => i + 1)" :key="page">
+                        <button @click="setOthersPage(page)"
+                                :class="page === currentOthersPage ? 'bg-gradient-to-r from-teal-700 via-emerald-700 to-cyan-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-gradient-to-r hover:from-teal-50 hover:via-emerald-50 hover:to-cyan-50'"
+                                class="px-4 py-2 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                                x-text="page">
+                        </button>
+                    </template>
+                    <button @click="currentOthersPage < totalOthersPages && setOthersPage(currentOthersPage + 1)"
+                            :disabled="currentOthersPage >= totalOthersPages"
+                            :class="currentOthersPage >= totalOthersPages ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
+                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        Next
+                    </button>
+                </nav>
+            </div>
+        </template>
     </div>
 </div>
 
@@ -898,6 +987,7 @@
 window.__productBrowse = {
     food: @json($food),
     merchandise: @json($merchandise),
+    others: @json($others ?? []),
     activeTab: @json(session('active_tab') ?? null),
     highlightProduct: @json(session('highlight_product') ?? null)
 };

@@ -44,28 +44,10 @@
                    class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
                     Shop Merchandise
                 </a>
-            </div>
-            
-            <!-- Trust Indicators -->
-            <div class="flex flex-wrap justify-center gap-8 text-white/80 text-sm">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Fresh Daily
-                </div>
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Premium Quality
-                </div>
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Fast Service
-                </div>
+                <a href="{{ route('unissa-cafe.catalog') }}?tab=others" 
+                   class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
+                    Explore Others
+                </a>
             </div>
         </div>
     </div>
@@ -85,44 +67,9 @@
                         <h2 class="text-3xl font-bold text-teal-700">About Unissa Cafe</h2>
                     </div>
                     
-                    <p class="text-gray-700 text-lg leading-relaxed mb-6">
+                    <p class="text-gray-700 text-lg leading-relaxed mb-8">
                         Discover our carefully curated selection of mouth-watering food and high-quality merchandise. From artisan pizzas and fresh salads to exclusive branded items, Unissa Cafe offers an unforgettable experience that combines great taste with premium quality.
                     </p>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Fresh Daily</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Quality Items</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Premium Selection</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Great Experience</span>
-                        </div>
-                    </div>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="{{ route('unissa-cafe.catalog') }}?tab=food" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors shadow-lg">
@@ -133,6 +80,9 @@
                         </a>
                         <a href="{{ route('unissa-cafe.catalog') }}?tab=merch" class="inline-flex items-center px-6 py-3 bg-white hover:bg-gray-50 text-teal-600 font-semibold rounded-lg border-2 border-teal-600 transition-colors">
                             Shop Merchandise
+                        </a>
+                        <a href="{{ route('unissa-cafe.catalog') }}?tab=others" class="inline-flex items-center px-6 py-3 bg-white hover:bg-gray-50 text-teal-600 font-semibold rounded-lg border-2 border-teal-600 transition-colors">
+                            Explore Others
                         </a>
                     </div>
                 </div>
@@ -354,6 +304,65 @@
                     </div>
                     <h3 class="text-xl font-semibold text-gray-600 mb-2">No Featured Merchandise</h3>
                     <p class="text-gray-500">Add some premium merchandise to showcase here.</p>
+                </div>
+                @endforelse
+        </div>
+    </div>
+
+    <!-- Featured Others -->
+    <div class="mb-16">
+        <h2 class="text-3xl font-bold text-center mb-8">Featured Others</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @forelse($others->take(3) as $product)
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="aspect-w-16 aspect-h-9">
+                        <img src="{{ $product->display_image }}" 
+                             alt="{{ $product->name }}" 
+                             class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ $product->name }}</h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">{{ Str::limit($product->desc, 100) }}</p>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                @if($product->reviews_avg_rating > 0)
+                                    <div class="flex text-yellow-400 mr-2">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @if($i <= round($product->reviews_avg_rating))
+                                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                                </svg>
+                                            @else
+                                                <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
+                                                </svg>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                    <span class="text-sm text-gray-500">({{ $product->reviews_count }})</span>
+                                @endif
+                            </div>
+                            <div class="text-right">
+                                <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
+                            </div>
+                        </div>
+                        
+                        <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" 
+                                class="w-full mt-4 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+                @empty
+                <div class="col-span-full text-center py-12">
+                    <div class="text-gray-400 mb-4">
+                        <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Featured Others Items</h3>
+                    <p class="text-gray-500">Add some other products to showcase here.</p>
                 </div>
                 @endforelse
         </div>
