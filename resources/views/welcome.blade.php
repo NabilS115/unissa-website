@@ -771,12 +771,12 @@
                 }
                 
                 const modalHtml = `
-                    <div id="gallery-modal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative">
+                    <div id="gallery-modal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center" style="z-index: 9999;">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative" style="z-index: 10000;">
                             <div class="p-6">
                                 <div class="flex items-center justify-between mb-6">
                                     <h3 class="text-2xl font-bold text-gray-900">${isEdit ? 'Edit Gallery Image' : 'Add New Gallery Image'}</h3>
-                                    <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600">
+                                    <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600" style="z-index: 10001; position: relative;">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
@@ -820,8 +820,8 @@
                                     </div>
                                     
                                     <div class="flex gap-3 pt-4">
-                                        <button type="button" onclick="closeGalleryModal()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancel</button>
-                                        <button type="submit" class="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700">${isEdit ? 'Update Image' : 'Add Image'}</button>
+                                        <button type="button" onclick="closeGalleryModal()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" style="z-index: 10001; position: relative;">Cancel</button>
+                                        <button type="submit" class="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700" style="z-index: 10001; position: relative;">${isEdit ? 'Update Image' : 'Add Image'}</button>
                                     </div>
                                 </form>
                             </div>
@@ -837,6 +837,12 @@
                     inserted.removeAttribute('data-initial-hidden');
                     inserted.classList.remove('hidden');
                     inserted.style.display = 'flex';
+                    
+                    // Hide potentially interfering elements
+                    const editButton = document.querySelector('.fixed.top-20.right-4');
+                    const galleryButtons = document.querySelector('#add-gallery-btn, #manage-gallery-btn')?.closest('.flex.gap-2')?.parentElement;
+                    if (editButton) editButton.style.display = 'none';
+                    if (galleryButtons) galleryButtons.style.display = 'none';
                 }
 
                 // Wait for modal DOM nodes to be available before setting up upload handlers and form listener.
@@ -970,12 +976,12 @@
 
             function showGalleryManagementModal() {
                 const modalHtml = `
-                    <div id="manage-gallery-modal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
+                    <div id="manage-gallery-modal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center" style="z-index: 9999;">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative max-h-[90vh] overflow-y-auto" style="z-index: 10000;">
                             <div class="p-6">
                                 <div class="flex items-center justify-between mb-6">
                                     <h3 class="text-2xl font-bold text-gray-900">Manage Gallery Images</h3>
-                                    <button onclick="closeManageGalleryModal()" class="text-gray-400 hover:text-gray-600">
+                                    <button onclick="closeManageGalleryModal()" class="text-gray-400 hover:text-gray-600" style="z-index: 10001; position: relative;">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
@@ -1003,6 +1009,12 @@
                     inserted.classList.remove('hidden');
                     // ensure it's on top
                     inserted.style.display = 'flex';
+                    
+                    // Hide potentially interfering elements
+                    const editButton = document.querySelector('.fixed.top-20.right-4');
+                    const galleryButtons = document.querySelector('#add-gallery-btn, #manage-gallery-btn')?.closest('.flex.gap-2')?.parentElement;
+                    if (editButton) editButton.style.display = 'none';
+                    if (galleryButtons) galleryButtons.style.display = 'none';
                 }
                 loadGalleryForManagement();
             }
@@ -1237,24 +1249,56 @@
 
             function closeGalleryModal() {
                 const modal = document.getElementById('gallery-modal');
-                if (modal) modal.remove();
+                if (modal) {
+                    modal.remove();
+                    
+                    // Restore hidden elements
+                    const editButton = document.querySelector('.fixed.top-20.right-4');
+                    const galleryButtons = document.querySelector('#add-gallery-btn, #manage-gallery-btn')?.closest('.flex.gap-2')?.parentElement;
+                    if (editButton) editButton.style.display = '';
+                    if (galleryButtons) galleryButtons.style.display = '';
+                }
             }
 
             function closeManageGalleryModal() {
                 const modal = document.getElementById('manage-gallery-modal');
-                if (modal) modal.remove();
+                if (modal) {
+                    modal.remove();
+                    
+                    // Restore hidden elements
+                    const editButton = document.querySelector('.fixed.top-20.right-4');
+                    const galleryButtons = document.querySelector('#add-gallery-btn, #manage-gallery-btn')?.closest('.flex.gap-2')?.parentElement;
+                    if (editButton) editButton.style.display = '';
+                    if (galleryButtons) galleryButtons.style.display = '';
+                }
             }
 
             // Admin gallery management functions
 
             window.closeGalleryModal = function() {
                 const modal = document.getElementById('gallery-modal');
-                if (modal) modal.remove();
+                if (modal) {
+                    modal.remove();
+                    
+                    // Restore hidden elements
+                    const editButton = document.querySelector('.fixed.top-20.right-4');
+                    const galleryButtons = document.querySelector('#add-gallery-btn, #manage-gallery-btn')?.closest('.flex.gap-2')?.parentElement;
+                    if (editButton) editButton.style.display = '';
+                    if (galleryButtons) galleryButtons.style.display = '';
+                }
             }
 
             window.closeManageGalleryModal = function() {
                 const modal = document.getElementById('manage-gallery-modal');
-                if (modal) modal.remove();
+                if (modal) {
+                    modal.remove();
+                    
+                    // Restore hidden elements
+                    const editButton = document.querySelector('.fixed.top-20.right-4');
+                    const galleryButtons = document.querySelector('#add-gallery-btn, #manage-gallery-btn')?.closest('.flex.gap-2')?.parentElement;
+                    if (editButton) editButton.style.display = '';
+                    if (galleryButtons) galleryButtons.style.display = '';
+                }
             }
         @endif
 
