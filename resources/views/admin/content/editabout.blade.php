@@ -103,7 +103,7 @@
                                    name="content[about_title]" 
                                    id="about_title"
                                    value="{{ \App\Models\ContentBlock::get('about_title', 'About Our Company', 'text', 'about') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                         
                         <div>
@@ -128,7 +128,7 @@
                                        name="content[mission_title]" 
                                        id="mission_title"
                                        value="{{ \App\Models\ContentBlock::get('mission_title', 'Our Mission', 'text', 'about') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 
                                 <label for="mission_content" class="block text-sm font-medium text-gray-700 mt-2">Mission Content</label>
                                 <textarea name="content[mission_content]" 
@@ -142,7 +142,7 @@
                                        name="content[vision_title]" 
                                        id="vision_title"
                                        value="{{ \App\Models\ContentBlock::get('vision_title', 'Our Vision', 'text', 'about') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 
                                 <label for="vision_content" class="block text-sm font-medium text-gray-700 mt-2">Vision Content</label>
                                 <textarea name="content[vision_content]" 
@@ -156,7 +156,7 @@
                                        name="content[values_title]" 
                                        id="values_title"
                                        value="{{ \App\Models\ContentBlock::get('values_title', 'Our Values', 'text', 'about') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 
                                 <label for="values_content" class="block text-sm font-medium text-gray-700 mt-2">Values Content</label>
                                 <textarea name="content[values_content]" 
@@ -183,7 +183,7 @@
                                            name="content[board_member1_name]" 
                                            id="board_member1_name"
                                            value="{{ \App\Models\ContentBlock::get('board_member1_name', '', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                           class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 
                                 <div>
@@ -192,7 +192,7 @@
                                            name="content[board_member1_position]" 
                                            id="board_member1_position"
                                            value="{{ \App\Models\ContentBlock::get('board_member1_position', '', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                           class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
 
                                 <div class="md:col-span-2">
@@ -238,7 +238,7 @@
                                            name="content[board_member2_name]" 
                                            id="board_member2_name"
                                            value="{{ \App\Models\ContentBlock::get('board_member2_name', '', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                           class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                                 
                                 <div>
@@ -247,7 +247,7 @@
                                            name="content[board_member2_position]" 
                                            id="board_member2_position"
                                            value="{{ \App\Models\ContentBlock::get('board_member2_position', '', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                           class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
 
                                 <div class="md:col-span-2">
@@ -293,7 +293,7 @@
                                            name="content[board_member3_name]" 
                                            id="board_member3_name"
                                            value="{{ \App\Models\ContentBlock::get('board_member3_name', '', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
+                                           class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
                                 </div>
                                 
                                 <div>
@@ -302,7 +302,7 @@
                                            name="content[board_member3_position]" 
                                            id="board_member3_position"
                                            value="{{ \App\Models\ContentBlock::get('board_member3_position', '', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
+                                           class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
                                 </div>
 
                                 <div class="md:col-span-2">

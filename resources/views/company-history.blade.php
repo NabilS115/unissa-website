@@ -73,11 +73,11 @@
                                     $member1Image = \App\Models\ContentBlock::get('board_member1_image', '', 'text', 'about');
                                     $member1Initials = \App\Models\ContentBlock::get('board_member1_initials', 'DC', 'text', 'about');
                                 @endphp
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-white text-2xl font-black shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden" style="background: linear-gradient(to right, #166534, #14532d) !important;">
                                     @if($member1Image)
                                         <img src="{{ $member1Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
                                     @else
-                                        {!! $member1Initials !!}
+                                        <span class="text-white font-black text-2xl drop-shadow-lg">{{ $member1Initials }}</span>
                                     @endif
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-800 mb-1">{!! \App\Models\ContentBlock::get('board_member1_name', 'Dato\' Chairman', 'text', 'about') !!}</h3>
@@ -92,11 +92,11 @@
                                     $member2Image = \App\Models\ContentBlock::get('board_member2_image', '', 'text', 'about');
                                     $member2Initials = \App\Models\ContentBlock::get('board_member2_initials', 'MS', 'text', 'about');
                                 @endphp
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-slate-600 to-slate-700 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-white text-2xl font-black shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden" style="background: linear-gradient(to right, #dc2626, #ea580c) !important;">
                                     @if($member2Image)
                                         <img src="{{ $member2Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
                                     @else
-                                        {!! $member2Initials !!}
+                                        <span class="text-white font-black text-2xl drop-shadow-lg">{{ $member2Initials }}</span>
                                     @endif
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-800 mb-1">{!! \App\Models\ContentBlock::get('board_member2_name', 'Md. Saiful', 'text', 'about') !!}</h3>
@@ -111,11 +111,11 @@
                                     $member3Image = \App\Models\ContentBlock::get('board_member3_image', '', 'text', 'about');
                                     $member3Initials = \App\Models\ContentBlock::get('board_member3_initials', 'AF', 'text', 'about');
                                 @endphp
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-white text-2xl font-black shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden" style="background: linear-gradient(to right, #1e40af, #1e3a8a) !important;">
                                     @if($member3Image)
                                         <img src="{{ $member3Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
                                     @else
-                                        {!! $member3Initials !!}
+                                        <span class="text-white font-black text-2xl drop-shadow-lg">{{ $member3Initials }}</span>
                                     @endif
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-800 mb-1">{!! \App\Models\ContentBlock::get('board_member3_name', 'Ahmad Farid', 'text', 'about') !!}</h3>

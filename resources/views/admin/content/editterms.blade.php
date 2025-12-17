@@ -63,7 +63,7 @@
                                    name="content[terms_title]" 
                                    id="terms_title"
                                    value="{{ \App\Models\ContentBlock::get('terms_title', 'Terms of Service', 'text', 'terms') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                         
                         <div>
@@ -72,7 +72,7 @@
                                    name="content[terms_subtitle]" 
                                    id="terms_subtitle"
                                    value="{{ \App\Models\ContentBlock::get('terms_subtitle', 'Terms and conditions of use', 'text', 'terms') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                                    name="content[terms_last_updated]" 
                                    id="terms_last_updated"
                                    value="{{ \App\Models\ContentBlock::get('terms_last_updated', date('F j, Y'), 'text', 'terms') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
                                    placeholder="e.g., December 17, 2024">
                         </div>
                     </div>

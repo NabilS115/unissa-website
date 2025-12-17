@@ -63,7 +63,7 @@
                                    name="content[privacy_title]" 
                                    id="privacy_title"
                                    value="{{ \App\Models\ContentBlock::get('privacy_title', 'Privacy Policy', 'text', 'privacy') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                         
                         <div>
@@ -72,7 +72,7 @@
                                    name="content[privacy_subtitle]" 
                                    id="privacy_subtitle"
                                    value="{{ \App\Models\ContentBlock::get('privacy_subtitle', 'How we protect your information', 'text', 'privacy') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                                    name="content[privacy_last_updated]" 
                                    id="privacy_last_updated"
                                    value="{{ \App\Models\ContentBlock::get('privacy_last_updated', date('F j, Y'), 'text', 'privacy') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
                                    placeholder="e.g., December 17, 2024">
                         </div>
                     </div>

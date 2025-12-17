@@ -63,7 +63,7 @@
                                    name="content[contact_title]" 
                                    id="contact_title"
                                    value="{{ \App\Models\ContentBlock::get('contact_title', 'Contact Us', 'text', 'contact') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                         
                         <div>
@@ -72,7 +72,7 @@
                                    name="content[contact_subtitle]" 
                                    id="contact_subtitle"
                                    value="{{ \App\Models\ContentBlock::get('contact_subtitle', 'Get in touch with us', 'text', 'contact') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                                        name="content[contact_email]" 
                                        id="contact_email"
                                        value="{{ \App\Models\ContentBlock::get('contact_email', 'tijarahco@unissa.edu.bn', 'text', 'contact') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                             </div>
 
                             <div>
@@ -114,7 +114,7 @@
                                        name="content[contact_phone]" 
                                        id="contact_phone"
                                        value="{{ \App\Models\ContentBlock::get('contact_phone', '+673 123 4567', 'text', 'contact') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                             </div>
 
                             <div class="md:col-span-2">
@@ -123,7 +123,7 @@
                                           id="contact_address"
                                           rows="4"
                                           placeholder="Enter address lines (press Enter for new lines)"
-                                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">{{ str_replace('<br>', "\n", \App\Models\ContentBlock::get('contact_address', 'Universiti Islam Sultan Sharif Ali<br>Simpang 347, Jalan Pasar Gadong<br>Bandar Seri Begawan, Brunei', 'html', 'contact')) }}</textarea>
+                                          class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">{{ str_replace('<br>', "\n", \App\Models\ContentBlock::get('contact_address', 'Universiti Islam Sultan Sharif Ali<br>Simpang 347, Jalan Pasar Gadong<br>Bandar Seri Begawan, Brunei', 'html', 'contact')) }}</textarea>
                                 <p class="text-xs text-gray-500 mt-1">Press Enter to create new lines</p>
                             </div>
 
@@ -151,7 +151,7 @@
                                        id="contact_facebook_link"
                                        value="{{ \App\Models\ContentBlock::get('contact_facebook_link', '', 'text', 'contact') }}"
                                        placeholder="https://facebook.com/yourpage (leave empty if not applicable)"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 <p class="text-xs text-gray-500 mt-1">Leave empty if you don't have a Facebook page</p>
                             </div>
 
@@ -162,7 +162,7 @@
                                        id="contact_instagram_link"
                                        value="{{ \App\Models\ContentBlock::get('contact_instagram_link', 'https://www.instagram.com/tijarahco.bn/', 'text', 'contact') }}"
                                        placeholder="https://instagram.com/youraccount (leave empty if not applicable)"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 <p class="text-xs text-gray-500 mt-1">Leave empty if you don't have an Instagram account</p>
                             </div>
 
@@ -173,7 +173,7 @@
                                        id="contact_twitter_link"
                                        value="{{ \App\Models\ContentBlock::get('contact_twitter_link', '', 'text', 'contact') }}"
                                        placeholder="https://twitter.com/youraccount (leave empty if not applicable)"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 <p class="text-xs text-gray-500 mt-1">Leave empty if you don't have a Twitter account</p>
                             </div>
                         </div>
