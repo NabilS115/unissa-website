@@ -10,30 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
-        .modal {
-            z-index: 9999 !important;
-        }
-        .modal-backdrop {
-            z-index: 9998 !important;
-        }
-        .fixed-buttons {
-            z-index: 9997 !important;
-        }
-        /* Gallery modal button fixes */
-        .gallery-modal {
-            z-index: 10000 !important;
-        }
-        .gallery-modal .btn {
-            z-index: 10001 !important;
-            position: relative !important;
-        }
-        /* Ensure buttons in modals don't overlap */
-        .modal .btn, .modal button {
-            z-index: 10001 !important;
-            position: relative !important;
-        }
-    </style>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen py-8">

@@ -10,30 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
-        .modal {
-            z-index: 9999 !important;
-        }
-        .modal-backdrop {
-            z-index: 9998 !important;
-        }
-        .fixed-buttons {
-            z-index: 9997 !important;
-        }
-        /* Gallery modal button fixes */
-        .gallery-modal {
-            z-index: 10000 !important;
-        }
-        .gallery-modal .btn {
-            z-index: 10001 !important;
-            position: relative !important;
-        }
-        /* Ensure buttons in modals don't overlap */
-        .modal .btn, .modal button {
-            z-index: 10001 !important;
-            position: relative !important;
-        }
-    </style>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen py-8">
@@ -75,54 +51,118 @@
             <form id="about-form" class="space-y-8">
                 @csrf
                 
-                <!-- Page Header Section -->
+                <!-- Hero Section -->
                 <div class="bg-white rounded-lg shadow">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Page Header</h2>
+                        <h2 class="text-lg font-medium text-gray-900">Hero Section</h2>
                     </div>
                     <div class="px-6 py-4 space-y-4">
                         <div>
-                            <label for="about_title" class="block text-sm font-medium text-gray-700">Page Title</label>
-                            <input type="text" 
-                                   name="content[about_title]" 
-                                   id="about_title"
-                                   value="{{ \App\Models\ContentBlock::get('about_title', 'Our Story & Values', 'text', 'about') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                        </div>
-                        
-                        <div>
-                            <label for="about_subtitle" class="block text-sm font-medium text-gray-700">Page Subtitle</label>
-                            <input type="text" 
-                                   name="content[about_subtitle]" 
-                                   id="about_subtitle"
-                                   value="{{ \App\Models\ContentBlock::get('about_subtitle', 'Discover our journey and what drives us forward', 'text', 'about') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <label for="about_hero_image" class="block text-sm font-medium text-gray-700">Hero Image</label>
+                            <div class="mt-1 space-y-2">
+                                <div class="flex items-center space-x-4">
+                                    <input type="file" 
+                                           id="about_hero_image" 
+                                           accept="image/*"
+                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                                    <button type="button" 
+                                            onclick="uploadHeroImage()"
+                                            class="px-4 py-2 bg-teal-600 text-white rounded-md text-sm hover:bg-teal-700">Upload</button>
+                                </div>
+                                <input type="hidden" 
+                                       name="content[about_hero_image]" 
+                                       id="about_hero_image_url"
+                                       value="{{ \App\Models\ContentBlock::get('about_hero_image', '', 'text', 'about') }}">
+                                <div class="mt-2">
+                                    @php $heroImage = \App\Models\ContentBlock::get('about_hero_image', '', 'text', 'about'); @endphp
+                                    @if($heroImage)
+                                        <img id="about_hero_image_preview" 
+                                             src="{{ $heroImage }}" 
+                                             alt="Hero Image Preview" 
+                                             class="w-full h-32 object-cover rounded border bg-gray-50">
+                                    @else
+                                        <div id="about_hero_image_preview" class="w-full h-32 bg-gray-100 rounded border flex items-center justify-center">
+                                            <span class="text-gray-500">No hero image uploaded</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Board Section -->
+                <!-- About Section -->
                 <div class="bg-white rounded-lg shadow">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Board of Directors Section</h2>
+                        <h2 class="text-lg font-medium text-gray-900">About Section</h2>
                     </div>
                     <div class="px-6 py-4 space-y-4">
                         <div>
-                            <label for="board_title" class="block text-sm font-medium text-gray-700">Section Title</label>
+                            <label for="about_title" class="block text-sm font-medium text-gray-700">About Title</label>
                             <input type="text" 
-                                   name="content[board_title]" 
-                                   id="board_title"
-                                   value="{{ \App\Models\ContentBlock::get('board_title', 'Board of Directors', 'text', 'about') }}"
+                                   name="content[about_title]" 
+                                   id="about_title"
+                                   value="{{ \App\Models\ContentBlock::get('about_title', 'About Our Company', 'text', 'about') }}"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
-
+                        
                         <div>
-                            <label for="board_subtitle" class="block text-sm font-medium text-gray-700">Section Subtitle</label>
-                            <input type="text" 
-                                   name="content[board_subtitle]" 
-                                   id="board_subtitle"
-                                   value="{{ \App\Models\ContentBlock::get('board_subtitle', 'Meet the visionary leaders driving our company forward', 'text', 'about') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <label for="about_content" class="block text-sm font-medium text-gray-700 mb-2">About Content</label>
+                            <textarea name="content[about_content]" 
+                                      id="about_content"
+                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_content', '<p>We are a dynamic company committed to excellence in business and innovation.</p>', 'html', 'about') }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mission, Vision, Values Section -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Mission, Vision & Values</h2>
+                    </div>
+                    <div class="px-6 py-4 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="mission_title" class="block text-sm font-medium text-gray-700">Mission Title</label>
+                                <input type="text" 
+                                       name="content[mission_title]" 
+                                       id="mission_title"
+                                       value="{{ \App\Models\ContentBlock::get('mission_title', 'Our Mission', 'text', 'about') }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                
+                                <label for="mission_content" class="block text-sm font-medium text-gray-700 mt-2">Mission Content</label>
+                                <textarea name="content[mission_content]" 
+                                          id="mission_content"
+                                          class="ckeditor">{{ \App\Models\ContentBlock::get('mission_content', '<p>To provide exceptional service and innovative solutions.</p>', 'html', 'about') }}</textarea>
+                            </div>
+
+                            <div>
+                                <label for="vision_title" class="block text-sm font-medium text-gray-700">Vision Title</label>
+                                <input type="text" 
+                                       name="content[vision_title]" 
+                                       id="vision_title"
+                                       value="{{ \App\Models\ContentBlock::get('vision_title', 'Our Vision', 'text', 'about') }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                
+                                <label for="vision_content" class="block text-sm font-medium text-gray-700 mt-2">Vision Content</label>
+                                <textarea name="content[vision_content]" 
+                                          id="vision_content"
+                                          class="ckeditor">{{ \App\Models\ContentBlock::get('vision_content', '<p>To be the leading company in our industry.</p>', 'html', 'about') }}</textarea>
+                            </div>
+
+                            <div>
+                                <label for="values_title" class="block text-sm font-medium text-gray-700">Values Title</label>
+                                <input type="text" 
+                                       name="content[values_title]" 
+                                       id="values_title"
+                                       value="{{ \App\Models\ContentBlock::get('values_title', 'Our Values', 'text', 'about') }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                
+                                <label for="values_content" class="block text-sm font-medium text-gray-700 mt-2">Values Content</label>
+                                <textarea name="content[values_content]" 
+                                          id="values_content"
+                                          class="ckeditor">{{ \App\Models\ContentBlock::get('values_content', '<p>Integrity, Innovation, Excellence.</p>', 'html', 'about') }}</textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,192 +172,170 @@
                     <div class="px-6 py-4 border-b border-gray-200">
                         <h2 class="text-lg font-medium text-gray-900">Board Members</h2>
                     </div>
-                    <div class="px-6 py-4 space-y-8">
+                    <div class="px-6 py-4 space-y-6">
                         <!-- Board Member 1 -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-md font-medium text-gray-800 mb-4">Board Member 1 (Chairman)</h3>
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h3 class="text-md font-medium text-gray-900 mb-3">Board Member 1</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label for="board_member1_name" class="block text-sm font-medium text-gray-700">Name</label>
                                     <input type="text" 
                                            name="content[board_member1_name]" 
                                            id="board_member1_name"
-                                           value="{{ \App\Models\ContentBlock::get('board_member1_name', 'Dato\' Chairman', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                           value="{{ \App\Models\ContentBlock::get('board_member1_name', '', 'text', 'about') }}"
+                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
+                                
                                 <div>
-                                    <label for="board_member1_title" class="block text-sm font-medium text-gray-700">Title</label>
+                                    <label for="board_member1_position" class="block text-sm font-medium text-gray-700">Position</label>
                                     <input type="text" 
-                                           name="content[board_member1_title]" 
-                                           id="board_member1_title"
-                                           value="{{ \App\Models\ContentBlock::get('board_member1_title', 'Chairman & Founder', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                           name="content[board_member1_position]" 
+                                           id="board_member1_position"
+                                           value="{{ \App\Models\ContentBlock::get('board_member1_position', '', 'text', 'about') }}"
+                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                <div>
-                                    <label for="board_member1_initials" class="block text-sm font-medium text-gray-700">Initials (shown if no photo)</label>
-                                    <input type="text" 
-                                           name="content[board_member1_initials]" 
-                                           id="board_member1_initials"
-                                           value="{{ \App\Models\ContentBlock::get('board_member1_initials', 'DC', 'text', 'about') }}"
-                                           maxlength="3"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+
+                                <div class="md:col-span-2">
+                                    <label for="board_member1_bio" class="block text-sm font-medium text-gray-700">Bio</label>
+                                    <textarea name="content[board_member1_bio]" 
+                                              id="board_member1_bio"
+                                              class="ckeditor">{{ \App\Models\ContentBlock::get('board_member1_bio', '', 'html', 'about') }}</textarea>
                                 </div>
+
                                 <div>
                                     <label for="board_member1_image" class="block text-sm font-medium text-gray-700">Profile Image</label>
+                                    @php $currentImage1 = \App\Models\ContentBlock::get('board_member1_image', '', 'text', 'about'); @endphp
+                                    @if($currentImage1)
+                                        <div class="mb-2">
+                                            <img src="{{ $currentImage1 }}" class="w-20 h-20 object-cover rounded-full border-2 border-gray-300" alt="Current Image">
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <p class="text-sm text-gray-600">Current image</p>
+                                                <button type="button" onclick="removeExistingBoardMemberImage(1)" class="text-xs text-red-600 hover:text-red-700 underline">Remove</button>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <input type="file" 
+                                           name="board_member1_image"
                                            id="board_member1_image" 
                                            accept="image/*"
                                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                     <input type="hidden" name="content[board_member1_image]" id="board_member1_image_url" value="{{ \App\Models\ContentBlock::get('board_member1_image', '', 'text', 'about') }}">
+                                    <div id="board_member1_preview" class="mt-2" style="display: none;">
+                                        <img id="board_member1_preview_img" class="w-20 h-20 object-cover rounded-full border-2 border-gray-300" alt="Preview">
+                                        <button type="button" onclick="removeBoardMemberImage(1)" class="mt-1 text-sm text-red-600 hover:text-red-700">Remove New Image</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Board Member 2 -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-md font-medium text-gray-800 mb-4">Board Member 2 (CEO)</h3>
+                        <div class="border-l-4 border-teal-500 pl-4">
+                            <h3 class="text-md font-medium text-gray-900 mb-3">Board Member 2</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label for="board_member2_name" class="block text-sm font-medium text-gray-700">Name</label>
                                     <input type="text" 
                                            name="content[board_member2_name]" 
                                            id="board_member2_name"
-                                           value="{{ \App\Models\ContentBlock::get('board_member2_name', 'Md. Saiful', 'text', 'about') }}"
+                                           value="{{ \App\Models\ContentBlock::get('board_member2_name', '', 'text', 'about') }}"
                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
+                                
                                 <div>
-                                    <label for="board_member2_title" class="block text-sm font-medium text-gray-700">Title</label>
+                                    <label for="board_member2_position" class="block text-sm font-medium text-gray-700">Position</label>
                                     <input type="text" 
-                                           name="content[board_member2_title]" 
-                                           id="board_member2_title"
-                                           value="{{ \App\Models\ContentBlock::get('board_member2_title', 'Chief Executive Officer', 'text', 'about') }}"
+                                           name="content[board_member2_position]" 
+                                           id="board_member2_position"
+                                           value="{{ \App\Models\ContentBlock::get('board_member2_position', '', 'text', 'about') }}"
                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
-                                <div>
-                                    <label for="board_member2_initials" class="block text-sm font-medium text-gray-700">Initials (shown if no photo)</label>
-                                    <input type="text" 
-                                           name="content[board_member2_initials]" 
-                                           id="board_member2_initials"
-                                           value="{{ \App\Models\ContentBlock::get('board_member2_initials', 'MS', 'text', 'about') }}"
-                                           maxlength="3"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+
+                                <div class="md:col-span-2">
+                                    <label for="board_member2_bio" class="block text-sm font-medium text-gray-700">Bio</label>
+                                    <textarea name="content[board_member2_bio]" 
+                                              id="board_member2_bio"
+                                              class="ckeditor">{{ \App\Models\ContentBlock::get('board_member2_bio', '', 'html', 'about') }}</textarea>
                                 </div>
+
                                 <div>
                                     <label for="board_member2_image" class="block text-sm font-medium text-gray-700">Profile Image</label>
+                                    @php $currentImage2 = \App\Models\ContentBlock::get('board_member2_image', '', 'text', 'about'); @endphp
+                                    @if($currentImage2)
+                                        <div class="mb-2">
+                                            <img src="{{ $currentImage2 }}" class="w-20 h-20 object-cover rounded-full border-2 border-gray-300" alt="Current Image">
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <p class="text-sm text-gray-600">Current image</p>
+                                                <button type="button" onclick="removeExistingBoardMemberImage(2)" class="text-xs text-red-600 hover:text-red-700 underline">Remove</button>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <input type="file" 
+                                           name="board_member2_image"
                                            id="board_member2_image" 
                                            accept="image/*"
                                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
                                     <input type="hidden" name="content[board_member2_image]" id="board_member2_image_url" value="{{ \App\Models\ContentBlock::get('board_member2_image', '', 'text', 'about') }}">
+                                    <div id="board_member2_preview" class="mt-2" style="display: none;">
+                                        <img id="board_member2_preview_img" class="w-20 h-20 object-cover rounded-full border-2 border-gray-300" alt="Preview">
+                                        <button type="button" onclick="removeBoardMemberImage(2)" class="mt-1 text-sm text-red-600 hover:text-red-700">Remove New Image</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Board Member 3 -->
-                        <div>
-                            <h3 class="text-md font-medium text-gray-800 mb-4">Board Member 3 (CFO)</h3>
+                        <div class="border-l-4 border-purple-500 pl-4">
+                            <h3 class="text-md font-medium text-gray-900 mb-3">Board Member 3</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label for="board_member3_name" class="block text-sm font-medium text-gray-700">Name</label>
                                     <input type="text" 
                                            name="content[board_member3_name]" 
                                            id="board_member3_name"
-                                           value="{{ \App\Models\ContentBlock::get('board_member3_name', 'Ahmad Farid', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                           value="{{ \App\Models\ContentBlock::get('board_member3_name', '', 'text', 'about') }}"
+                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
                                 </div>
+                                
                                 <div>
-                                    <label for="board_member3_title" class="block text-sm font-medium text-gray-700">Title</label>
+                                    <label for="board_member3_position" class="block text-sm font-medium text-gray-700">Position</label>
                                     <input type="text" 
-                                           name="content[board_member3_title]" 
-                                           id="board_member3_title"
-                                           value="{{ \App\Models\ContentBlock::get('board_member3_title', 'Chief Financial Officer', 'text', 'about') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                           name="content[board_member3_position]" 
+                                           id="board_member3_position"
+                                           value="{{ \App\Models\ContentBlock::get('board_member3_position', '', 'text', 'about') }}"
+                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
                                 </div>
-                                <div>
-                                    <label for="board_member3_initials" class="block text-sm font-medium text-gray-700">Initials (shown if no photo)</label>
-                                    <input type="text" 
-                                           name="content[board_member3_initials]" 
-                                           id="board_member3_initials"
-                                           value="{{ \App\Models\ContentBlock::get('board_member3_initials', 'AF', 'text', 'about') }}"
-                                           maxlength="3"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+
+                                <div class="md:col-span-2">
+                                    <label for="board_member3_bio" class="block text-sm font-medium text-gray-700">Bio</label>
+                                    <textarea name="content[board_member3_bio]" 
+                                              id="board_member3_bio"
+                                              class="ckeditor">{{ \App\Models\ContentBlock::get('board_member3_bio', '', 'html', 'about') }}</textarea>
                                 </div>
+
                                 <div>
                                     <label for="board_member3_image" class="block text-sm font-medium text-gray-700">Profile Image</label>
+                                    @php $currentImage3 = \App\Models\ContentBlock::get('board_member3_image', '', 'text', 'about'); @endphp
+                                    @if($currentImage3)
+                                        <div class="mb-2">
+                                            <img src="{{ $currentImage3 }}" class="w-20 h-20 object-cover rounded-full border-2 border-gray-300" alt="Current Image">
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <p class="text-sm text-gray-600">Current image</p>
+                                                <button type="button" onclick="removeExistingBoardMemberImage(3)" class="text-xs text-red-600 hover:text-red-700 underline">Remove</button>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <input type="file" 
+                                           name="board_member3_image"
                                            id="board_member3_image" 
                                            accept="image/*"
                                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
                                     <input type="hidden" name="content[board_member3_image]" id="board_member3_image_url" value="{{ \App\Models\ContentBlock::get('board_member3_image', '', 'text', 'about') }}">
+                                    <div id="board_member3_preview" class="mt-2" style="display: none;">
+                                        <img id="board_member3_preview_img" class="w-20 h-20 object-cover rounded-full border-2 border-gray-300" alt="Preview">
+                                        <button type="button" onclick="removeBoardMemberImage(3)" class="mt-1 text-sm text-red-600 hover:text-red-700">Remove New Image</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Company Overview Section -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Company Overview</h2>
-                    </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <div>
-                            <label for="about_overview" class="block text-sm font-medium text-gray-700">Overview Content</label>
-                            <textarea name="content[about_overview]" 
-                                      id="about_overview"
-                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_overview', '<p>Founded with a vision to bridge the gap between traditional business practices and modern innovation, <strong>Tijarah Co</strong> has established itself as a trusted partner for organizations seeking to navigate the complexities of today\'s dynamic marketplace.</p>', 'html', 'about') }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mission & Vision Section -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Mission & Vision</h2>
-                    </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <div>
-                            <label for="about_mission" class="block text-sm font-medium text-gray-700">Mission Statement</label>
-                            <textarea name="content[about_mission]" 
-                                      id="about_mission"
-                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_mission', '<p>To empower businesses through innovative solutions, ethical practices, and sustainable growth strategies that create lasting value for all stakeholders.</p>', 'html', 'about') }}</textarea>
-                        </div>
-                        
-                        <div>
-                            <label for="about_vision" class="block text-sm font-medium text-gray-700">Vision Statement</label>
-                            <textarea name="content[about_vision]" 
-                                      id="about_vision"
-                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_vision', '<p>To be the leading catalyst for business transformation in the region, fostering a community where tradition meets innovation.</p>', 'html', 'about') }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Company Values Section -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Company Values</h2>
-                    </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <div>
-                            <label for="about_values" class="block text-sm font-medium text-gray-700">Values Content</label>
-                            <textarea name="content[about_values]" 
-                                      id="about_values"
-                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_values', '<ul><li><strong>Integrity:</strong> We operate with transparency and honesty in all our dealings</li><li><strong>Innovation:</strong> We embrace new ideas and technologies to drive progress</li><li><strong>Excellence:</strong> We strive for the highest standards in everything we do</li><li><strong>Collaboration:</strong> We believe in the power of partnership and teamwork</li></ul>', 'html', 'about') }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Company History Section -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Company History</h2>
-                    </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <div>
-                            <label for="about_history" class="block text-sm font-medium text-gray-700">History Content</label>
-                            <textarea name="content[about_history]" 
-                                      id="about_history"
-                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_history', '<p>Our journey began with a simple yet powerful vision: to create meaningful connections between businesses, communities, and opportunities. Over the years, we have grown from a startup with big dreams to a respected player in the business ecosystem.</p>', 'html', 'about') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -361,6 +379,20 @@
                     });
             });
 
+            // Image upload handlers
+            const imageInputs = ['about_hero_image', 'board_member1_image', 'board_member2_image', 'board_member3_image'];
+            imageInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('change', function() {
+                        const memberId = inputId.includes('board_member') ? inputId.replace('board_member', '').replace('_image', '') : null;
+                        if (memberId) {
+                            previewBoardMemberImage(memberId);
+                        }
+                    });
+                }
+            });
+
             // Form submission
             document.getElementById('about-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -381,6 +413,28 @@
                         }
                     }
 
+                    // Handle image uploads first
+                    for (const [key, value] of formData.entries()) {
+                        if (value instanceof File && value.size > 0) {
+                            const uploadFormData = new FormData();
+                            uploadFormData.append('image', value);
+                            
+                            const uploadResponse = await fetch('{{ route("content.upload.image") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: uploadFormData
+                            });
+                            
+                            const uploadResult = await uploadResponse.json();
+                            if (uploadResult.success) {
+                                formData.delete(key);
+                                formData.set(`content[${key}]`, uploadResult.url);
+                            }
+                        }
+                    }
+
                     // Convert FormData to proper nested structure for content fields
                     const data = {
                         content: {}
@@ -390,7 +444,7 @@
                         const match = key.match(/^content\[(.+)\]$/);
                         if (match) {
                             data.content[match[1]] = value;
-                        } else {
+                        } else if (key !== '_token' && !(value instanceof File)) {
                             data[key] = value;
                         }
                     }
@@ -429,6 +483,83 @@
                 }
             });
         });
+
+        // Upload hero image function
+        async function uploadHeroImage() {
+            const fileInput = document.getElementById('about_hero_image');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select an image file.');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                const response = await fetch('{{ route("content.upload.image") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('about_hero_image_url').value = result.url;
+                    const preview = document.getElementById('about_hero_image_preview');
+                    preview.innerHTML = `<img src="${result.url}" alt="Hero Image Preview" class="w-full h-32 object-cover rounded border bg-gray-50">`;
+                    alert('Hero image uploaded successfully!');
+                } else {
+                    alert('Error uploading image: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                alert('Error uploading image. Please try again.');
+            }
+        }
+
+        // Preview board member image
+        function previewBoardMemberImage(memberId) {
+            const fileInput = document.getElementById(`board_member${memberId}_image`);
+            const preview = document.getElementById(`board_member${memberId}_preview`);
+            const previewImg = document.getElementById(`board_member${memberId}_preview_img`);
+            
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Remove existing board member image function
+        function removeExistingBoardMemberImage(memberId) {
+            if (confirm('Are you sure you want to remove this board member image?')) {
+                const hiddenInput = document.getElementById(`board_member${memberId}_image_url`);
+                const currentImageDiv = hiddenInput.closest('div').querySelector('.mb-2');
+                
+                if (hiddenInput) hiddenInput.value = '';
+                if (currentImageDiv) currentImageDiv.remove();
+            }
+        }
+        
+        // Remove board member image function
+        function removeBoardMemberImage(memberId) {
+            const fileInput = document.getElementById(`board_member${memberId}_image`);
+            const preview = document.getElementById(`board_member${memberId}_preview`);
+            const hiddenInput = document.getElementById(`board_member${memberId}_image_url`);
+            
+            if (fileInput) fileInput.value = '';
+            if (preview) preview.style.display = 'none';
+            if (hiddenInput) hiddenInput.value = '';
+        }
     </script>
 </body>
 </html>

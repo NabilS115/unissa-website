@@ -73,7 +73,7 @@
                                     $member1Image = \App\Models\ContentBlock::get('board_member1_image', '', 'text', 'about');
                                     $member1Initials = \App\Models\ContentBlock::get('board_member1_initials', 'DC', 'text', 'about');
                                 @endphp
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
                                     @if($member1Image)
                                         <img src="{{ $member1Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
                                     @else
@@ -92,7 +92,7 @@
                                     $member2Image = \App\Models\ContentBlock::get('board_member2_image', '', 'text', 'about');
                                     $member2Initials = \App\Models\ContentBlock::get('board_member2_initials', 'MS', 'text', 'about');
                                 @endphp
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-teal-500 to-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-slate-600 to-slate-700 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
                                     @if($member2Image)
                                         <img src="{{ $member2Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
                                     @else
@@ -111,7 +111,7 @@
                                     $member3Image = \App\Models\ContentBlock::get('board_member3_image', '', 'text', 'about');
                                     $member3Initials = \App\Models\ContentBlock::get('board_member3_initials', 'AF', 'text', 'about');
                                 @endphp
-                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                                <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
                                     @if($member3Image)
                                         <img src="{{ $member3Image }}" alt="Board Member" class="w-full h-full object-cover rounded-full">
                                     @else
@@ -151,16 +151,6 @@
                 <div class="text-gray-700 leading-relaxed">
                     {!! \App\Models\ContentBlock::get('about_vision', '<p>To be the leading catalyst for business transformation in the region, fostering a community where tradition meets innovation.</p>', 'html', 'about') !!}
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Company Values Section -->
-    <section class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div class="bg-white rounded-2xl shadow-lg p-8 lg:p-12">
-            <h3 class="text-3xl font-bold text-teal-700 mb-6">Our Values</h3>
-            <div class="text-gray-700 leading-relaxed">
-                {!! \App\Models\ContentBlock::get('about_values', '<ul><li><strong>Integrity:</strong> We operate with transparency and honesty in all our dealings</li><li><strong>Innovation:</strong> We embrace new ideas and technologies to drive progress</li><li><strong>Excellence:</strong> We strive for the highest standards in everything we do</li><li><strong>Collaboration:</strong> We believe in the power of partnership and teamwork</li></ul>', 'html', 'about') !!}
             </div>
         </div>
     </section>
