@@ -427,7 +427,7 @@ input[type="number"]::-ms-clear {
                     <!-- Product Details -->
                     <div class="p-4 sm:p-6">
                         <div class="mb-2">
-                            <span class="inline-block px-2 sm:px-3 py-1 text-xs font-semibold text-white bg-gradient-to-r from-teal-500 to-green-500 rounded-full">
+                            <span class="inline-block px-2 sm:px-3 py-1 text-xs font-semibold text-white bg-teal-600 rounded-full" style="background-color:#0d9488;">
                                 {{ ucfirst($product->type ?? 'Product') }}
                             </span>
                         </div>
@@ -572,7 +572,7 @@ input[type="number"]::-ms-clear {
                         <!-- Checkout Button -->
                         <div class="border-t border-gray-200 pt-8">
                             @if($product->isAvailable())
-                                <button type="button" id="checkout-btn" class="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 text-white font-bold py-4 px-8 rounded-xl hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 text-lg">
+                                <button type="button" id="checkout-btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 px-8 rounded-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 text-lg" style="background-color:#0d9488;">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                                     </svg>
@@ -623,7 +623,7 @@ input[type="number"]::-ms-clear {
                         </p>
                     </div>
                     <div class="space-y-4">
-                        <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl" style="background-color:#0d9488;">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>

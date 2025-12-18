@@ -809,7 +809,7 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
                                     </div>
-                                    <button @click.stop="addToCart(food.id, food.name, food.price)" class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                                    <button @click.stop="addToCart(food.id, food.name, food.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                         Add to Cart
                                     </button>
                                 </div>
@@ -823,21 +823,21 @@
                 <nav class="flex items-center space-x-2">
                     <button @click="currentFoodPage > 1 && setFoodPage(currentFoodPage - 1)"
                             :disabled="currentFoodPage <= 1"
-                            :class="currentFoodPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
-                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            :class="currentFoodPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                         Previous
                     </button>
                     <template x-for="page in Array.from({length: totalFoodPages}, (_, i) => i + 1)" :key="page">
                         <button @click="setFoodPage(page)"
-                                :class="page === currentFoodPage ? 'bg-gradient-to-r from-teal-700 via-emerald-700 to-cyan-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-gradient-to-r hover:from-teal-50 hover:via-emerald-50 hover:to-cyan-50'"
+                                :class="page === currentFoodPage ? 'bg-teal-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-teal-50'"
                                 class="px-4 py-2 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                                 x-text="page">
                         </button>
                     </template>
                     <button @click="currentFoodPage < totalFoodPages && setFoodPage(currentFoodPage + 1)"
                             :disabled="currentFoodPage >= totalFoodPages"
-                            :class="currentFoodPage >= totalFoodPages ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
-                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            :class="currentFoodPage >= totalFoodPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                         Next
                     </button>
                 </nav>
@@ -886,7 +886,7 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
                                     </div>
-                                    <button @click.stop="addToCart(merch.id, merch.name, merch.price)" class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                                    <button @click.stop="addToCart(merch.id, merch.name, merch.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                         Add to Cart
                                     </button>
                                 </div>
@@ -900,21 +900,21 @@
                 <nav class="flex items-center space-x-2">
                     <button @click="currentMerchPage > 1 && setMerchPage(currentMerchPage - 1)"
                             :disabled="currentMerchPage <= 1"
-                            :class="currentMerchPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
-                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            :class="currentMerchPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                         Previous
                     </button>
                     <template x-for="page in Array.from({length: totalMerchPages}, (_, i) => i + 1)" :key="page">
                         <button @click="setMerchPage(page)"
-                                :class="page === currentMerchPage ? 'bg-gradient-to-r from-teal-700 via-emerald-700 to-cyan-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-gradient-to-r hover:from-teal-50 hover:via-emerald-50 hover:to-cyan-50'"
+                                :class="page === currentMerchPage ? 'bg-teal-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-teal-50'"
                                 class="px-4 py-2 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                                 x-text="page">
                         </button>
                     </template>
                     <button @click="currentMerchPage < totalMerchPages && setMerchPage(currentMerchPage + 1)"
                             :disabled="currentMerchPage >= totalMerchPages"
-                            :class="currentMerchPage >= totalMerchPages ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
-                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            :class="currentMerchPage >= totalMerchPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                         Next
                     </button>
                 </nav>
@@ -945,7 +945,7 @@
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
                             </div>
-                            <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important;">
+                            <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                 Add to Cart
                             </button>
                         </div>
@@ -957,21 +957,21 @@
                 <nav class="flex items-center space-x-2">
                     <button @click="currentOthersPage > 1 && setOthersPage(currentOthersPage - 1)"
                             :disabled="currentOthersPage <= 1"
-                            :class="currentOthersPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
-                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            :class="currentOthersPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                         Previous
                     </button>
                     <template x-for="page in Array.from({length: totalOthersPages}, (_, i) => i + 1)" :key="page">
                         <button @click="setOthersPage(page)"
-                                :class="page === currentOthersPage ? 'bg-gradient-to-r from-teal-700 via-emerald-700 to-cyan-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-gradient-to-r hover:from-teal-50 hover:via-emerald-50 hover:to-cyan-50'"
+                                :class="page === currentOthersPage ? 'bg-teal-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-teal-50'"
                                 class="px-4 py-2 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                                 x-text="page">
                         </button>
                     </template>
                     <button @click="currentOthersPage < totalOthersPages && setOthersPage(currentOthersPage + 1)"
                             :disabled="currentOthersPage >= totalOthersPages"
-                            :class="currentOthersPage >= totalOthersPages ? 'opacity-50 cursor-not-allowed' : 'hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700'"
-                            class="px-4 py-2 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            :class="currentOthersPage >= totalOthersPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                         Next
                     </button>
                 </nav>

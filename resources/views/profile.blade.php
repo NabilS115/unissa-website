@@ -175,7 +175,7 @@
                             </div>
                             <h3 class="text-xl font-semibold text-gray-900 mb-3 empty-title">No Reviews Yet</h3>
                             <p class="text-gray-600 mb-8 max-w-md mx-auto empty-text">You haven't written any reviews yet. Share your experiences with products to help other users make informed decisions!</p>
-                            <a href="/catalog" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-green-500 text-white font-semibold rounded-xl shadow-lg hover:from-teal-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105 browse-btn">
+                            <a href="/catalog" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 browse-btn" style="background-color:#0d9488;">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2h14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2M7 7h10"/>
                                 </svg>

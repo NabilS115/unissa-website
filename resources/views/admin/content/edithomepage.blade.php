@@ -487,6 +487,9 @@
                         setTimeout(() => {
                             successMessage.classList.add('hidden');
                         }, 3000);
+                        
+                        // Scroll to top to show success message
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
                         alert('Save failed: ' + (result.message || 'Unknown error'));
                     }

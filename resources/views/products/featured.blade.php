@@ -349,7 +349,7 @@
                         </div>
                         
                         <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" 
-                                class="w-full mt-4 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                                class="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                             Add to Cart
                         </button>
                     </div>
