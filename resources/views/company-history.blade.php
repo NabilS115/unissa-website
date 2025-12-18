@@ -22,8 +22,8 @@
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
         <img src="{!! \App\Models\ContentBlock::get('about_hero_image', 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80', 'text', 'about') !!}" alt="Company Banner" class="absolute inset-0 w-full h-full object-cover">
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{!! \App\Models\ContentBlock::get('about_title', 'Our Story & Values', 'text', 'about') !!}</h1>
-            <p class="text-lg md:text-xl text-white drop-shadow-md">{!! \App\Models\ContentBlock::get('about_subtitle', 'Discover our journey and what drives us forward', 'text', 'about') !!}</p>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{!! \App\Models\ContentBlock::get('about_hero_title', 'About Our Company', 'text', 'about') !!}</h1>
+            <p class="text-lg md:text-xl text-white drop-shadow-md">{!! \App\Models\ContentBlock::get('about_hero_subtitle', 'Discover our journey, values, and commitment to excellence', 'text', 'about') !!}</p>
         </div>
     </section>
 

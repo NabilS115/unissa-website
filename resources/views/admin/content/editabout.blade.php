@@ -53,42 +53,71 @@
             <form id="about-form" class="space-y-8">
                 @csrf
                 
-                <!-- Hero Section -->
-                <div class="bg-white rounded-lg shadow">
+                <!-- Hero Section Preview -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200">
                         <h2 class="text-lg font-medium text-gray-900">Hero Section</h2>
+                        <p class="text-sm text-gray-600">Click on the preview to edit</p>
                     </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <div>
-                            <label for="about_hero_image" class="block text-sm font-medium text-gray-700">Hero Image</label>
-                            <div class="mt-1 space-y-2">
-                                <div class="flex items-center space-x-4">
-                                    <input type="file" 
-                                           id="about_hero_image" 
-                                           accept="image/*"
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
-                                    <button type="button" 
-                                            onclick="uploadHeroImage()"
-                                            class="px-4 py-2 bg-teal-600 text-white rounded-md text-sm hover:bg-teal-700">Upload</button>
-                                </div>
-                                <input type="hidden" 
-                                       name="content[about_hero_image]" 
-                                       id="about_hero_image_url"
-                                       value="{{ \App\Models\ContentBlock::get('about_hero_image', '', 'text', 'about') }}">
-                                <div class="mt-2">
-                                    @php $heroImage = \App\Models\ContentBlock::get('about_hero_image', '', 'text', 'about'); @endphp
-                                    @if($heroImage)
-                                        <img id="about_hero_image_preview" 
-                                             src="{{ $heroImage }}" 
-                                             alt="Hero Image Preview" 
-                                             class="w-full h-32 object-cover rounded border bg-gray-50">
-                                    @else
-                                        <div id="about_hero_image_preview" class="w-full h-32 bg-gray-100 rounded border flex items-center justify-center">
-                                            <span class="text-gray-500">No hero image uploaded</span>
-                                        </div>
-                                    @endif
+                    
+                    <!-- Hero Preview -->
+                    <div class="relative bg-cover bg-center h-64 cursor-pointer" 
+                         id="about_hero_preview"
+                         style="background-image: url('{{ \App\Models\ContentBlock::get('about_hero_image', 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1600&q=80', 'text', 'about') }}');"
+                         onclick="toggleAboutHeroEdit()">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <h1 class="text-3xl md:text-5xl font-bold mb-4" id="about_hero_title_display">{{ \App\Models\ContentBlock::get('about_hero_title', 'About Our Company', 'text', 'about') }}</h1>
+                                <p class="text-lg md:text-xl mb-6" id="about_hero_subtitle_display">{{ \App\Models\ContentBlock::get('about_hero_subtitle', 'Discover our journey, values, and commitment to excellence', 'text', 'about') }}</p>
+                                <div class="flex items-center justify-center text-sm text-white/80">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Click to edit hero section
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hero Edit Form (Hidden) -->
+                    <div id="about_hero_edit_form" class="hidden p-6 bg-gray-50 border-t space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input type="text" 
+                                   name="content[about_hero_title]" 
+                                   id="about_hero_title_input"
+                                   value="{{ \App\Models\ContentBlock::get('about_hero_title', 'About Our Company', 'text', 'about') }}"
+                                   class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
+                                   onchange="updateAboutHeroDisplay('title', this.value)">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
+                            <textarea name="content[about_hero_subtitle]" 
+                                      id="about_hero_subtitle_input"
+                                      rows="3"
+                                      class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
+                                      onchange="updateAboutHeroDisplay('subtitle', this.value)">{{ \App\Models\ContentBlock::get('about_hero_subtitle', 'Discover our journey, values, and commitment to excellence', 'text', 'about') }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Background Image</label>
+                            <div class="flex items-center space-x-4">
+                                <input type="file" id="about_hero_background_image" accept="image/*" class="hidden">
+                                <button type="button" onclick="document.getElementById('about_hero_background_image').click()" 
+                                        class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700">Choose Image</button>
+                                <button type="button" onclick="removeAboutHeroImage()" 
+                                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Remove</button>
+                            </div>
+                            <input type="hidden" 
+                                   name="content[about_hero_image]" 
+                                   id="about_hero_background_image_url"
+                                   value="{{ \App\Models\ContentBlock::get('about_hero_image', '', 'text', 'about') }}">
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button type="button" onclick="toggleAboutHeroEdit()" 
+                                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Done</button>
                         </div>
                     </div>
                 </div>
@@ -390,8 +419,8 @@
                     });
             });
 
-            // Image upload handlers
-            const imageInputs = ['about_hero_image', 'board_member1_image', 'board_member2_image', 'board_member3_image'];
+            // Image upload handlers for board member images only (hero image handled separately)
+            const imageInputs = ['board_member1_image', 'board_member2_image', 'board_member3_image'];
             imageInputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 if (input) {
@@ -422,6 +451,16 @@
                         if (formData.has(name)) {
                             formData.set(name, editor.getData());
                         }
+                    }
+                    
+                    // Ensure hero title and subtitle are captured (they're not CKEditor fields)
+                    const heroTitle = document.getElementById('about_hero_title_input');
+                    const heroSubtitle = document.getElementById('about_hero_subtitle_input');
+                    if (heroTitle) {
+                        formData.set('content[about_hero_title]', heroTitle.value);
+                    }
+                    if (heroSubtitle) {
+                        formData.set('content[about_hero_subtitle]', heroSubtitle.value);
                     }
 
                     // Handle image uploads first
@@ -498,19 +537,35 @@
             initImageCropper();
         });
 
-        // Upload hero image function
-        async function uploadHeroImage() {
-            const fileInput = document.getElementById('about_hero_image');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('Please select an image file.');
-                return;
+        // About page hero functions (matching homepage style)
+        function toggleAboutHeroEdit() {
+            const editForm = document.getElementById('about_hero_edit_form');
+            editForm.classList.toggle('hidden');
+        }
+
+        function updateAboutHeroDisplay(type, value) {
+            if (type === 'title') {
+                document.getElementById('about_hero_title_display').textContent = value;
+            } else if (type === 'subtitle') {
+                document.getElementById('about_hero_subtitle_display').textContent = value;
             }
-            
+        }
+
+        async function removeAboutHeroImage() {
+            if (confirm('Are you sure you want to remove the hero background image?')) {
+                document.getElementById('about_hero_background_image_url').value = '';
+                document.getElementById('about_hero_preview').style.backgroundImage = 'url("https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1600&q=80")';
+            }
+        }
+
+        // Handle hero background image file selection
+        document.getElementById('about_hero_background_image').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
             const formData = new FormData();
             formData.append('image', file);
-            
+
             try {
                 const response = await fetch('{{ route("content.upload.image") }}', {
                     method: 'POST',
@@ -519,14 +574,12 @@
                     },
                     body: formData
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    document.getElementById('about_hero_image_url').value = result.url;
-                    const preview = document.getElementById('about_hero_image_preview');
-                    preview.innerHTML = `<img src="${result.url}" alt="Hero Image Preview" class="w-full h-32 object-cover rounded border bg-gray-50">`;
-                    alert('Hero image uploaded successfully!');
+                    document.getElementById('about_hero_background_image_url').value = result.url;
+                    document.getElementById('about_hero_preview').style.backgroundImage = `url("${result.url}")`;
                 } else {
                     alert('Error uploading image: ' + (result.message || 'Unknown error'));
                 }
@@ -534,7 +587,7 @@
                 console.error('Error uploading image:', error);
                 alert('Error uploading image. Please try again.');
             }
-        }
+        });
 
         // Preview board member image
         function previewBoardMemberImage(memberId) {
