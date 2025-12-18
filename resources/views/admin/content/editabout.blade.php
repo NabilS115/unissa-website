@@ -122,88 +122,32 @@
                     </div>
                 </div>
 
-                <!-- About Section -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">About Section</h2>
-                    </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <div>
-                            <label for="about_title" class="block text-sm font-medium text-gray-700">About Title</label>
-                            <input type="text" 
-                                   name="content[about_title]" 
-                                   id="about_title"
-                                   value="{{ \App\Models\ContentBlock::get('about_title', 'About Our Company', 'text', 'about') }}"
-                                   class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                        </div>
-                        
-                        <div>
-                            <label for="about_content" class="block text-sm font-medium text-gray-700 mb-2">About Content</label>
-                            <textarea name="content[about_content]" 
-                                      id="about_content"
-                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_content', '<p>We are a dynamic company committed to excellence in business and innovation.</p>', 'html', 'about') }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mission, Vision, Values Section -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Mission, Vision & Values</h2>
-                    </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label for="mission_title" class="block text-sm font-medium text-gray-700">Mission Title</label>
-                                <input type="text" 
-                                       name="content[mission_title]" 
-                                       id="mission_title"
-                                       value="{{ \App\Models\ContentBlock::get('mission_title', 'Our Mission', 'text', 'about') }}"
-                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                                
-                                <label for="mission_content" class="block text-sm font-medium text-gray-700 mt-2">Mission Content</label>
-                                <textarea name="content[mission_content]" 
-                                          id="mission_content"
-                                          class="ckeditor">{{ \App\Models\ContentBlock::get('mission_content', '<p>To provide exceptional service and innovative solutions.</p>', 'html', 'about') }}</textarea>
-                            </div>
-
-                            <div>
-                                <label for="vision_title" class="block text-sm font-medium text-gray-700">Vision Title</label>
-                                <input type="text" 
-                                       name="content[vision_title]" 
-                                       id="vision_title"
-                                       value="{{ \App\Models\ContentBlock::get('vision_title', 'Our Vision', 'text', 'about') }}"
-                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                                
-                                <label for="vision_content" class="block text-sm font-medium text-gray-700 mt-2">Vision Content</label>
-                                <textarea name="content[vision_content]" 
-                                          id="vision_content"
-                                          class="ckeditor">{{ \App\Models\ContentBlock::get('vision_content', '<p>To be the leading company in our industry.</p>', 'html', 'about') }}</textarea>
-                            </div>
-
-                            <div>
-                                <label for="values_title" class="block text-sm font-medium text-gray-700">Values Title</label>
-                                <input type="text" 
-                                       name="content[values_title]" 
-                                       id="values_title"
-                                       value="{{ \App\Models\ContentBlock::get('values_title', 'Our Values', 'text', 'about') }}"
-                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                                
-                                <label for="values_content" class="block text-sm font-medium text-gray-700 mt-2">Values Content</label>
-                                <textarea name="content[values_content]" 
-                                          id="values_content"
-                                          class="ckeditor">{{ \App\Models\ContentBlock::get('values_content', '<p>Integrity, Innovation, Excellence.</p>', 'html', 'about') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Board Members Section -->
                 <div class="bg-white rounded-lg shadow">
                     <div class="px-6 py-4 border-b border-gray-200">
                         <h2 class="text-lg font-medium text-gray-900">Board Members</h2>
                     </div>
                     <div class="px-6 py-4 space-y-6">
+                        <!-- Board Title and Subtitle -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label for="board_title" class="block text-sm font-medium text-gray-700">Board Section Title</label>
+                                <input type="text" 
+                                       name="content[board_title]" 
+                                       id="board_title"
+                                       value="{{ \App\Models\ContentBlock::get('board_title', 'Board of Directors', 'text', 'about') }}"
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label for="board_subtitle" class="block text-sm font-medium text-gray-700">Board Section Subtitle</label>
+                                <input type="text" 
+                                       name="content[board_subtitle]" 
+                                       id="board_subtitle"
+                                       value="{{ \App\Models\ContentBlock::get('board_subtitle', 'Meet the visionary leaders driving our company forward', 'text', 'about') }}"
+                                       class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            </div>
+                        </div>
+                        
                         <!-- Board Member 1 -->
                         <div class="border-l-4 border-blue-500 pl-4">
                             <h3 class="text-md font-medium text-gray-900 mb-3">Board Member 1</h3>
@@ -375,6 +319,45 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company Overview Section -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Company Overview</h2>
+                    </div>
+                    <div class="px-6 py-4 space-y-4">
+                        <div>
+                            <label for="about_overview" class="block text-sm font-medium text-gray-700 mb-2">Company Overview</label>
+                            <textarea name="content[about_overview]" 
+                                      id="about_overview"
+                                      class="ckeditor">{{ \App\Models\ContentBlock::get('about_overview', '<p>Founded with a vision to bridge the gap between traditional business practices and modern innovation, <strong>Tijarah Co</strong> has established itself as a trusted partner for organizations seeking to navigate the complexities of today\'s dynamic marketplace.</p>', 'html', 'about') }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mission & Vision Section -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Mission & Vision</h2>
+                    </div>
+                    <div class="px-6 py-4 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="about_mission" class="block text-sm font-medium text-gray-700 mb-2">Our Mission</label>
+                                <textarea name="content[about_mission]" 
+                                          id="about_mission"
+                                          class="ckeditor">{{ \App\Models\ContentBlock::get('about_mission', '<p>To empower businesses through innovative solutions, ethical practices, and sustainable growth strategies that create lasting value for all stakeholders.</p>', 'html', 'about') }}</textarea>
+                            </div>
+
+                            <div>
+                                <label for="about_vision" class="block text-sm font-medium text-gray-700 mb-2">Our Vision</label>
+                                <textarea name="content[about_vision]" 
+                                          id="about_vision"
+                                          class="ckeditor">{{ \App\Models\ContentBlock::get('about_vision', '<p>To be the leading catalyst for business transformation in the region, fostering a community where tradition meets innovation.</p>', 'html', 'about') }}</textarea>
                             </div>
                         </div>
                     </div>
