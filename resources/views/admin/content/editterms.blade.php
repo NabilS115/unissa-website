@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Terms of Service - Admin Panel</title>
-    <link rel="icon" href="{{ asset('images/tijarah-co-logo.png') }}" type="image/png">
-    <link rel="shortcut icon" href="{{ asset('images/tijarah-co-logo.png') }}" type="image/png">
-    <link rel="apple-touch-icon" href="{{ asset('images/tijarah-co-logo.png') }}">
+    <link rel="icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}" type="image/x-icon" sizes="32x32">
+    <link rel="shortcut icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
+    <!-- Add Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-100">
@@ -171,6 +173,7 @@
 
                     // Convert FormData to proper nested structure for content fields
                     const data = {
+                        _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         content: {}
                     };
                     
@@ -216,7 +219,349 @@
                     saveBtn.disabled = false;
                 }
             });
+            
+            // Initialize image cropper
+            initImageCropper();
         });
+    </script>
+
+    <!-- Image Cropper Modal -->
+    <div id="cropperModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Crop & Edit Image</h3>
+                <button id="closeCropper" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mb-4">
+                <img id="cropperImage" style="max-width: 100%; max-height: 400px;">
+            </div>
+            <!-- Preview for circular images -->
+            <div id="circularPreview" class="mb-4 text-center" style="display: none;">
+                <p class="text-sm text-gray-600 mb-2">Preview (how it will look on your website):</p>
+                <div class="inline-block">
+                    <img id="previewCircular" class="w-20 h-20 rounded-full object-cover border-2 border-gray-300">
+                </div>
+            </div>
+            <!-- Aspect Ratio Controls -->
+            <div class="mb-4 text-center">
+                <p class="text-sm text-gray-600 mb-2">Aspect Ratio:</p>
+                <div class="flex justify-center gap-2">
+                    <button id="aspectSquare" class="px-3 py-2 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600 transition-colors">1:1 Square</button>
+                    <button id="aspectWide" class="px-3 py-2 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600 transition-colors">16:9 Banner</button>
+                    <button id="aspectContent" class="px-3 py-2 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600 transition-colors">4:3 Content</button>
+                    <button id="aspectFree" class="px-3 py-2 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600 transition-colors">Free Crop</button>
+                </div>
+            </div>
+            
+            <!-- Image Controls -->
+            <div class="mb-4 text-center border-t pt-4">
+                <p class="text-sm text-gray-600 mb-2">Image Controls:</p>
+                <div class="flex justify-center gap-2 flex-wrap">
+                    <button id="resetCrop" class="px-3 py-2 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors">↺ Reset</button>
+                    <button id="rotateCrop" class="px-3 py-2 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors">⟲ Rotate</button>
+                    <button id="flipCrop" class="px-3 py-2 bg-purple-500 text-white rounded text-sm hover:bg-purple-600 transition-colors">⇄ Flip</button>
+                    <button id="zoomIn" class="px-3 py-2 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors">+ Zoom In</button>
+                    <button id="zoomOut" class="px-3 py-2 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition-colors">- Zoom Out</button>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-center gap-4 border-t pt-4">
+                <button id="cancelCrop" class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors font-medium">
+                    Cancel
+                </button>
+                <button id="applyCrop" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium shadow-lg">
+                    ✓ Apply Crop
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Cropper.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script>
+    let cropper = null;
+    let currentFileInput = null;
+    let currentPreviewElement = null;
+
+    // Image cropping functionality
+    function initImageCropper() {
+        const fileInputs = document.querySelectorAll('input[type="file"][accept*="image"]');
+        
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    currentFileInput = input;
+                    
+                    // Find the preview element for this input
+                    const inputId = input.id;
+                    currentPreviewElement = document.getElementById(inputId + '_preview_img') || 
+                                          document.querySelector(`img[id*="${inputId}"]`) ||
+                                          input.parentElement.querySelector('img') ||
+                                          input.closest('.mb-4').querySelector('img');
+                    
+                    openCropperModal(file);
+                }
+            });
+        });
+    }
+
+    function openCropperModal(file) {
+        const modal = document.getElementById('cropperModal');
+        const image = document.getElementById('cropperImage');
+        
+        // Determine aspect ratio based on input field type
+        let aspectRatio = NaN; // Default: free ratio
+        let cropBoxInfo = '';
+        
+        if (currentFileInput) {
+            const inputId = currentFileInput.id;
+            const inputName = currentFileInput.name;
+            
+            // Board member images - square for circular display
+            if (inputId.includes('board_member') || inputName.includes('board_member')) {
+                aspectRatio = 1; // 1:1 square
+                cropBoxInfo = 'Board Member Photo (Square - will display as circle)';
+            }
+            // Hero/Banner images - wide banner ratio
+            else if (inputId.includes('hero') || inputId.includes('banner') || inputName.includes('hero') || inputName.includes('banner')) {
+                aspectRatio = 16/9; // 16:9 banner
+                cropBoxInfo = 'Hero/Banner Image (16:9 ratio)';
+            }
+            // Logo images - square
+            else if (inputId.includes('logo') || inputName.includes('logo')) {
+                aspectRatio = 1; // 1:1 square
+                cropBoxInfo = 'Logo Image (Square)';
+            }
+            // About/content images - 4:3 ratio
+            else if (inputId.includes('about') || inputName.includes('about')) {
+                aspectRatio = 4/3; // 4:3 content ratio
+                cropBoxInfo = 'Content Image (4:3 ratio)';
+            }
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            image.src = e.target.result;
+            modal.classList.remove('hidden');
+            
+            // Update modal title with crop info
+            const modalTitle = modal.querySelector('h3');
+            modalTitle.textContent = cropBoxInfo || 'Crop & Edit Image';
+            
+            // Show/hide circular preview for board member photos
+            const circularPreview = document.getElementById('circularPreview');
+            const previewCircular = document.getElementById('previewCircular');
+            
+            if (aspectRatio === 1 && cropBoxInfo.includes('Board Member')) {
+                circularPreview.style.display = 'block';
+                previewCircular.src = e.target.result;
+            } else {
+                circularPreview.style.display = 'none';
+            }
+            
+            // Initialize cropper with enhanced options
+            cropper = new Cropper(image, {
+                aspectRatio: aspectRatio,
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 0.8,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: aspectRatio === NaN, // Only allow resize if free ratio
+                toggleDragModeOnDblclick: false,
+                minCropBoxWidth: 50,
+                minCropBoxHeight: 50,
+                responsive: true,
+                checkOrientation: false,
+                crop: function(event) {
+                    // Update circular preview in real-time for board member photos
+                    if (aspectRatio === 1 && cropBoxInfo.includes('Board Member')) {
+                        const canvas = cropper.getCroppedCanvas({
+                            width: 200,
+                            height: 200,
+                            imageSmoothingEnabled: true,
+                            imageSmoothingQuality: 'high'
+                        });
+                        const previewUrl = canvas.toDataURL('image/jpeg', 0.9);
+                        previewCircular.src = previewUrl;
+                        
+                        // Store the exact canvas and URL for final use
+                        cropper.finalCanvas = canvas;
+                        cropper.finalPreviewUrl = previewUrl;
+                    }
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function closeCropperModal() {
+        const modal = document.getElementById('cropperModal');
+        modal.classList.add('hidden');
+        
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        
+        // Reset file input if cancelled
+        if (currentFileInput) {
+            currentFileInput.value = '';
+        }
+    }
+
+    function applyCrop() {
+        if (!cropper || !currentFileInput) {
+            closeCropperModal();
+            return;
+        }
+        
+        // Close modal immediately for better UX
+        const modal = document.getElementById('cropperModal');
+        modal.classList.add('hidden');
+        
+        try {
+            // Use the stored canvas from the preview for perfect consistency
+            let canvas;
+            if (cropper.finalCanvas) {
+                // Use the exact same canvas that was shown in the preview
+                canvas = cropper.finalCanvas;
+            } else {
+                // Fallback to generating a new canvas
+                canvas = cropper.getCroppedCanvas({
+                    width: 200,
+                    height: 200,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+            }
+            
+            canvas.toBlob(function(blob) {
+                if (!blob) {
+                    console.error('Failed to create blob from canvas');
+                    return;
+                }
+                
+                try {
+                    // Create a new File object
+                    const fileName = currentFileInput.files[0].name;
+                    const croppedFile = new File([blob], fileName, {
+                        type: blob.type,
+                        lastModified: Date.now()
+                    });
+                    
+                    // Create a new FileList with the cropped file
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(croppedFile);
+                    currentFileInput.files = dataTransfer.files;
+                    
+                    // Use the exact same image data that was shown in the preview
+                    let finalImageUrl;
+                    if (cropper.finalPreviewUrl) {
+                        finalImageUrl = cropper.finalPreviewUrl;
+                    } else {
+                        finalImageUrl = canvas.toDataURL('image/jpeg', 0.9);
+                    }
+                    
+                    // Update preview if exists
+                    if (currentPreviewElement) {
+                        currentPreviewElement.src = finalImageUrl;
+                        currentPreviewElement.style.display = 'block';
+                        
+                        // Show preview container if hidden
+                        const previewContainer = currentPreviewElement.closest('[id*="preview"]');
+                        if (previewContainer) {
+                            previewContainer.style.display = 'block';
+                        }
+                        
+                        // Hide current image when new one is uploaded
+                        const inputId = currentFileInput.id;
+                        if (inputId.includes('board_member')) {
+                            const currentImageContainer = currentFileInput.parentElement.querySelector('div.mb-2');
+                            if (currentImageContainer && currentImageContainer.querySelector('img')) {
+                                currentImageContainer.style.display = 'none';
+                            }
+                        }
+                    }
+                    
+                    // Trigger change event for any existing preview handlers
+                    const changeEvent = new Event('change', { bubbles: true });
+                    currentFileInput.dispatchEvent(changeEvent);
+                    
+                } catch (error) {
+                    console.error('Error processing cropped image:', error);
+                }
+                
+            }, 'image/jpeg', 0.9);
+            
+        } catch (error) {
+            console.error('Error in applyCrop:', error);
+        }
+        
+        // Clean up cropper
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        
+        // Reset variables
+        currentFileInput = null;
+        currentPreviewElement = null;
+    }
+
+    // Event listeners
+    document.getElementById('closeCropper').addEventListener('click', closeCropperModal);
+    document.getElementById('cancelCrop').addEventListener('click', closeCropperModal);
+    document.getElementById('applyCrop').addEventListener('click', applyCrop);
+
+    document.getElementById('resetCrop').addEventListener('click', function() {
+        if (cropper) {
+            cropper.reset();
+        }
+    });
+
+    document.getElementById('rotateCrop').addEventListener('click', function() {
+        if (cropper) {
+            cropper.rotate(90);
+        }
+    });
+
+    document.getElementById('flipCrop').addEventListener('click', function() {
+        if (cropper) {
+            const imageData = cropper.getImageData();
+            cropper.scaleX(-imageData.scaleX);
+        }
+    });
+
+    document.getElementById('zoomIn').addEventListener('click', function() {
+        if (cropper) {
+            cropper.zoom(0.1);
+        }
+    });
+
+    document.getElementById('zoomOut').addEventListener('click', function() {
+        if (cropper) {
+            cropper.zoom(-0.1);
+        }
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('cropperModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCropperModal();
+        }
+    });
+
+
     </script>
 </body>
 </html>

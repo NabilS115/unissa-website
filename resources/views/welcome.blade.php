@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Tijarah Co')
 
@@ -22,7 +22,7 @@
         <img src="{!! \App\Models\ContentBlock::get('hero_background_image', 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80', 'text', 'homepage') !!}" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover">
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
             <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{!! \App\Models\ContentBlock::get('hero_title', 'Business with Barakah', 'text', 'homepage') !!}</h1>
-            <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">Promoting halal, ethical, and impactful entrepreneurship through UNISSA’s Tijarah Co.</p>
+            <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">{!! \App\Models\ContentBlock::get('hero_subtitle', 'Promoting halal, ethical, and impactful entrepreneurship through UNISSA\'s Tijarah Co.', 'text', 'homepage') !!}</p>
             <a href="{{ route('unissa-cafe.homepage') }}" class="inline-flex items-center px-6 py-3 bg-teal-600 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 hover:from-teal-700 hover:via-emerald-700 hover:to-cyan-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
                 Visit Unissa Cafe
                 <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -166,6 +166,16 @@
                         <img src="{{ asset(\App\Models\ContentBlock::get('about_logo', 'images/tijarahco_sdn_bhd.png', 'text', 'homepage')) }}" alt="TIJARAH CO SDN BHD Logo" class="w-full h-full object-contain" loading="lazy">
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="w-full py-16 mb-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-bold text-teal-800 mb-4">{!! \App\Models\ContentBlock::get('services_title', 'Our Services', 'text', 'homepage') !!}</h2>
+                <div class="text-lg text-gray-600 max-w-3xl mx-auto">{!! \App\Models\ContentBlock::get('services_description', 'We provide comprehensive business solutions to help you achieve your entrepreneurial goals with integrity and excellence.', 'html', 'homepage') !!}</div>
             </div>
         </div>
     </section>
@@ -1333,7 +1343,7 @@
             }
         };
         
-        // Vendors carousel removed — not used on this site.
+        // Vendors carousel removed â€” not used on this site.
         // Initialize gallery carousel immediately and also on DOM ready
         window.initializeGalleryCarousel();
 
