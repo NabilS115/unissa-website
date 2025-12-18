@@ -18,7 +18,7 @@
 
 /* PROFESSIONAL MOBILE OPTIMIZATION */
 @media (max-width: 768px) {
-    .food-card, .merch-card {
+    .food-card, .merch-card, .other-card {
         margin-bottom: 16px !important;
         min-height: 320px !important;
         display: flex !important;
@@ -26,7 +26,7 @@
         height: auto !important;
     }
     
-    .food-card img, .merch-card img {
+    .food-card img, .merch-card img, .other-card img {
         height: 180px !important;
         max-height: 180px !important;
         object-fit: cover !important;
@@ -34,7 +34,7 @@
         object-position: center !important;
     }
     
-    .food-card .p-2\.5, .merch-card .p-2\.5 {
+    .food-card .p-2\.5, .merch-card .p-2\.5, .other-card .p-2\.5 {
         padding: 16px !important;
         flex-grow: 1 !important;
         display: flex !important;
@@ -42,7 +42,7 @@
         justify-content: space-between !important;
     }
     
-    .food-card button, .merch-card button {
+    .food-card button, .merch-card button, .other-card button {
         padding: 8px 16px !important;
         font-size: 13px !important;
         border-radius: 8px !important;
@@ -52,13 +52,13 @@
         margin-top: auto !important;
     }
     
-    .food-card h4, .merch-card h4 {
+    .food-card h4, .merch-card h4, .other-card h4 {
         font-size: 16px !important;
         line-height: 1.3 !important;
         margin-bottom: 8px !important;
     }
     
-    .food-card p, .merch-card p {
+    .food-card p, .merch-card p, .other-card p {
         font-size: 13px !important;
         line-height: 1.4 !important;
         margin-bottom: 12px !important;
@@ -199,7 +199,7 @@
     $otherCategories = \App\Models\Product::where('type', 'others')->pluck('category')->unique()->values()->all();
 @endphp
 
-<div x-data="foodMerchComponent()" class="alpine-component" id="browse-container">
+<div x-data="foodMerchComponent()" class="alpine-component" id="browse-container" x-cloak>
 
     <!-- Menu Controls Header -->
                 <div class="w-full bg-teal-600 text-white sticky top-0 z-40 border-t border-teal-500">
@@ -923,31 +923,51 @@
         </template>
 
         <!-- Others Cards -->
-        <template x-show="tab === 'others'">
-            <div x-show="pagedOthers.length === 0" class="text-center py-16">
-                <div class="max-w-md mx-auto">
-                    <div class="text-6xl mb-4">📦</div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
-                    <p class="text-gray-500">We're working on adding more products to this category. Check back soon!</p>
-                </div>
-            </div>
-            <div x-show="pagedOthers.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <template x-if="tab === 'others'">
+            <div class="tab-content animate-fade-in">
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-8 mb-20">
                 <template x-for="other in pagedOthers" :key="other.id">
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 group"
-                         @click="openProductModal(other)"
-                         :class="{'ring-2 ring-yellow-400 shadow-yellow-200': highlightedProductId && highlightedProductId == other.id}">
-                        <div class="aspect-w-16 aspect-h-9 bg-gray-100">
-                            <img :src="other.display_image" :alt="other.name" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy">
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-2 text-gray-800" x-text="other.name"></h3>
-                            <p class="text-gray-600 mb-3 text-sm line-clamp-3" x-text="other.description"></p>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
+                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer other-card transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
+                         :style="`animation-delay: ${$el.parentElement.children ? Array.from($el.parentElement.children).indexOf($el) * 50 : 0}ms`"
+                         :data-product-id="other.id"
+                         @click="navigateToReview(other.id)">
+                        <div class="relative overflow-hidden">
+                            <img :src="other.img" :alt="other.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                            <div class="absolute top-2 md:top-4 left-2 md:left-4">
+                                <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="other.category"></span>
                             </div>
-                            <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
-                                Add to Cart
-                            </button>
+                            <template x-if="other.calculated_rating && other.calculated_rating > 0">
+                                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center">
+                                    <svg class="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <span class="text-sm font-semibold text-gray-800" x-text="other.calculated_rating">0</span>
+                                </div>
+                            </template>
+                            @if(auth()->user()?->role === 'admin')
+                            <div class="absolute bottom-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <button @click.stop="editProduct(other)" class="w-12 h-6 bg-teal-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-teal-700 transition-colors">
+                                    Edit
+                                </button>
+                                <button @click.stop="deleteProduct(other.id)" class="w-12 h-6 bg-red-600 text-white text-xs font-bold rounded flex items-center justify-center hover:bg-red-700 transition-colors">
+                                    Del
+                                </button>
+                            </div>
+                            @endif
+                        </div>
+                        <div class="p-2.5 md:p-6 flex flex-col flex-grow">
+                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="other.name"></h4>
+                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow" x-text="other.desc"></p>
+                            <template x-if="other.price">
+                                <div class="mt-auto">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
+                                    </div>
+                                    <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </template>
@@ -976,6 +996,41 @@
                     </button>
                 </nav>
             </div>
+            <!-- Empty State -->
+            <div x-show="pagedOthers.length === 0" class="text-center py-16">
+                <div class="max-w-md mx-auto">
+                    <div class="text-6xl mb-4">📦</div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+                    <p class="text-gray-500">We're working on adding more products to this category. Check back soon!</p>
+                </div>
+            </div>
+            </div>
+        </template>
+            <!-- Others Pagination -->
+            <div class="flex justify-center mb-12" x-show="totalOthersPages > 1">
+                <nav class="flex items-center space-x-2">
+                    <button @click="currentOthersPage > 1 && setOthersPage(currentOthersPage - 1)"
+                            :disabled="currentOthersPage <= 1"
+                            :class="currentOthersPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
+                        Previous
+                    </button>
+                    <template x-for="page in Array.from({length: totalOthersPages}, (_, i) => i + 1)" :key="page">
+                        <button @click="setOthersPage(page)"
+                                :class="page === currentOthersPage ? 'bg-teal-700 text-white shadow-xl' : 'bg-white text-teal-600 border border-teal-200 hover:bg-teal-50'"
+                                class="px-4 py-2 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                                x-text="page">
+                        </button>
+                    </template>
+                    <button @click="currentOthersPage < totalOthersPages && setOthersPage(currentOthersPage + 1)"
+                            :disabled="currentOthersPage >= totalOthersPages"
+                            :class="currentOthersPage >= totalOthersPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'"
+                            class="px-4 py-2 rounded-2xl bg-teal-600 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
+                        Next
+                    </button>
+                </nav>
+            </div>
+            </div>
         </template>
     </div>
 </div>
@@ -992,27 +1047,8 @@ window.__productBrowse = {
     highlightProduct: @json(session('highlight_product') ?? null)
 };
 
-// Ensure Alpine component is visible after initialization
-document.addEventListener('alpine:init', () => {
-});
-
-document.addEventListener('alpine:initialized', () => {
-    console.log('🚀 Alpine fully initialized');
-    
-    // Make sure the browse component is visible
-    const browseComponent = document.querySelector('.alpine-component');
-    if (browseComponent) {
-        browseComponent.classList.add('alpine-initialized');
-        browseComponent.style.opacity = '1';
-        browseComponent.style.display = 'block';
-    }
-});
-
-// Ensure immediate visibility - no waiting for Alpine
+// Ensure immediate visibility
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 Browse page DOM loaded');
-    
-    // Show content immediately
     const browseComponent = document.getElementById('browse-container');
     if (browseComponent) {
         browseComponent.style.opacity = '1';
@@ -1123,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /* Product card mobile optimization */
-    .food-card, .merch-card {
+    .food-card, .merch-card, .other-card {
         max-width: 100% !important;
         width: 100% !important;
         margin: 0 !important;
@@ -1135,13 +1171,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     /* Image container fixes */
     .food-card .relative.overflow-hidden,
-    .merch-card .relative.overflow-hidden {
+    .merch-card .relative.overflow-hidden,
+    .other-card .relative.overflow-hidden {
         height: 220px !important;
         overflow: hidden !important;
         border-radius: 0.75rem 0.75rem 0 0 !important;
     }
     
-    .food-card img, .merch-card img {
+    .food-card img, .merch-card img, .other-card img {
         width: 100% !important;
         height: 220px !important;
         object-fit: cover !important;
@@ -1149,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /* Card content padding adjustments */
-    .food-card .p-6, .merch-card .p-6 {
+    .food-card .p-6, .merch-card .p-6, .other-card .p-6 {
         padding: 1rem !important;
         display: flex !important;
         flex-direction: column !important;
@@ -1157,7 +1194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /* Price and button spacing */
-    .food-card .space-y-4, .merch-card .space-y-4 {
+    .food-card .space-y-4, .merch-card .space-y-4, .other-card .space-y-4 {
         gap: 1rem !important;
     }
     
@@ -1212,7 +1249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /* Button sizing for mobile */
-    .food-card button, .merch-card button {
+    .food-card button, .merch-card button, .other-card button {
         min-height: 48px !important;
         font-size: 1rem !important;
         padding: 0.75rem 1rem !important;
@@ -1271,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     /* Force mobile product card styles */
     @media screen and (max-width: 767px) {
-        .food-card, .merch-card {
+        .food-card, .merch-card, .other-card {
             margin-bottom: 0.75rem !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
             border-radius: 0.75rem !important;
@@ -1281,28 +1318,28 @@ document.addEventListener('DOMContentLoaded', function() {
             height: auto !important;
         }
         
-        .food-card:hover, .merch-card:hover {
+        .food-card:hover, .merch-card:hover, .other-card:hover {
             transform: translateY(-2px) !important;
         }
         
-        .food-card img, .merch-card img {
+        .food-card img, .merch-card img, .other-card img {
             height: 9rem !important; /* h-36 = 144px */
         }
         
-        .food-card > div:last-child, .merch-card > div:last-child {
+        .food-card > div:last-child, .merch-card > div:last-child, .other-card > div:last-child {
             padding: 0.625rem !important;
             display: flex !important;
             flex-direction: column !important;
             flex-grow: 1 !important;
         }
         
-        .food-card h4, .merch-card h4 {
+        .food-card h4, .merch-card h4, .other-card h4 {
             font-size: 0.875rem !important;
             line-height: 1.25rem !important;
             margin-bottom: 0.25rem !important;
         }
         
-        .food-card p, .merch-card p {
+        .food-card p, .merch-card p, .other-card p {
             font-size: 0.75rem !important;
             line-height: 1rem !important;
             margin-bottom: 0.5rem !important;
@@ -1313,7 +1350,7 @@ document.addEventListener('DOMContentLoaded', function() {
             flex-grow: 1 !important;
         }
         
-        .food-card button, .merch-card button {
+        .food-card button, .merch-card button, .other-card button {
             padding: 0.25rem 0.5rem !important;
             font-size: 0.75rem !important;
             border-radius: 0.375rem !important;
@@ -1321,7 +1358,7 @@ document.addEventListener('DOMContentLoaded', function() {
             margin-top: auto !important;
         }
         
-        .food-card span[class*="text-"], .merch-card span[class*="text-"] {
+        .food-card span[class*="text-"], .merch-card span[class*="text-"], .other-card span[class*="text-"] {
             font-size: 1rem !important;
         }
         

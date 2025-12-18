@@ -156,7 +156,10 @@ class CatalogController extends Controller
                 if ($request->expectsJson()) {
                     return response()->json(['success' => true, 'product' => $newProduct]);
                 }
-                return redirect()->route('unissa-cafe.catalog')->with('success', 'Product added!');
+                return redirect()->route('unissa-cafe.catalog')
+                    ->with('success', 'Product added!')
+                    ->with('active_tab', $newProduct->type)
+                    ->with('highlight_product', $newProduct->id);
             } else {
                 \Log::error('Product save failed', [
                     'validated' => $validated,
@@ -372,6 +375,16 @@ class CatalogController extends Controller
                 }])
                 ->get();
         });
+        
+        // Ensure others is never null or empty when products exist
+        if (is_null($others)) {
+            $others = \App\Models\Product::where('type', 'others')
+                ->where('is_active', true)
+                ->with(['reviews' => function ($query) {
+                    $query->select('product_id', 'rating');
+                }])
+                ->get();
+        }
         
         $categories = Cache::remember('products.categories', now()->addHour(), function () {
             return \App\Models\Product::where('is_active', true)
