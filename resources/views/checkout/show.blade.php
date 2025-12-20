@@ -246,7 +246,7 @@ input[type="number"] {
                         <div class="space-y-3 text-sm">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-700 font-medium">Unit Price:</span>
-                                <span class="font-semibold text-gray-800">${{ number_format($unitPrice, 2) }}</span>
+                                <span class="font-semibold text-gray-800">B${{ number_format($unitPrice, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-700 font-medium">Quantity:</span>
@@ -255,7 +255,7 @@ input[type="number"] {
                             <div class="border-t border-teal-200 pt-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-xl font-bold text-gray-800">Total:</span>
-                                    <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">B${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                             </div>
                         </div>

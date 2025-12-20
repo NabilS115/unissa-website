@@ -230,7 +230,7 @@
                             @if($product->price)
                                 <div class="mt-auto">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-lg font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
+                                        <span class="text-lg font-bold text-teal-600">B${{ number_format($product->price, 2) }}</span>
                                     </div>
                                     <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                         Add to Cart
@@ -280,7 +280,7 @@
                         @if($product->price)
                             <div class="mt-auto">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="text-lg font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
+                                    <span class="text-lg font-bold text-teal-600">B${{ number_format($product->price, 2) }}</span>
                                 </div>
                                 <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                     Add to Cart
@@ -330,7 +330,7 @@
                         @if($product->price)
                             <div class="mt-auto">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="text-lg font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
+                                    <span class="text-lg font-bold text-teal-600">B${{ number_format($product->price, 2) }}</span>
                                 </div>
                                 <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                     Add to Cart
@@ -619,7 +619,7 @@ function addToCart(productId, productName, productPrice) {
                     Toast.fire({
                         icon: 'success',
                         title: data.message,
-                        text: `${productName} - $${parseFloat(productPrice).toFixed(2)}`
+                        text: `${productName} - B$${parseFloat(productPrice).toFixed(2)}`
                     });
                 } else {
                     alert(data.message);

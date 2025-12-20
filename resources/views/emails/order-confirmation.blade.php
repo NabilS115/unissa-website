@@ -292,7 +292,7 @@
                     @endif
                     <div class="product-price">
                         <span>Quantity: {{ $order->quantity }}</span>
-                        <span>${{ number_format($order->unit_price, 2) }} each</span>
+                        <span>B${{ number_format($order->unit_price, 2) }} each</span>
                     </div>
                 </div>
             </div>
@@ -301,7 +301,7 @@
         <!-- Total -->
         <div class="total-section">
             <h3>Total Amount</h3>
-            <div class="total-amount">${{ number_format($order->total_price, 2) }}</div>
+            <div class="total-amount">B${{ number_format($order->total_price, 2) }}</div>
         </div>
 
         <!-- Next Steps -->

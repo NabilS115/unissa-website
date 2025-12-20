@@ -79,7 +79,7 @@
                                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800 capitalize">
                                                         {{ $item->product->category }}
                                                     </span>
-                                                    <span class="text-lg font-semibold text-teal-600">${{ number_format($item->product->price, 2) }}</span>
+                                                    <span class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</span>
                                                 </div>
                                                 
                                                 <!-- Mobile quantity controls -->
@@ -111,7 +111,7 @@
                                                             </form>
                                                         </div>
                                                         <div class="text-right">
-                                                            <p class="text-2xl font-bold text-gray-800" data-item-total>${{ number_format($item->total_price, 2) }}</p>
+                                                            <p class="text-2xl font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -144,7 +144,7 @@
                                         </button>
                                     </form>
                                 </div>                                                <div class="text-right min-w-0">
-                                                    <p class="text-2xl font-bold text-gray-800" data-item-total>${{ number_format($item->total_price, 2) }}</p>
+                                                    <p class="text-2xl font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -193,7 +193,7 @@
                             <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-4">
                                 <div class="flex justify-between items-center mb-3">
                                     <span class="text-gray-700 font-medium">Subtotal</span>
-                                    <span class="text-xl font-bold text-gray-800" data-subtotal>${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-xl font-bold text-gray-800" data-subtotal>B${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-700">Items</span>
@@ -204,7 +204,7 @@
                             <div class="border-t-2 border-dashed border-gray-300 pt-6">
                                 <div class="flex justify-between items-center">
                                     <span class="text-2xl font-bold text-gray-800">Total</span>
-                                    <span class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent" data-subtotal>${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent" data-subtotal>B${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -388,5 +388,5 @@ input[type="number"] {
 
 </style>
 
-<script src="/js/cart.js"></script>
+<script src="/js/cart.js?v={{ time() }}"></script>
 @endsection

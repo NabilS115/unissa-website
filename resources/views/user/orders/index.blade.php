@@ -106,11 +106,11 @@
                                         </div>
                                         <div>
                                             <p class="text-xs text-gray-500 uppercase tracking-wide">Unit Price</p>
-                                            <p class="text-sm font-semibold text-gray-800">${{ number_format($order->unit_price, 2) }}</p>
+                                            <p class="text-sm font-semibold text-gray-800">B${{ number_format($order->unit_price, 2) }}</p>
                                         </div>
                                         <div>
                                             <p class="text-xs text-gray-500 uppercase tracking-wide">Total</p>
-                                            <p class="text-lg font-bold text-teal-600">${{ number_format($order->total_price, 2) }}</p>
+                                            <p class="text-lg font-bold text-teal-600">B${{ number_format($order->total_price, 2) }}</p>
                                         </div>
                                         <div>
                                             <p class="text-xs text-gray-500 uppercase tracking-wide">Payment</p>

@@ -130,11 +130,11 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Unit Price</p>
-                            <p class="text-lg font-bold text-gray-800">${{ number_format($order->unit_price, 2) }}</p>
+                            <p class="text-lg font-bold text-gray-800">B${{ number_format($order->unit_price, 2) }}</p>
                         </div>
                         <div>
                             <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Total Price</p>
-                            <p class="text-2xl font-bold text-teal-600">${{ number_format($order->total_price, 2) }}</p>
+                            <p class="text-2xl font-bold text-teal-600">B${{ number_format($order->total_price, 2) }}</p>
                         </div>
                     </div>
                 </div>
@@ -205,7 +205,7 @@
                     
                     <div>
                         <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Total Amount</p>
-                        <p class="text-2xl font-bold text-teal-600">${{ number_format($order->total_price, 2) }}</p>
+                        <p class="text-2xl font-bold text-teal-600">B${{ number_format($order->total_price, 2) }}</p>
                     </div>
                 </div>
             </div>

@@ -273,7 +273,7 @@
                                             <span class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-teal-700 hover:to-emerald-700 transition-all duration-200 inline-block">
                                                 Choose Image
                                             </span>
-                                            <input id="img" name="img" type="file" accept="image/*" class="hidden" required
+                                            <input id="img" name="img" type="file" accept="image/*" class="hidden"
                                                    @change="startCrop($event)">
                                         </label>
                                         <p class="text-sm text-gray-600 mt-2">or drag and drop your image here</p>

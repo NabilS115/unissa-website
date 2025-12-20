@@ -513,7 +513,7 @@ input[type="number"]::-ms-clear {
                                         <div class="flex items-center justify-between">
                                             <span class="text-xs sm:text-sm font-medium text-gray-600">Unit Price</span>
                                             <div class="flex items-center gap-1 sm:gap-2">
-                                                <span class="text-lg sm:text-2xl font-bold text-green-600" id="unit-price">${{ number_format($product->price ?? 0, 2) }}</span>
+                                                <span class="text-lg sm:text-2xl font-bold text-green-600" id="unit-price">B${{ number_format($product->price ?? 0, 2) }}</span>
                                                 <span class="text-xs text-gray-500 bg-gray-100 px-1 sm:px-2 py-1 rounded-full">each</span>
                                             </div>
                                         </div>
@@ -524,8 +524,8 @@ input[type="number"]::-ms-clear {
                                             <div>
                                                 <span class="text-sm font-medium text-teal-100">Total Amount</span>
                                                 <div class="flex items-baseline gap-2 mt-1">
-                                                    <span class="text-3xl font-bold" id="total-price">${{ number_format($product->price ?? 0, 2) }}</span>
-                                                    <span class="text-sm text-teal-200">USD</span>
+                                                    <span class="text-3xl font-bold" id="total-price">B${{ number_format($product->price ?? 0, 2) }}</span>
+                                                    <span class="text-sm text-teal-200">BND</span>
                                                 </div>
                                             </div>
                                             <!-- Removed decorative white circle -->

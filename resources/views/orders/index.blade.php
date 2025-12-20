@@ -65,11 +65,11 @@
                                     <div class="flex items-center gap-4 mt-1 text-sm text-gray-500">
                                         <span>Quantity: {{ $order->quantity }}</span>
                                         <span>•</span>
-                                        <span>Unit Price: ${{ number_format($order->unit_price, 2) }}</span>
+                                        <span>Unit Price: B${{ number_format($order->unit_price, 2) }}</span>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-2xl font-bold text-gray-900">${{ number_format($order->total_price, 2) }}</div>
+                                    <div class="text-2xl font-bold text-gray-900">B${{ number_format($order->total_price, 2) }}</div>
                                 </div>
                             </div>
 

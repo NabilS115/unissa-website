@@ -22,11 +22,32 @@
             });
             if (response.ok) {
                 const data = await response.json();
-                const itemTotalElement = quantityInput.closest('.group') && quantityInput.closest('.group').querySelector('[data-item-total]');
-                if (itemTotalElement && data.item_total) itemTotalElement.textContent = '$' + parseFloat(data.item_total).toFixed(2);
+                console.log('Cart update response:', data, 'for formId:', formId);
+                
+                // Find the specific item's container and update ALL total elements within it
+                const form = document.getElementById(`cart-form-${formId}`);
+                const itemContainer = form ? form.closest('.group') : null;
+                
+                if (itemContainer && data.item_total) {
+                    // Find ALL data-item-total elements within this specific item container
+                    const itemTotalElements = itemContainer.querySelectorAll('[data-item-total]');
+                    console.log('Found', itemTotalElements.length, 'item total elements to update');
+                    
+                    // Update each element (mobile and desktop versions)
+                    itemTotalElements.forEach((element, index) => {
+                        console.log(`Updating item total element ${index + 1} to: B$${parseFloat(data.item_total).toFixed(2)}`);
+                        element.textContent = 'B$' + parseFloat(data.item_total).toFixed(2);
+                    });
+                } else {
+                    console.log('Could not find item container. Form:', form, 'Container:', itemContainer);
+                }
                 if (data.cart_total) {
+                    console.log('Updating cart totals to: B$' + parseFloat(data.cart_total).toFixed(2));
                     const subtotalElements = document.querySelectorAll('[data-subtotal]');
-                    subtotalElements.forEach(el => el.textContent = '$' + parseFloat(data.cart_total).toFixed(2));
+                    subtotalElements.forEach(el => {
+                        console.log('Updating subtotal element:', el);
+                        el.textContent = 'B$' + parseFloat(data.cart_total).toFixed(2);
+                    });
                 }
                 if (data.total_items) {
                     const itemCountElements = document.querySelectorAll('[data-item-count]');

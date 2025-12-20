@@ -35,6 +35,7 @@
       currentOthersPage: 1,
       itemsPerPage: 12,
       isLoading: false,
+      isSubmitting: false,
       showAddModal: false,
       showEditModal: false,
       editingProduct: null,
@@ -227,6 +228,27 @@
       async submitAddForm(event) {
         event.preventDefault();
         const form = event.target;
+        
+        // Custom validation for image upload
+        const fileInput = document.getElementById('add-image-input');
+        const croppedInput = document.getElementById('add-cropped-data');
+        const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+        const hasCroppedData = croppedInput && croppedInput.value && croppedInput.value.trim() !== '';
+        
+        if (!hasFile && !hasCroppedData) {
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Image Required',
+              text: 'Please upload and crop an image for the product.',
+              confirmButtonColor: '#0d9488'
+            });
+          } else {
+            alert('Please upload and crop an image for the product.');
+          }
+          return;
+        }
+        
         const formData = new FormData(form);
         
         // Add AJAX headers
@@ -236,7 +258,7 @@
         };
         
         try {
-          this.isLoading = true;
+          this.isSubmitting = true;
           const response = await fetch(form.action, {
             method: 'POST',
             body: formData,
@@ -253,25 +275,52 @@
             this.showAddModal = false;
             form.reset();
             
-            // Reset image cropper
+            // Reset image cropper and validation state
+            resetAddCropper();
             if (window.addCropper) {
               window.addCropper.destroy();
               window.addCropper = null;
             }
             
-            // Hide preview containers
-            document.getElementById('add-preview-container')?.classList.add('hidden');
-            document.getElementById('add-cropper-container')?.classList.add('hidden');
-            
-            alert('Product added successfully!');
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Product added successfully!',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+              });
+            } else {
+              alert('Product added successfully!');
+            }
           } else {
-            alert('Error: ' + (data.error || 'Failed to add product'));
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Upload Failed',
+                text: data.error || 'Failed to add product. Please check all fields and try again.',
+                confirmButtonColor: '#0d9488'
+              });
+            } else {
+              alert('Error: ' + (data.error || 'Failed to add product. Please check all fields and try again.'));
+            }
           }
         } catch (error) {
           console.error('Add product error:', error);
-          alert('Failed to add product. Please check your connection and try again.');
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Network Error',
+              text: 'Failed to add product. Please check your connection and try again.',
+              confirmButtonColor: '#0d9488'
+            });
+          } else {
+            alert('Failed to add product. Please check your connection and try again.');
+          }
         } finally {
-          this.isLoading = false;
+          this.isSubmitting = false;
         }
       },
 
@@ -287,7 +336,7 @@
         };
         
         try {
-          this.isLoading = true;
+          this.isSubmitting = true;
           const response = await fetch(form.action, {
             method: 'POST',
             body: formData,
@@ -314,15 +363,45 @@
             document.getElementById('edit-preview-container')?.classList.add('hidden');
             document.getElementById('edit-cropper-container')?.classList.add('hidden');
             
-            alert('Product updated successfully!');
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Updated!',
+                text: 'Product updated successfully!',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+              });
+            } else {
+              alert('Product updated successfully!');
+            }
           } else {
-            alert('Error: ' + (data.error || 'Failed to update product'));
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Update Failed',
+                text: data.error || 'Failed to update product. Please check all fields and try again.',
+                confirmButtonColor: '#0d9488'
+              });
+            } else {
+              alert('Error: ' + (data.error || 'Failed to update product. Please check all fields and try again.'));
+            }
           }
         } catch (error) {
           console.error('Edit product error:', error);
-          alert('Failed to update product. Please check your connection and try again.');
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Network Error',
+              text: 'Failed to update product. Please check your connection and try again.',
+              confirmButtonColor: '#0d9488'
+            });
+          } else {
+            alert('Failed to update product. Please check your connection and try again.');
+          }
         } finally {
-          this.isLoading = false;
+          this.isSubmitting = false;
         }
       },
 
@@ -574,11 +653,32 @@
         })
         .then(data => {
           this.removeProductFromList(productId);
-          alert('Product deleted successfully!');
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted!',
+              text: 'Product deleted successfully!',
+              timer: 2000,
+              showConfirmButton: false,
+              toast: true,
+              position: 'top-end'
+            });
+          } else {
+            alert('Product deleted successfully!');
+          }
         })
         .catch(err => {
           console.error('Delete error:', err);
-          alert('Failed to delete product. Please check your connection and try again.');
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Delete Failed',
+              text: 'Failed to delete product. Please check your connection and try again.',
+              confirmButtonColor: '#0d9488'
+            });
+          } else {
+            alert('Failed to delete product. Please check your connection and try again.');
+          }
           this.removeProductFromList(productId);
         })
         .finally(() => {
@@ -593,45 +693,219 @@
   let editCropper = null;
 
   function initAddCropper(event) {
-    const file = event.target.files[0]; if (!file) return;
+    const file = event.target.files[0]; 
+    if (!file) return;
+    
+    // Show loading indicator
+    const uploadArea = event.target.closest('.border-dashed');
+    const originalContent = uploadArea.innerHTML;
+    uploadArea.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-12">
+        <svg class="animate-spin h-8 w-8 text-teal-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-sm text-gray-600">Processing image...</p>
+      </div>
+    `;
+    
     const reader = new FileReader();
-    reader.onload = function(e){
-      const image = document.getElementById('add-cropper-image'); if (!image) return; image.src = e.target.result;
+    reader.onload = function(e) {
+      // Restore original content
+      uploadArea.innerHTML = originalContent;
+      
+      const image = document.getElementById('add-cropper-image'); 
+      if (!image) return; 
+      image.src = e.target.result;
       if (addCropper) addCropper.destroy();
-      const c = document.getElementById('add-cropper-container'); if (c) c.classList.remove('hidden');
-      addCropper = new Cropper(image, { aspectRatio: 4/3, viewMode:0, dragMode:'move', autoCropArea:0.8, restore:false, modal:true, guides:true, center:true, highlight:true, cropBoxMovable:true, cropBoxResizable:true, toggleDragModeOnDblclick:false, responsive:true, checkOrientation:false, zoomable:true, wheelZoomRatio:0.1, background:true });
+      const c = document.getElementById('add-cropper-container'); 
+      if (c) c.classList.remove('hidden');
+      addCropper = new Cropper(image, { 
+        aspectRatio: 4/3, viewMode:0, dragMode:'move', autoCropArea:0.8, restore:false, modal:true, 
+        guides:true, center:true, highlight:true, cropBoxMovable:true, cropBoxResizable:true, 
+        toggleDragModeOnDblclick:false, responsive:true, checkOrientation:false, zoomable:true, 
+        wheelZoomRatio:0.1, background:true 
+      });
+    };
+    reader.onerror = function() {
+      // Restore original content on error
+      uploadArea.innerHTML = originalContent;
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Upload Error',
+          text: 'Failed to process the image. Please try again.',
+          confirmButtonColor: '#0d9488'
+        });
+      } else {
+        alert('Failed to process the image. Please try again.');
+      }
     };
     reader.readAsDataURL(file);
   }
 
   function initEditCropper(event) {
-    const file = event.target.files[0]; if (!file) return;
+    const file = event.target.files[0]; 
+    if (!file) return;
+    
+    // Show loading indicator
+    const uploadArea = event.target.closest('.border-dashed');
+    const originalContent = uploadArea.innerHTML;
+    uploadArea.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-12">
+        <svg class="animate-spin h-8 w-8 text-teal-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-sm text-gray-600">Processing image...</p>
+      </div>
+    `;
+    
     const reader = new FileReader();
-    reader.onload = function(e){
-      const image = document.getElementById('edit-cropper-image'); if (!image) return; image.src = e.target.result;
+    reader.onload = function(e) {
+      // Restore original content
+      uploadArea.innerHTML = originalContent;
+      
+      const image = document.getElementById('edit-cropper-image'); 
+      if (!image) return; 
+      image.src = e.target.result;
       if (editCropper) editCropper.destroy();
-      const c = document.getElementById('edit-cropper-container'); if (c) c.classList.remove('hidden');
-      editCropper = new Cropper(image, { aspectRatio:4/3, viewMode:0, dragMode:'move', autoCropArea:0.8, restore:false, modal:true, guides:true, center:true, highlight:true, cropBoxMovable:true, cropBoxResizable:true, toggleDragModeOnDblclick:false, responsive:true, checkOrientation:false, zoomable:true, wheelZoomRatio:0.1, background:true });
+      const c = document.getElementById('edit-cropper-container'); 
+      if (c) c.classList.remove('hidden');
+      editCropper = new Cropper(image, { 
+        aspectRatio:4/3, viewMode:0, dragMode:'move', autoCropArea:0.8, restore:false, modal:true, 
+        guides:true, center:true, highlight:true, cropBoxMovable:true, cropBoxResizable:true, 
+        toggleDragModeOnDblclick:false, responsive:true, checkOrientation:false, zoomable:true, 
+        wheelZoomRatio:0.1, background:true 
+      });
+    };
+    reader.onerror = function() {
+      // Restore original content on error
+      uploadArea.innerHTML = originalContent;
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Upload Error',
+          text: 'Failed to process the image. Please try again.',
+          confirmButtonColor: '#0d9488'
+        });
+      } else {
+        alert('Failed to process the image. Please try again.');
+      }
     };
     reader.readAsDataURL(file);
   }
 
   function applyCrop(type) {
-    const cropper = type === 'add' ? addCropper : editCropper; if (!cropper) return;
-    const canvas = cropper.getCroppedCanvas({ width:384, height:288, imageSmoothingEnabled:true, imageSmoothingQuality:'high', fillColor:'#ffffff', minWidth:384, minHeight:288, maxWidth:768, maxHeight:576 });
+    const cropper = type === 'add' ? addCropper : editCropper; 
+    if (!cropper) return;
+    
+    const canvas = cropper.getCroppedCanvas({ 
+      width:384, height:288, imageSmoothingEnabled:true, imageSmoothingQuality:'high', 
+      fillColor:'#ffffff', minWidth:384, minHeight:288, maxWidth:768, maxHeight:576 
+    });
+    
     canvas.toBlob(function(blob){
       const url = URL.createObjectURL(blob);
       const previewImg = document.getElementById(`${type}-cropped-preview`);
       const previewContainer = document.getElementById(`${type}-preview-container`);
       const hiddenInput = document.getElementById(`${type}-cropped-data`);
-      if (previewImg) previewImg.src = url; if (previewContainer) previewContainer.classList.remove('hidden');
-      const reader = new FileReader(); reader.onload = function(){ if (hiddenInput) hiddenInput.value = reader.result; }; reader.readAsDataURL(blob);
-      const c = document.getElementById(`${type}-cropper-container`); if (c) c.classList.add('hidden');
+      const fileInput = document.getElementById(`${type}-image-input`);
+      
+      if (previewImg) previewImg.src = url; 
+      if (previewContainer) previewContainer.classList.remove('hidden');
+      
+      const reader = new FileReader(); 
+      reader.onload = function(){ 
+        if (hiddenInput) {
+          hiddenInput.value = reader.result;
+          // Mark the hidden input as having valid data for form validation
+          hiddenInput.setAttribute('data-has-image', 'true');
+        }
+        // Remove required from file input since we now have cropped data
+        if (fileInput) fileInput.removeAttribute('required');
+        
+        // Update upload area to show success state
+        const uploadArea = fileInput?.closest('.border-dashed');
+        if (uploadArea) {
+          uploadArea.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-6 text-center">
+              <svg class="h-12 w-12 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <p class="text-sm font-medium text-green-600">Image uploaded and cropped successfully!</p>
+              <p class="text-xs text-gray-500 mt-1">You can see the preview below</p>
+              <button type="button" class="mt-2 text-xs text-teal-600 hover:text-teal-500" onclick="resetAddCropper()">
+                Upload different image
+              </button>
+            </div>
+          `;
+        }
+      }; 
+      reader.readAsDataURL(blob);
+      
+      const c = document.getElementById(`${type}-cropper-container`); 
+      if (c) c.classList.add('hidden');
     }, 'image/jpeg', 0.9);
   }
 
-  function resetAddCropper(){ if (addCropper) addCropper.reset(); }
-  function resetEditCropper(){ if (editCropper) editCropper.reset(); }
+  function resetAddCropper(){ 
+    if (addCropper) {
+      addCropper.destroy();
+      addCropper = null;
+    }
+    
+    // Reset the validation state
+    const fileInput = document.getElementById('add-image-input');
+    const hiddenInput = document.getElementById('add-cropped-data');
+    const previewContainer = document.getElementById('add-preview-container');
+    const cropperContainer = document.getElementById('add-cropper-container');
+    
+    if (fileInput) {
+      fileInput.value = '';
+      // Restore the original upload interface
+      const uploadArea = fileInput.closest('.border-dashed');
+      if (uploadArea) {
+        uploadArea.innerHTML = `
+          <div class="space-y-1 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="flex text-sm text-gray-600">
+              <label for="add-image-input" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
+                <span>Upload an image</span>
+                <input id="add-image-input" type="file" accept="image/*" class="sr-only" x-on:change="initAddCropper($event)">
+              </label>
+              <p class="pl-1">or drag and drop</p>
+            </div>
+            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+          </div>
+        `;
+      }
+    }
+    
+    if (hiddenInput) {
+      hiddenInput.value = '';
+      hiddenInput.removeAttribute('data-has-image');
+    }
+    if (previewContainer) previewContainer.classList.add('hidden');
+    if (cropperContainer) cropperContainer.classList.add('hidden');
+  }
+  
+  function resetEditCropper(){ 
+    if (editCropper) editCropper.reset(); 
+    // Reset the validation state
+    const hiddenInput = document.getElementById('edit-cropped-data');
+    const previewContainer = document.getElementById('edit-preview-container');
+    const cropperContainer = document.getElementById('edit-cropper-container');
+    
+    if (hiddenInput) {
+      hiddenInput.value = '';
+      hiddenInput.removeAttribute('data-has-image');
+    }
+    if (previewContainer) previewContainer.classList.add('hidden');
+    if (cropperContainer) cropperContainer.classList.add('hidden');
+  }
 
   function toggleEditStockField(){ const track = document.getElementById('edit_track_stock'); const field = document.getElementById('edit_stock_quantity_field'); const input = document.getElementById('edit_stock_quantity'); if (track && field && input) { if (track.checked) { field.classList.remove('hidden'); input.required = true; } else { field.classList.add('hidden'); input.required = false; input.value = 0; } } }
   function toggleAddStockField(){ const track = document.getElementById('add_track_stock'); const field = document.getElementById('add_stock_quantity_field'); const input = document.getElementById('add_stock_quantity'); if (track && field && input) { if (track.checked) { field.classList.remove('hidden'); input.required = true; } else { field.classList.add('hidden'); input.required = false; input.value = 0; } } }

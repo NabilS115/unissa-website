@@ -254,7 +254,7 @@
         if (isNaN(quantity) || quantity < 1) quantity = 1;
         if (quantity > 100) quantity = 100;
         const total = unitPrice * quantity;
-        if (totalPriceElement) totalPriceElement.textContent = '$' + total.toFixed(2);
+        if (totalPriceElement) totalPriceElement.textContent = 'B$' + total.toFixed(2);
       }
 
       if (decreaseBtn && quantityInput) {

@@ -221,10 +221,10 @@
                                     <img src="{{ $itemImageSrc ?? '' }}" alt="{{ $item->product->name }}" class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm">
                                     <div class="flex-grow">
                                         <h4 class="font-semibold text-gray-800">{{ $item->product->name }}</h4>
-                                        <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x ${{ number_format($item->product->price, 2) }}</p>
+                                        <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x B${{ number_format($item->product->price, 2) }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-bold text-teal-700">${{ number_format($item->total_price, 2) }}</p>
+                                        <p class="font-bold text-teal-700">B${{ number_format($item->total_price, 2) }}</p>
                                     </div>
                                 </div>
                             @endforeach
@@ -234,12 +234,12 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-700 font-medium">Subtotal ({{ $totalItems }} items)</span>
-                                    <span class="font-semibold text-gray-800">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="font-semibold text-gray-800">B${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                                 <div class="border-t border-teal-200 pt-3">
                                     <div class="flex justify-between items-center">
                                         <span class="text-xl font-bold text-gray-800">Total</span>
-                                        <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">${{ number_format($totalPrice, 2) }}</span>
+                                        <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">B${{ number_format($totalPrice, 2) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -355,7 +355,7 @@
                                             </div>
                                             <div class="flex justify-between items-center">
                                                 <span class="font-semibold text-gray-700">Amount:</span>
-                                                <span class="text-xl font-bold text-green-600">${{ number_format($totalPrice ?? 0, 2) }}</span>
+                                                <span class="text-xl font-bold text-green-600">B${{ number_format($totalPrice ?? 0, 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -368,7 +368,7 @@
                                             BIBD Transfer Instructions:
                                         </h6>
                                         <ul class="text-sm text-amber-700 space-y-1">
-                                            <li>• Transfer exactly <strong>${{ number_format($totalPrice ?? 0, 2) }}</strong> from your BIBD account</li>
+                                            <li>• Transfer exactly <strong>B${{ number_format($totalPrice ?? 0, 2) }}</strong> from your BIBD account</li>
                                             <li>• Use your <strong>phone number</strong> as transfer reference</li>
                                             <li>• Transfer is instant between BIBD accounts</li>
                                             <li>• Keep your transfer receipt for verification</li>
@@ -413,7 +413,7 @@
                             <div class="bg-white rounded-lg p-4 border border-green-200 mb-4">
                                 <div class="flex justify-between items-center mb-3">
                                     <span class="text-lg font-semibold text-gray-700">Total Amount:</span>
-                                    <span class="text-2xl font-bold text-green-600">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-2xl font-bold text-green-600">B${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                                 <div class="text-sm text-gray-600">
                                     <p class="mb-2"><strong>Pickup Location:</strong> UNISSA Café, [Your Address]</p>
@@ -429,7 +429,7 @@
                                     Cash Payment Instructions:
                                 </h6>
                                 <ul class="text-sm text-green-700 space-y-1">
-                                    <li>• Prepare exact amount: <strong>${{ number_format($totalPrice, 2) }}</strong></li>
+                                    <li>• Prepare exact amount: <strong>B${{ number_format($totalPrice, 2) }}</strong></li>
                                     <li>• We'll notify you when your order is ready</li>
                                     <li>• Bring your order confirmation (email/SMS)</li>
                                     <li>• Payment due upon pickup</li>
@@ -490,7 +490,7 @@
                             <div class="bg-white rounded-lg p-4 border border-purple-200 mb-4">
                                 <div class="flex justify-between items-center mb-3">
                                     <span class="text-lg font-semibold text-gray-700">Total Amount:</span>
-                                    <span class="text-2xl font-bold text-teal-600">${{ number_format($totalPrice, 2) }}</span>
+                                    <span class="text-2xl font-bold text-teal-600">B${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

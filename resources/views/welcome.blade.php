@@ -676,13 +676,31 @@
                     
                     // Validate file type
                     if (!file.type.startsWith('image/')) {
-                        alert('Please select an image file.');
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid File Type',
+                                text: 'Please select an image file (JPG, PNG, GIF, etc.)',
+                                confirmButtonColor: '#0d9488'
+                            });
+                        } else {
+                            alert('Please select an image file (JPG, PNG, GIF, etc.).');
+                        }
                         return;
                     }
                     
                     // Validate file size (2MB max)
                     if (file.size > 2 * 1024 * 1024) {
-                        alert('Image size must be less than 2MB.');
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'File Too Large',
+                                text: 'Image size must be less than 2MB. Please choose a smaller image.',
+                                confirmButtonColor: '#0d9488'
+                            });
+                        } else {
+                            alert('Image size must be less than 2MB. Please choose a smaller image.');
+                        }
                         return;
                     }
                     
@@ -713,7 +731,16 @@
                 imagePreview.classList.remove('hidden');
             };
             reader.onerror = function() {
-                alert('Error reading file. Please try again.');
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'File Read Error',
+                        text: 'Unable to read the selected file. Please try selecting the image again.',
+                        confirmButtonColor: '#0d9488'
+                    });
+                } else {
+                    alert('Unable to read the selected file. Please try selecting the image again.');
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -912,7 +939,19 @@
                                 const result = await response.json();
                                 
                                 if (response.ok) {
-                                    alert(result.message);
+                                    if (typeof Swal !== 'undefined') {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Upload Successful!',
+                                            text: result.message || 'Image uploaded successfully!',
+                                            timer: 2000,
+                                            showConfirmButton: false,
+                                            toast: true,
+                                            position: 'top-end'
+                                        });
+                                    } else {
+                                        alert(result.message || 'Image uploaded successfully!');
+                                    }
                                     closeGalleryModal();
                                     // Auto-refresh gallery data and UI
                                     await loadEventImages();
@@ -933,11 +972,29 @@
                                     }
                                 } else {
                                     console.error('Error response:', result);
-                                    alert(result.message || 'Failed to save image.');
+                                    if (typeof Swal !== 'undefined') {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Upload Failed',
+                                            text: result.message || 'Failed to upload image. Please try again.',
+                                            confirmButtonColor: '#0d9488'
+                                        });
+                                    } else {
+                                        alert(result.message || 'Failed to upload image. Please try again.');
+                                    }
                                 }
                             } catch (error) {
                                 console.error('Network error:', error);
-                                alert('Network error occurred: ' + error.message);
+                                if (typeof Swal !== 'undefined') {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Network Error',
+                                        text: 'Unable to upload image. Please check your connection and try again.',
+                                        confirmButtonColor: '#0d9488'
+                                    });
+                                } else {
+                                    alert('Unable to upload image. Please check your connection and try again.');
+                                }
                             }
                         });
                     })

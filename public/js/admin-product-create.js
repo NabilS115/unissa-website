@@ -81,7 +81,16 @@
             this.croppedBlob = blob;
             this.croppedUrl = URL.createObjectURL(blob);
             const reader = new FileReader();
-            reader.onload = () => { const el = document.getElementById('cropped-data'); if (el) el.value = reader.result; };
+            reader.onload = () => { 
+              const el = document.getElementById('cropped-data'); 
+              if (el) {
+                el.value = reader.result;
+                el.setAttribute('data-has-image', 'true');
+              }
+              // Remove required from file input since we now have cropped data
+              const fileInput = document.getElementById('img');
+              if (fileInput) fileInput.removeAttribute('required');
+            };
             reader.readAsDataURL(blob);
           }, 'image/jpeg', 0.9);
       },
@@ -92,10 +101,27 @@
         this.croppedUrl = '';
         this.croppedBlob = null;
         const inp = document.getElementById('img'); if (inp) inp.value = '';
-        const hidden = document.getElementById('cropped-data'); if (hidden) hidden.value = '';
+        const hidden = document.getElementById('cropped-data'); 
+        if (hidden) {
+          hidden.value = '';
+          hidden.removeAttribute('data-has-image');
+        }
       },
 
       handleSubmit(event) {
+        // Custom validation for image upload
+        const fileInput = document.getElementById('img');
+        const croppedInput = document.getElementById('cropped-data');
+        const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+        const hasCroppedData = croppedInput && croppedInput.value && croppedInput.value.trim() !== '';
+        const hasCroppedBlob = this.croppedBlob;
+        
+        if (!hasFile && !hasCroppedData && !hasCroppedBlob) {
+          event.preventDefault();
+          alert('Please upload and crop an image for the product.');
+          return;
+        }
+        
         // If we have a cropped image, submit via JS to include the blob
         if (this.croppedBlob) {
           event.preventDefault();

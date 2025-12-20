@@ -442,7 +442,7 @@
                             <div class="flex text-sm text-gray-600">
                                 <label for="add-image-input" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
                                     <span>Upload an image</span>
-                                    <input id="add-image-input" type="file" accept="image/*" class="sr-only" required
+                                    <input id="add-image-input" type="file" accept="image/*" class="sr-only"
                                            x-on:change="initAddCropper($event)">
                                 </label>
                                 <p class="pl-1">or drag and drop</p>
@@ -524,8 +524,22 @@
                     <button type="button" @click="showAddModal = false" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
-                        Add Product
+                    <button type="submit" 
+                            :disabled="isSubmitting"
+                            :class="isSubmitting ? 'px-6 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed' : 'px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors'"
+                            class="flex items-center">
+                        <template x-if="isSubmitting">
+                            <span class="flex items-center">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Adding Product...
+                            </span>
+                        </template>
+                        <template x-if="!isSubmitting">
+                            <span>Add Product</span>
+                        </template>
                     </button>
                 </div>
             </div>
@@ -750,8 +764,22 @@
                     <button type="button" @click="showEditModal = false" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
-                        Update Product
+                    <button type="submit" 
+                            :disabled="isSubmitting"
+                            :class="isSubmitting ? 'px-6 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed' : 'px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors'"
+                            class="flex items-center">
+                        <template x-if="isSubmitting">
+                            <span class="flex items-center">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Updating Product...
+                            </span>
+                        </template>
+                        <template x-if="!isSubmitting">
+                            <span>Update Product</span>
+                        </template>
                     </button>
                 </div>
             </div>
@@ -808,7 +836,7 @@
                             <template x-if="food.price">
                                 <div class="mt-auto">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
+                                        <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
                                     </div>
                                     <button @click.stop="addToCart(food.id, food.name, food.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                         Add to Cart
@@ -885,7 +913,7 @@
                             <template x-if="merch.price">
                                 <div class="mt-auto">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
+                                        <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
                                     </div>
                                     <button @click.stop="addToCart(merch.id, merch.name, merch.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                         Add to Cart
@@ -962,7 +990,7 @@
                             <template x-if="other.price">
                                 <div class="mt-auto">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-lg font-bold text-teal-600">$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
+                                        <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
                                     </div>
                                     <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                         Add to Cart
