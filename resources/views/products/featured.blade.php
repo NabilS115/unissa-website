@@ -3,6 +3,20 @@
 @section('title', 'Unissa Cafe - Homepage')
 
 @section('content')
+@if(auth()->check() && auth()->user()->role === 'admin')
+    <!-- Admin Edit Button -->
+    <div class="fixed top-20 right-4 z-50">
+        <a href="{{ route('content.unissa-cafe') }}" 
+           class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+           style="background-color: #0d9488 !important;">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit Page
+        </a>
+    </div>
+@endif
+
 <div class="container mx-auto px-6 py-8">
 
 
@@ -22,31 +36,27 @@
         
         <div class="relative z-10 text-center px-4">
             <div class="mb-6 animate-fade-in-up">
-                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
-                    Welcome to 
-                    <span class="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                        Unissa Cafe
-                    </span>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">
+                    <span class="text-white">{{ \App\Models\ContentBlock::get('hero_title', 'Welcome to', 'text', 'unissa-cafe') }}</span>
                 </h1>
             </div>
             
             <p class="text-xl md:text-2xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                Experience the perfect blend of <strong>delicious cuisine</strong> and <strong>premium quality</strong>. 
-                Where every bite tells a story and every product reflects excellence.
+                {!! \App\Models\ContentBlock::get('hero_subtitle', 'Experience the perfect blend of <strong>delicious cuisine</strong> and <strong>premium quality</strong>. Where every bite tells a story and every product reflects excellence.', 'text', 'unissa-cafe') !!}
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                 <a href="{{ route('unissa-cafe.catalog') }}?tab=food" 
                    class="group inline-flex items-center gap-3 bg-white text-teal-600 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
-                    Browse Food & Beverages
+                    {{ \App\Models\ContentBlock::get('food_button_text', 'Browse Food & Beverages', 'text', 'unissa-cafe') }}
                 </a>
                 <a href="{{ route('unissa-cafe.catalog') }}?tab=merch" 
                    class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
-                    Shop Merchandise
+                    {{ \App\Models\ContentBlock::get('merchandise_button_text', 'Shop Merchandise', 'text', 'unissa-cafe') }}
                 </a>
                 <a href="{{ route('unissa-cafe.catalog') }}?tab=others" 
                    class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
-                    Explore Others
+                    {{ \App\Models\ContentBlock::get('others_button_text', 'Explore Others', 'text', 'unissa-cafe') }}
                 </a>
             </div>
         </div>
@@ -64,32 +74,32 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                             </svg>
                         </div>
-                        <h2 class="text-3xl font-bold text-teal-700">About Unissa Cafe</h2>
+                        <h2 class="text-3xl font-bold text-teal-700">{{ \App\Models\ContentBlock::get('about_title', 'About Unissa Cafe', 'text', 'unissa-cafe') }}</h2>
                     </div>
                     
-                    <p class="text-gray-700 text-lg leading-relaxed mb-8">
-                        Discover our carefully curated selection of mouth-watering food and high-quality merchandise. From artisan pizzas and fresh salads to exclusive branded items, Unissa Cafe offers an unforgettable experience that combines great taste with premium quality.
-                    </p>
+                    <div class="text-gray-700 text-lg leading-relaxed mb-8">
+                        {!! \App\Models\ContentBlock::get('about_description', '<p>Discover our carefully curated selection of mouth-watering food and high-quality merchandise. From artisan pizzas and fresh salads to exclusive branded items, Unissa Cafe offers an unforgettable experience that combines great taste with premium quality.</p>', 'html', 'unissa-cafe') !!}
+                    </div>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="{{ route('unissa-cafe.catalog') }}?tab=food" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors shadow-lg">
-                            Browse Food & Beverages
+                            {{ \App\Models\ContentBlock::get('food_button_text', 'Browse Food & Beverages', 'text', 'unissa-cafe') }}
                             <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
                         </a>
                         <a href="{{ route('unissa-cafe.catalog') }}?tab=merch" class="inline-flex items-center px-6 py-3 bg-white hover:bg-gray-50 text-teal-600 font-semibold rounded-lg border-2 border-teal-600 transition-colors">
-                            Shop Merchandise
+                            {{ \App\Models\ContentBlock::get('merchandise_button_text', 'Shop Merchandise', 'text', 'unissa-cafe') }}
                         </a>
                         <a href="{{ route('unissa-cafe.catalog') }}?tab=others" class="inline-flex items-center px-6 py-3 bg-white hover:bg-gray-50 text-teal-600 font-semibold rounded-lg border-2 border-teal-600 transition-colors">
-                            Explore Others
+                            {{ \App\Models\ContentBlock::get('others_button_text', 'Explore Others', 'text', 'unissa-cafe') }}
                         </a>
                     </div>
                 </div>
                 
                 <!-- Image -->
                 <div class="relative h-64 lg:h-full">
-                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80" 
+                    <img src="{{ \App\Models\ContentBlock::get('about_image', 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80', 'text', 'unissa-cafe') }}" 
                          alt="Unissa Cafe - Delicious Food & Premium Merchandise" 
                          class="w-full h-full object-cover"
                          onerror="this.src='https://via.placeholder.com/800x400/0d9488/ffffff?text=Unissa+Cafe+Food'; this.onerror=null;">

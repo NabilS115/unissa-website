@@ -26,11 +26,16 @@ class ContentBlock extends Model
     /**
      * Get content by key with fallback to default
      */
-    public static function get($key, $default = '')
+    public static function get($key, $default = '', $type = 'text', $page = 'homepage')
     {
-        $block = static::where('key', $key)
-                      ->where('is_active', true)
-                      ->first();
+        $query = static::where('key', $key)
+                      ->where('is_active', true);
+        
+        if ($page) {
+            $query->where('page', $page);
+        }
+        
+        $block = $query->first();
         
         return $block ? $block->content : $default;
     }

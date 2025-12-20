@@ -59,6 +59,16 @@ class ContentController extends Controller
         return view('admin.content.editterms');
     }
 
+    public function unissaCafeHomepage()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editunissacafe');
+    }
+
     public function updateHomepage(Request $request)
     {
         // Only allow admin access
@@ -173,6 +183,28 @@ class ContentController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Terms of service updated successfully!']);
+    }
+
+    public function updateUnissaCafeHomepage(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+            'content.*' => 'nullable|string'
+        ]);
+
+        foreach ($validated['content'] as $key => $content) {
+            // Only update if content is not empty
+            if (!empty(trim($content))) {
+                ContentBlock::set($key, $content, 'html', 'unissa-cafe');
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Unissa Cafe homepage content updated successfully!']);
     }
 
     public function uploadImage(Request $request)
