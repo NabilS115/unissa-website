@@ -345,6 +345,7 @@
     <!-- Add Product Modal -->
     <div x-show="showAddModal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4" style="display: none;">
         <form method="POST" action="{{ route('unissa-cafe.products.store') }}" enctype="multipart/form-data"
+              @submit.prevent="submitAddForm"
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
             @csrf
             
@@ -536,7 +537,7 @@
     @if(auth()->check() && auth()->user()->role === 'admin')
     <div x-show="showEditModal" data-initial-hidden class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4" style="display: none;">
         <form method="POST" :action="`/catalog/edit/${editingProduct?.id || ''}`" enctype="multipart/form-data"
-              @submit="showEditModal = false" 
+              @submit.prevent="submitEditForm" 
               class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
             @csrf
             @method('PUT')

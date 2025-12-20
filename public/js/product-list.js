@@ -148,12 +148,182 @@
       get totalMerchPages() { return Math.ceil(this.filteredMerch.length / this.itemsPerPage); },
       get totalOthersPages() { return Math.ceil(this.filteredOthers.length / this.itemsPerPage); },
 
+      // Real-time update methods
+      addProductToList(product) {
+        if (product.type === 'food') {
+          this.food.push(product);
+        } else if (product.type === 'merch') {
+          this.merchandise.push(product);
+        } else if (product.type === 'others') {
+          this.others.push(product);
+        }
+        // Switch to the appropriate tab and highlight the new product
+        this.switchTab(product.type);
+        this.$nextTick(() => {
+          this.highlightProduct(product.id);
+        });
+      },
+
+      updateProductInList(updatedProduct) {
+        const lists = {
+          food: this.food,
+          merch: this.merchandise,
+          others: this.others
+        };
+        
+        let originalIndex = -1;
+        let originalList = null;
+        
+        // Find the original position and list
+        Object.entries(lists).forEach(([type, list]) => {
+          const index = list.findIndex(p => p.id === updatedProduct.id);
+          if (index !== -1) {
+            originalIndex = index;
+            originalList = type;
+          }
+        });
+        
+        // Remove from all lists
+        Object.values(lists).forEach(list => {
+          const index = list.findIndex(p => p.id === updatedProduct.id);
+          if (index !== -1) list.splice(index, 1);
+        });
+        
+        // Add to correct list
+        if (lists[updatedProduct.type]) {
+          // If product stayed in the same category, preserve position
+          if (originalList === updatedProduct.type && originalIndex !== -1) {
+            lists[updatedProduct.type].splice(originalIndex, 0, updatedProduct);
+          } else {
+            // If category changed, add to end of new category
+            lists[updatedProduct.type].push(updatedProduct);
+          }
+        }
+        
+        // Highlight the updated product
+        this.switchTab(updatedProduct.type);
+        this.$nextTick(() => {
+          this.highlightProduct(updatedProduct.id);
+        });
+      },
+
+      removeProductFromList(productId) {
+        const lists = [this.food, this.merchandise, this.others];
+        lists.forEach(list => {
+          const index = list.findIndex(p => p.id === productId);
+          if (index !== -1) list.splice(index, 1);
+        });
+      },
+
       switchTab(newTab) {
         if (this.tab === newTab) return;
         const url = new URL(window.location);
         url.searchParams.set('tab', newTab);
         window.history.pushState(null, '', url);
         this.tab = newTab;
+      },
+
+      // AJAX form submission methods
+      async submitAddForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Add AJAX headers
+        const headers = {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        };
+        
+        try {
+          this.isLoading = true;
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: headers
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // Add product to list in real-time
+            this.addProductToList(data.product);
+            
+            // Close modal and reset form
+            this.showAddModal = false;
+            form.reset();
+            
+            // Reset image cropper
+            if (window.addCropper) {
+              window.addCropper.destroy();
+              window.addCropper = null;
+            }
+            
+            // Hide preview containers
+            document.getElementById('add-preview-container')?.classList.add('hidden');
+            document.getElementById('add-cropper-container')?.classList.add('hidden');
+            
+            alert('Product added successfully!');
+          } else {
+            alert('Error: ' + (data.error || 'Failed to add product'));
+          }
+        } catch (error) {
+          console.error('Add product error:', error);
+          alert('Error: Failed to add product');
+        } finally {
+          this.isLoading = false;
+        }
+      },
+
+      async submitEditForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Add AJAX headers
+        const headers = {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        };
+        
+        try {
+          this.isLoading = true;
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: headers
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // Update product in list in real-time
+            this.updateProductInList(data.product);
+            
+            // Close modal and reset
+            this.showEditModal = false;
+            this.editingProduct = null;
+            
+            // Reset image cropper
+            if (window.editCropper) {
+              window.editCropper.destroy();
+              window.editCropper = null;
+            }
+            
+            // Hide preview containers
+            document.getElementById('edit-preview-container')?.classList.add('hidden');
+            document.getElementById('edit-cropper-container')?.classList.add('hidden');
+            
+            alert('Product updated successfully!');
+          } else {
+            alert('Error: ' + (data.error || 'Failed to update product'));
+          }
+        } catch (error) {
+          console.error('Edit product error:', error);
+          alert('Error: Failed to update product');
+        } finally {
+          this.isLoading = false;
+        }
       },
 
       performSearch() {
@@ -386,6 +556,8 @@
 
       deleteProduct(productId) {
         if (!confirm('Are you sure you want to delete this product?')) return;
+        
+        this.isLoading = true;
         fetch(`/products/${productId}`, {
           method: 'DELETE',
           headers: { 'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]')||{}).getAttribute ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '' , 'Content-Type':'application/json','Accept':'application/json' },
@@ -401,17 +573,16 @@
           throw new Error(`HTTP error! status: ${response.status}`);
         })
         .then(data => {
-          const foodIndex = this.food.findIndex(item => item.id === productId); if (foodIndex !== -1) this.food.splice(foodIndex,1);
-          const merchIndex = this.merchandise.findIndex(item => item.id === productId); if (merchIndex !== -1) this.merchandise.splice(merchIndex,1);
-          this.$nextTick(()=>{});
+          this.removeProductFromList(productId);
           alert('Product deleted successfully!');
         })
         .catch(err => {
           console.error('Delete error:', err);
-          const foodIndex = this.food.findIndex(item => item.id === productId); if (foodIndex !== -1) this.food.splice(foodIndex,1);
-          const merchIndex = this.merchandise.findIndex(item => item.id === productId); if (merchIndex !== -1) this.merchandise.splice(merchIndex,1);
-          this.$nextTick(()=>{});
+          this.removeProductFromList(productId);
           alert('Product deleted successfully!');
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
       }
     };

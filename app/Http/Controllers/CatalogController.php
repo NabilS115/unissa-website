@@ -267,7 +267,7 @@ class CatalogController extends Controller
         ]);
 
         if ($request->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Product updated successfully']);
+            return response()->json(['success' => true, 'message' => 'Product updated successfully', 'product' => $product]);
         }
 
         // Redirect back to the appropriate tab and highlight the updated product
