@@ -206,8 +206,9 @@
     <!-- Featured Food Products -->
     <div class="mb-12">
         <h2 class="text-3xl font-bold text-center mb-8">Featured Food & Beverages</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @forelse($food->take(3) as $product)
+        <div class="max-w-6xl mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center place-content-center">
+                @forelse($food->take(4) as $product)
                     <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
                          onclick="window.location.href='/product/{{ $product->id }}'">
                         <div class="relative overflow-hidden">
@@ -250,15 +251,17 @@
                     <p class="text-gray-500">Add some delicious food items to showcase here.</p>
                 </div>
                 @endforelse
+            </div>
         </div>
     </div>
 
     <!-- Featured Merchandise -->
     <div class="mb-12">
         <h2 class="text-3xl font-bold text-center mb-8">Featured Merchandise</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @forelse($merchandise->take(3) as $product)
-                <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
+        <div class="max-w-6xl mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center place-content-center">
+                @forelse($merchandise->take(4) as $product)
+                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
                      onclick="window.location.href='/product/{{ $product->id }}'">
                     <div class="relative overflow-hidden">
                         <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
@@ -300,14 +303,16 @@
                     <p class="text-gray-500">Add some premium merchandise to showcase here.</p>
                 </div>
                 @endforelse
+            </div>
         </div>
     </div>
 
     <!-- Featured Others -->
-    <div class="mb-16">
-        <h2 class="text-3xl font-bold text-center mb-8">Featured Others</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @forelse($others->take(3) as $product)
+    <div class="mb-12">
+        <h2 class="text-3xl font-bold text-center mb-8">Featured Others Items</h2>
+        <div class="max-w-6xl mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center place-content-center">
+                @forelse($others->take(4) as $product)
                 <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
                      onclick="window.location.href='/product/{{ $product->id }}'">
                     <div class="relative overflow-hidden">
@@ -350,6 +355,7 @@
                     <p class="text-gray-500">Add some other products to showcase here.</p>
                 </div>
                 @endforelse
+            </div>
         </div>
     </div>
 
