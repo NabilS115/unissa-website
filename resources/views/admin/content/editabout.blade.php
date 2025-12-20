@@ -170,13 +170,6 @@
                                            class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
 
-                                <div class="md:col-span-2">
-                                    <label for="board_member1_bio" class="block text-sm font-medium text-gray-700">Bio</label>
-                                    <textarea name="content[board_member1_bio]" 
-                                              id="board_member1_bio"
-                                              class="ckeditor">{{ \App\Models\ContentBlock::get('board_member1_bio', '', 'html', 'about') }}</textarea>
-                                </div>
-
                                 <div>
                                     <label for="board_member1_image" class="block text-sm font-medium text-gray-700">Profile Image</label>
                                     @php $currentImage1 = \App\Models\ContentBlock::get('board_member1_image', '', 'text', 'about'); @endphp
@@ -228,13 +221,6 @@
                                            class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
 
-                                <div class="md:col-span-2">
-                                    <label for="board_member2_bio" class="block text-sm font-medium text-gray-700">Bio</label>
-                                    <textarea name="content[board_member2_bio]" 
-                                              id="board_member2_bio"
-                                              class="ckeditor">{{ \App\Models\ContentBlock::get('board_member2_bio', '', 'html', 'about') }}</textarea>
-                                </div>
-
                                 <div>
                                     <label for="board_member2_image" class="block text-sm font-medium text-gray-700">Profile Image</label>
                                     @php $currentImage2 = \App\Models\ContentBlock::get('board_member2_image', '', 'text', 'about'); @endphp
@@ -284,13 +270,6 @@
                                            id="board_member3_position"
                                            value="{{ \App\Models\ContentBlock::get('board_member3_position', '', 'text', 'about') }}"
                                            class="mt-1 block w-full border-2 border-gray-400 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
-                                </div>
-
-                                <div class="md:col-span-2">
-                                    <label for="board_member3_bio" class="block text-sm font-medium text-gray-700">Bio</label>
-                                    <textarea name="content[board_member3_bio]" 
-                                              id="board_member3_bio"
-                                              class="ckeditor">{{ \App\Models\ContentBlock::get('board_member3_bio', '', 'html', 'about') }}</textarea>
                                 </div>
 
                                 <div>

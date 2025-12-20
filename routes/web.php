@@ -47,45 +47,31 @@ use App\Models\User;
 use App\Models\Image;
 use App\Http\Controllers\CatalogController;
 
-// Universal context detection helper for consistent branding across all pages
+// Simplified context detection helper
 $setContextForAllPages = function ($request) {
     $referer = $request->headers->get('referer');
-    $context = 'tijarah'; // Default context - bias towards Tijarah
     
-    // Priority 1: FORCE Tijarah for homepage/company pages - highest priority
-    if ($referer && (
-        str_ends_with($referer, '/') || 
-        preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
-        str_contains($referer, '/company-history') ||
-        str_contains($referer, '/contact')
-    )) {
-        $context = 'tijarah';
-    }
-    // Priority 2: Explicit context parameter (only if not from Tijarah pages)
-    elseif ($request->query('context') === 'unissa-cafe') {
-        $context = 'unissa-cafe';
-    }
-    // Priority 3: Detect UNISSA CAFE from referer URL patterns
-    elseif ($referer && (
+    // Simple rule: If coming from or going to Unissa pages, set Unissa context
+    $isUnissaRequest = $request->query('context') === 'unissa-cafe' || 
+                      str_contains($request->path(), 'unissa-cafe') ||
+                      str_contains($request->path(), 'products') ||
+                      str_contains($request->path(), 'cart') ||
+                      str_contains($request->path(), 'checkout') ||
+                      str_contains($request->path(), 'admin/orders') ||
+                      str_contains($request->path(), 'admin/products');
+    
+    $isUnissaReferer = $referer && (
         str_contains($referer, 'unissa-cafe') || 
         str_contains($referer, '/products/') || 
-        str_contains($referer, '/product/') ||
         str_contains($referer, '/cart') || 
         str_contains($referer, '/checkout') || 
-        str_contains($referer, '/my/orders') ||
         str_contains($referer, '/admin/orders') || 
         str_contains($referer, '/admin/products')
-    )) {
-        $context = 'unissa-cafe';
-    }
-    // Priority 4: Default remains tijarah
+    );
     
-    // Clear any stale session context when we have a clear Tijarah detection
-    if ($context === 'tijarah' && $referer) {
-        session()->forget('header_context');
-    }
+    $context = ($isUnissaRequest || $isUnissaReferer) ? 'unissa-cafe' : 'tijarah';
     
-    // Always set the determined context in session
+    // Set context in session for consistency
     session(['header_context' => $context]);
     
     return $context;

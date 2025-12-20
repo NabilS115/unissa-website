@@ -35,12 +35,7 @@
                 <div class="max-w-4xl mx-auto">
                     <div class="flex items-center justify-between">
                         <div>
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-                                    </svg>
-                                </div>
+                            <div class="mb-6">
                                 <h2 class="text-3xl md:text-4xl font-extrabold text-white">{!! \App\Models\ContentBlock::get('board_title', 'Board of Directors', 'text', 'about') !!}</h2>
                             </div>
                             <div class="text-white/90 text-sm">

@@ -5,26 +5,20 @@
 
 <footer class="w-full bg-teal-600 text-white py-8 px-4 flex flex-col md:flex-row items-center justify-between gap-8" style="background-color:#0d9488;">
     @php
-        $footerContext = session('header_context', 'tijarah');
-        $referer = request()->headers->get('referer');
-        $isCafePage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('admin/orders*') || request()->is('admin/products*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/orders*');
+        // Simple logic: Check current URL patterns to determine branding
+        $isUnissaPage = request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || 
+                       request()->is('products/*') || request()->is('product/*') || 
+                       request()->is('admin/orders*') || request()->is('admin/products*') || 
+                       request()->is('cart') || request()->is('cart/*') || 
+                       request()->is('checkout') || request()->is('checkout/*') || 
+                       request()->is('my/orders*');
+        
+        // For profile pages, check session context (set by navigation)
         $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
+        $sessionContext = session('header_context', 'tijarah');
         
-        // OVERRIDE: If on profile page and referer suggests Tijarah, force Tijarah branding
-        $refererSuggestsTijarah = $referer && (
-            str_ends_with($referer, '/') || 
-            preg_match('/^https?:\/\/[^\/]+\/?$/', $referer) ||
-            str_contains($referer, '/company-history') ||
-            str_contains($referer, '/contact') ||
-            (str_ends_with($referer, '/profile') && !str_contains($referer, 'context=unissa-cafe')) ||
-            (str_ends_with($referer, '/admin-profile') && !str_contains($referer, 'context=unissa-cafe'))
-        );
-        
-        if ($isProfilePage && $refererSuggestsTijarah) {
-            $shouldShowUnissaBranding = false; // Force Tijarah branding
-        } else {
-            $shouldShowUnissaBranding = $isCafePage || ($isProfilePage && $footerContext === 'unissa-cafe');
-        }
+        // Final decision: Unissa branding if on Unissa pages OR profile with Unissa context
+        $shouldShowUnissaBranding = $isUnissaPage || ($isProfilePage && $sessionContext === 'unissa-cafe');
     @endphp
     
     <div class="flex items-center gap-4">
