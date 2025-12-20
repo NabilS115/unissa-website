@@ -404,6 +404,16 @@
                 }
             } catch (error) {
                 console.error('Error loading gallery data:', error);
+                // Show user-friendly message instead of silent failure
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Gallery Unavailable',
+                        text: 'Unable to load gallery images at the moment.',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
             }
         }
         

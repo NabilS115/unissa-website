@@ -269,7 +269,7 @@
           }
         } catch (error) {
           console.error('Add product error:', error);
-          alert('Error: Failed to add product');
+          alert('Failed to add product. Please check your connection and try again.');
         } finally {
           this.isLoading = false;
         }
@@ -320,7 +320,7 @@
           }
         } catch (error) {
           console.error('Edit product error:', error);
-          alert('Error: Failed to update product');
+          alert('Failed to update product. Please check your connection and try again.');
         } finally {
           this.isLoading = false;
         }
@@ -578,8 +578,8 @@
         })
         .catch(err => {
           console.error('Delete error:', err);
+          alert('Failed to delete product. Please check your connection and try again.');
           this.removeProductFromList(productId);
-          alert('Product deleted successfully!');
         })
         .finally(() => {
           this.isLoading = false;

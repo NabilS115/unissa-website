@@ -699,11 +699,11 @@ function addToCart(productId, productName, productPrice) {
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to add item to cart. Please try again.'
+                    title: 'Connection Error',
+                    text: 'Unable to add item to cart. Please check your connection and try again.'
                 });
             } else {
-                alert('Failed to add item to cart. Please try again.');
+                alert('Unable to add item to cart. Please check your connection and try again.');
             }
             
             // Reset button on error

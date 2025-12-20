@@ -282,8 +282,8 @@ class CatalogController extends Controller
 
     public function index()
     {
-        // Redirect to featured products (legacy support)
-        return redirect()->route('products.featured');
+        // Redirect to unissa-cafe homepage (current main featured products page)
+        return redirect()->route('unissa-cafe.homepage');
     }
 
     public function featured()
@@ -519,47 +519,77 @@ class CatalogController extends Controller
     
     /**
      * Clear product-related caches when products are modified
+     * Improved cache management with categorized clearing
      */
     private function clearProductCaches($productType = null, $productId = null)
     {
-        // Clear browse page caches
-        Cache::forget('products.browse.food');
-        Cache::forget('products.browse.merch');
-        Cache::forget('products.browse.others');
-        Cache::forget('products.categories');
-        
-        // Clear featured products caches
-        Cache::forget('products.featured.food');
-        Cache::forget('products.featured.merch');
-        Cache::forget('products.featured.others');
-        
-        // Clear admin statistics cache
-        Cache::forget('admin.product.stats');
-        
-        // Clear specific product detail cache if ID provided
-        if ($productId) {
-            Cache::forget("product.detail.{$productId}");
+        try {
+            // Clear browse page caches
+            Cache::forget('products.browse.food');
+            Cache::forget('products.browse.merch');
+            Cache::forget('products.browse.others');
+            Cache::forget('products.categories');
+            
+            // Clear featured products caches
+            Cache::forget('products.featured.food');
+            Cache::forget('products.featured.merch');
+            Cache::forget('products.featured.others');
+            
+            // Clear admin statistics cache
+            Cache::forget('admin.product.stats');
+            
+            // Clear specific product detail cache if ID provided
+            if ($productId) {
+                Cache::forget("product.detail.{$productId}");
+            }
+            
+            // Clear search-related caches
+            $this->clearSearchCaches();
+            
+            // Clear testimonials cache
+            Cache::forget('reviews.testimonials');
+            
+            // Log cache clearing for debugging
+            \Log::info('Product cache cleared successfully', [
+                'type' => $productType,
+                'product_id' => $productId
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Cache clearing failed', [
+                'error' => $e->getMessage(),
+                'type' => $productType,
+                'product_id' => $productId
+            ]);
         }
-        
-        // Clear search-related caches (broader clear for search results)
-        $this->clearSearchCaches();
-        
-        // Clear testimonials cache
-        Cache::forget('reviews.testimonials');
     }
     
     /**
      * Clear search-related caches
+     * Improved cache clearing with better organization
      */
     private function clearSearchCaches()
     {
-        // In a production environment with Redis, you would use cache tags
-        // For now, we'll be selective about what we clear
-        
-        // Note: With database cache, we can't easily clear by pattern
-        // In production, consider using Redis with cache tags for better performance
-        
-        // Clear common search patterns - this is not ideal but works for database cache
-        // TODO: Migrate to Redis cache for better tag-based cache invalidation
+        try {
+            // Clear common search patterns
+            $searchTypes = ['food', 'merch', 'others'];
+            $commonQueries = ['', 'popular', 'new', 'active'];
+            
+            foreach ($searchTypes as $type) {
+                foreach ($commonQueries as $query) {
+                    Cache::forget("search.{$type}.{$query}");
+                }
+            }
+            
+            // Clear global search caches
+            Cache::forget('search.suggestions');
+            Cache::forget('search.categories');
+            Cache::forget('search.filters');
+            
+            \Log::info('Search caches cleared successfully');
+            
+        } catch (\Exception $e) {
+            \Log::error('Search cache clearing failed', ['error' => $e->getMessage()]);
+        }
     }
 }
