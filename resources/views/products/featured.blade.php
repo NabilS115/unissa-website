@@ -129,7 +129,7 @@
                         </div>
                         
                         <!-- Review Text -->
-                        <p class="text-gray-700 mb-6 leading-relaxed italic">"{{ Str::limit($review->review, 150) }}"</p>
+                        <p class="text-gray-700 mb-6 leading-relaxed italic break-words overflow-hidden">"{{ Str::limit($review->review, 150) }}"</p>
                         
                         <!-- Product Info -->
                         @if($review->product)
@@ -208,40 +208,37 @@
         <h2 class="text-3xl font-bold text-center mb-8">Featured Food & Beverages</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($food->take(3) as $product)
-                    <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2" onclick="window.location.href='/product/{{ $product->id }}'">
-                    <div class="relative overflow-hidden">
-                        <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                                Featured
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="mb-3">
-                            <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-green-700 bg-green-50 rounded-full border border-green-200">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
-                                </svg>
-                                {{ $product->category }}
-                            </span>
-                        </div>
-                        <h4 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors leading-tight">{{ $product->name }}</h4>
-                        <p class="text-gray-600 text-sm mb-5 leading-relaxed line-clamp-2">{{ $product->desc }}</p>
-                        @if($product->price)
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
-                                <span class="text-sm text-gray-500 ml-1">each</span>
+                    <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
+                         onclick="window.location.href='/product/{{ $product->id }}'">
+                        <div class="relative overflow-hidden">
+                            <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                            <div class="absolute top-2 md:top-4 left-2 md:left-4">
+                                <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $product->category }}</span>
                             </div>
-                            <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                                Add to Cart
-                            </button>
+                            @if($product->reviews_avg_rating && $product->reviews_avg_rating > 0)
+                                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center">
+                                    <svg class="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <span class="text-sm font-semibold text-gray-800">{{ number_format($product->reviews_avg_rating, 1) }}</span>
+                                </div>
+                            @endif
                         </div>
-                        @endif
+                        <div class="p-2.5 md:p-6 flex flex-col flex-grow">
+                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors">{{ $product->name }}</h4>
+                            <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow">{{ $product->desc }}</p>
+                            @if($product->price)
+                                <div class="mt-auto">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-lg font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
+                                    </div>
+                                    <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
                 @empty
                 <div class="col-span-full text-center py-12">
                     <div class="text-gray-400 mb-4">
@@ -261,37 +258,34 @@
         <h2 class="text-3xl font-bold text-center mb-8">Featured Merchandise</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($merchandise->take(3) as $product)
-                <div class="bg-white rounded-3xl shadow-2xl hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2" onclick="window.location.href='/product/{{ $product->id }}'">
+                <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
+                     onclick="window.location.href='/product/{{ $product->id }}'">
                     <div class="relative overflow-hidden">
-                        <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                                Featured
-                            </span>
+                        <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                        <div class="absolute top-2 md:top-4 left-2 md:left-4">
+                            <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $product->category }}</span>
                         </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="mb-3">
-                            <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-50 rounded-full border border-blue-200">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                        @if($product->reviews_avg_rating && $product->reviews_avg_rating > 0)
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center">
+                                <svg class="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                 </svg>
-                                {{ $product->category }}
-                            </span>
-                        </div>
-                        <h4 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors leading-tight">{{ $product->name }}</h4>
-                        <p class="text-gray-600 text-sm mb-5 leading-relaxed line-clamp-2">{{ $product->desc }}</p>
-                        @if($product->price)
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
-                                <span class="text-sm text-gray-500 ml-1">each</span>
+                                <span class="text-sm font-semibold text-gray-800">{{ number_format($product->reviews_avg_rating, 1) }}</span>
                             </div>
-                            <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="group bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                                Add to Cart
-                            </button>
-                        </div>
+                        @endif
+                    </div>
+                    <div class="p-2.5 md:p-6 flex flex-col flex-grow">
+                        <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors">{{ $product->name }}</h4>
+                        <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow">{{ $product->desc }}</p>
+                        @if($product->price)
+                            <div class="mt-auto">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-lg font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
+                                </div>
+                                <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
+                                    Add to Cart
+                                </button>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -312,46 +306,37 @@
     <!-- Featured Others -->
     <div class="mb-16">
         <h2 class="text-3xl font-bold text-center mb-8">Featured Others</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($others->take(3) as $product)
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="aspect-w-16 aspect-h-9">
-                        <img src="{{ $product->display_image }}" 
-                             alt="{{ $product->name }}" 
-                             class="w-full h-48 object-cover">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ $product->name }}</h3>
-                        <p class="text-gray-600 mb-4 line-clamp-3">{{ Str::limit($product->desc, 100) }}</p>
-                        
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                @if($product->reviews_avg_rating > 0)
-                                    <div class="flex text-yellow-400 mr-2">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= round($product->reviews_avg_rating))
-                                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                                                </svg>
-                                            @else
-                                                <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
-                                                </svg>
-                                            @endif
-                                        @endfor
-                                    </div>
-                                    <span class="text-sm text-gray-500">({{ $product->reviews_count }})</span>
-                                @endif
-                            </div>
-                            <div class="text-right">
-                                <span class="text-2xl font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
-                            </div>
+                <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
+                     onclick="window.location.href='/product/{{ $product->id }}'">
+                    <div class="relative overflow-hidden">
+                        <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                        <div class="absolute top-2 md:top-4 left-2 md:left-4">
+                            <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $product->category }}</span>
                         </div>
-                        
-                        <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" 
-                                class="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
-                            Add to Cart
-                        </button>
+                        @if($product->reviews_avg_rating && $product->reviews_avg_rating > 0)
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center">
+                                <svg class="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-gray-800">{{ number_format($product->reviews_avg_rating, 1) }}</span>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="p-2.5 md:p-6 flex flex-col flex-grow">
+                        <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors">{{ $product->name }}</h4>
+                        <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow">{{ $product->desc }}</p>
+                        @if($product->price)
+                            <div class="mt-auto">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-lg font-bold text-teal-600">${{ number_format($product->price, 2) }}</span>
+                                </div>
+                                <button onclick="event.stopPropagation(); addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 @empty
