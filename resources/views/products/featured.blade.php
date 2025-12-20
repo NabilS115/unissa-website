@@ -38,7 +38,7 @@
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                 <a href="{{ route('unissa-cafe.catalog') }}?tab=food" 
                    class="group inline-flex items-center gap-3 bg-white text-teal-600 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
-                    Browse Food Menu
+                    Browse Food & Beverages
                 </a>
                 <a href="{{ route('unissa-cafe.catalog') }}?tab=merch" 
                    class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
@@ -73,7 +73,7 @@
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="{{ route('unissa-cafe.catalog') }}?tab=food" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors shadow-lg">
-                            Browse Food Menu
+                            Browse Food & Beverages
                             <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>

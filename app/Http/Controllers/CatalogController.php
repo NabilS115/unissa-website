@@ -290,7 +290,8 @@ class CatalogController extends Controller
     {
         // Cache featured products for 1 hour
         $merchandise = Cache::remember('products.featured.merch', now()->addHour(), function () {
-            return \App\Models\Product::where('type', 'merch')
+            // First try to get products with reviews (rating-based)
+            $withReviews = \App\Models\Product::where('type', 'merch')
                 ->where('is_active', true)
                 ->with(['reviews' => function ($query) {
                     $query->select('product_id', 'rating');
@@ -302,10 +303,33 @@ class CatalogController extends Controller
                 ->orderByDesc('reviews_count')
                 ->limit(6)
                 ->get();
+            
+            // If we don't have enough products with reviews, fill with newest products
+            if ($withReviews->count() < 6) {
+                $needed = 6 - $withReviews->count();
+                $excludeIds = $withReviews->pluck('id')->toArray();
+                
+                $newest = \App\Models\Product::where('type', 'merch')
+                    ->where('is_active', true)
+                    ->whereNotIn('id', $excludeIds)
+                    ->with(['reviews' => function ($query) {
+                        $query->select('product_id', 'rating');
+                    }])
+                    ->withAvg('reviews', 'rating')
+                    ->withCount('reviews')
+                    ->latest()
+                    ->limit($needed)
+                    ->get();
+                
+                return $withReviews->merge($newest);
+            }
+            
+            return $withReviews;
         });
         
         $food = Cache::remember('products.featured.food', now()->addHour(), function () {
-            return \App\Models\Product::where('type', 'food')
+            // First try to get products with reviews (rating-based)
+            $withReviews = \App\Models\Product::where('type', 'food')
                 ->where('is_active', true)
                 ->with(['reviews' => function ($query) {
                     $query->select('product_id', 'rating');
@@ -317,6 +341,28 @@ class CatalogController extends Controller
                 ->orderByDesc('reviews_count')
                 ->limit(6)
                 ->get();
+            
+            // If we don't have enough products with reviews, fill with newest products
+            if ($withReviews->count() < 6) {
+                $needed = 6 - $withReviews->count();
+                $excludeIds = $withReviews->pluck('id')->toArray();
+                
+                $newest = \App\Models\Product::where('type', 'food')
+                    ->where('is_active', true)
+                    ->whereNotIn('id', $excludeIds)
+                    ->with(['reviews' => function ($query) {
+                        $query->select('product_id', 'rating');
+                    }])
+                    ->withAvg('reviews', 'rating')
+                    ->withCount('reviews')
+                    ->latest()
+                    ->limit($needed)
+                    ->get();
+                
+                return $withReviews->merge($newest);
+            }
+            
+            return $withReviews;
         });
         
         $others = Cache::remember('products.featured.others', now()->addHour(), function () {
