@@ -607,7 +607,6 @@ input[type="number"]::-ms-clear {
                             </p>
                         </div>
                     </div>
-                </div>
                 @endauth
                 @guest
                 <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-12 text-center">
@@ -668,12 +667,21 @@ input[type="number"]::-ms-clear {
                             <p class="text-gray-600 text-sm sm:text-base">Based on {{ $totalRatings }} {{ $totalRatings === 1 ? 'review' : 'reviews' }}</p>
                         </div>
                         @auth
-                            <button id="write-review-btn" class="inline-flex items-center gap-1 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 transform hover:scale-105 text-sm sm:text-base">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                                </svg>
-                                Write a Review
-                            </button>
+                            @if(Auth::user()->role !== 'admin')
+                                <button id="write-review-btn" class="inline-flex items-center gap-1 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 transform hover:scale-105 text-sm sm:text-base">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                    </svg>
+                                    Write a Review
+                                </button>
+                            @else
+                                <div class="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-semibold rounded-lg sm:rounded-xl text-sm sm:text-base">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                    <span>Admin View - {{ $totalRatings }} Reviews</span>
+                                </div>
+                            @endif
                         @else
                             <div class="text-center sm:text-right">
                                 <p class="text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base">Want to share your experience?</p>

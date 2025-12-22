@@ -207,6 +207,32 @@ class ContentController extends Controller
         return response()->json(['success' => true, 'message' => 'Unissa Cafe homepage content updated successfully!']);
     }
 
+    public function updateBankTransferSettings(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $validated = $request->validate([
+                'content.bank_account_name' => 'nullable|string|max:255',
+                'content.bank_account_number' => 'nullable|string|max:50',
+            ]);
+
+            foreach ($validated['content'] as $key => $content) {
+                if (!empty(trim($content))) {
+                    ContentBlock::set($key, $content, 'text', 'bank-transfer');
+                }
+            }
+
+            return response()->json(['success' => true, 'message' => 'Bank transfer settings updated successfully!']);
+        } catch (\Exception $e) {
+            \Log::error('Bank transfer settings update error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error updating settings: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function uploadImage(Request $request)
     {
         // Only allow admin access

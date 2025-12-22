@@ -838,9 +838,19 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
                                     </div>
-                                    <button @click.stop="addToCart(food.id, food.name, food.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
-                                        Add to Cart
-                                    </button>
+                                    <template x-if="window.userRole === 'admin'">
+                                        <a :href="`/admin/products/${food.id}/edit`" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important; text-decoration: none;">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            <span>Edit Product</span>
+                                        </a>
+                                    </template>
+                                    <template x-if="window.userRole !== 'admin'">
+                                        <button @click.stop="addToCart(food.id, food.name, food.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
+                                            Add to Cart
+                                        </button>
+                                    </template>
                                 </div>
                             </template>
                         </div>
@@ -915,9 +925,19 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
                                     </div>
-                                    <button @click.stop="addToCart(merch.id, merch.name, merch.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
-                                        Add to Cart
-                                    </button>
+                                    <template x-if="window.userRole === 'admin'">
+                                        <a :href="`/admin/products/${merch.id}/edit`" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important; text-decoration: none;">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            <span>Edit Product</span>
+                                        </a>
+                                    </template>
+                                    <template x-if="window.userRole !== 'admin'">
+                                        <button @click.stop="addToCart(merch.id, merch.name, merch.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
+                                            Add to Cart
+                                        </button>
+                                    </template>
                                 </div>
                             </template>
                         </div>
@@ -992,9 +1012,19 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
                                     </div>
-                                    <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
-                                        Add to Cart
-                                    </button>
+                                    <template x-if="window.userRole === 'admin'">
+                                        <a :href="`/admin/products/${other.id}/edit`" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important; text-decoration: none;">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            <span>Edit Product</span>
+                                        </a>
+                                    </template>
+                                    <template x-if="window.userRole !== 'admin'">
+                                        <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
+                                            Add to Cart
+                                        </button>
+                                    </template>
                                 </div>
                             </template>
                         </div>
@@ -1400,4 +1430,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+
+<script>
+    // Make user role available globally for Alpine.js
+    window.userRole = @json(auth()->check() ? auth()->user()->role : null);
+</script>
 @endsection

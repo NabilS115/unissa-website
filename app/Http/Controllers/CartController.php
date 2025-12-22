@@ -170,6 +170,22 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1|max:100'
         ]);
 
+        // Check product stock if tracking is enabled
+        $product = $cartItem->product;
+        if ($product->track_stock && $request->quantity > $product->stock_quantity) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Only {$product->stock_quantity} units available in stock.",
+                    'max_quantity' => $product->stock_quantity
+                ], 422);
+            }
+            
+            return redirect()->back()
+                ->withErrors(['quantity' => "Only {$product->stock_quantity} units available in stock."])
+                ->withInput();
+        }
+
         $cartItem->update([
             'quantity' => $request->quantity
         ]);
@@ -185,7 +201,8 @@ class CartController extends Controller
                 'message' => 'Quantity updated!',
                 'item_total' => $cartItem->total_price,
                 'cart_total' => $cartTotal,
-                'total_items' => $totalItems
+                'total_items' => $totalItems,
+                'max_quantity' => $product->track_stock ? $product->stock_quantity : 100
             ]);
         }
 

@@ -95,7 +95,9 @@
         <div class="mb-8">
             <div class="flex space-x-2 md:space-x-6 border-b border-teal-200">
                 <button class="tab-btn px-4 py-2 text-teal-700 font-semibold border-b-2 border-transparent focus:outline-none transition-all duration-200" data-tab="profile">Profile</button>
-                <button class="tab-btn px-4 py-2 text-teal-700 font-semibold border-b-2 border-transparent focus:outline-none transition-all duration-200" data-tab="payment">Payment</button>
+                @if(Auth::user()->role !== 'admin')
+                    <button class="tab-btn px-4 py-2 text-teal-700 font-semibold border-b-2 border-transparent focus:outline-none transition-all duration-200" data-tab="payment">Payment</button>
+                @endif
                 <button class="tab-btn px-4 py-2 text-teal-700 font-semibold border-b-2 border-transparent focus:outline-none transition-all duration-200" data-tab="password">Password</button>
             </div>
         </div>
@@ -169,33 +171,37 @@
                 </form>
             </div>
         </div>
-        <div id="tab-content-payment" class="tab-content hidden">
-            <!-- Payment Method Details Card (Payment Tab) -->
-            <div class="bg-[#f8fafc] border border-[#0d9488] rounded-2xl shadow-lg p-8">
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="w-12 h-12 bg-[#0d9488] rounded-xl flex items-center justify-center">
-                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6z" clip-rule="evenodd"/>
-                        </svg>
+        @if(Auth::user()->role !== 'admin')
+            <div id="tab-content-payment" class="tab-content hidden">
+                <!-- Payment Method Details Card (Payment Tab) -->
+                <div class="bg-[#f8fafc] border border-[#0d9488] rounded-2xl shadow-lg p-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-[#0d9488] rounded-xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-[#0d9488]">Payment Method Details</h2>
+                            <p class="text-[#007070]">Save your preferred payment method for faster checkout</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-[#0d9488]">Payment Method Details</h2>
-                        <p class="text-[#007070]">Save your preferred payment method for faster checkout</p>
-                    </div>
-                </div>
                 <form id="payment-method-form" method="POST" action="{{ route('profile.payment') }}" class="space-y-6">
                     @csrf
                     @method('put')
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="payment_method" class="block text-sm font-semibold text-[#0d9488] mb-2">Payment Method</label>
-                            <select name="payment_method" id="payment_method" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] bg-white" onchange="togglePaymentFields()">
-                                <option value="">Select a payment method</option>
-                                <option value="credit_card" {{ old('payment_method', Auth::user()->payment_method) == 'credit_card' ? 'selected' : '' }}>Credit/Debit Card</option>
-                                <option value="bank_transfer" {{ old('payment_method', Auth::user()->payment_method) == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                            </select>
-                        </div>
-                        <div>
+                    
+                    @if(Auth::user()->role !== 'admin')
+                        <!-- Personal Payment Methods (Non-Admin Users Only) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="payment_method" class="block text-sm font-semibold text-[#0d9488] mb-2">Payment Method</label>
+                                <select name="payment_method" id="payment_method" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] bg-white" onchange="togglePaymentFields()">
+                                    <option value="">Select a payment method</option>
+                                    <option value="credit_card" {{ old('payment_method', Auth::user()->payment_method) == 'credit_card' ? 'selected' : '' }}>Credit/Debit Card</option>
+                                    <option value="bank_transfer" {{ old('payment_method', Auth::user()->payment_method) == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                                </select>
+                            </div>
+                            <div>
                             <div id="card-fields" style="display:none;">
                                 <label for="cardholder_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Cardholder Name</label>
                                 <input name="cardholder_name" id="cardholder_name" type="text" autocomplete="cc-name"
@@ -248,21 +254,68 @@
                                     class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Reference (optional)" />
                             </div>
                         </div>
-                    </div>
+                        
+                        <!-- Save Personal Payment Method Button (Non-Admin Users Only) -->
+                        <div class="flex justify-end w-full pt-6">
+                            <button type="submit" id="save-payment-btn" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200" autocomplete="off">
+                                <span class="whitespace-nowrap">Save Payment Method</span>
+                            </button>
+                        </div>
+                    @else
+                        <!-- Admin Bank Transfer Settings (Admin Users Only) -->
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-6 h-6 text-[#0d9488]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <h4 class="text-xl font-bold text-[#0d9488]">UNISSA Bank Transfer Settings</h4>
+                            </div>
+                            <p class="text-gray-600 mb-6">Configure the bank account details that customers will see during BIBD bank transfer checkout</p>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="admin_bank_account_name" class="block text-sm font-semibold text-[#0d9488] mb-2">UNISSA Account Name</label>
+                                    <input type="text" id="admin_bank_account_name"
+                                        value="{{ \App\Models\ContentBlock::get('bank_account_name', 'UNISSA Café', 'text', 'bank-transfer') }}"
+                                        class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" 
+                                        placeholder="e.g., UNISSA Café"
+                                        onchange="updateBankTransferSetting('bank_account_name', this.value)" />
+                                    <p class="text-xs text-gray-500 mt-1">The exact name on your business bank account</p>
+                                </div>
+                                
+                                <div>
+                                    <label for="admin_bank_account_number" class="block text-sm font-semibold text-[#0d9488] mb-2">UNISSA Account Number</label>
+                                    <input type="text" id="admin_bank_account_number"
+                                        value="{{ \App\Models\ContentBlock::get('bank_account_number', '', 'text', 'bank-transfer') }}"
+                                        class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white font-mono" 
+                                        placeholder="e.g., 1234567890123456"
+                                        onchange="updateBankTransferSetting('bank_account_number', this.value)" />
+                                    <p class="text-xs text-gray-500 mt-1">The BIBD account number where customers will transfer money</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-blue-700">
+                                            <strong>Admin Only:</strong> These settings control what customers see during BIBD bank transfer checkout. Changes apply immediately to all new orders.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
-                    <!-- Profile JS bootstrap injected later to avoid load-order issues -->
-                    <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 w-full">
-                        <!-- ...existing code... -->
-                    </div>
-                    <!-- Move button to its own row at the bottom of the card, checked text removed -->
-                    <div class="flex justify-end w-full pt-6">
-                        <button type="submit" id="save-payment-btn" class="px-6 py-3 bg-[#0d9488] hover:bg-[#007070] text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 transition-all duration-200" autocomplete="off">
-                            <span class="whitespace-nowrap">Save Payment Method</span>
-                        </button>
-                    </div>
                 </form>
             </div>
         </div>
+        @endif
 
         <!-- Password Tab Content -->
         <div id="tab-content-password" class="tab-content hidden">
@@ -470,6 +523,72 @@
                     document.addEventListener('DOMContentLoaded', function() {
                         togglePaymentFields();
                     });
+                    
+                    // Admin bank transfer settings update
+                    async function updateBankTransferSetting(field, value) {
+                        try {
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                            if (!csrfToken) {
+                                showToast('CSRF token not found', 'error');
+                                return;
+                            }
+
+                            const response = await fetch('/admin/content/bank-transfer', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                                    'Accept': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    content: {
+                                        [field]: value
+                                    }
+                                })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                showToast('Bank transfer setting updated successfully!', 'success');
+                            } else {
+                                console.error('Update failed:', result);
+                                showToast(result.message || 'Error updating bank transfer setting', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Network error:', error);
+                            showToast('Network error updating bank transfer setting', 'error');
+                        }
+                    }
+                    
+                    function showToast(message, type) {
+                        const toast = document.getElementById('profile-toast');
+                        const messageElement = toast.querySelector('.toast-message');
+                        
+                        // Set message and styling
+                        messageElement.textContent = message;
+                        toast.className = `fixed top-6 left-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-lg text-white shadow-lg transition-all duration-300`;
+                        
+                        if (type === 'success') {
+                            toast.classList.add('bg-green-500');
+                        } else {
+                            toast.classList.add('bg-red-500');
+                        }
+                        
+                        // Show toast
+                        toast.style.display = 'flex';
+                        toast.style.transform = 'translateX(-50%)';
+                        toast.classList.remove('opacity-0');
+                        
+                        // Hide after 3 seconds
+                        setTimeout(() => {
+                            toast.classList.add('opacity-0');
+                            setTimeout(() => {
+                                toast.style.display = 'none';
+                                toast.classList.remove('bg-green-500', 'bg-red-500');
+                            }, 300);
+                        }, 3000);
+                    }
                 </script>
                 
                 <!-- Toast container for AJAX save notifications (top-center to avoid back-to-top overlap) -->

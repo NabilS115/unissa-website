@@ -44,14 +44,17 @@
         <div class="flex items-center gap-3 md:hidden">
             @if($shouldShowUnissaBranding)
                 @auth
-                <div class="relative" id="cart-group-mobile">
-                    <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
-                        </svg>
-                    </a>
-                    <span id="cart-count-mobile" class="absolute bg-red-500 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center -top-1 -right-1 shadow-sm" style="display: none; font-size: 9px;">0</span>
-                </div>
+                    @if(auth()->user()->role !== 'admin')
+                        <!-- Mobile Cart (Customer Only) -->
+                        <div class="relative" id="cart-group-mobile">
+                            <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                            </a>
+                            <span id="cart-count-mobile" class="absolute bg-red-500 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center -top-1 -right-1 shadow-sm" style="display: none; font-size: 9px;">0</span>
+                        </div>
+                    @endif
                 @endauth
             @endif
             <button id="mobile-menu-btn" class="w-10 h-10 bg-white text-teal-600 rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 active:scale-95">
@@ -141,18 +144,21 @@
             <!-- Cart Icon (only show on cafe pages and for authenticated users) -->
             @if($shouldShowUnissaBranding)
                 @auth
-                <div class="relative z-50 overflow-visible" id="cart-group">
-                    <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 overflow-visible">
-                        <!-- Enhanced Shopping Cart Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
-                        </svg>
-                    </a>
-                    <!-- Smaller Notification Bubble -->
-                    <span id="cart-count" class="absolute bg-red-600 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1 z-50 overflow-visible" style="display: none; font-size: 8px; line-height: 1;">0</span>
-                </div>
-                <!-- cart/count logic moved to public/js/header.js -->
+                    @if(auth()->user()->role !== 'admin')
+                        <!-- Desktop Cart (Customer Only) -->
+                        <div class="relative z-50 overflow-visible" id="cart-group">
+                            <a href="{{ route('cart.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 overflow-visible">
+                                <!-- Enhanced Shopping Cart Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 1.5M7 13l-1.5-1.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                            </a>
+                            <!-- Smaller Notification Bubble -->
+                            <span id="cart-count" class="absolute bg-red-600 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1 z-50 overflow-visible" style="display: none; font-size: 8px; line-height: 1;">0</span>
+                        </div>
+                    @endif
                 @endauth
+                <!-- cart/count logic moved to public/js/header.js -->
             @endif
 
             <!-- Profile Icon -->
@@ -197,7 +203,11 @@
                     @endphp
                     <a href="{{ $profileUrl }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Profile</a>
                     @if(request()->is('unissa-cafe') || request()->is('unissa-cafe/*') || request()->is('products/*') || request()->is('product/*') || request()->is('cart') || request()->is('cart/*') || request()->is('checkout') || request()->is('checkout/*') || request()->is('my/*'))
-                        <a href="{{ route('user.orders.index') }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">My Orders</a>
+                        @if(auth()->user()->role !== 'admin')
+                            <a href="{{ route('user.orders.index') }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">My Orders</a>
+                        @else
+                            <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-teal-600 hover:bg-teal-50">Order Management</a>
+                        @endif
                     @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -493,17 +503,33 @@
                             @endif
                             
                             @if($shouldShowUnissaBranding)
-                                <a href="{{ route('user.orders.index') }}" class="flex items-center px-4 py-4 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-all duration-200 active:scale-[0.98]">
-                                    <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center mr-4">
-                                        <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium">My Orders</div>
-                                        <div class="text-xs text-gray-500">Order history</div>
-                                    </div>
-                                </a>
+                                @if(auth()->user()->role !== 'admin')
+                                    <!-- My Orders (Customer Only) -->
+                                    <a href="{{ route('user.orders.index') }}" class="flex items-center px-4 py-4 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-all duration-200 active:scale-[0.98]">
+                                        <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center mr-4">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium">My Orders</div>
+                                            <div class="text-xs text-gray-500">Order history</div>
+                                        </div>
+                                    </a>
+                                @else
+                                    <!-- Order Management (Admin Only) -->
+                                    <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-4 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-all duration-200 active:scale-[0.98]">
+                                        <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mr-4">
+                                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium">Order Management</div>
+                                            <div class="text-xs text-gray-500">All customer orders</div>
+                                        </div>
+                                    </a>
+                                @endif
                             @endif
                         </nav>
                         

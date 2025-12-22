@@ -122,9 +122,12 @@ class CheckoutController extends Controller
         }
 
         // Set success message based on payment method
+        $bankAccountName = \App\Models\ContentBlock::get('bank_account_name', 'UNISSA Café', 'text', 'bank-transfer');
+        $bankAccountNumber = \App\Models\ContentBlock::get('bank_account_number', '[Your Account Number]', 'text', 'bank-transfer');
+        
         $successMessage = match($validated['payment_method']) {
             'online' => 'Your order has been placed! Credit card payment will be processed securely. We\'ll notify you when ready for pickup. Contact: +673 8123456',
-            'bank_transfer' => 'Your order has been placed! Please transfer $' . number_format($totalPrice, 2) . ' to UNISSA Café via BIBD (Account: [Your Real Account Number]). Use your phone number as reference. WhatsApp confirmation to +673 8123456',
+            'bank_transfer' => "Your order has been placed! Please transfer $" . number_format($totalPrice, 2) . " to {$bankAccountName} via BIBD (Account: {$bankAccountNumber}). Use your phone number as reference. WhatsApp confirmation to +673 8123456",
             'cash' => 'Your order has been placed successfully! Please bring exact amount ($' . number_format($totalPrice, 2) . ') when collecting your order. Contact: +673 8123456',
             default => 'Your order has been placed successfully! Contact us at +673 8123456 for any questions.'
         };
@@ -267,7 +270,7 @@ class CheckoutController extends Controller
 
         $successMessage = match($validated['payment_method']) {
             'online' => 'Your orders have been placed! Credit card payment will be processed securely. We\'ll notify you when ready for pickup. Contact: +673 8123456',
-            'bank_transfer' => 'Your orders have been placed! Please transfer $' . number_format($totalPrice, 2) . ' to UNISSA Café via BIBD (Account: [Your Real Account Number]). Use your phone number as reference. WhatsApp confirmation to +673 8123456',
+            'bank_transfer' => "Your orders have been placed! Please transfer $" . number_format($totalPrice, 2) . " to " . \App\Models\ContentBlock::get('bank_account_name', 'UNISSA Café', 'text', 'bank-transfer') . " via BIBD (Account: " . \App\Models\ContentBlock::get('bank_account_number', '[Your Account Number]', 'text', 'bank-transfer') . "). Use your phone number as reference. WhatsApp confirmation to +673 8123456",
             'cash' => 'Your orders have been placed successfully! Please bring exact amount ($' . number_format($totalPrice, 2) . ') when collecting your order. Contact: +673 8123456',
             default => 'Your orders have been placed successfully! Contact us at +673 8123456 for any questions.'
         };

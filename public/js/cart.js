@@ -5,9 +5,21 @@
         if (!form) return;
         const quantityInput = form.querySelector('input[name="quantity"]');
         if (!quantityInput) return;
+        
+        // Get stock information from form data attributes
+        const trackStock = form.getAttribute('data-track-stock') === 'true';
+        const stockQuantity = parseInt(form.getAttribute('data-stock-quantity')) || 100;
+        const maxQuantity = trackStock ? stockQuantity : 100;
+        
         let newQuantity = parseInt(quantityInput.value, 10) + change;
         if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
-        if (newQuantity > 100) newQuantity = 100;
+        if (newQuantity > maxQuantity) {
+            if (trackStock) {
+                alert(`Only ${stockQuantity} units available in stock.`);
+            }
+            newQuantity = maxQuantity;
+        }
+        
         quantityInput.value = newQuantity;
         try {
             const formData = new FormData(form);
@@ -54,9 +66,21 @@
                     itemCountElements.forEach(el => el.textContent = data.total_items + ' items');
                 }
                 if (window.updateCartCount) window.updateCartCount(data.total_items || 0);
+                
+                // Update form stock data if provided
+                if (data.max_quantity && form) {
+                    form.setAttribute('data-stock-quantity', data.max_quantity);
+                }
             } else {
+                // Handle error response
+                const errorData = await response.json().catch(() => ({}));
                 quantityInput.value = Math.max(1, newQuantity - change);
-                alert('Failed to update cart. Please try again.');
+                
+                if (errorData.message) {
+                    alert(errorData.message);
+                } else {
+                    alert('Failed to update cart. Please try again.');
+                }
             }
         } catch (error) {
             quantityInput.value = Math.max(1, newQuantity - change);

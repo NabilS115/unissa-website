@@ -347,11 +347,11 @@
                                             </div>
                                             <div class="flex justify-between items-center">
                                                 <span class="font-semibold text-gray-700">Account Name:</span>
-                                                <span class="text-teal-700 font-medium">UNISSA Café</span>
+                                                <span class="text-teal-700 font-medium">{{ \App\Models\ContentBlock::get('bank_account_name', 'UNISSA Café', 'text', 'bank-transfer') }}</span>
                                             </div>
                                             <div class="flex justify-between items-center">
                                                 <span class="font-semibold text-gray-700">Account Number:</span>
-                                                <span class="font-mono bg-teal-100 px-3 py-1 rounded text-teal-800 font-bold">[UNISSA's Real Account Number]</span>
+                                                <span class="font-mono bg-teal-100 px-3 py-1 rounded text-teal-800 font-bold">{{ \App\Models\ContentBlock::get('bank_account_number', '[Your Account Number]', 'text', 'bank-transfer') }}</span>
                                             </div>
                                             <div class="flex justify-between items-center">
                                                 <span class="font-semibold text-gray-700">Amount:</span>

@@ -11,6 +11,46 @@
             <p class="text-base md:text-lg text-gray-600">Review your selected items and proceed to secure checkout</p>
         </div>
 
+        <!-- Error Messages -->
+        @if($errors->any())
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">
+                            Unable to proceed to checkout:
+                        </h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="space-y-1">
+                                @foreach($errors->all() as $error)
+                                    <li>• {{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @if($cartItems->isEmpty())
             <!-- Elegant Empty Cart -->
             <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-16 text-center">
@@ -80,13 +120,20 @@
                                                         {{ $item->product->category }}
                                                     </span>
                                                     <span class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</span>
+                                                    @if($item->product->track_stock)
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $item->product->stock_quantity <= 10 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-700' }}">
+                                                            {{ $item->product->stock_quantity }} in stock
+                                                        </span>
+                                                    @endif
                                                 </div>
                                                 
                                                 <!-- Mobile quantity controls -->
                                                 <div class="sm:hidden">
                                                     <div class="flex items-center justify-between">
                                                         <div class="flex items-center gap-3">
-                                                            <form id="cart-form-mobile-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2">
+                                                            <form id="cart-form-mobile-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2"
+                                                                  data-stock-quantity="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}"
+                                                                  data-track-stock="{{ $item->product->track_stock ? 'true' : 'false' }}">
                                                                 @csrf
                                                                 @method('PATCH')
                                                                 <button type="button" onclick="updateQuantity('mobile-{{ $item->id }}', -1)" 
@@ -97,7 +144,7 @@
                                                                 </button>
                                                                 
                                                                 <input type="number" name="quantity" value="{{ $item->quantity }}" 
-                                                                       min="1" max="100" 
+                                                                       min="1" max="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}" 
                                                                        class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200 appearance-none"
                                                                        style="-webkit-appearance: none; -moz-appearance: textfield;"
                                                                        onchange="this.form.submit()">
@@ -120,7 +167,9 @@
                             <!-- Desktop Quantity Controls & Price -->
                             <div class="hidden sm:flex items-center gap-6">
                                 <div class="flex items-center gap-3">
-                                    <form id="cart-form-desktop-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2">
+                                    <form id="cart-form-desktop-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2"
+                                          data-stock-quantity="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}"
+                                          data-track-stock="{{ $item->product->track_stock ? 'true' : 'false' }}">
                                         @csrf
                                         @method('PATCH')
                                         <button type="button" onclick="updateQuantity('desktop-{{ $item->id }}', -1)" 
@@ -131,7 +180,7 @@
                                         </button>
                                         
                                         <input type="number" name="quantity" value="{{ $item->quantity }}" 
-                                               min="1" max="100" 
+                                               min="1" max="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}" 
                                                class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200 appearance-none"
                                                style="-webkit-appearance: none; -moz-appearance: textfield;"
                                                onchange="this.form.submit()">
