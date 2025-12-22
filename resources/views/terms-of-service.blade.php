@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Unissa Cafe - Terms of Service')
+@section('title', 'UNISSA Cafe - Terms of Service')
 
 @section('content')
     @if(auth()->check() && auth()->user()->role === 'admin')
@@ -32,7 +32,7 @@
                 </div>
                 <div class="flex items-center">
                     <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                    TIJARAH CO SDN BHD & Unissa Cafe
+                    TIJARAH CO SDN BHD & UNISSA Cafe
                 </div>
             </div>
         </div>

@@ -17,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Unissa Cafe - Catalog - LEGACY</title>
+    <title>UNISSA Cafe - Catalog - LEGACY</title>
     <meta name="theme-color" content="#0d9488">
     {{-- Tailwind CDN removed for production. Use main layout for styles. --}}
     <style>
@@ -164,7 +164,7 @@
 <header class="w-full bg-teal-600 text-white py-4 flex items-center justify-between px-6 header-fallback sticky top-0 z-50">
     <div class="flex items-center gap-4 logo-section">
         <div class="w-16 h-16 bg-white rounded-full p-1 shadow-md flex items-center justify-center">
-            <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain">
+            <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="UNISSA Cafe Logo" class="w-full h-full object-contain">
         </div>
         <h1 class="text-3xl font-bold" style="font-size: 1.875rem; font-weight: bold; margin: 0;">TIJARAH CO SDN BHD</h1>
     </div>

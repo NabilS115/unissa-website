@@ -24,7 +24,7 @@
     <div class="flex items-center gap-4">
         <div class="w-16 h-16 bg-white rounded-full p-2 shadow-md flex items-center justify-center overflow-hidden">
             @if($shouldShowUnissaBranding)
-                <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.style.display='none'">
+                <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="UNISSA Cafe Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.style.display='none'">
             @else
                 <img src="{{ asset('images/tijarahco_sdn_bhd_logo.png') }}" alt="TIJARAH CO SDN BHD Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.style.display='none'">
             @endif
@@ -32,7 +32,7 @@
         <div class="flex flex-col">
             <span class="font-bold text-lg">
                 @if($shouldShowUnissaBranding)
-                    Unissa Cafe
+                    UNISSA Cafe
                 @else
                     TIJARAH CO SDN BHD
                 @endif
@@ -42,7 +42,7 @@
     <div class="flex flex-col md:flex-row gap-8 w-full md:w-auto justify-center">
     <div class="bg-[#007070] bg-opacity-80 rounded-2xl px-8 py-6 flex flex-col justify-center min-w-[160px]">
             @if($shouldShowUnissaBranding)
-                <!-- Unissa Cafe Footer Navigation -->
+                <!-- UNISSA Cafe Footer Navigation -->
                 <a href="{{ route('unissa-cafe.homepage') }}" class="text-white mb-2 hover:underline">Homepage</a>
                 <a href="{{ route('unissa-cafe.catalog') }}" class="text-white mb-2 hover:underline">Catalog</a>
                 <a href="{{ route('privacy-policy') }}" class="text-white mb-2 hover:underline">Privacy Policy</a>

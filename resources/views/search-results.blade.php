@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Unissa Cafe - Search Results for "' . $query . '"')
+@section('title', 'UNISSA Cafe - Search Results for "' . $query . '"')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">

@@ -22,7 +22,7 @@
         <div class="flex items-center gap-2 md:gap-4 logo-section flex-shrink-0">
             @if($shouldShowUnissaBranding)
                 <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-2 shadow-md flex items-center justify-center overflow-hidden">
-                    <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.style.display='none'">
+                    <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="UNISSA Cafe Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.style.display='none'">
                 </div>
             @else
                 <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full p-2 shadow-md flex items-center justify-center overflow-hidden">
@@ -31,8 +31,8 @@
             @endif
             <h1 class="text-lg md:text-3xl font-bold" style="font-weight: bold; margin: 0;">
                 @if($shouldShowUnissaBranding)
-                    <span class="hidden sm:inline">Unissa Cafe</span>
-                    <span class="sm:hidden">Unissa Cafe</span>
+                    <span class="hidden sm:inline">UNISSA Cafe</span>
+                    <span class="sm:hidden">UNISSA Cafe</span>
                 @else
                     <span class="hidden sm:inline">TIJARAH CO SDN BHD</span>
                     <span class="sm:hidden">Tijarah</span>
@@ -73,7 +73,7 @@
             <nav>
                 <ul class="flex gap-4 nav-list">
                     @if($shouldShowUnissaBranding)
-                        <!-- Unissa Cafe Navigation -->
+                        <!-- UNISSA Cafe Navigation -->
                         <li><a href="{{ route('unissa-cafe.homepage') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/homepage') || request()->is('unissa-cafe') ? 'font-semibold underline' : '' }}">Home</a></li>
                         <li><a href="{{ route('unissa-cafe.catalog') }}" class="text-white hover:underline nav-link {{ request()->is('unissa-cafe/catalog') ? 'font-semibold underline' : '' }}">Catalog</a></li>
                         <li><a href="/" class="text-white hover:underline nav-link border-l border-teal-400 pl-4 ml-2">← Back to Tijarah</a></li>
@@ -310,7 +310,7 @@
                     <div class="flex items-center gap-3">
                         @if($shouldShowUnissaBranding)
                             <div class="w-8 h-8 bg-white rounded-full p-0.5 shadow-sm flex items-center justify-center">
-                                <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="Unissa Cafe Logo" class="w-full h-full object-contain">
+                                <img src="{{ asset('images/UNISSA_CAFE.png') }}" alt="UNISSA Cafe Logo" class="w-full h-full object-contain">
                             </div>
                         @else
                             <div class="w-8 h-8 bg-white rounded-full p-0.5 shadow-sm flex items-center justify-center">
@@ -319,7 +319,7 @@
                         @endif
                         <span class="font-bold text-white text-lg">
                             @if($shouldShowUnissaBranding)
-                                Unissa Cafe
+                                UNISSA Cafe
                             @else
                                 Tijarah Co
                             @endif

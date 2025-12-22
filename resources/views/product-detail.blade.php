@@ -68,7 +68,7 @@
     @endif
 @extends('layouts.app')
 
-@section('title', 'Unissa Cafe - Product Details')
+@section('title', 'UNISSA Cafe - Product Details')
 
 {{-- Preload critical product image to prevent flash --}}
 @section('head')

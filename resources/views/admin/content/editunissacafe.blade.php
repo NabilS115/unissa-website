@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Unissa Cafe Homepage - Admin Panel</title>
+    <title>Edit UNISSA Cafe Homepage - Admin Panel</title>
     <link rel="icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}" type="image/x-icon" sizes="32x32">
     <link rel="shortcut icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}">
@@ -21,8 +21,8 @@
                 <div class="px-6 py-4 border-b border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">Edit Unissa Cafe Homepage Content</h1>
-                            <p class="mt-1 text-sm text-gray-600">Customize the content on your Unissa Cafe homepage</p>
+                            <h1 class="text-2xl font-bold text-gray-900">Edit UNISSA Cafe Homepage Content</h1>
+                            <p class="mt-1 text-sm text-gray-600">Customize the content on your UNISSA Cafe homepage</p>
                         </div>
                         <a href="{{ route('unissa-cafe.homepage') }}" 
                            class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-md transition-colors">
@@ -65,7 +65,7 @@
                          id="hero_preview"
                          onclick="toggleHeroEdit()">
                         <div class="text-center text-white px-4">
-                            <h1 class="text-3xl md:text-4xl font-bold mb-4" id="hero_title_display">{{ \App\Models\ContentBlock::get('hero_title', 'Welcome to Unissa Cafe', 'text', 'unissa-cafe') }}</h1>
+                            <h1 class="text-3xl md:text-4xl font-bold mb-4" id="hero_title_display">{{ \App\Models\ContentBlock::get('hero_title', 'Welcome to UNISSA Cafe', 'text', 'unissa-cafe') }}</h1>
                             <p class="text-lg mb-6" id="hero_subtitle_display">{{ strip_tags(\App\Models\ContentBlock::get('hero_subtitle', 'Experience the perfect blend of delicious cuisine and premium quality. Where every bite tells a story and every product reflects excellence.', 'text', 'unissa-cafe')) }}</p>
                             <div class="flex items-center justify-center text-sm text-white/80">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@
                             <input type="text" 
                                    name="content[hero_title]" 
                                    id="hero_title_input"
-                                   value="{{ \App\Models\ContentBlock::get('hero_title', 'Welcome to Unissa Cafe', 'text', 'unissa-cafe') }}"
+                                   value="{{ \App\Models\ContentBlock::get('hero_title', 'Welcome to UNISSA Cafe', 'text', 'unissa-cafe') }}"
                                    class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
                                    onchange="updateHeroDisplay('title', this.value)">
                         </div>
@@ -119,16 +119,11 @@
                     <div class="p-6 cursor-pointer hover:bg-gray-50 transition-colors" 
                          id="about_preview"
                          onclick="toggleAboutEdit()">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center">
-                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                                </svg>
-                            </div>
-                            <h2 class="text-3xl font-bold text-teal-700" id="about_title_display">{{ \App\Models\ContentBlock::get('about_title', 'About Unissa Cafe', 'text', 'unissa-cafe') }}</h2>
+                        <div class="mb-4">
+                            <h2 class="text-3xl font-bold text-teal-700" id="about_title_display">{{ \App\Models\ContentBlock::get('about_title', 'About UNISSA Cafe', 'text', 'unissa-cafe') }}</h2>
                         </div>
                         <div class="text-gray-700 text-lg leading-relaxed mb-4" id="about_description_display">
-                            {!! \App\Models\ContentBlock::get('about_description', '<p>Discover our carefully curated selection of mouth-watering food and high-quality merchandise. From artisan pizzas and fresh salads to exclusive branded items, Unissa Cafe offers an unforgettable experience that combines great taste with premium quality.</p>', 'html', 'unissa-cafe') !!}
+                            {!! \App\Models\ContentBlock::get('about_description', '<p>Discover our carefully curated selection of mouth-watering food and high-quality merchandise. From artisan pizzas and fresh salads to exclusive branded items, UNISSA Cafe offers an unforgettable experience that combines great taste with premium quality.</p>', 'html', 'unissa-cafe') !!}
                         </div>
                         <div class="flex items-center justify-center text-sm text-gray-500 mt-4">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +140,7 @@
                             <input type="text" 
                                    name="content[about_title]" 
                                    id="about_title_input"
-                                   value="{{ \App\Models\ContentBlock::get('about_title', 'About Unissa Cafe', 'text', 'unissa-cafe') }}"
+                                   value="{{ \App\Models\ContentBlock::get('about_title', 'About UNISSA Cafe', 'text', 'unissa-cafe') }}"
                                    class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
                                    onchange="updateAboutDisplay('title', this.value)">
                         </div>
@@ -154,7 +149,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">About Description</label>
                             <textarea name="content[about_description]" 
                                       id="about_description_input"
-                                      class="ckeditor-about">{{ \App\Models\ContentBlock::get('about_description', '<p>Discover our carefully curated selection of mouth-watering food and high-quality merchandise. From artisan pizzas and fresh salads to exclusive branded items, Unissa Cafe offers an unforgettable experience that combines great taste with premium quality.</p>', 'html', 'unissa-cafe') }}</textarea>
+                                      class="ckeditor-about">{{ \App\Models\ContentBlock::get('about_description', '<p>Discover our carefully curated selection of mouth-watering food and high-quality merchandise. From artisan pizzas and fresh salads to exclusive branded items, UNISSA Cafe offers an unforgettable experience that combines great taste with premium quality.</p>', 'html', 'unissa-cafe') }}</textarea>
                         </div>
 
                         <div>
@@ -363,6 +358,8 @@
                         showSuccessMessage(result.message);
                         // Update displays with new content
                         updateDisplays();
+                        // Scroll to top to show success message
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
                         alert('Error: ' + (result.message || 'Failed to save changes'));
                     }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Unissa Cafe - Search Results - ' . $query)
+@section('title', 'UNISSA Cafe - Search Results - ' . $query)
 
 @php
 use Illuminate\Support\Str;

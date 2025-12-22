@@ -24,7 +24,7 @@
             <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{!! \App\Models\ContentBlock::get('hero_title', 'Business with Barakah', 'text', 'homepage') !!}</h1>
             <p class="text-lg md:text-xl text-white drop-shadow-md mb-6">{!! \App\Models\ContentBlock::get('hero_subtitle', 'Promoting halal, ethical, and impactful entrepreneurship through UNISSA\'s Tijarah Co.', 'text', 'homepage') !!}</p>
             <a href="{{ route('unissa-cafe.homepage') }}" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" style="background-color:#0d9488;">
-                Visit Unissa Cafe
+                Visit UNISSA Cafe
                 <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                 </svg>
