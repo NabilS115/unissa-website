@@ -449,6 +449,7 @@ input[type="number"]::-ms-clear {
             <div class="xl:col-span-2 space-y-8">
                 <!-- Quick Order Section -->
                 @auth
+                    @if(Auth::user()->role !== 'admin')
                 <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
                     <!-- Header Section -->
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-green-100">
@@ -607,6 +608,20 @@ input[type="number"]::-ms-clear {
                             </p>
                         </div>
                     </div>
+                    @else
+                        <!-- Admin View Message -->
+                        <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                            <div class="p-6 sm:p-8 text-center">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">Admin View</h3>
+                                <p class="text-gray-600">You're viewing this product as an administrator. Cart functionality is not available for admin accounts.</p>
+                            </div>
+                        </div>
+                    @endif
                 @endauth
                 @guest
                 <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-12 text-center">

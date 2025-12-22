@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit UNISSA Cafe Homepage - Admin Panel</title>
-    <link rel="icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}" type="image/x-icon" sizes="32x32">
-    <link rel="shortcut icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/tijarahco_sdn_bhd_logo.ico?v={{ time() }}">
+    <link rel="icon" href="/unissa-favicon.ico?v={{ time() }}" type="image/x-icon" sizes="32x32">
+    <link rel="shortcut icon" href="/unissa-favicon.ico?v={{ time() }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/unissa-favicon.ico?v={{ time() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
     <!-- Add Cropper.js CSS -->

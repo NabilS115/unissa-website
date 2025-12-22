@@ -19,7 +19,11 @@
     @php
         // Simple, clean favicon system
         $isUnissaCafe = str_contains(request()->fullUrl(), 'unissa-cafe') || 
-                       str_contains(request()->path(), 'unissa-cafe');
+                   str_contains(request()->path(), 'unissa-cafe') ||
+                   str_contains(request()->path(), 'product/') ||
+                   str_contains(request()->path(), 'products/') ||
+                   str_contains(request()->path(), 'cart') ||
+                   str_contains(request()->path(), 'orders');
         $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'tijarahco_sdn_bhd_logo.ico';
         $brandContext = $isUnissaCafe ? 'UNISSA' : 'TIJARAH';
     @endphp

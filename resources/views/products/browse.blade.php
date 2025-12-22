@@ -193,6 +193,52 @@
         }
     }
     
+    // Calculate average ratings for others items
+    $others = $others ?? [];
+    if ($others instanceof \Illuminate\Support\Collection) {
+        $others = $others->map(function($item) {
+            return is_array($item) ? (object)$item : $item;
+        })->toArray();
+    } else {
+        $others = array_map(function($item) {
+            return is_array($item) ? (object)$item : $item;
+        }, $others);
+    }
+
+    foreach ($others as &$otherItem) {
+        $productId = null;
+        if (is_object($otherItem) && isset($otherItem->id)) {
+            $productId = $otherItem->id;
+        } elseif (is_array($otherItem) && isset($otherItem['id'])) {
+            $productId = $otherItem['id'];
+        }
+        if ($productId) {
+            $reviews = \App\Models\Review::where('product_id', $productId)->get();
+            $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+            foreach ($reviews as $review) {
+                $rating = (int) $review->rating;
+                if ($rating >= 1 && $rating <= 5) {
+                    $ratings[$rating]++;
+                }
+            }
+            $totalRatings = array_sum($ratings);
+            $averageRating = 0;
+            if ($totalRatings > 0) {
+                $weightedSum = 0;
+                foreach ($ratings as $star => $count) {
+                    $weightedSum += $star * $count;
+                }
+                $averageRating = $weightedSum / $totalRatings;
+            }
+            if (is_object($otherItem)) {
+                $otherItem->calculated_rating = number_format($averageRating, 1);
+            } else {
+                $otherItem['calculated_rating'] = number_format($averageRating, 1);
+                $otherItem = (object)$otherItem;
+            }
+        }
+    }
+
     // Separate categories for food, merch, and others
     $foodCategories = \App\Models\Product::where('type', 'food')->pluck('category')->unique()->values()->all();
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
