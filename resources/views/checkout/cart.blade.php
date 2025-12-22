@@ -373,7 +373,7 @@
                                             <li>• Transfer is instant between BIBD accounts</li>
                                             <li>• Keep your transfer receipt for verification</li>
                                             <li>• Payment confirmation within 1 hour (business hours)</li>
-                                            <li>• For urgent matters, WhatsApp us: <strong>+673 8123456</strong></li>
+                                            <li>• For urgent matters, WhatsApp us: <strong>+673 8602877</strong></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -433,7 +433,7 @@
                                     <li>• We'll notify you when your order is ready</li>
                                     <li>• Bring your order confirmation (email/SMS)</li>
                                     <li>• Payment due upon pickup</li>
-                                    <li>• Contact us: <strong>+673 8123456</strong> for any questions</li>
+                                    <li>• Contact us: <strong>+673 8602877</strong> for any questions</li>
                                 </ul>
                             </div>
                         </div>
@@ -525,7 +525,7 @@
                                     <li>• Instant confirmation upon successful payment</li>
                                     <li>• Payment processed immediately</li>
                                     <li>• Order will be prepared after payment verification</li>
-                                    <li>• Contact us: <strong>+673 8123456</strong> for payment support</li>
+                                    <li>• Contact us: <strong>+673 8602877</strong> for payment support</li>
                                 </ul>
                             </div>
                         </div>
