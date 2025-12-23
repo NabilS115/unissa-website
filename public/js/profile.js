@@ -108,22 +108,31 @@
     // --- Tabs ---
     // Global tab switcher (exposed for debugging/fallbacks)
     function showProfileTab(tab){
-        try{ const tabContents = document.querySelectorAll('.tab-content'); tabContents.forEach(c=>{ c.classList.add('hidden'); c.classList.remove('tab-visible'); }); }catch(e){}
+        console.log('showProfileTab called with:', tab);
+        try{ const tabContents = document.querySelectorAll('.tab-content'); console.log('Found tab contents:', tabContents.length); tabContents.forEach(c=>{ c.classList.add('hidden'); c.classList.remove('tab-visible'); }); }catch(e){console.error('Error hiding tabs:', e);}
         const el = document.getElementById('tab-content-' + tab);
-        if (el){ el.classList.remove('hidden'); el.classList.add('tab-visible'); }
-        try{ const tabBtns = document.querySelectorAll('.tab-btn'); tabBtns.forEach(b=>b.classList.remove('border-teal-500','text-teal-900')); }catch(e){}
+        console.log('Target tab element:', el);
+        if (el){ el.classList.remove('hidden'); el.classList.add('tab-visible'); console.log('Showed tab:', tab); }
+        try{ const tabBtns = document.querySelectorAll('.tab-btn'); tabBtns.forEach(b=>b.classList.remove('border-teal-500','text-teal-900')); }catch(e){console.error('Error with tab buttons:', e);}
         const btn = document.querySelector('.tab-btn[data-tab="'+tab+'"]');
         if (btn) btn.classList.add('border-teal-500','text-teal-900');
     }
     // (no globals exposed) keep showProfileTab internal for production
+    
+    // Temporarily expose for debugging
+    window.showProfileTab = showProfileTab;
 
     function initTabs(){
+        console.log('initTabs called');
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
+        console.log('Found tab buttons:', tabBtns.length);
+        console.log('Found tab contents:', tabContents.length);
         try{}catch(e){}
         if (!tabBtns.length) return;
-        tabBtns.forEach(btn=>btn.addEventListener('click', function(e){ e.preventDefault(); const t = this.dataset && this.dataset.tab; if (t) showProfileTab(t); }));
+        tabBtns.forEach(btn=>btn.addEventListener('click', function(e){ e.preventDefault(); const t = this.dataset && this.dataset.tab; console.log('Tab clicked:', t); if (t) showProfileTab(t); }));
         // show default
+        console.log('Showing default profile tab');
         showProfileTab('profile');
     }
 

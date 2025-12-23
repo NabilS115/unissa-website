@@ -171,6 +171,84 @@
                 </form>
             </div>
         </div>
+        
+        <!-- Password Tab Content -->
+        <div id="tab-content-password" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <form id="password-form" method="POST" action="{{ route('profile.password') }}" class="space-y-4">
+                    @csrf
+                    @method('put')
+                    <div class="border-l-4 border-red-400 pl-4">
+                        <label for="current_password" class="block text-sm font-medium text-gray-500 mb-1">Current Password</label>
+                        <div class="relative">
+                            <input name="current_password" id="current_password" type="password" required autocomplete="current-password"
+                                   class="w-full px-4 py-3 border {{ $errors->updatePassword->has('current_password') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                            <button type="button" data-target="current_password" class="password-toggle absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none" title="Show password">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
+                                    <!-- refined slash for closed-eye -->
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                </svg>
+                            </button>
+                        </div>
+                        @if (optional($errors->updatePassword)->has('current_password'))
+                            <p class="mt-2 text-sm text-red-600">{{ optional($errors->updatePassword)->first('current_password') }}</p>
+                        @endif
+                    </div>
+
+                    <div class="border-l-4 border-yellow-400 pl-4">
+                        <label for="password" class="block text-sm font-medium text-gray-500 mb-1">New Password</label>
+                        <div class="relative">
+                            <input name="password" id="password" type="password" required autocomplete="new-password"
+                                   class="w-full px-4 py-3 border {{ $errors->updatePassword->has('password') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
+                            <button type="button" data-target="password" class="password-toggle absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none" title="Show password">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
+                                    <!-- refined slash for closed-eye -->
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                </svg>
+                            </button>
+                        </div>
+                        @if (optional($errors->updatePassword)->has('password'))
+                            <p class="mt-2 text-sm text-red-600">{{ optional($errors->updatePassword)->first('password') }}</p>
+                        @endif
+                    </div>
+
+                    <div class="border-l-4 border-green-400 pl-4">
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-500 mb-1">Confirm New Password</label>
+                        <div class="relative">
+                            <input name="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200" />
+                            <button type="button" data-target="password_confirmation" class="password-toggle absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none" title="Show password">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12s-4.5 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
+                                    <!-- refined slash for closed-eye -->
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
+                        @if (session('password-updated'))
+                            <div class="flex items-center gap-2 text-green-600 font-medium">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                Password updated successfully!
+                            </div>
+                        @endif
+                        <button type="submit" class="px-6 py-3 bg-red-600 hover:bg-red-700 focus:ring-red-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg">
+                            Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
         @if(Auth::user()->role !== 'admin')
             <div id="tab-content-payment" class="tab-content hidden">
                 <!-- Payment Method Details Card (Payment Tab) -->
@@ -317,14 +395,9 @@
         </div>
         @endif
 
-        <!-- Password Tab Content -->
-        <div id="tab-content-password" class="tab-content hidden">
-                    <div class="bg-white rounded-2xl shadow-lg p-6">
-                        <form id="password-form" method="POST" action="{{ route('profile.password') }}" class="space-y-4">
-                            @csrf
-                            @method('put')
-                            <div class="border-l-4 border-red-400 pl-4">
-                                <label for="current_password" class="block text-sm font-medium text-gray-500 mb-1">Current Password</label>
+        <!-- Photo modal (used by /js/profile.js) -->
+        <div id="photo-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden border border-teal-100 max-h-[90vh] flex flex-col">
                                 <div class="relative">
                                     <input name="current_password" id="current_password" type="password" required autocomplete="current-password"
                                            class="w-full px-4 py-3 border {{ $errors->updatePassword->has('current_password') ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500' }} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200" />
@@ -498,7 +571,93 @@
                         hasCustomPhoto: @json($hasCustomPhoto)
                     };
                 </script>
-                <script src="/js/profile.js"></script>
+                <script src="/js/profile.js?v={{ time() }}"></script>
+                
+                <!-- Robust tab switching functionality -->
+                <script>
+                (function() {
+                    console.log('Edit profile tabs initializing...');
+                    
+                    function initTabSwitching() {
+                        // Function to switch tabs with robust error handling
+                        function switchToTab(tabName) {
+                            console.log('Switching to tab:', tabName);
+                            
+                            try {
+                                // Hide all tab contents first
+                                const allTabs = document.querySelectorAll('.tab-content');
+                                console.log('Found tabs:', allTabs.length);
+                                
+                                allTabs.forEach(function(tab) {
+                                    tab.style.display = 'none';
+                                    tab.classList.add('hidden');
+                                    tab.classList.remove('tab-visible');
+                                });
+                                
+                                // Show the target tab
+                                const targetTab = document.getElementById('tab-content-' + tabName);
+                                console.log('Target tab element:', targetTab);
+                                
+                                if (targetTab) {
+                                    targetTab.style.display = 'block';
+                                    targetTab.classList.remove('hidden');
+                                    targetTab.classList.add('tab-visible');
+                                    console.log('Successfully showed tab:', tabName);
+                                } else {
+                                    console.error('Tab not found:', 'tab-content-' + tabName);
+                                }
+                                
+                                // Update button styles
+                                const allButtons = document.querySelectorAll('.tab-btn');
+                                allButtons.forEach(function(btn) {
+                                    btn.classList.remove('border-teal-500', 'text-teal-900');
+                                });
+                                
+                                const activeButton = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+                                if (activeButton) {
+                                    activeButton.classList.add('border-teal-500', 'text-teal-900');
+                                    console.log('Updated button styles for:', tabName);
+                                }
+                                
+                            } catch (error) {
+                                console.error('Error switching tabs:', error);
+                            }
+                        }
+                        
+                        // Add event listeners to tab buttons
+                        const tabButtons = document.querySelectorAll('.tab-btn');
+                        console.log('Found tab buttons:', tabButtons.length);
+                        
+                        tabButtons.forEach(function(button) {
+                            const tabName = button.getAttribute('data-tab');
+                            console.log('Setting up button for tab:', tabName);
+                            
+                            button.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                console.log('Button clicked for tab:', tabName);
+                                switchToTab(tabName);
+                            });
+                        });
+                        
+                        // Initialize with profile tab
+                        console.log('Initializing with profile tab');
+                        switchToTab('profile');
+                        
+                        // Make function globally available for debugging
+                        window.switchToTab = switchToTab;
+                    }
+                    
+                    // Initialize when DOM is ready
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initTabSwitching);
+                    } else {
+                        initTabSwitching();
+                    }
+                    
+                    // Also initialize after a short delay as backup
+                    setTimeout(initTabSwitching, 100);
+                })();
+                </script>
                 
                 <!-- Payment Method Toggle Function -->
                 <script>
@@ -596,6 +755,17 @@
                     <div class="toast-message">Saved</div>
                 </div>
     <style>
+    /* Tab content visibility rules */
+    .tab-content {
+        display: block;
+    }
+    .tab-content.hidden {
+        display: none !important;
+    }
+    .tab-content.tab-visible {
+        display: block !important;
+    }
+    
     /* Enhanced form focus states */
     .form-input:focus {
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
