@@ -223,7 +223,8 @@ window.__adminProducts = {
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
-                                            <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-12 h-12 rounded-lg object-cover mr-3">
+                                            <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-12 h-12 rounded-lg object-cover mr-3" loading="lazy" decoding="async"
+                                                 onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSI4IiBmaWxsPSIjZjlmYWZiIi8+PHRleHQgeD0iNTAlIiB5PSI1NCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5Y2EzYWYiIGZvbnQtc2l6ZT0iMTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPic">
                                             <div>
                                                 <div class="font-medium text-gray-900">{{ $product->name }}</div>
                                                 <div class="text-sm text-gray-500">{{ ucfirst($product->type) }}</div>

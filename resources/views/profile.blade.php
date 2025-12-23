@@ -22,7 +22,8 @@
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6">
                         <div class="relative">
                 @if(Auth::check())
-                    <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
+                    <img src="{{ Auth::user()->profile_photo_url ?: asset('images/default-profile.svg') }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white" loading="lazy" decoding="async"
+                         onerror="this.onerror=null; this.src='{{ asset('images/default-profile.svg') }}'; if(!this.src.includes('default-profile.svg')) { this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9IiNmNGY0ZjUiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iMyIgZmlsbD0iIzljYTNhZiIvPgo8cGF0aCBkPSJNNy41IDE5LjVhNy41IDcuNSAwIDAgMSA5IDAgYy0yLTIuNS02LTIuNS04IDBaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPg=='; }">                    
                 @endif
                         </div>
                         <div class="lg:mb-4">

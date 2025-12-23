@@ -853,7 +853,8 @@
                          :data-product-id="food.id"
                          @click="navigateToReview(food.id)">
                         <div class="relative overflow-hidden">
-                            <img :src="food.img" :alt="food.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                            <img :src="food.img" :alt="food.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;" loading="lazy" decoding="async"
+                                 :onerror="'this.onerror=null;this.src=\"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIxNiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOWNhM2FmIiBmb250LXNpemU9IjE0IiBmb250LWZhbWlseT0iQXJpYWwiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz5c\"'">
                             <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="food.category"></span>
                             </div>
@@ -940,7 +941,8 @@
                          :data-product-id="merch.id"
                          @click="navigateToReview(merch.id)">
                         <div class="relative overflow-hidden">
-                            <img :src="merch.img" :alt="merch.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                            <img :src="merch.img" :alt="merch.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;" loading="lazy" decoding="async"
+                                 :onerror="'this.onerror=null;this.src=\"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIxNiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOWNhM2FmIiBmb250LXNpemU9IjE0IiBmb250LWZhbWlseT0iQXJpYWwiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz5c\"'">
                             <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="merch.category"></span>
                             </div>
@@ -1027,7 +1029,8 @@
                          :data-product-id="other.id"
                          @click="navigateToReview(other.id)">
                         <div class="relative overflow-hidden">
-                            <img :src="other.img" :alt="other.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                            <img :src="other.img" :alt="other.name" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;" loading="lazy" decoding="async"
+                                 :onerror="'this.onerror=null;this.src=\"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIxNiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOWNhM2FmIiBmb250LXNpemU9IjE0IiBmb250LWZhbWlseT0iQXJpYWwiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz5c\"'">
                             <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="other.category"></span>
                             </div>

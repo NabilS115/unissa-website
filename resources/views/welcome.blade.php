@@ -170,16 +170,6 @@
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section class="w-full py-16 mb-16">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-teal-800 mb-4">{!! \App\Models\ContentBlock::get('services_title', 'Our Services', 'text', 'homepage') !!}</h2>
-                <div class="text-lg text-gray-600 max-w-3xl mx-auto">{!! \App\Models\ContentBlock::get('services_description', 'We provide comprehensive business solutions to help you achieve your entrepreneurial goals with integrity and excellence.', 'html', 'homepage') !!}</div>
-            </div>
-        </div>
-    </section>
-
     <!-- Contact Summary Section -->
     <section class="w-full bg-gradient-to-br from-teal-50 to-emerald-50 py-16 mb-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

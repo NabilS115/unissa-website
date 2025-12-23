@@ -249,4 +249,39 @@ class ContentController extends Controller
 
         return response()->json(['success' => true, 'url' => $url]);
     }
+
+    public function footer()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editfooter');
+    }
+
+    public function updateFooter(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+            'content.*' => 'nullable|string'
+        ]);
+
+        foreach ($validated['content'] as $key => $content) {
+            // Determine page context from the key
+            $page = str_contains($key, 'tijarah') ? 'tijarah-footer' : 'unissa-footer';
+            
+            // Clean content - allow empty strings for removal of optional fields like social media
+            $content = trim($content ?? '');
+            
+            ContentBlock::set($key, $content, 'text', $page);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Footer content updated successfully!']);
+    }
 }

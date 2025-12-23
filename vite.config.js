@@ -15,4 +15,24 @@ export default defineConfig({
     server: {
         cors: true,
     },
+    build: {
+        // Optimize asset bundling
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ['alpinejs'],
+                }
+            }
+        },
+        // Optimize CSS
+        cssCodeSplit: true,
+        // Generate source maps for debugging
+        sourcemap: true,
+        // Optimize chunk size warnings
+        chunkSizeWarningLimit: 1000
+    },
+    // Performance optimizations
+    optimizeDeps: {
+        include: ['alpinejs']
+    }
 });

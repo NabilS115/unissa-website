@@ -52,7 +52,8 @@
                     <div class="flex flex-col lg:flex-row lg:items-end gap-6 w-full">
                         <div class="relative group">
                             @if(Auth::check())
-                                <img id="profile-photo" src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white cursor-pointer">
+                                <img id="profile-photo" src="{{ Auth::user()->profile_photo_url }}" alt="Profile Picture" class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg bg-white cursor-pointer" loading="lazy" decoding="async"
+                                     onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIxNiIgZmlsbD0iI2Y5ZmFmYiIvPjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjE2IiBmaWxsPSIjOWNhM2FmIi8+PHBhdGggZD0iTTI0IDk2YzAtMTYgMTYtMzIgNDAtMzJzNDAgMTYgNDAgMzJaIiBmaWxsPSIjOWNhM2FmIi8+PC9zdmc+'">
                             @endif
                             @php
                                 $userPhoto = Auth::user()->profile_photo_url;

@@ -38,13 +38,19 @@
     
     <!-- DNS prefetch for external resources -->
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//unpkg.com">
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
     
     <!-- Preload critical resources for better caching -->
     <link rel="preload" href="{{ Vite::asset('resources/css/app.css') }}" as="style">
     <link rel="preload" href="{{ Vite::asset('resources/js/app.js') }}" as="script">
+    <link rel="preload" href="/js/performance-optimizer.js" as="script">
+    <link rel="preload" href="/js/alpine-optimizer.js" as="script">
     
     <!-- Global Error Handler -->
     <script src="/js/error-handler.js"></script>
+    <!-- Performance Optimizer -->
+    <script src="/js/performance-optimizer.js"></script>
     <!-- Alpine.js Optimizer -->
     <script src="/js/alpine-optimizer.js"></script>
     <!-- Livewire Navigation Optimizer -->

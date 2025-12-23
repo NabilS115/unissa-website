@@ -488,6 +488,8 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
     Route::post('/admin/content/about', [App\Http\Controllers\ContentController::class, 'updateAbout'])->name('content.about.update');
     Route::get('/admin/content/privacy', [App\Http\Controllers\ContentController::class, 'privacy'])->name('content.privacy');
     Route::post('/admin/content/privacy', [App\Http\Controllers\ContentController::class, 'updatePrivacy'])->name('content.privacy.update');
+    Route::get('/admin/content/footer', [App\Http\Controllers\ContentController::class, 'footer'])->name('content.footer');
+    Route::post('/admin/content/footer', [App\Http\Controllers\ContentController::class, 'updateFooter'])->name('content.footer.update');
     Route::get('/admin/content/terms', [App\Http\Controllers\ContentController::class, 'terms'])->name('content.terms');
     Route::post('/admin/content/terms', [App\Http\Controllers\ContentController::class, 'updateTerms'])->name('content.terms.update');
     Route::get('/admin/content/unissa-cafe', [App\Http\Controllers\ContentController::class, 'unissaCafeHomepage'])->name('content.unissa-cafe');

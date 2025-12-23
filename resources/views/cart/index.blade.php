@@ -116,13 +116,16 @@
                                             <div class="flex-grow">
                                                 <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $item->product->name }}</h3>
                                                 <div class="flex items-center gap-3 mb-3">
-                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800 capitalize">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-50 text-gray-600 capitalize border border-gray-200">
                                                         {{ $item->product->category }}
                                                     </span>
                                                     <span class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</span>
                                                     @if($item->product->track_stock)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $item->product->stock_quantity <= 10 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-700' }}">
-                                                            {{ $item->product->stock_quantity }} in stock
+                                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-medium {{ $item->product->stock_quantity <= 10 ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-green-50 text-green-700 border border-green-200' }}">
+                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h2zm3-3a1 1 0 00-1 1v1h4V5a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            {{ $item->product->stock_quantity }} available
                                                         </span>
                                                     @endif
                                                 </div>

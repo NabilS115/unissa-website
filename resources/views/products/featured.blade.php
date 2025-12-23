@@ -81,7 +81,7 @@
                 <div class="relative h-64 lg:h-full">
                     <img src="{{ \App\Models\ContentBlock::get('about_image', 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80', 'text', 'unissa-cafe') }}" 
                          alt="UNISSA Cafe - Delicious Food & Premium Merchandise" 
-                         class="w-full h-full object-cover"
+                         class="w-full h-full object-cover" loading="lazy" decoding="async"
                          onerror="this.src='https://via.placeholder.com/800x400/0d9488/ffffff?text=Unissa+Cafe+Food'; this.onerror=null;">
                     <div class="absolute inset-0 bg-gradient-to-l from-transparent to-teal-600/20"></div>
                 </div>
@@ -193,16 +193,16 @@
 
     <!-- Statistics/Highlights Section removed per request -->
 
-    <!-- Featured Food Products -->
+    <!-- Food Products -->
     <div class="mb-12">
-        <h2 class="text-3xl font-bold text-center mb-8">Featured Food & Beverages</h2>
+        <h2 class="text-3xl font-bold text-center mb-8">Food & Beverages</h2>
         <div class="max-w-6xl mx-auto px-4 md:px-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center place-content-center">
                 @forelse($food->take(4) as $product)
                     <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
                          onclick="window.location.href='/product/{{ $product->id }}'">
                         <div class="relative overflow-hidden">
-                            <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;">
+                            <img src="{{ $product->img }}" alt="{{ $product->name }}" class="w-full object-cover md:object-cover object-contain group-hover:scale-110 transition-transform duration-300" style="height: 180px !important; max-height: 180px !important; object-position: center !important;" loading="lazy" decoding="async">
                             <div class="absolute top-2 md:top-4 left-2 md:left-4">
                                 <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $product->category }}</span>
                             </div>
@@ -237,7 +237,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Featured Food Items</h3>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Food Items</h3>
                     <p class="text-gray-500">Add some delicious food items to showcase here.</p>
                 </div>
                 @endforelse
@@ -245,9 +245,9 @@
         </div>
     </div>
 
-    <!-- Featured Merchandise -->
+    <!-- Merchandise -->
     <div class="mb-12">
-        <h2 class="text-3xl font-bold text-center mb-8">Featured Merchandise</h2>
+        <h2 class="text-3xl font-bold text-center mb-8">Merchandise</h2>
         <div class="max-w-6xl mx-auto px-4 md:px-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center place-content-center">
                 @forelse($merchandise->take(4) as $product)
@@ -289,7 +289,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Featured Merchandise</h3>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Merchandise</h3>
                     <p class="text-gray-500">Add some premium merchandise to showcase here.</p>
                 </div>
                 @endforelse
@@ -297,9 +297,9 @@
         </div>
     </div>
 
-    <!-- Featured Others -->
+    <!-- Others -->
     <div class="mb-12">
-        <h2 class="text-3xl font-bold text-center mb-8">Featured Others Items</h2>
+        <h2 class="text-3xl font-bold text-center mb-8">Others</h2>
         <div class="max-w-6xl mx-auto px-4 md:px-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center place-content-center">
                 @forelse($others->take(4) as $product)
@@ -341,7 +341,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Featured Others Items</h3>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Others</h3>
                     <p class="text-gray-500">Add some other products to showcase here.</p>
                 </div>
                 @endforelse
