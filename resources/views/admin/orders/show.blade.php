@@ -152,7 +152,7 @@
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Email:</span>
-                            <p class="font-medium">
+                            <p class="font-medium break-all" title="{{ $order->customer_email }}">
                                 <a href="mailto:{{ $order->customer_email }}" class="text-blue-600 hover:text-blue-800">
                                     {{ $order->customer_email }}
                                 </a>

@@ -878,7 +878,7 @@
                             @endif
                         </div>
                         <div class="p-2.5 md:p-6 flex flex-col flex-grow">
-                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="food.name"></h4>
+                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors truncate" x-text="food.name" :title="food.name"></h4>
                             <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow" x-text="food.desc"></p>
                             <template x-if="food.price">
                                 <div class="mt-auto">
@@ -966,7 +966,7 @@
                             @endif
                         </div>
                         <div class="p-2.5 md:p-6 flex flex-col flex-grow">
-                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="merch.name"></h4>
+                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors truncate" x-text="merch.name" :title="merch.name"></h4>
                             <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow" x-text="merch.desc"></p>
                             <template x-if="merch.price">
                                 <div class="mt-auto">
@@ -1054,7 +1054,7 @@
                             @endif
                         </div>
                         <div class="p-2.5 md:p-6 flex flex-col flex-grow">
-                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors" x-text="other.name"></h4>
+                            <h4 class="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2 group-hover:text-teal-600 transition-colors truncate" x-text="other.name" :title="other.name"></h4>
                             <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 flex-grow" x-text="other.desc"></p>
                             <template x-if="other.price">
                                 <div class="mt-auto">

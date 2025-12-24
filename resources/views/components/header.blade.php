@@ -175,11 +175,11 @@
                     </span>
                 @endif
             </button>
-            <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-2 opacity-0 pointer-events-none z-[9999]">
+            <div id="profileDropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-2 opacity-0 pointer-events-none z-[9999]">
                 @auth
                     <div class="px-4 py-2 text-black">
-                        <div class="font-bold">{{ Auth::user()->name }}</div>
-                        <div class="text-sm text-gray-600">{{ Auth::user()->email }}</div>
+                        <div class="font-bold truncate">{{ Auth::user()->name }}</div>
+                        <div class="text-sm text-gray-600 truncate" title="{{ Auth::user()->email }}">{{ Auth::user()->email }}</div>
                     </div>
                     <hr class="my-2">
                     @php

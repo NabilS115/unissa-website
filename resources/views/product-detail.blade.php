@@ -431,7 +431,7 @@ input[type="number"]::-ms-clear {
                                 {{ ucfirst($product->type ?? 'Product') }}
                             </span>
                         </div>
-                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 leading-tight">{{ $product->name }}</h1>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 leading-tight break-words">{{ $product->name }}</h1>
                         <p class="text-gray-600 leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">{{ $product->desc }}</p>
                         
                         <!-- Category Badge -->

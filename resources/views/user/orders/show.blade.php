@@ -157,7 +157,7 @@
                     @if($order->customer_email)
                         <div>
                             <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Email</p>
-                            <p class="text-lg font-semibold text-gray-800">{{ $order->customer_email }}</p>
+                            <p class="text-lg font-semibold text-gray-800 break-all" title="{{ $order->customer_email }}">{{ $order->customer_email }}</p>
                         </div>
                     @endif
                     

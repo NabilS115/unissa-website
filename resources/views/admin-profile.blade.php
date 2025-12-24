@@ -90,7 +90,7 @@
                     <div class="space-y-6">
                         <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border-l-4 border-teal-400 pl-6 py-4">
                             <div class="text-sm font-semibold text-gray-600 mb-2">Email Address</div>
-                            <div class="text-lg text-gray-900 font-medium break-words">{{ Auth::user()->email ?? 'admin@tijarah.bn' }}</div>
+                            <div class="text-lg text-gray-900 font-medium break-words overflow-wrap-anywhere max-w-full">{{ Auth::user()->email ?? 'admin@tijarah.bn' }}</div>
                         </div>
                         
                         <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border-l-4 border-emerald-400 pl-6 py-4">

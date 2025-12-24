@@ -206,9 +206,9 @@ window.__adminOrders = {
                                     </td>
                                     <td class="px-6 py-4">
                                         <div>
-                                            <div class="font-medium text-gray-900">{{ $order->customer_name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $order->customer_email }}</div>
-                                            <div class="text-sm text-gray-500">{{ $order->customer_phone }}</div>
+                                            <div class="font-medium text-gray-900 truncate">{{ $order->customer_name }}</div>
+                                            <div class="text-sm text-gray-500 truncate" title="{{ $order->customer_email }}">{{ $order->customer_email }}</div>
+                                            <div class="text-sm text-gray-500 truncate">{{ $order->customer_phone }}</div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
@@ -216,8 +216,8 @@ window.__adminOrders = {
                                             <img src="{{ $order->product->img }}" alt="{{ $order->product->name }}" class="w-10 h-10 rounded-lg object-cover mr-3" loading="lazy" decoding="async"
                                                  onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHJ4PSI4IiBmaWxsPSIjZjlmYWZiIi8+PHRleHQgeD0iNTAlIiB5PSI1NCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5Y2EzYWYiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9IkFyaWFsIiBkeT0iLjNlbSI+Tm88L3RleHQ+PC9zdmc+'">
                                             <div>
-                                                <div class="font-medium text-gray-900">{{ $order->product->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $order->product->category }}</div>
+                                                <div class="font-medium text-gray-900 truncate" title="{{ $order->product->name }}">{{ $order->product->name }}</div>
+                                                <div class="text-sm text-gray-500 truncate">{{ $order->product->category }}</div>
                                             </div>
                                         </div>
                                     </td>
