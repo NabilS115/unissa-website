@@ -174,13 +174,8 @@ class ProfileController extends Controller
         $user = Auth::user();
         try {
             $validated = $request->validate([
-                'payment_method' => ['nullable', 'string', 'max:32'],
+                'payment_method' => ['nullable', 'string', 'in:bank_transfer'],
                 'payment_details' => ['nullable', 'string', 'max:255'],
-                'cardholder_name' => ['nullable', 'string', 'max:100'],
-                'card_number' => ['nullable', 'string', 'max:32'],
-                'card_expiry' => ['nullable', 'string', 'max:7'],
-                'card_ccv' => ['nullable', 'string', 'max:8'],
-                'billing_address' => ['nullable', 'string', 'max:255'],
                 'bank_name' => ['nullable', 'string', 'max:64'],
                 'bank_account' => ['nullable', 'string', 'max:64'],
                 'bank_reference' => ['nullable', 'string', 'max:128'],
@@ -188,11 +183,6 @@ class ProfileController extends Controller
 
             $user->payment_method = $validated['payment_method'] ?? null;
             $user->payment_details = $validated['payment_details'] ?? null;
-            $user->cardholder_name = $validated['cardholder_name'] ?? null;
-            $user->card_number = $validated['card_number'] ?? null;
-            $user->card_expiry = $validated['card_expiry'] ?? null;
-            $user->card_ccv = $validated['card_ccv'] ?? null;
-            $user->billing_address = $validated['billing_address'] ?? null;
             $user->bank_name = $validated['bank_name'] ?? null;
             $user->bank_account = $validated['bank_account'] ?? null;
             $user->bank_reference = $validated['bank_reference'] ?? null;

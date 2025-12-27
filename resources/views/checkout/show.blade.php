@@ -369,7 +369,7 @@ input[type="number"] {
                         
                         <div class="space-y-6">
                             <!-- Payment Method Selection -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-4">
                                 <!-- Cash Payment Option -->
                                 <label class="relative cursor-pointer">
                                     <input type="radio" name="payment_method" value="cash" checked 
@@ -397,27 +397,7 @@ input[type="number"] {
                                     </div>
                                 </label>
 
-                                <!-- Online Payment Option -->
-                                <label class="relative cursor-pointer">
-                                    <input type="radio" name="payment_method" value="online" 
-                                           class="sr-only peer" onclick="updatePaymentMethod()">
-                                    <div class="w-full p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-teal-300 peer-checked:border-teal-500 peer-checked:bg-teal-50 transition-all duration-200">
-                                        <div class="flex items-center gap-4">
-                                            <div class="flex-shrink-0">
-                                                <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-                                                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <h4 class="font-semibold text-gray-900">Pay Online</h4>
-                                                <p class="text-sm text-gray-600 mt-1">Credit/Debit Card, PayPal</p>
-                                                <div class="flex items-center gap-1 mt-2">
-                                                    <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                    <span class="text-xs text-teal-600 font-medium">Secure & Fast</span>
+                                <!-- Bank Transfer Option -->
                                                 </div>
                                             </div>
                                         </div>
@@ -441,103 +421,6 @@ input[type="number"] {
                                             <li>• We accept bills and coins</li>
                                             <li>• Your order will be confirmed immediately</li>
                                         </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Online Payment Info -->
-                            <div id="online-payment-info" class="bg-teal-50 border border-teal-200 rounded-xl p-4" style="display: none;">
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-shrink-0 mt-0.5">
-                                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium text-blue-800 mb-1">Online Payment Details</h4>
-                                        <ul class="text-sm text-blue-700 space-y-1">
-                                            <li>• Secure SSL encrypted payment processing</li>
-                                            <li>• Accept all major credit/debit cards</li>
-                                            <li>• PayPal and digital wallet options available</li>
-                                            <li>• Payment processed immediately upon order confirmation</li>
-                                            <li>• Email receipt sent instantly</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Credit Card Form -->
-                            <div id="credit-card-form" class="bg-white border border-gray-200 rounded-xl p-6" style="display: none;">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                    </svg>
-                                    Payment Information
-                                </h4>
-                                
-                                <div class="space-y-4">
-                                    <!-- Card Number -->
-                                    <div>
-                                        <label for="card_number" class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
-                                        <div class="relative">
-                                            <input type="text" id="card_number" name="card_number" 
-                                                   placeholder="1234 5678 9012 3456" maxlength="19"
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12">
-                                            <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
-                                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <span id="card_number_error" class="text-xs text-red-600 mt-1 hidden">Please enter a valid card number</span>
-                                    </div>
-
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <!-- Expiry Date -->
-                                        <div>
-                                            <label for="card_expiry" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
-                                            <input type="text" id="card_expiry" name="card_expiry" 
-                                                   placeholder="MM/YY" maxlength="5"
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                            <span id="card_expiry_error" class="text-xs text-red-600 mt-1 hidden">Please enter a valid expiry date (MM/YY)</span>
-                                        </div>
-
-                                        <!-- CVV -->
-                                        <div>
-                                            <label for="card_cvv" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
-                                            <input type="text" id="card_cvv" name="card_cvv" 
-                                                   placeholder="123" maxlength="4"
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                            <span id="card_cvv_error" class="text-xs text-red-600 mt-1 hidden">Please enter a valid CVV</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Cardholder Name -->
-                                    <div>
-                                        <label for="cardholder_name" class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
-                                        <input type="text" id="cardholder_name" name="cardholder_name" 
-                                               placeholder="John Doe"
-                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                        <span id="cardholder_name_error" class="text-xs text-red-600 mt-1 hidden">Please enter the cardholder name</span>
-                                    </div>
-
-                                    <!-- Billing Address Toggle -->
-                                    <div class="pt-2">
-                                        <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" id="same_as_customer" name="same_as_customer" checked 
-                                                   class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
-                                            <span class="text-sm text-gray-700">Billing address same as customer information</span>
-                                        </label>
-                                    </div>
-
-                                    <!-- Security Notice -->
-                                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-4">
-                                        <div class="flex items-center gap-2">
-                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                            <span class="text-xs text-gray-600">Your payment information is secure and encrypted</span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -648,64 +531,24 @@ input[type="number"] {
     // Payment method handling
     function updatePaymentMethod() {
         const cashPaymentInfo = document.getElementById('cash-payment-info');
-        const onlinePaymentInfo = document.getElementById('online-payment-info');
-        const paypalPaymentInfo = document.getElementById('paypal-payment-info');
-        const creditCardForm = document.getElementById('credit-card-form');
+        const bankTransferInfo = document.getElementById('bank-transfer-info');
         const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
         const submitButton = document.querySelector('button[type="submit"] span');
+        
         paymentMethods.forEach(method => {
             if (method.checked && method.value === 'cash') {
                 if (cashPaymentInfo) cashPaymentInfo.style.display = 'block';
-                if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'none';
-                if (paypalPaymentInfo) paypalPaymentInfo.style.display = 'none';
-                if (creditCardForm) creditCardForm.style.display = 'none';
+                if (bankTransferInfo) bankTransferInfo.style.display = 'none';
                 if (submitButton) submitButton.textContent = 'Complete Order';
-            } else if (method.checked && method.value === 'online') {
+            } else if (method.checked && method.value === 'bank_transfer') {
                 if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
-                if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'block';
-                if (paypalPaymentInfo) paypalPaymentInfo.style.display = 'none';
-                if (creditCardForm) creditCardForm.style.display = 'block';
-                if (submitButton) submitButton.textContent = 'Pay Now & Complete Order';
-            } else if (method.checked && method.value === 'paypal') {
-                if (cashPaymentInfo) cashPaymentInfo.style.display = 'none';
-                if (onlinePaymentInfo) onlinePaymentInfo.style.display = 'none';
-                if (paypalPaymentInfo) paypalPaymentInfo.style.display = 'block';
-                if (creditCardForm) creditCardForm.style.display = 'none';
-                if (submitButton) submitButton.textContent = 'Place Order';
+                if (bankTransferInfo) bankTransferInfo.style.display = 'block';
+                if (submitButton) submitButton.textContent = 'Complete Order';
             }
         });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const cardNumberInput = document.getElementById('card_number');
-        const expiryInput = document.getElementById('card_expiry');
-        const cvvInput = document.getElementById('card_cvv');
-        const cardholderNameInput = document.getElementById('cardholder_name');
-
-        if (cardNumberInput) {
-            cardNumberInput.addEventListener('input', function() {
-                formatCardNumber(this);
-                showError(this, 'card_number_error', validateCardNumber(this.value));
-            });
-        }
-        if (expiryInput) {
-            expiryInput.addEventListener('input', function() {
-                formatExpiryDate(this);
-                showError(this, 'card_expiry_error', validateExpiry(this.value));
-            });
-        }
-        if (cvvInput) {
-            cvvInput.addEventListener('input', function() {
-                formatCVV(this);
-                showError(this, 'card_cvv_error', validateCVV(this.value));
-            });
-        }
-        if (cardholderNameInput) {
-            cardholderNameInput.addEventListener('input', function() {
-                showError(this, 'cardholder_name_error', validateCardholderName(this.value));
-            });
-        }
-        
         // Add event listeners for payment method changes
         const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
         paymentMethodInputs.forEach(function(input) {
@@ -714,49 +557,6 @@ input[type="number"] {
         
         // Initialize payment method display
         updatePaymentMethod();
-    });
-
-    // Form submission handling
-    document.getElementById('checkout-form')?.addEventListener('submit', function(e) {
-        const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
-        if (selectedPaymentMethod && selectedPaymentMethod.value === 'online') {
-            // Validate credit card fields
-            const cardNumber = document.getElementById('card_number');
-            const cardExpiry = document.getElementById('card_expiry');
-            const cardCVV = document.getElementById('card_cvv');
-            const cardholderName = document.getElementById('cardholder_name');
-            let valid = true;
-            if (!validateCardNumber(cardNumber.value)) {
-                showError(cardNumber, 'card_number_error', false);
-                valid = false;
-            }
-            if (!validateExpiry(cardExpiry.value)) {
-                showError(cardExpiry, 'card_expiry_error', false);
-                valid = false;
-            }
-            if (!validateCVV(cardCVV.value)) {
-                showError(cardCVV, 'card_cvv_error', false);
-                valid = false;
-            }
-            if (!validateCardholderName(cardholderName.value)) {
-                showError(cardholderName, 'cardholder_name_error', false);
-                valid = false;
-            }
-            if (!valid) {
-                e.preventDefault();
-                return;
-            }
-            // Show processing message
-            const submitButton = this.querySelector('button[type="submit"]');
-            const buttonText = submitButton.querySelector('span');
-            const originalText = buttonText.textContent;
-            buttonText.textContent = 'Processing Payment...';
-            submitButton.disabled = true;
-            setTimeout(() => {
-                buttonText.textContent = originalText;
-                submitButton.disabled = false;
-            }, 10000);
-        }
     });
 </script>
 @endsection

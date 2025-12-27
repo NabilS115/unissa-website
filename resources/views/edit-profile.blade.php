@@ -271,49 +271,16 @@
                     
                     @if(Auth::user()->role !== 'admin')
                         <!-- Personal Payment Methods (Non-Admin Users Only) -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="payment_method" class="block text-sm font-semibold text-[#0d9488] mb-2">Payment Method</label>
-                                <select name="payment_method" id="payment_method" class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] bg-white" onchange="togglePaymentFields()">
-                                    <option value="">Select a payment method</option>
-                                    <option value="credit_card" {{ old('payment_method', Auth::user()->payment_method) == 'credit_card' ? 'selected' : '' }}>Credit/Debit Card</option>
-                                    <option value="bank_transfer" {{ old('payment_method', Auth::user()->payment_method) == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                                </select>
+                        <div class="space-y-6">
+                            <!-- Payment Method Label (Static) -->
+                            <div class="mb-6">
+                                <h3 class="text-lg font-semibold text-[#0d9488] mb-2">Bank Transfer Details</h3>
+                                <p class="text-sm text-[#007070]">Set up your BIBD bank transfer information for faster checkout</p>
+                                <input type="hidden" name="payment_method" value="bank_transfer" />
                             </div>
+                            
+                            <!-- Bank Transfer Fields -->
                             <div>
-                            <div id="card-fields" style="display:none;">
-                                <label for="cardholder_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Cardholder Name</label>
-                                <input name="cardholder_name" id="cardholder_name" type="text" autocomplete="cc-name"
-                                    value="{{ old('cardholder_name', Auth::user()->cardholder_name) }}"
-                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Name on card" oninput="validateCardholderName()" />
-                                <p id="cardholder-name-validation" class="mt-2 text-sm"></p>
-                                <label for="card_number" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Card Number</label>
-                                <input name="card_number" id="card_number" type="text" autocomplete="cc-number"
-                                    value="{{ old('card_number', Auth::user()->card_number) }}"
-                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Card number" oninput="validateCardNumber()" />
-                                <p id="card-number-validation" class="mt-2 text-sm"></p>
-                                <div class="grid grid-cols-2 gap-4 mt-4">
-                                    <div>
-                                        <label for="card_expiry" class="block text-sm font-semibold text-[#0d9488] mb-2">Expiry (MM/YY)</label>
-                                        <input name="card_expiry" id="card_expiry" type="text" autocomplete="cc-exp"
-                                            value="{{ old('card_expiry', Auth::user()->card_expiry) }}"
-                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="MM/YY" oninput="validateCardExpiry()" />
-                                        <p id="card-expiry-validation" class="mt-2 text-sm"></p>
-                                    </div>
-                                    <div>
-                                        <label for="card_ccv" class="block text-sm font-semibold text-[#0d9488] mb-2">CCV</label>
-                                        <input name="card_ccv" id="card_ccv" type="text" autocomplete="cc-csc"
-                                            value="{{ old('card_ccv', Auth::user()->card_ccv) }}"
-                                            class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="CCV" oninput="validateCardCCV()" />
-                                        <p id="card-ccv-validation" class="mt-2 text-sm"></p>
-                                    </div>
-                                </div>
-                                <label for="billing_address" class="block text-sm font-semibold text-[#0d9488] mb-2 mt-4">Billing Address</label>
-                                <input name="billing_address" id="billing_address" type="text" autocomplete="street-address"
-                                    value="{{ old('billing_address', Auth::user()->billing_address) }}"
-                                    class="w-full px-4 py-3 border border-[#0d9488] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition-all duration-200 text-[#0d9488] placeholder-[#007070] bg-white" placeholder="Billing address" />
-                            </div>
-                            <div id="bank-fields" style="display:none;">
                                 <label for="bank_name" class="block text-sm font-semibold text-[#0d9488] mb-2">Bank</label>
                                 <div class="w-full px-4 py-3 border border-[#0d9488] rounded-xl bg-gray-50 text-[#0d9488] font-medium">
                                     BIBD (Bank Islam Brunei Darussalam)
@@ -660,31 +627,7 @@
                 })();
                 </script>
                 
-                <!-- Payment Method Toggle Function -->
-                <script>
-                    function togglePaymentFields() {
-                        const paymentMethod = document.getElementById('payment_method').value;
-                        const cardFields = document.getElementById('card-fields');
-                        const bankFields = document.getElementById('bank-fields');
-                        
-                        // Hide all payment fields first
-                        if (cardFields) cardFields.style.display = 'none';
-                        if (bankFields) bankFields.style.display = 'none';
-                        
-                        // Show relevant fields based on selection
-                        if (paymentMethod === 'credit_card' && cardFields) {
-                            cardFields.style.display = 'block';
-                        } else if (paymentMethod === 'bank_transfer' && bankFields) {
-                            bankFields.style.display = 'block';
-                        }
-                    }
-                    
-                    // Initialize payment fields on page load
-                    document.addEventListener('DOMContentLoaded', function() {
-                        togglePaymentFields();
-                    });
-                    
-                    // Admin bank transfer settings update
+                <!-- Admin bank transfer settings update
                     async function updateBankTransferSetting(field, value) {
                         try {
                             const csrfToken = document.querySelector('meta[name="csrf-token"]');

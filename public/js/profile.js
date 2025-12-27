@@ -48,45 +48,6 @@
         setMessage('department-validation', ok ? 'Valid department!' : 'Department must be at least 2 letters.', ok);
     }
 
-    // --- Card validators ---
-    function validateCardholderName(){
-        const nm = (document.getElementById('cardholder_name')||{}).value || '';
-        if (!nm.trim()) { setMessage('cardholder-name-validation','',true); return; }
-        const ok = nm.trim().length >= 2;
-        setMessage('cardholder-name-validation', ok ? 'Looks good.' : 'Name must be at least 2 characters.', ok);
-    }
-
-    function validateCardNumber(){
-        const num = ((document.getElementById('card_number')||{}).value || '').replace(/\s/g,'');
-        const msgId = 'card-number-validation';
-        if (!num) { setMessage(msgId,'',true); return; }
-        const re = /^\d{16}$/;
-        const ok = re.test(num);
-        setMessage(msgId, ok ? 'Valid card number.' : 'Card number must be 16 digits.', ok);
-    }
-
-    function validateCardExpiry(){
-        const expiry = (document.getElementById('card_expiry')||{}).value || '';
-        const msgId = 'card-expiry-validation';
-        if (!expiry) { setMessage(msgId,'',true); return; }
-        const re = /^(0[1-9]|1[0-2])\/(\d{2})$/;
-        if (!re.test(expiry)) { setMessage(msgId,'Expiry must be MM/YY.',false); return; }
-        const [mm, yy] = expiry.split('/');
-        const yyyy = parseInt(yy,10) + 2000;
-        const expDate = new Date(yyyy, parseInt(mm,10)-1, 1);
-        const now = new Date();
-        const ok = expDate >= new Date(now.getFullYear(), now.getMonth(), 1);
-        setMessage(msgId, ok ? 'Valid expiry date.' : 'Card is expired.', ok);
-    }
-
-    function validateCardCCV(){
-        const ccv = (document.getElementById('card_ccv')||{}).value || '';
-        if (!ccv) { setMessage('card-ccv-validation','',true); return; }
-        // Enforce exactly 3 digits for CCV (3 is standard). If 4-digit CCV support is ever required
-        // (e.g., for specific card schemes), update this regex accordingly.
-        const ok = (/^\d{3}$/).test(ccv);
-        setMessage('card-ccv-validation', ok ? 'Valid CCV.' : 'CCV must be 3 digits.', ok);
-    }
 
     function validateBankAccount(input){
         if (!input) return;
@@ -136,15 +97,7 @@
         showProfileTab('profile');
     }
 
-    // --- Payment fields toggle & AJAX save ---
-    function togglePaymentFields(){
-        const method = (document.getElementById('payment_method')||{}).value;
-        const card = document.getElementById('card-fields');
-        const bank = document.getElementById('bank-fields');
-        if (card) card.style.display = (method === 'credit_card') ? 'block' : 'none';
-        if (bank) bank.style.display = (method === 'bank_transfer') ? 'block' : 'none';
-    }
-
+    // --- Payment AJAX save ---
     function initPaymentAjax(){
         const form = document.getElementById('payment-method-form');
         const btn = document.getElementById('save-payment-btn');
@@ -476,12 +429,11 @@
 
     onReady(function(){
         initTabs();
-        togglePaymentFields();
         initPaymentAjax();
         initProfileAjax();
         initPasswordAjax();
         // validations
-        ['name','email','phone','department','cardholder_name','card_number','card_expiry','card_ccv'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', function(){ try{ if (id==='name') validateName(); if (id==='email') validateEmail(); if (id==='phone') validatePhone(); if (id==='department') validateDepartment(); if (id==='cardholder_name') validateCardholderName(); if (id==='card_number') validateCardNumber(); if (id==='card_expiry') validateCardExpiry(); if (id==='card_ccv') validateCardCCV(); }catch(e){} }); });
+        ['name','email','phone','department'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', function(){ try{ if (id==='name') validateName(); if (id==='email') validateEmail(); if (id==='phone') validatePhone(); if (id==='department') validateDepartment(); }catch(e){} }); });
         // bank account
         const bankInput = document.getElementById('bank_account'); if (bankInput) bankInput.addEventListener('input', function(){ validateBankAccount(this); });
         // photo modal buttons

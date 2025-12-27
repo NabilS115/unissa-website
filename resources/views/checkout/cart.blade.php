@@ -313,14 +313,6 @@
                                 </label>
 
                                 <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
-                                    <input type="radio" name="payment_method" value="online" class="text-teal-600 focus:ring-teal-500 w-5 h-5" {{ old('payment_method', Auth::user()->payment_method) === 'online' ? 'checked' : '' }}>
-                                    <div class="ml-4">
-                                        <div class="font-semibold text-gray-800">Credit/Debit Card</div>
-                                        <div class="text-sm text-gray-600">Pay securely online now</div>
-                                    </div>
-                                </label>
-
-                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all duration-200">
                                     <input type="radio" name="payment_method" value="bank_transfer" class="text-teal-600 focus:ring-teal-500 w-5 h-5" {{ old('payment_method', Auth::user()->payment_method) === 'bank_transfer' ? 'checked' : '' }}>
                                     <div class="ml-4">
                                         <div class="font-semibold text-gray-800">BIBD Bank Transfer</div>

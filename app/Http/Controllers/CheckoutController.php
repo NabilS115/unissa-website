@@ -52,12 +52,7 @@ class CheckoutController extends Controller
             'customer_phone' => 'required|string|max:20',
             'pickup_notes' => 'nullable|string|max:1000',
             'notes' => 'nullable|string|max:1000',
-            'payment_method' => 'required|in:cash,online,bank_transfer',
-            // Credit card fields (required only for online payments, but not stored)
-            'card_number' => 'required_if:payment_method,online|nullable|string',
-            'card_expiry' => 'required_if:payment_method,online|nullable|string',
-            'card_cvv' => 'required_if:payment_method,online|nullable|string',
-            'cardholder_name' => 'required_if:payment_method,online|nullable|string|max:255',
+            'payment_method' => 'required|in:cash,bank_transfer',
             // Bank transfer fields (required only for bank transfer payments)
             'bank_name' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
             'bank_reference' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
@@ -179,12 +174,7 @@ class CheckoutController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
-            'payment_method' => 'required|in:cash,online,bank_transfer',
-            // Credit card fields (required only for online payments)
-            'card_number' => 'required_if:payment_method,online|nullable|string|min:13|max:19',
-            'card_expiry' => 'required_if:payment_method,online|nullable|string|size:5',
-            'card_cvv' => 'required_if:payment_method,online|nullable|string|min:3|max:4',
-            'cardholder_name' => 'required_if:payment_method,online|nullable|string|max:255',
+            'payment_method' => 'required|in:cash,bank_transfer',
             // Bank transfer fields (required only for bank transfer payments)
             'bank_name' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
             'bank_reference' => 'required_if:payment_method,bank_transfer|nullable|string|max:100',
