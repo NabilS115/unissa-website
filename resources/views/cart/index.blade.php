@@ -83,7 +83,7 @@
                             @foreach($cartItems as $item)
                             <div class="group relative bg-gradient-to-r from-gray-50 to-white p-6 border border-gray-200 rounded-2xl hover:shadow-lg hover:border-teal-200 transition-all duration-300">
                                 <!-- Product Image -->
-                                <div class="flex items-start gap-6">
+                                <div class="flex items-center gap-6">
                                     @php
                                         $imgPath = $item->product->img;
                                         $isStorage = $imgPath && (str_starts_with($imgPath, 'products/') || str_starts_with($imgPath, 'catalog/') || str_starts_with($imgPath, 'gallery/'));
@@ -111,103 +111,59 @@
                                     @endif
                                     
                                     <!-- Product Details -->
-                                    <div class="flex-grow min-w-0">
-                                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                                            <div class="flex-grow">
-                                                <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $item->product->name }}</h3>
-                                                <div class="flex items-center gap-3 mb-3">
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-50 text-gray-600 capitalize border border-gray-200">
-                                                        {{ $item->product->category }}
-                                                    </span>
-                                                    <span class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</span>
-                                                    @if($item->product->track_stock)
-                                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-medium {{ $item->product->stock_quantity <= 10 ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-green-50 text-green-700 border border-green-200' }}">
-                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h2zm3-3a1 1 0 00-1 1v1h4V5a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                                                            </svg>
-                                                            {{ $item->product->stock_quantity }} available
-                                                        </span>
-                                                    @endif
-                                                </div>
+                                    <div class="flex-1 flex items-center justify-between gap-4">
+                                        <!-- Product Info -->
+                                        <div class="flex-1 min-w-0">
+                                            <h3 class="text-lg font-bold text-gray-800 mb-1 truncate">{{ $item->product->name }}</h3>
+                                            <div class="mb-2">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-600 capitalize border border-gray-200">
+                                                    {{ $item->product->category }}
+                                                </span>
+                                            </div>
+                                            <div class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</div>
+                                        </div>
+                                        
+                                        <!-- Quantity Controls -->
+                                        <div class="flex items-center justify-end gap-2">
+                                            <form id="cart-form-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2"
+                                                  data-stock-quantity="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}"
+                                                  data-track-stock="{{ $item->product->track_stock ? 'true' : 'false' }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="button" onclick="updateQuantity('{{ $item->id }}', -1)" 
+                                                        class="w-8 h-8 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-lg transition-colors">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                                    </svg>
+                                                </button>
                                                 
-                                                <!-- Mobile quantity controls -->
-                                                <div class="sm:hidden">
-                                                    <div class="flex items-center justify-between">
-                                                        <div class="flex items-center gap-3">
-                                                            <form id="cart-form-mobile-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2"
-                                                                  data-stock-quantity="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}"
-                                                                  data-track-stock="{{ $item->product->track_stock ? 'true' : 'false' }}">
-                                                                @csrf
-                                                                @method('PATCH')
-                                                                <button type="button" onclick="updateQuantity('mobile-{{ $item->id }}', -1)" 
-                                                                        class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
-                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                                                                    </svg>
-                                                                </button>
-                                                                
-                                                                <input type="number" name="quantity" value="{{ $item->quantity }}" 
-                                                                       min="1" max="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}" 
-                                                                       class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200 appearance-none"
-                                                                       style="-webkit-appearance: none; -moz-appearance: textfield;"
-                                                                       onchange="this.form.submit()">
-                                                                
-                                                                <button type="button" onclick="updateQuantity('mobile-{{ $item->id }}', 1)" 
-                                                                        class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
-                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                                                    </svg>
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                        <div class="text-right">
-                                                            <p class="text-2xl font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                            <!-- Desktop Quantity Controls & Price -->
-                            <div class="hidden sm:flex items-center gap-6">
-                                <div class="flex items-center gap-3">
-                                    <form id="cart-form-desktop-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2"
-                                          data-stock-quantity="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}"
-                                          data-track-stock="{{ $item->product->track_stock ? 'true' : 'false' }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="button" onclick="updateQuantity('desktop-{{ $item->id }}', -1)" 
-                                                class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                                            </svg>
-                                        </button>
+                                                <input type="number" name="quantity" value="{{ $item->quantity }}" 
+                                                       min="1" max="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}" 
+                                                       class="w-16 text-center text-sm font-semibold border border-gray-200 rounded-lg py-1 focus:border-teal-400 focus:ring-1 focus:ring-teal-200 appearance-none"
+                                                       style="-webkit-appearance: none; -moz-appearance: textfield;"
+                                                       onchange="this.form.submit()">
+                                                
+                                                <button type="button" onclick="updateQuantity('{{ $item->id }}', 1)" 
+                                                        class="w-8 h-8 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-lg transition-colors">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
                                         
-                                        <input type="number" name="quantity" value="{{ $item->quantity }}" 
-                                               min="1" max="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}" 
-                                               class="w-20 text-center text-lg font-semibold border-2 border-gray-200 rounded-xl py-2 focus:border-teal-400 focus:ring-2 focus:ring-teal-200 appearance-none"
-                                               style="-webkit-appearance: none; -moz-appearance: textfield;"
-                                               onchange="this.form.submit()">
-                                        
-                                        <button type="button" onclick="updateQuantity('desktop-{{ $item->id }}', 1)" 
-                                                class="w-10 h-10 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl transition-colors">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>                                                <div class="text-right min-w-0">
-                                                    <p class="text-2xl font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</p>
-                                                </div>
-                                            </div>
+                                        <!-- Total Price -->
+                                        <div class="text-right min-w-[90px]">
+                                            <div class="text-xl font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</div>
                                         </div>
                                     </div>
                                     
                                     <!-- Remove Button -->
-                                    <form action="{{ route('cart.remove', $item) }}" method="POST" onsubmit="return confirm('Remove this item from cart?')" class="flex-shrink-0">
+                                    <form action="{{ route('cart.remove', $item) }}" method="POST" onsubmit="return confirm('Remove this item from cart?')" class="ml-4">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="w-10 h-10 flex items-center justify-center text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all duration-200 group">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button type="submit" class="w-8 h-8 flex items-center justify-center text-red-500 hover:text-white hover:bg-red-500 rounded-lg transition-all duration-200 group">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>
                                         </button>
