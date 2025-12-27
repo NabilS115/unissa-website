@@ -115,6 +115,22 @@ class Order extends Model
     }
 
     /**
+     * Get the print jobs associated with this order
+     */
+    public function printJobs()
+    {
+        return $this->hasMany(PrintJob::class);
+    }
+
+    /**
+     * Check if this order contains print jobs
+     */
+    public function hasPrintJobs(): bool
+    {
+        return $this->printJobs()->count() > 0;
+    }
+
+    /**
      * Get the status badge color
      */
     public function getStatusColorAttribute(): string

@@ -100,6 +100,105 @@
                     @endif
                 </div>
 
+                <!-- Print Job Information (if applicable) -->
+                @if($order->hasPrintJobs())
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                            <svg class="w-6 h-6 mr-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                            </svg>
+                            Print Job Details
+                        </h2>
+                        
+                        @foreach($order->printJobs as $printJob)
+                            <div class="border border-gray-200 rounded-xl p-6 mb-4 last:mb-0">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $printJob->original_filename }}</h3>
+                                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <span class="text-gray-500">File Type:</span>
+                                                <span class="ml-2 font-medium">{{ strtoupper($printJob->file_type) }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">File Size:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->file_size_formatted }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Paper Size:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->paper_size }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Color:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->color_option_display }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Paper Type:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->paper_type_display }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Copies:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->copies }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Page Count:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->page_count }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Status:</span>
+                                                <span class="ml-2 px-2 py-1 rounded-full text-xs font-medium
+                                                    {{ $printJob->status === 'uploaded' ? 'bg-blue-100 text-blue-800' : 
+                                                       ($printJob->status === 'processing' ? 'bg-yellow-100 text-yellow-800' : 
+                                                       ($printJob->status === 'ready' ? 'bg-green-100 text-green-800' : 
+                                                       ($printJob->status === 'completed' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800'))) }}">
+                                                    {{ $printJob->status_display }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-2 ml-4">
+                                        <a href="{{ route('printing.download', $printJob) }}" 
+                                           class="inline-flex items-center px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                                            </svg>
+                                            Download File
+                                        </a>
+                                        <button onclick="updatePrintJobStatus({{ $printJob->id }})" 
+                                                class="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            Update Status
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                @if($printJob->notes)
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <h4 class="font-medium text-gray-900 mb-2">Customer Notes</h4>
+                                        <p class="text-gray-600 text-sm">{{ $printJob->notes }}</p>
+                                    </div>
+                                @endif
+                                
+                                @if($printJob->admin_notes)
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <h4 class="font-medium text-gray-900 mb-2">Admin Notes</h4>
+                                        <p class="text-gray-600 text-sm">{{ $printJob->admin_notes }}</p>
+                                    </div>
+                                @endif
+                                
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-500 text-sm">Total Cost:</span>
+                                        <span class="text-xl font-bold text-green-600">B${{ number_format($printJob->total_price, 2) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
                 <!-- Special Instructions -->
                 @if($order->special_instructions)
                     <div class="bg-white rounded-2xl shadow-lg p-8">

@@ -331,6 +331,13 @@ Route::get('/unissa-cafe/data', [CatalogController::class, 'getData'])->name('un
 // Legacy catalog data endpoint
 Route::get('/catalog/data', [CatalogController::class, 'getData'])->name('catalog.data');
 
+// Printing Services Routes
+Route::get('/printing', [\App\Http\Controllers\PrintingController::class, 'index'])->name('printing.index');
+Route::post('/printing/upload', [\App\Http\Controllers\PrintingController::class, 'upload'])->name('printing.upload')->middleware('auth');
+Route::post('/printing/{printJob}/add-to-cart', [\App\Http\Controllers\PrintingController::class, 'addToCart'])->name('printing.add-to-cart')->middleware('auth');
+Route::get('/printing/{printJob}/download', [\App\Http\Controllers\PrintingController::class, 'downloadFile'])->name('printing.download')->middleware('auth');
+Route::delete('/printing/{printJob}', [\App\Http\Controllers\PrintingController::class, 'destroy'])->name('printing.destroy')->middleware('auth');
+
 // about routes
 Route::get('/about', function (\Illuminate\Http\Request $request) use ($setContextForAllPages) {
     $setContextForAllPages($request);

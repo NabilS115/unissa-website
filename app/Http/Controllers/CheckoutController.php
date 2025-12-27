@@ -239,6 +239,9 @@ class CheckoutController extends Controller
             $order = Order::create($orderData);
             $orders[] = $order;
 
+            // Link print jobs to order if this is a print service
+            \App\Models\PrintJob::linkToOrder($order, $item->notes);
+
             // Send order confirmation email for each order
             try {
                 Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));

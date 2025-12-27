@@ -146,6 +146,10 @@
                    class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
                     {{ \App\Models\ContentBlock::get('others_button_text', 'Explore Others', 'text', 'unissa-cafe') }}
                 </a>
+                <a href="{{ route('printing.index') }}" 
+                   class="group inline-flex items-center gap-3 bg-orange-500/90 backdrop-blur-sm text-white hover:bg-orange-600/90 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-orange-300/50 hover:border-orange-400/50 transform hover:-translate-y-1">
+                    🖨️ Printing Services
+                </a>
             </div>
         </div>
     </div>
