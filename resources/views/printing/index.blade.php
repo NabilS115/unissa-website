@@ -146,9 +146,8 @@
                                     <div>
                                         <label class="block text-lg font-bold text-gray-900 mb-3">Paper Type</label>
                                         <select name="paper_type" required class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg" onchange="updatePricing()">
-                                            <option value="regular" selected>Regular Paper</option>
-                                            <option value="photo">Photo Paper</option>
-                                            <option value="cardstock">Cardstock</option>
+                                            <option value="printing" selected>Printing</option>
+                                            <option value="photocopy">Photocopy</option>
                                         </select>
                                     </div>
 
@@ -224,28 +223,20 @@
                         </h3>
                         <div class="space-y-4">
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                                <span class="font-medium">B&W Regular</span>
-                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_regular', '0.10', 'text', 'printing') }}/page</span>
+                                <span class="font-medium">B&W Printing</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_printing', '0.30', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                                <span class="font-medium">Color Regular</span>
-                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_regular', '0.25', 'text', 'printing') }}/page</span>
+                                <span class="font-medium">Color Printing</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_printing', '0.80', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                                <span class="font-medium">B&W Photo Paper</span>
-                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_photo', '0.50', 'text', 'printing') }}/page</span>
+                                <span class="font-medium">B&W Photocopy</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_photocopy', '0.20', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                                <span class="font-medium">Color Photo Paper</span>
-                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_photo', '1.00', 'text', 'printing') }}/page</span>
-                            </div>
-                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                                <span class="font-medium">B&W Cardstock</span>
-                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_cardstock', '0.25', 'text', 'printing') }}/page</span>
-                            </div>
-                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                                <span class="font-medium">Color Cardstock</span>
-                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_cardstock', '0.50', 'text', 'printing') }}/page</span>
+                                <span class="font-medium">Color Photocopy</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_photocopy', '1.00', 'text', 'printing') }}/page</span>
                             </div>
                         </div>
                     </div>
@@ -388,14 +379,12 @@
 
             const prices = {
                 'black_white': { 
-                    'regular': {{ \App\Models\ContentBlock::get('price_bw_regular', '0.10', 'text', 'printing') }}, 
-                    'photo': {{ \App\Models\ContentBlock::get('price_bw_photo', '0.50', 'text', 'printing') }}, 
-                    'cardstock': {{ \App\Models\ContentBlock::get('price_bw_cardstock', '0.25', 'text', 'printing') }} 
+                    'printing': {{ \App\Models\ContentBlock::get('price_bw_printing', '0.30', 'text', 'printing') }}, 
+                    'photocopy': {{ \App\Models\ContentBlock::get('price_bw_photocopy', '0.20', 'text', 'printing') }} 
                 },
                 'color': { 
-                    'regular': {{ \App\Models\ContentBlock::get('price_color_regular', '0.25', 'text', 'printing') }}, 
-                    'photo': {{ \App\Models\ContentBlock::get('price_color_photo', '1.00', 'text', 'printing') }}, 
-                    'cardstock': {{ \App\Models\ContentBlock::get('price_color_cardstock', '0.50', 'text', 'printing') }} 
+                    'printing': {{ \App\Models\ContentBlock::get('price_color_printing', '0.80', 'text', 'printing') }}, 
+                    'photocopy': {{ \App\Models\ContentBlock::get('price_color_photocopy', '1.00', 'text', 'printing') }} 
                 }
             };
 
@@ -410,9 +399,18 @@
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            console.log('Form submitted'); // Debug log
+            
             const uploadBtn = document.getElementById('upload-btn');
             const uploadText = document.getElementById('upload-text');
             const uploadLoading = document.getElementById('upload-loading');
+            
+            // Check if file is selected
+            const fileInput = document.getElementById('file-input');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select a file to upload.');
+                return;
+            }
             
             uploadBtn.disabled = true;
             uploadText.classList.add('hidden');
@@ -420,6 +418,8 @@
 
             try {
                 const formData = new FormData(uploadForm);
+                console.log('Sending request to:', '{{ route("printing.upload") }}'); // Debug log
+                
                 const response = await fetch('{{ route("printing.upload") }}', {
                     method: 'POST',
                     body: formData,
@@ -428,7 +428,16 @@
                     }
                 });
 
+                console.log('Response status:', response.status); // Debug log
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error response:', errorText);
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
+                }
+
                 const result = await response.json();
+                console.log('Response result:', result); // Debug log
 
                 if (result.success) {
                     currentPrintJob = result.print_job;
@@ -436,15 +445,11 @@
                     document.getElementById('success-modal').classList.remove('hidden');
                     document.getElementById('success-modal').classList.add('flex');
                 } else {
-                    throw new Error(result.error || 'Upload failed');
+                    throw new Error(result.error || result.message || 'Upload failed');
                 }
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Upload Failed',
-                    text: error.message,
-                    confirmButtonColor: '#0d9488'
-                });
+                console.error('Upload error:', error); // Debug log
+                alert('Upload failed: ' + error.message);
             } finally {
                 uploadBtn.disabled = false;
                 uploadText.classList.remove('hidden');

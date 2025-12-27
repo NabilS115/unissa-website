@@ -24,15 +24,19 @@ class PrintingController extends Controller
 
     public function upload(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240', // 10MB max
-            'paper_size' => 'required|in:A4,A3,Letter,Legal',
-            'color_option' => 'required|in:black_white,color',
-            'paper_type' => 'required|in:regular,photo,cardstock',
-            'copies' => 'required|integer|min:1|max:100',
-            'orientation' => 'required|in:portrait,landscape',
-            'notes' => 'nullable|string|max:500',
-        ]);
+        try {
+            $request->validate([
+                'file' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240', // 10MB max
+                'paper_size' => 'required|in:A4,A3,Letter,Legal',
+                'color_option' => 'required|in:black_white,color',
+                'paper_type' => 'required|in:printing,photocopy',
+                'copies' => 'required|integer|min:1|max:100',
+                'orientation' => 'required|in:portrait,landscape',
+                'notes' => 'nullable|string|max:500',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())], 422);
+        }
 
         if (!Auth::check()) {
             return response()->json(['error' => 'Please login to upload files for printing.'], 401);
@@ -46,8 +50,17 @@ class PrintingController extends Controller
             // Generate unique filename
             $filename = Str::uuid() . '.' . $extension;
             
-            // Store file in print_jobs directory
-            $filePath = $file->storeAs('print_jobs', $filename, 'private');
+            // Test if private disk exists
+            if (!config('filesystems.disks.private')) {
+                return response()->json(['error' => 'Private disk configuration not found'], 500);
+            }
+            
+            // Store file in print_jobs directory using local disk
+            $filePath = $file->storeAs('print_jobs', $filename, 'local');
+            
+            if (!$filePath) {
+                return response()->json(['error' => 'Failed to store file'], 500);
+            }
             
             // Estimate page count (basic estimation)
             $pageCount = $this->estimatePageCount($file, $extension);
@@ -78,6 +91,7 @@ class PrintingController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Print job upload error: ' . $e->getMessage());
             return response()->json(['error' => 'Upload failed: ' . $e->getMessage()], 500);
         }
     }
@@ -138,11 +152,11 @@ class PrintingController extends Controller
             abort(403);
         }
 
-        if (!Storage::disk('private')->exists($printJob->file_path)) {
+        if (!Storage::disk('local')->exists($printJob->file_path)) {
             abort(404, 'File not found');
         }
 
-        return Storage::disk('private')->download(
+        return Storage::disk('local')->download(
             $printJob->file_path,
             $printJob->original_filename
         );
@@ -155,7 +169,7 @@ class PrintingController extends Controller
         }
 
         // Delete file from storage
-        Storage::disk('private')->delete($printJob->file_path);
+        Storage::disk('local')->delete($printJob->file_path);
         
         // Delete record
         $printJob->delete();

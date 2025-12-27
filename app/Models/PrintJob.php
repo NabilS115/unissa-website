@@ -88,9 +88,11 @@ class PrintJob extends Model
     public function getPaperTypeDisplayAttribute(): string
     {
         return match($this->paper_type) {
-            'regular' => 'Regular Paper',
-            'photo' => 'Photo Paper',
-            'cardstock' => 'Cardstock',
+            'printing' => 'Printing',
+            'photocopy' => 'Photocopy',
+            'regular' => 'Regular Paper', // Legacy support
+            'photo' => 'Photo Paper', // Legacy support
+            'cardstock' => 'Cardstock', // Legacy support
             default => ucfirst($this->paper_type)
         };
     }
@@ -98,20 +100,27 @@ class PrintJob extends Model
     // Static methods for pricing
     public static function getPricePerPage(string $colorOption, string $paperType): float
     {
+        // Use dynamic pricing from ContentBlock
         $prices = [
             'black_white' => [
-                'regular' => 0.10,
-                'photo' => 0.50,
+                'printing' => (float) \App\Models\ContentBlock::get('price_bw_printing', '0.30', 'text', 'printing'),
+                'photocopy' => (float) \App\Models\ContentBlock::get('price_bw_photocopy', '0.20', 'text', 'printing'),
+                // Legacy support
+                'regular' => (float) \App\Models\ContentBlock::get('price_bw_printing', '0.30', 'text', 'printing'),
+                'photo' => (float) \App\Models\ContentBlock::get('price_bw_photocopy', '0.20', 'text', 'printing'),
                 'cardstock' => 0.25,
             ],
             'color' => [
-                'regular' => 0.25,
-                'photo' => 1.00,
+                'printing' => (float) \App\Models\ContentBlock::get('price_color_printing', '0.80', 'text', 'printing'),
+                'photocopy' => (float) \App\Models\ContentBlock::get('price_color_photocopy', '1.00', 'text', 'printing'),
+                // Legacy support
+                'regular' => (float) \App\Models\ContentBlock::get('price_color_printing', '0.80', 'text', 'printing'),
+                'photo' => (float) \App\Models\ContentBlock::get('price_color_photocopy', '1.00', 'text', 'printing'),
                 'cardstock' => 0.50,
             ]
         ];
 
-        return $prices[$colorOption][$paperType] ?? 0.10;
+        return $prices[$colorOption][$paperType] ?? 0.30;
     }
 
     // Boot method for auto-calculating price

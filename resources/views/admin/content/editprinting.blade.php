@@ -119,29 +119,21 @@
                         <!-- Black & White Prices -->
                         <div class="bg-gray-50 rounded-lg p-4">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Black & White Printing</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Regular Paper (B$)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Printing (B$)</label>
                                     <input type="number" 
                                            step="0.01"
-                                           name="content[price_bw_regular]" 
-                                           value="{{ \App\Models\ContentBlock::get('price_bw_regular', '0.10', 'text', 'printing') }}"
+                                           name="content[price_bw_printing]" 
+                                           value="{{ \App\Models\ContentBlock::get('price_bw_printing', '0.30', 'text', 'printing') }}"
                                            class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Photo Paper (B$)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Photocopy (B$)</label>
                                     <input type="number" 
                                            step="0.01"
-                                           name="content[price_bw_photo]" 
-                                           value="{{ \App\Models\ContentBlock::get('price_bw_photo', '0.50', 'text', 'printing') }}"
-                                           class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Cardstock (B$)</label>
-                                    <input type="number" 
-                                           step="0.01"
-                                           name="content[price_bw_cardstock]" 
-                                           value="{{ \App\Models\ContentBlock::get('price_bw_cardstock', '0.25', 'text', 'printing') }}"
+                                           name="content[price_bw_photocopy]" 
+                                           value="{{ \App\Models\ContentBlock::get('price_bw_photocopy', '0.20', 'text', 'printing') }}"
                                            class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                             </div>
@@ -150,29 +142,21 @@
                         <!-- Color Prices -->
                         <div class="bg-gray-50 rounded-lg p-4">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Color Printing</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Regular Paper (B$)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Printing (B$)</label>
                                     <input type="number" 
                                            step="0.01"
-                                           name="content[price_color_regular]" 
-                                           value="{{ \App\Models\ContentBlock::get('price_color_regular', '0.25', 'text', 'printing') }}"
+                                           name="content[price_color_printing]" 
+                                           value="{{ \App\Models\ContentBlock::get('price_color_printing', '0.80', 'text', 'printing') }}"
                                            class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Photo Paper (B$)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Photocopy (B$)</label>
                                     <input type="number" 
                                            step="0.01"
-                                           name="content[price_color_photo]" 
-                                           value="{{ \App\Models\ContentBlock::get('price_color_photo', '1.00', 'text', 'printing') }}"
-                                           class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Cardstock (B$)</label>
-                                    <input type="number" 
-                                           step="0.01"
-                                           name="content[price_color_cardstock]" 
-                                           value="{{ \App\Models\ContentBlock::get('price_color_cardstock', '0.50', 'text', 'printing') }}"
+                                           name="content[price_color_photocopy]" 
+                                           value="{{ \App\Models\ContentBlock::get('price_color_photocopy', '1.00', 'text', 'printing') }}"
                                            class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                             </div>

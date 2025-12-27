@@ -23,7 +23,8 @@
                    str_contains(request()->path(), 'product/') ||
                    str_contains(request()->path(), 'products/') ||
                    str_contains(request()->path(), 'cart') ||
-                   str_contains(request()->path(), 'orders');
+                   str_contains(request()->path(), 'orders') ||
+                   str_contains(request()->path(), 'printing');
         $faviconFile = $isUnissaCafe ? 'unissa-favicon.ico' : 'tijarahco_sdn_bhd_logo.ico';
         $brandContext = $isUnissaCafe ? 'UNISSA' : 'TIJARAH';
     @endphp

@@ -6,7 +6,8 @@
                    request()->is('admin/orders*') || request()->is('admin/products*') || 
                    request()->is('cart') || request()->is('cart/*') || 
                    request()->is('checkout') || request()->is('checkout/*') || 
-                   request()->is('my/orders*');
+                   request()->is('my/orders*') ||
+                   request()->is('printing') || request()->is('printing/*');
     
     // For profile pages, check session context (set by navigation)
     $isProfilePage = request()->is('profile') || request()->is('admin-profile') || request()->is('edit-profile');
