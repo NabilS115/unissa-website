@@ -28,7 +28,7 @@
 @if(auth()->check() && auth()->user()->role === 'admin')
     <!-- Admin Edit Button -->
     <div class="fixed top-20 right-4 z-50">
-        <a href="{{ route('content.unissa-cafe') }}" 
+        <a href="{{ route('content.printing') }}" 
            class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
            style="background-color: #0d9488 !important;">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,12 +55,12 @@
         <div class="relative z-10 text-center px-4">
             <div class="mb-6 animate-fade-in-up">
                 <h1 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">
-                    <span class="text-white">🖨️ Printing Services</span>
+                    <span class="text-white">{{ \App\Models\ContentBlock::get('printing_hero_title', '🖨️ Printing Services', 'text', 'printing') }}</span>
                 </h1>
             </div>
             
             <p class="text-xl md:text-2xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                Professional printing services at <strong>UNISSA Cafe</strong>. Upload your documents, photos, or presentations and get high-quality prints while you enjoy our cafe!
+                {!! \App\Models\ContentBlock::get('printing_hero_subtitle', 'Professional printing services at <strong>UNISSA Cafe</strong>. Upload your documents, photos, or presentations and get high-quality prints while you enjoy our cafe!', 'text', 'printing') !!}
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
@@ -100,8 +100,8 @@
                                     <svg class="mx-auto h-20 w-20 text-gray-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                     </svg>
-                                    <p class="text-2xl font-medium text-gray-900 mb-3">Drop your files here or click to browse</p>
-                                    <p class="text-gray-600 mb-6 text-lg">Supported: PDF, DOC, DOCX, JPG, PNG (max 10MB)</p>
+                                    <p class="text-2xl font-medium text-gray-900 mb-3">{{ \App\Models\ContentBlock::get('upload_instructions', 'Drop your files here or click to browse', 'text', 'printing') }}</p>
+                                    <p class="text-gray-600 mb-6 text-lg">{{ \App\Models\ContentBlock::get('supported_formats', 'Supported: PDF, DOC, DOCX, JPG, PNG (max 10MB)', 'text', 'printing') }}</p>
                                     <button type="button" class="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1" onclick="document.getElementById('file-input').click()">
                                         Choose File
                                     </button>
@@ -155,7 +155,7 @@
                                     <!-- Copies -->
                                     <div>
                                         <label class="block text-lg font-bold text-gray-900 mb-3">Number of Copies</label>
-                                        <input type="number" name="copies" value="1" min="1" max="100" required class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg" onchange="updatePricing()">
+                                        <input type="number" name="copies" value="1" min="1" max="{{ \App\Models\ContentBlock::get('max_copies', '100', 'text', 'printing') }}" required class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg" onchange="updatePricing()">
                                     </div>
 
                                     <!-- Orientation -->
@@ -201,7 +201,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
                                 <h3 class="text-2xl font-bold text-gray-900 mb-4">Login Required</h3>
-                                <p class="text-gray-600 mb-8 text-lg">Please login to use our printing services.</p>
+                                <p class="text-gray-600 mb-8 text-lg">{{ \App\Models\ContentBlock::get('login_required_message', 'Please login to use our printing services.', 'text', 'printing') }}</p>
                                 <a href="{{ route('login') }}" class="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                                     Login to Continue
                                 </a>
@@ -225,27 +225,27 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
                                 <span class="font-medium">B&W Regular</span>
-                                <span class="font-bold text-green-600">B$0.10/page</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_regular', '0.10', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
                                 <span class="font-medium">Color Regular</span>
-                                <span class="font-bold text-green-600">B$0.25/page</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_regular', '0.25', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
                                 <span class="font-medium">B&W Photo Paper</span>
-                                <span class="font-bold text-green-600">B$0.50/page</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_photo', '0.50', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
                                 <span class="font-medium">Color Photo Paper</span>
-                                <span class="font-bold text-green-600">B$1.00/page</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_photo', '1.00', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
                                 <span class="font-medium">B&W Cardstock</span>
-                                <span class="font-bold text-green-600">B$0.25/page</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_bw_cardstock', '0.25', 'text', 'printing') }}/page</span>
                             </div>
                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
                                 <span class="font-medium">Color Cardstock</span>
-                                <span class="font-bold text-green-600">B$0.50/page</span>
+                                <span class="font-bold text-green-600">B${{ \App\Models\ContentBlock::get('price_color_cardstock', '0.50', 'text', 'printing') }}/page</span>
                             </div>
                         </div>
                     </div>
@@ -266,7 +266,7 @@
                                 <span class="mr-3 text-xl">🖼️</span> Images (JPG, PNG)
                             </li>
                             <li class="flex items-center text-teal-800 font-medium">
-                                <span class="mr-3 text-xl">📐</span> Maximum file size: 10MB
+                                <span class="mr-3 text-xl">📐</span> Maximum file size: {{ \App\Models\ContentBlock::get('max_file_size', '10', 'text', 'printing') }}MB
                             </li>
                         </ul>
                     </div>
@@ -387,8 +387,16 @@
             const copies = parseInt(document.querySelector('input[name="copies"]').value) || 1;
 
             const prices = {
-                'black_white': { 'regular': 0.10, 'photo': 0.50, 'cardstock': 0.25 },
-                'color': { 'regular': 0.25, 'photo': 1.00, 'cardstock': 0.50 }
+                'black_white': { 
+                    'regular': {{ \App\Models\ContentBlock::get('price_bw_regular', '0.10', 'text', 'printing') }}, 
+                    'photo': {{ \App\Models\ContentBlock::get('price_bw_photo', '0.50', 'text', 'printing') }}, 
+                    'cardstock': {{ \App\Models\ContentBlock::get('price_bw_cardstock', '0.25', 'text', 'printing') }} 
+                },
+                'color': { 
+                    'regular': {{ \App\Models\ContentBlock::get('price_color_regular', '0.25', 'text', 'printing') }}, 
+                    'photo': {{ \App\Models\ContentBlock::get('price_color_photo', '1.00', 'text', 'printing') }}, 
+                    'cardstock': {{ \App\Models\ContentBlock::get('price_color_cardstock', '0.50', 'text', 'printing') }} 
+                }
             };
 
             const pricePerPage = prices[colorOption][paperType];

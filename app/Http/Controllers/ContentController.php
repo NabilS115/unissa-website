@@ -284,4 +284,35 @@ class ContentController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Footer content updated successfully!']);
     }
+
+    public function printing()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editprinting');
+    }
+
+    public function updatePrinting(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+        ]);
+
+        foreach ($validated['content'] as $key => $content) {
+            // Clean the content
+            $content = trim($content ?? '');
+            
+            ContentBlock::set($key, $content, 'text', 'printing');
+        }
+
+        return response()->json(['success' => true, 'message' => 'Printing page content updated successfully!']);
+    }
 }
