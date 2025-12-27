@@ -1,5 +1,20 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| UNISSA Email Configuration
+|--------------------------------------------------------------------------
+|
+| Current Setup: Using Mailtrap for testing with institutional sender email
+| Production Setup: Commented out in .env file for later activation
+| 
+| To switch to real institutional email:
+| 1. Get SMTP settings from IT department for admin.tijarah@unissa.edu.bn
+| 2. Comment out Mailtrap settings in .env
+| 3. Uncomment and configure institutional email settings in .env
+|
+*/
+
 return [
 
     /*
