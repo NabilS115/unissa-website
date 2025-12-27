@@ -3,6 +3,94 @@
 @section('title', 'UNISSA Cafe - Homepage')
 
 @section('content')
+@if(session('success'))
+    <div id="success-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto transform scale-100 transition-transform">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Order Placed Successfully!</h3>
+                </div>
+                <button id="close-success-modal" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6">
+                <div class="text-center">
+                    <p class="text-gray-600 mb-4">Your order has been successfully placed!</p>
+                    
+                    @if(session('payment_method') === 'bank_transfer')
+                        <p class="text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            Please proceed with your BIBD bank transfer as instructed on the checkout page. You will receive an email confirmation shortly.
+                        </p>
+                    @elseif(session('payment_method') === 'cash')
+                        <p class="text-sm text-gray-500 bg-green-50 border border-green-200 rounded-lg p-4">
+                            Please bring exact cash amount when you come to collect your order. You will receive an email confirmation shortly.
+                        </p>
+                    @else
+                        <p class="text-sm text-gray-500 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            You will receive an email confirmation shortly. We'll notify you when your order is ready for pickup.
+                        </p>
+                    @endif
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-gray-200">
+                <button id="continue-shopping" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('success-modal');
+            const closeBtn = document.getElementById('close-success-modal');
+            const continueBtn = document.getElementById('continue-shopping');
+            
+            function redirectToHomepage() {
+                window.location.href = '{{ route("unissa-cafe.homepage") }}';
+            }
+            
+            // Close button click
+            if (closeBtn) {
+                closeBtn.addEventListener('click', redirectToHomepage);
+            }
+            
+            // Continue shopping button click
+            if (continueBtn) {
+                continueBtn.addEventListener('click', redirectToHomepage);
+            }
+            
+            // Close on backdrop click
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        redirectToHomepage();
+                    }
+                });
+            }
+            
+            // Close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    redirectToHomepage();
+                }
+            });
+        });
+    </script>
+@endif
+
 @if(auth()->check() && auth()->user()->role === 'admin')
     <!-- Admin Edit Button -->
     <div class="fixed top-20 right-4 z-50">

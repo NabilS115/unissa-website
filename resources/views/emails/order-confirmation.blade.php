@@ -304,12 +304,73 @@
             <div class="total-amount">B${{ number_format($order->total_price, 2) }}</div>
         </div>
 
+        <!-- Payment Instructions -->
+        @if($order->payment_method === 'cash')
+            <div class="next-steps" style="background: linear-gradient(135deg, #f0fdf4, #ecfdf5); border: 2px solid #4ade80;">
+                <h3 style="color: #16a34a; margin: 0 0 16px; font-size: 18px;">💰 Cash Payment Instructions</h3>
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                    <ul style="margin: 0; padding: 0 0 0 20px; color: #15803d;">
+                        <li style="margin-bottom: 12px;"><strong>Amount Due:</strong> B${{ number_format($order->total_price, 2) }} (please bring exact amount)</li>
+                        <li style="margin-bottom: 12px;"><strong>Payment Due:</strong> When you come to collect your order</li>
+                        <li style="margin-bottom: 12px;"><strong>Bring This Email:</strong> Show this confirmation for faster service</li>
+                        <li style="margin-bottom: 12px;"><strong>Contact:</strong> Call/WhatsApp +673 8123456 for any questions</li>
+                        <li style="margin-bottom: 12px;"><strong>Location:</strong> Unissa Cafe - We'll notify you when ready!</li>
+                    </ul>
+                </div>
+            </div>
+        @elseif($order->payment_method === 'bank_transfer')
+            <div class="next-steps" style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid #14b8a6;">
+                <h3 style="color: #0d9488; margin: 0 0 16px; font-size: 18px;">🏦 BIBD Bank Transfer Instructions</h3>
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #5eead4;">
+                    <div style="background: #f0fdfa; padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #14b8a6;">
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #374151;">Bank:</span>
+                                <span style="color: #0d9488; font-weight: 600;">BIBD (Bank Islam Brunei Darussalam)</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #374151;">Account Name:</span>
+                                <span style="color: #0d9488; font-weight: 600;">{{ \App\Models\ContentBlock::get('bank_account_name', 'UNISSA Café', 'text', 'bank-transfer') }}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #374151;">Account Number:</span>
+                                <span style="font-family: monospace; background: #14b8a6; color: white; padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 16px;">{{ \App\Models\ContentBlock::get('bank_account_number', '[Account Number]', 'text', 'bank-transfer') }}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #374151;">Amount:</span>
+                                <span style="color: #dc2626; font-weight: bold; font-size: 18px;">B${{ number_format($order->total_price, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fef3c7; padding: 16px; border-radius: 8px; border: 1px solid #f59e0b; margin-bottom: 16px;">
+                        <h4 style="color: #92400e; margin: 0 0 12px; font-size: 16px; font-weight: 600;">📝 Transfer Instructions:</h4>
+                        <ul style="margin: 0; padding: 0 0 0 20px; color: #92400e;">
+                            <li style="margin-bottom: 8px;">Transfer exactly <strong>B${{ number_format($order->total_price, 2) }}</strong> from your BIBD account</li>
+                            <li style="margin-bottom: 8px;">Use your <strong>phone number</strong> as transfer reference</li>
+                            <li style="margin-bottom: 8px;">Transfer is instant between BIBD accounts</li>
+                            <li style="margin-bottom: 8px;">Keep your transfer receipt for verification</li>
+                            <li style="margin-bottom: 8px;">WhatsApp confirmation to <strong>+673 8123456</strong></li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #dbeafe; padding: 16px; border-radius: 8px; border: 1px solid #3b82f6;">
+                        <p style="margin: 0; color: #1e40af; font-weight: 600; text-align: center;">
+                            💬 After Transfer: WhatsApp us your transfer receipt at <strong>+673 8123456</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Next Steps -->
         <div class="next-steps">
             <h3>What's Next?</h3>
             <ul>
-                @if($order->payment_status === 'pending')
-                    <li><strong>Payment:</strong> Please bring cash payment when you come to pick up your order</li>
+                @if($order->payment_status === 'pending' && $order->payment_method !== 'bank_transfer')
+                    <li><strong>Payment:</strong> Complete payment as instructed above</li>
+                @elseif($order->payment_method === 'bank_transfer')
+                    <li><strong>Payment:</strong> Complete BIBD bank transfer and send confirmation via WhatsApp</li>
                 @else
                     <li><strong>Payment:</strong> Your payment has been processed successfully</li>
                 @endif

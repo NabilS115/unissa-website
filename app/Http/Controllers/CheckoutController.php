@@ -128,7 +128,8 @@ class CheckoutController extends Controller
         };
 
         return redirect()->route('unissa-cafe.homepage')
-            ->with('success', $successMessage . " Order ID: #{$order->id}");
+            ->with('success', $successMessage . " Order ID: #{$order->id}")
+            ->with('payment_method', $validated['payment_method']);
     }
 
     /**
@@ -266,6 +267,7 @@ class CheckoutController extends Controller
         };
 
         return redirect()->route('unissa-cafe.homepage')
-            ->with('success', $successMessage . " {$orderCount} order(s) created with total amount: $" . number_format($totalPrice, 2));
+            ->with('success', $successMessage . " {$orderCount} order(s) created with total amount: $" . number_format($totalPrice, 2))
+            ->with('payment_method', $validated['payment_method']);
     }
 }
