@@ -70,35 +70,32 @@ window.__adminOrders = {
             </div>
 
             <!-- Statistics Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
-                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <div class="text-2xl font-bold text-blue-700">{{ $stats['total_orders'] }}</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-blue-700">{{ $stats['total_orders'] ?? 0 }}</div>
                     <div class="text-sm text-blue-600">Total Orders</div>
                 </div>
-                <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
-                    <div class="text-2xl font-bold text-yellow-700">{{ $stats['pending_orders'] }}</div>
+                <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-yellow-700">{{ $stats['pending_orders'] ?? 0 }}</div>
                     <div class="text-sm text-yellow-600">Pending</div>
                 </div>
-                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <div class="text-2xl font-bold text-blue-700">{{ $stats['confirmed_orders'] }}</div>
-                    <div class="text-sm text-blue-600">Confirmed</div>
+                <div class="bg-green-50 rounded-xl p-4 border border-green-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-green-700">{{ $stats['confirmed_orders'] ?? 0 }}</div>
+                    <div class="text-sm text-green-600">Confirmed</div>
                 </div>
-                <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                    <div class="text-2xl font-bold text-purple-700">{{ $stats['processing_orders'] }}</div>
+                <div class="bg-purple-50 rounded-xl p-4 border border-purple-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-purple-700">{{ $stats['processing_orders'] ?? 0 }}</div>
                     <div class="text-sm text-purple-600">Processing</div>
                 </div>
-                <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
-                    <div class="text-2xl font-bold text-orange-700">{{ $stats['ready_for_pickup_orders'] }}</div>
+                <div class="bg-orange-50 rounded-xl p-4 border border-orange-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-orange-700">{{ $stats['ready_for_pickup_orders'] ?? 0 }}</div>
                     <div class="text-sm text-orange-600">Ready for Pickup</div>
                 </div>
-                <div class="bg-green-50 rounded-xl p-4 border border-green-200">
-                    <div class="text-2xl font-bold text-green-700">{{ $stats['picked_up_orders'] }}</div>
-                    <div class="text-sm text-green-600">Picked Up</div>
-                </div>
-                <div class="bg-red-50 rounded-xl p-4 border border-red-200">
-                    <div class="text-2xl font-bold text-red-700">{{ $stats['cancelled_orders'] }}</div>
+                <div class="bg-red-50 rounded-xl p-4 border border-red-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-red-700">{{ $stats['cancelled_orders'] ?? 0 }}</div>
                     <div class="text-sm text-red-600">Cancelled</div>
                 </div>
+            </div>
                 <div class="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
                     <div class="text-lg font-bold text-indigo-700">${{ number_format($stats['total_revenue'], 2) }}</div>
                     <div class="text-sm text-indigo-600">Revenue</div>
@@ -108,6 +105,7 @@ window.__adminOrders = {
                     <div class="text-sm text-teal-600">Last 7 Days</div>
                 </div>
             </div>
+
 
             <!-- Filters -->
             <form method="GET" class="bg-gray-50 rounded-xl p-6">

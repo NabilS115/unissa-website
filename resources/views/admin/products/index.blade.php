@@ -83,23 +83,62 @@ window.__adminProducts = {
             </div>
 
             <!-- Statistics Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
-                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <div class="text-2xl font-bold text-blue-700">{{ $stats['total_products'] }}</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-blue-700">{{ $stats['total_products'] ?? 0 }}</div>
                     <div class="text-sm text-blue-600">Total Products</div>
                 </div>
-                <div class="bg-green-50 rounded-xl p-4 border border-green-200">
-                    <div class="text-2xl font-bold text-green-700">{{ $stats['available_products'] }}</div>
+                <div class="bg-green-50 rounded-xl p-4 border border-green-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-green-700">{{ $stats['available_products'] ?? 0 }}</div>
                     <div class="text-sm text-green-600">Available</div>
                 </div>
-                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <div class="text-2xl font-bold text-gray-700">{{ $stats['inactive_products'] }}</div>
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-gray-700">{{ $stats['inactive_products'] ?? 0 }}</div>
                     <div class="text-sm text-gray-600">Inactive</div>
                 </div>
-                <div class="bg-red-50 rounded-xl p-4 border border-red-200">
-                    <div class="text-2xl font-bold text-red-700">{{ $stats['out_of_stock'] }}</div>
+                <div class="bg-red-50 rounded-xl p-4 border border-red-200 hover:shadow-md transition-shadow">
+                    <div class="text-2xl font-bold text-red-700">{{ $stats['out_of_stock'] ?? 0 }}</div>
                     <div class="text-sm text-red-600">Out of Stock</div>
                 </div>
+            </div>
+                    <div class="bg-red-50 rounded-xl p-3 sm:p-4 border border-red-200 transition-all duration-300 hover:shadow-md">
+                        <div class="text-xl sm:text-2xl font-bold text-red-700">{{ $stats['out_of_stock'] ?? 0 }}</div>
+                        <div class="text-xs sm:text-sm text-red-600">Out of Stock</div>
+                    </div>
+                    <div class="bg-yellow-50 rounded-xl p-3 sm:p-4 border border-yellow-200 transition-all duration-300 hover:shadow-md">
+                        <div class="text-xl sm:text-2xl font-bold text-yellow-700">{{ $stats['discontinued_products'] ?? 0 }}</div>
+                        <div class="text-xs sm:text-sm text-yellow-600">Discontinued</div>
+                    </div>
+                    <div class="bg-teal-50 rounded-xl p-3 sm:p-4 border border-teal-200 transition-all duration-300 hover:shadow-md">
+                        <div class="text-xl sm:text-2xl font-bold text-teal-700">{{ $stats['food_products'] ?? 0 }}</div>
+                        <div class="text-xs sm:text-sm text-teal-600">Food Items</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-3 sm:p-4 border border-purple-200 transition-all duration-300 hover:shadow-md">
+                        <div class="text-xl sm:text-2xl font-bold text-purple-700">{{ $stats['merchandise_products'] ?? 0 }}</div>
+                        <div class="text-xs sm:text-sm text-purple-600">Merchandise</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <script>
+            // Loading state management for product stats
+            document.addEventListener('DOMContentLoaded', function() {
+                const skeleton = document.getElementById('product-stats-skeleton');
+                const content = document.getElementById('product-stats-content');
+                
+                // Show content and hide skeleton after a brief delay
+                setTimeout(() => {
+                    skeleton.style.display = 'none';
+                    content.style.display = 'contents';
+                    content.style.opacity = '0';
+                    setTimeout(() => {
+                        content.style.transition = 'opacity 0.5s ease-in';
+                        content.style.opacity = '1';
+                    }, 50);
+                }, 800);
+            });
+            </script>
                 <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
                     <div class="text-2xl font-bold text-yellow-700">{{ $stats['low_stock'] }}</div>
                     <div class="text-sm text-yellow-600">Low Stock</div>

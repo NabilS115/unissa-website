@@ -45,8 +45,8 @@
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
@@ -58,13 +58,13 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
-                            <dd class="text-lg font-semibold text-gray-900" id="total-users">{{ $totalUsers ?? 0 }}</dd>
+                            <dd class="text-lg font-semibold text-gray-900">{{ $totalUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -76,13 +76,13 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Active Users</dt>
-                            <dd class="text-lg font-semibold text-gray-900" id="active-users">{{ $activeUsers ?? 0 }}</dd>
+                            <dd class="text-lg font-semibold text-gray-900">{{ $activeUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
@@ -94,13 +94,13 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Admins</dt>
-                            <dd class="text-lg font-semibold text-gray-900" id="admin-users">{{ $adminUsers ?? 0 }}</dd>
+                            <dd class="text-lg font-semibold text-gray-900">{{ $adminUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
@@ -112,12 +112,13 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">New This Month</dt>
-                            <dd class="text-lg font-semibold text-gray-900" id="new-users">{{ $newUsers ?? 0 }}</dd>
+                            <dd class="text-lg font-semibold text-gray-900">{{ $newUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Search and Filters -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
