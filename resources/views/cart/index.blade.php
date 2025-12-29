@@ -115,47 +115,79 @@
                                         <!-- Product Info -->
                                         <div class="flex-1 min-w-0">
                                             <h3 class="text-lg font-bold text-gray-800 mb-1 truncate">{{ $item->product->name }}</h3>
-                                            <div class="mb-2">
-                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-600 capitalize border border-gray-200">
-                                                    {{ $item->product->category }}
-                                                </span>
+                                            @if($item->product->category !== 'Printing Services')
+                                                <div class="mb-2">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-600 capitalize border border-gray-200">
+                                                        {{ $item->product->category }}
+                                                    </span>
+                                                </div>
+                                                <div class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</div>
+                                            @endif
+                                        </div>
+                                        
+                                        @if($item->product->category === 'Printing Services')
+                                            <!-- Print Job - Special Layout -->
+                                            <div class="w-full">
+                                                <!-- Print job details in a more spacious layout -->
+                                                <div class="flex flex-col gap-3">
+                                                    <!-- Category badge for print jobs -->
+                                                    <div class="mb-1">
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200">
+                                                            🖨️ {{ $item->product->category }}
+                                                        </span>
+                                                    </div>
+                                                    <!-- Print specifications on separate line -->
+                                                    @if($item->product->desc)
+                                                        <div class="text-sm text-gray-600">{{ $item->product->desc }}</div>
+                                                    @endif
+                                                    <!-- Price and quantity info -->
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center gap-4">
+                                                            <div class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</div>
+                                                            <div class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Qty: 1</div>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <div class="text-sm text-gray-500 mb-1">Total</div>
+                                                            <div class="text-lg font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="text-lg font-semibold text-teal-600">B${{ number_format($item->product->price, 2) }}</div>
-                                        </div>
-                                        
-                                        <!-- Quantity Controls -->
-                                        <div class="flex items-center justify-end gap-2">
-                                            <form id="cart-form-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2"
-                                                  data-stock-quantity="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}"
-                                                  data-track-stock="{{ $item->product->track_stock ? 'true' : 'false' }}">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="button" onclick="updateQuantity('{{ $item->id }}', -1)" 
-                                                        class="w-8 h-8 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-lg transition-colors">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                                                    </svg>
-                                                </button>
+                                        @else
+                                            <!-- Regular Product - Quantity Controls -->
+                                            <div class="flex items-center justify-end gap-2">
+                                                <form id="cart-form-{{ $item->id }}" action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2"
+                                                      data-stock-quantity="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}"
+                                                      data-track-stock="{{ $item->product->track_stock ? 'true' : 'false' }}">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="button" onclick="updateQuantity('{{ $item->id }}', -1)" 
+                                                            class="w-8 h-8 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-lg transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                                        </svg>
+                                                    </button>
+                                                    
+                                                    <input type="number" name="quantity" value="{{ $item->quantity }}" 
+                                                           min="1" max="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}" 
+                                                           class="w-16 text-center text-sm font-semibold border border-gray-200 rounded-lg py-1 focus:border-teal-400 focus:ring-1 focus:ring-teal-200 appearance-none"
+                                                           style="-webkit-appearance: none; -moz-appearance: textfield;"
+                                                           onchange="this.form.submit()">
+                                                    
+                                                    <button type="button" onclick="updateQuantity('{{ $item->id }}', 1)" 
+                                                            class="w-8 h-8 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-lg transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                        </svg>
+                                                    </button>
+                                                </form>
                                                 
-                                                <input type="number" name="quantity" value="{{ $item->quantity }}" 
-                                                       min="1" max="{{ $item->product->track_stock ? $item->product->stock_quantity : 100 }}" 
-                                                       class="w-16 text-center text-sm font-semibold border border-gray-200 rounded-lg py-1 focus:border-teal-400 focus:ring-1 focus:ring-teal-200 appearance-none"
-                                                       style="-webkit-appearance: none; -moz-appearance: textfield;"
-                                                       onchange="this.form.submit()">
-                                                
-                                                <button type="button" onclick="updateQuantity('{{ $item->id }}', 1)" 
-                                                        class="w-8 h-8 flex items-center justify-center bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-lg transition-colors">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        
-                                        <!-- Total Price -->
-                                        <div class="text-right min-w-[90px]">
-                                            <div class="text-xl font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</div>
-                                        </div>
+                                                <!-- Total Price -->
+                                                <div class="text-right min-w-[90px]">
+                                                    <div class="text-xl font-bold text-gray-800" data-item-total>B${{ number_format($item->total_price, 2) }}</div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     
                                     <!-- Remove Button -->

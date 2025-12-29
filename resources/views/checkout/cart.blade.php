@@ -215,16 +215,36 @@
                                         }
                                     }
                                     $itemImageSrc = $img ? (Str::startsWith($img, ['http://', 'https://']) ? $img : asset('storage/' . $img)) : null;
+                                    
+                                    // Special handling for printing services
+                                    $isPrintJob = $item->product->category === 'Printing Services';
+                                    $printingIcon = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56"><rect width="56" height="56" rx="12" fill="%23065f46"/><text x="50%" y="55%" text-anchor="middle" fill="white" font-size="20" font-family="Arial" dy=".1em">🖨️</text></svg>';
                                 @endphp
 
                                 <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all duration-200">
-                                    <img src="{{ $itemImageSrc ?? '' }}" alt="{{ $item->product->name }}" class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm">
-                                    <div class="flex-grow">
-                                        <h4 class="font-semibold text-gray-800">{{ $item->product->name }}</h4>
-                                        <p class="text-sm text-teal-600 font-medium">{{ $item->quantity }}x B${{ number_format($item->product->price, 2) }}</p>
+                                    @if($isPrintJob)
+                                        <div class="w-14 h-14 rounded-xl border-2 border-white shadow-sm flex-shrink-0 flex items-center justify-center bg-gradient-to-r from-teal-600 to-emerald-600">
+                                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                                            </svg>
+                                        </div>
+                                    @else
+                                        @if($itemImageSrc)
+                                            <img src="{{ $itemImageSrc }}" alt="{{ $item->product->name }}" class="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-sm flex-shrink-0">
+                                        @else
+                                            <div class="w-14 h-14 rounded-xl border-2 border-white shadow-sm flex-shrink-0 flex items-center justify-center bg-gray-200">
+                                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    @endif
+                                    <div class="flex-grow min-w-0 overflow-hidden">
+                                        <h4 class="font-semibold text-gray-800 text-sm truncate break-words" title="{{ $item->product->name }}">{{ $item->product->name }}</h4>
+                                        <p class="text-xs text-teal-600 font-medium">{{ $item->quantity }}x B${{ number_format($item->product->price, 2) }}</p>
                                     </div>
-                                    <div class="text-right">
-                                        <p class="font-bold text-teal-700">B${{ number_format($item->total_price, 2) }}</p>
+                                    <div class="text-right flex-shrink-0">
+                                        <p class="font-bold text-teal-700 text-sm">B${{ number_format($item->total_price, 2) }}</p>
                                     </div>
                                 </div>
                             @endforeach

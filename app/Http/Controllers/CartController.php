@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -219,9 +220,39 @@ class CartController extends Controller
             abort(403);
         }
 
-        $cartItem->delete();
-
-        return redirect()->back()->with('success', 'Item removed from cart!');
+        try {
+            // Check if this is a printing service item
+            if ($cartItem->product && $cartItem->product->category === 'Printing Services') {
+                // Extract print job ID from notes if available
+                $printJobId = null;
+                if ($cartItem->notes) {
+                    preg_match('/Print Job ID: (\d+)/', $cartItem->notes, $matches);
+                    if (isset($matches[1])) {
+                        $printJobId = $matches[1];
+                    }
+                }
+                
+                // Store product info before deletion
+                $productId = $cartItem->product->id;
+                
+                // Delete the cart item first
+                $cartItem->delete();
+                
+                // Delete the temporary product created for this print job
+                \App\Models\Product::where('id', $productId)
+                    ->where('category', 'Printing Services')
+                    ->delete();
+                
+                return redirect()->back()->with('success', 'Print job removed from cart!');
+            } else {
+                // Regular product removal
+                $cartItem->delete();
+                return redirect()->back()->with('success', 'Item removed from cart!');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error removing cart item: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to remove item from cart. Please try again.');
+        }
     }
 
     /**
@@ -229,9 +260,33 @@ class CartController extends Controller
      */
     public function clearCart()
     {
-        Cart::where('user_id', Auth::id())->delete();
-
-        return redirect()->back()->with('success', 'Cart cleared!');
+        try {
+            // Get all cart items for this user
+            $cartItems = Cart::where('user_id', Auth::id())->with('product')->get();
+            
+            // Collect IDs of temporary products (printing services) to delete
+            $printingProductIds = [];
+            foreach ($cartItems as $item) {
+                if ($item->product && $item->product->category === 'Printing Services') {
+                    $printingProductIds[] = $item->product->id;
+                }
+            }
+            
+            // Delete all cart items
+            Cart::where('user_id', Auth::id())->delete();
+            
+            // Delete temporary printing service products
+            if (!empty($printingProductIds)) {
+                \App\Models\Product::whereIn('id', $printingProductIds)
+                    ->where('category', 'Printing Services')
+                    ->delete();
+            }
+            
+            return redirect()->back()->with('success', 'Cart cleared!');
+        } catch (\Exception $e) {
+            \Log::error('Error clearing cart: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to clear cart. Please try again.');
+        }
     }
 
     /**

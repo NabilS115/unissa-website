@@ -221,15 +221,25 @@ input[type="number"] {
                                     }
                                 }
                                 $productImageSrc = $imgPath ? (Str::startsWith($imgPath, ['http://', 'https://']) ? $imgPath : asset('storage/' . $imgPath)) : null;
+                                // Check if this is a printing service
+                                $isPrintJob = $product->category === 'Printing Services';
                                 // Inline SVG fallback (small transparent placeholder)
                                 $svgFallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="100%" height="100%" fill="%23e6fffa"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23666" font-size="14">No Image</text></svg>';
                             @endphp
-                            <img src="{{ $productImageSrc ?? $svgFallback }}" alt="{{ $product->name }}"
-                                 class="w-18 h-18 object-cover rounded-xl border-2 border-white shadow-md" onerror="this.onerror=null;this.src='{{ $svgFallback }}';">
-                            <div class="flex-1">
-                                <h3 class="font-bold text-gray-900 mb-1">{{ $product->name }}</h3>
-                                <p class="text-sm text-gray-600 mb-3">{{ Str::limit($product->desc, 60) }}</p>
-                                <div class="flex items-center gap-2">
+                            @if($isPrintJob)
+                                <div class="w-18 h-18 rounded-xl border-2 border-white shadow-md flex-shrink-0 flex items-center justify-center bg-gradient-to-r from-teal-600 to-emerald-600">
+                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                                    </svg>
+                                </div>
+                            @else
+                                <img src="{{ $productImageSrc ?? $svgFallback }}" alt="{{ $product->name }}"
+                                     class="w-18 h-18 object-cover rounded-xl border-2 border-white shadow-md flex-shrink-0" onerror="this.onerror=null;this.src='{{ $svgFallback }}';">
+                            @endif
+                            <div class="flex-1 min-w-0 overflow-hidden">
+                                <h3 class="font-bold text-gray-900 mb-1 text-sm truncate break-words" title="{{ $product->name }}">{{ $product->name }}</h3>
+                                <p class="text-xs text-gray-600 mb-3">{{ Str::limit($product->desc, 60) }}</p>
+                                <div class="flex items-center gap-2 flex-wrap">
                                     <span class="inline-block px-3 py-1 text-xs font-semibold bg-teal-100 text-teal-800 rounded-full">
                                         {{ $product->category }}
                                     </span>

@@ -183,7 +183,7 @@
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white text-xl font-bold py-6 px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50" id="upload-btn">
-                                    <span id="upload-text">Upload & Calculate Price</span>
+                                    <span id="upload-text">Process Print Job</span>
                                     <span id="upload-loading" class="hidden">
                                         <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -272,17 +272,19 @@
                                 <div class="space-y-4">
                                     @foreach($userPrintJobs as $job)
                                         <div class="print-job-card border border-gray-200 rounded-xl p-4">
-                                            <div class="flex items-start justify-between">
-                                                <div class="flex-1">
-                                                    <p class="font-bold text-gray-900 truncate">{{ $job->original_filename }}</p>
-                                                    <p class="text-sm text-gray-500">{{ $job->created_at->diffForHumans() }}</p>
-                                                    <p class="text-sm text-green-600 font-bold">B${{ number_format($job->total_price, 2) }}</p>
+                                            <div class="flex items-start justify-between gap-4">
+                                                <div class="flex-1 min-w-0 overflow-hidden">
+                                                    <p class="font-bold text-gray-900 text-sm truncate break-all" title="{{ $job->original_filename }}">{{ $job->original_filename }}</p>
+                                                    <p class="text-xs text-gray-500 mt-1">{{ $job->created_at->diffForHumans() }}</p>
+                                                    <p class="text-sm text-green-600 font-bold mt-1">B${{ number_format($job->total_price, 2) }}</p>
                                                 </div>
-                                                <span class="text-sm px-3 py-1 rounded-full font-medium
-                                                    {{ $job->status === 'uploaded' ? 'bg-blue-100 text-blue-800' : 
-                                                       ($job->status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800') }}">
-                                                    {{ $job->status_display }}
-                                                </span>
+                                                <div class="flex-shrink-0">
+                                                    <span class="text-xs px-3 py-1 rounded-full font-medium whitespace-nowrap
+                                                        {{ $job->status === 'uploaded' ? 'bg-blue-100 text-blue-800' : 
+                                                           ($job->status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800') }}">
+                                                        {{ $job->status_display }}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach

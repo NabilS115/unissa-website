@@ -87,61 +87,6 @@
                 </ul>
             </nav>
 
-            <!-- Search Icon -->
-            <div class="relative group" id="searchbar-group">
-                <button id="searchbar-icon" class="bg-white text-teal-600 rounded-full p-2 flex items-center justify-center shadow hover:shadow-lg transition-all duration-200" style="width:40px;height:40px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#008080" class="w-5 h-5">
-                        <circle cx="11" cy="11" r="8" stroke-width="2" stroke="#008080" fill="none"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="#008080" />
-                    </svg>
-                </button>
-                <form id="searchbar-dropdown" class="absolute right-0 top-full mt-2 w-96 bg-white rounded shadow-lg border border-gray-200 transition-all duration-300 opacity-0 pointer-events-none z-[9999]" action="{{ route('search') }}" method="GET">
-                    <div class="flex">
-                        <input type="text" name="search" id="main-search-input" placeholder="Search products, reviews..." class="flex-1 px-4 py-2 rounded-l-md text-black focus:outline-none" autocomplete="off" />
-                        <select name="scope" id="search-scope" class="px-3 py-2 border-l border-gray-300 text-black text-sm focus:outline-none">
-                            <option value="all">All</option>
-                            <option value="products">Products</option>
-                            <option value="reviews">Reviews</option>
-                            @if(auth()->check() && auth()->user()->role === 'admin')
-                                <option value="users">Users</option>
-                            @endif
-                        </select>
-                        <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded-r-md font-semibold hover:bg-teal-700 transition-colors">Search</button>
-                    </div>
-                    <div id="search-suggestions" class="w-full bg-white border-t border-gray-200 rounded-b shadow-lg z-[9999] hidden max-h-64 overflow-y-auto">
-                        <!-- Dynamic suggestions will be loaded here -->
-                    </div>
-                </form>
-                
-                <style>
-                    /* Search dropdown styles */
-                    #searchbar-dropdown {
-                        opacity: 0;
-                        pointer-events: none;
-                        transition: all 0.3s ease;
-                        transform: translateY(-8px);
-                        z-index: 9999;
-                    }
-                    #searchbar-group.active #searchbar-dropdown {
-                        opacity: 1;
-                        pointer-events: auto;
-                        transform: translateY(0);
-                    }
-                    
-                    /* Ensure search bar is visible on desktop */
-                    @media (min-width: 768px) {
-                        #desktop-nav {
-                            display: flex !important;
-                        }
-                        #searchbar-group {
-                            display: block !important;
-                        }
-                    }
-                </style>
-                
-                <!-- header scripts extracted to public/js/header.js -->
-            </div>
-
             <!-- Cart Icon (only show on cafe pages and for authenticated users) -->
             @if($shouldShowUnissaBranding)
                 @auth
@@ -596,7 +541,7 @@
         
         <!-- header bootstrap + external script (load for all users so search/profile toggles work for guests) -->
         <script>
-            window.__searchSuggestionsUrl = '{{ route('search.suggestions') }}';
+            // Search functionality removed - using browse page search only
             @auth
                 window.__cartCountUrl = '{{ route('cart.count') }}';
                 window.__isAuthenticated = true;

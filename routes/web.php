@@ -81,7 +81,7 @@ use App\Http\Controllers\ReviewController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\SearchController;
+
 use App\Http\Controllers\CartController;
 
 // contact routes
@@ -460,11 +460,7 @@ Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('revi
 Route::post('/reviews/{id}/helpful', [ReviewController::class, 'helpful'])->name('review.helpful');
 Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('review.update')->middleware('auth');
 
-// Search routes
-Route::get('/search', [SearchController::class, 'search'])->name('search');
-Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
-Route::get('/search/catalog', [SearchController::class, 'catalogSearch'])->name('search.catalog');
-Route::get('/search/filters', [SearchController::class, 'getFilters'])->name('search.filters');
+// Search routes removed - using browse page search only
 
 // Gallery routes (admin protected)
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {

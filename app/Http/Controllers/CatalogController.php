@@ -366,9 +366,10 @@ class CatalogController extends Controller
         });
         
         $others = Cache::remember('products.featured.others', now()->addHour(), function () {
-            // First try to get products with reviews (rating-based)
+            // First try to get products with reviews (rating-based), excluding printing services
             $withReviews = \App\Models\Product::where('type', 'others')
                 ->where('is_active', true)
+                ->where('category', '!=', 'Printing Services')
                 ->with(['reviews' => function ($query) {
                     $query->select('product_id', 'rating');
                 }])
@@ -387,6 +388,7 @@ class CatalogController extends Controller
                 
                 $newest = \App\Models\Product::where('type', 'others')
                     ->where('is_active', true)
+                    ->where('category', '!=', 'Printing Services')
                     ->whereNotIn('id', $excludeIds)
                     ->with(['reviews' => function ($query) {
                         $query->select('product_id', 'rating');
@@ -439,6 +441,7 @@ class CatalogController extends Controller
         $others = Cache::remember('products.browse.others', now()->addMinutes(30), function () {
             return \App\Models\Product::where('type', 'others')
                 ->where('is_active', true)
+                ->where('category', '!=', 'Printing Services')
                 ->with(['reviews' => function ($query) {
                     $query->select('product_id', 'rating');
                 }])
@@ -449,6 +452,7 @@ class CatalogController extends Controller
         if (is_null($others)) {
             $others = \App\Models\Product::where('type', 'others')
                 ->where('is_active', true)
+                ->where('category', '!=', 'Printing Services')
                 ->with(['reviews' => function ($query) {
                     $query->select('product_id', 'rating');
                 }])
@@ -628,7 +632,7 @@ class CatalogController extends Controller
             }
             
             // Clear global search caches
-            Cache::forget('search.suggestions');
+            // Search suggestions cache removed
             Cache::forget('search.categories');
             Cache::forget('search.filters');
             
