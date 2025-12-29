@@ -572,14 +572,32 @@ class AdminProductController extends Controller
     private function getProductStatistics(): array
     {
         return Cache::remember('admin.product.stats', now()->addMinutes(10), function () {
+            $total = Product::count();
+            $active = Product::where('status', Product::STATUS_ACTIVE)->count();
+            $inactive = Product::where('status', Product::STATUS_INACTIVE)->count();
+            $outOfStock = Product::where('status', Product::STATUS_OUT_OF_STOCK)->count();
+            $discontinued = Product::where('status', Product::STATUS_DISCONTINUED)->count();
+            $lowStock = Product::lowStock()->count();
+            $recent = Product::where('created_at', '>=', now()->subDays(7))->count();
+            
+            // Calculate "available" as active products that are not out of stock
+            $available = Product::where('status', Product::STATUS_ACTIVE)
+                              ->where(function($q) {
+                                  $q->where('track_stock', false)
+                                    ->orWhere(function($subQ) {
+                                        $subQ->where('track_stock', true)
+                                             ->where('stock_quantity', '>', 0);
+                                    });
+                              })->count();
+
             return [
-                'total_products' => Product::count(),
-                'available_products' => Product::where('status', Product::STATUS_ACTIVE)->count(),
-                'inactive_products' => Product::where('status', Product::STATUS_INACTIVE)->count(),
-                'out_of_stock' => Product::where('status', Product::STATUS_OUT_OF_STOCK)->count(),
-                'low_stock' => Product::lowStock()->count(),
-                'discontinued' => Product::where('status', Product::STATUS_DISCONTINUED)->count(),
-                'recent_products' => Product::where('created_at', '>=', now()->subDays(7))->count(),
+                'total_products' => $total,
+                'available_products' => $available,
+                'inactive_products' => $inactive,
+                'out_of_stock' => $outOfStock,
+                'low_stock' => $lowStock,
+                'discontinued' => $discontinued,
+                'recent_products' => $recent,
             ];
         });
     }

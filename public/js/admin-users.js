@@ -24,7 +24,7 @@
   async function loadUsers(){
     const tableBody = document.getElementById('users-table-body');
     if(!tableBody) return;
-    tableBody.innerHTML = `\n        <tr>\n            <td colspan="6" class="px-6 py-12 text-center">\n                <div class="flex flex-col items-center">\n                    <div class="animate-spin rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>\n                    <p class="text-gray-600">Loading users...</p>\n                </div>\n            </td>\n        </tr>\n    `;
+    tableBody.innerHTML = `\n        <tr>\n            <td colspan="5" class="px-6 py-12 text-center">\n                <div class="flex flex-col items-center">\n                    <div class="animate-spin rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>\n                    <p class="text-gray-600">Loading users...</p>\n                </div>\n            </td>\n        </tr>\n    `;
 
     try{
       const params = new URLSearchParams({ page: currentPage, search: currentSearch, admin_level: currentAdminLevelFilter, status: currentStatusFilter, include_deleted: includeDeleted });
@@ -48,21 +48,21 @@
         updateStats(data.stats||{}); 
       } else { 
         console.error('API Error:', response.status, response.statusText);
-        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Failed to load users (${response.status}). Please try again.</td></tr>`; 
+        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-red-600">Failed to load users (${response.status}). Please try again.</td></tr>`; 
       }
     }catch(e){ 
       console.error('Error loading users', e); 
       if(e.name === 'AbortError') {
-        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Request timed out. Please check your connection and try again.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-red-600">Request timed out. Please check your connection and try again.</td></tr>`;
       } else {
-        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Network error: ${e.message}. Please try again.</td></tr>`; 
+        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-red-600">Network error: ${e.message}. Please try again.</td></tr>`; 
       }
     }
   }
 
   function displayUsers(users){
     const tableBody = document.getElementById('users-table-body'); if(!tableBody) return;
-    if(!users || users.length===0){ tableBody.innerHTML = `\n            <tr>\n                <td colspan="6" class="px-6 py-12 text-center">\n                    <div class="flex flex-col items-center">\n                        <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7"/>\n                        </svg>\n                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No users found</h3>\n                        <p class="text-gray-600">Try adjusting your search criteria</p>\n                    </div>\n                </td>\n            </tr>\n        `; return; }
+    if(!users || users.length===0){ tableBody.innerHTML = `\n            <tr>\n                <td colspan="5" class="px-6 py-12 text-center">\n                    <div class="flex flex-col items-center">\n                        <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7"/>\n                        </svg>\n                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No users found</h3>\n                        <p class="text-gray-600">Try adjusting your search criteria</p>\n                    </div>\n                </td>\n            </tr>\n        `; return; }
 
     const usersHtml = users.map(user => {
       const avatar = user.profile_photo_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=14b8a6&color=fff');
@@ -91,7 +91,7 @@
         actionButtons = `${editBtn} ${toggleBtn} ${deleteBtn}`;
       }
 
-      return `\n        <tr class="hover:bg-gray-50 ${user.deleted_at ? 'opacity-60' : ''}">\n            <td class="px-6 py-4 whitespace-nowrap">\n                <div class="flex items-center">\n                    <img src="${avatar}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">\n                    <div class="ml-4">\n                        <div class="text-sm font-medium text-gray-900">${user.name}</div>\n                        <div class="text-sm text-gray-500">${user.email}</div>\n                    </div>\n                </div>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleBadge}">${user.admin_level ? user.admin_level.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'User'}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge}">${statusText}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\n                ${new Date(user.created_at).toLocaleDateString()}\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\n                ${user.reviews_count ?? 0}\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">\n                <div class="flex items-center gap-2">\n                    ${actionButtons}\n                </div>\n            </td>\n        </tr>\n      `;
+      return `\n        <tr class="hover:bg-gray-50 ${user.deleted_at ? 'opacity-60' : ''}">\n            <td class="px-6 py-4 whitespace-nowrap">\n                <div class="flex items-center">\n                    <img src="${avatar}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">\n                    <div class="ml-4">\n                        <div class="text-sm font-medium text-gray-900">${user.name}</div>\n                        <div class="text-sm text-gray-500">${user.email}</div>\n                    </div>\n                </div>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleBadge}">${user.admin_level ? user.admin_level.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'User'}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge}">${statusText}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\n                ${new Date(user.created_at).toLocaleDateString()}\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">\n                <div class="flex items-center gap-2">\n                    ${actionButtons}\n                </div>\n            </td>\n        </tr>\n      `;
     }).join('');
 
     tableBody.innerHTML = usersHtml;

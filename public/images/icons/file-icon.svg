@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#6b7280"/>
+  <path d="M16 16h24l8 8v24c0 2-2 4-4 4H16c-2 0-4-2-4-4V20c0-2 2-4 4-4z" fill="white"/>
+  <text x="50%" y="85%" text-anchor="middle" fill="white" font-size="8" font-family="Arial" dy=".1em">FILE</text>
+</svg>

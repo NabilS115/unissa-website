@@ -77,10 +77,16 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
-    // Relationship with Order model
+    // Relationship with OrderItem model
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    // Relationship with Order model through OrderItem
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasManyThrough(Order::class, OrderItem::class, 'product_id', 'id', 'id', 'order_id');
     }
 
     // Relationship with FeaturedProduct model

@@ -106,6 +106,9 @@ class PrintingController extends Controller
         $productName = "Print Job: {$printJob->original_filename}";
         $productDesc = "Print specifications: {$printJob->copies} copies, {$printJob->color_option_display}, {$printJob->paper_size} {$printJob->paper_type_display}";
 
+        // Create a proper image for the print job based on file type
+        $printJobImage = $this->generatePrintJobImage($printJob, $originalName, $extension);
+
         // Create temporary product for the print job
         $product = Product::create([
             'name' => $productName,
@@ -114,7 +117,7 @@ class PrintingController extends Controller
             'type' => 'others',
             'price' => $printJob->total_price,
             'is_active' => true,
-            'img' => 'images/UNISSA_CAFE.png' // Using cafe logo as placeholder
+            'img' => $printJobImage
         ]);
 
         // Add to cart
@@ -191,5 +194,30 @@ class PrintingController extends Controller
             'jpg', 'jpeg', 'png' => 1, // Images are typically 1 page
             default => 1
         };
+    }
+
+    /**
+     * Generate an appropriate image/icon for the print job based on file type
+     */
+    private function generatePrintJobImage(PrintJob $printJob, string $originalName, string $extension): string
+    {
+        $extension = strtolower($extension);
+        
+        // Return appropriate icon path based on file type
+        return match($extension) {
+            'pdf' => '/images/icons/pdf-icon.svg',
+            'doc', 'docx' => '/images/icons/document-icon.svg',
+            'jpg', 'jpeg', 'png' => '/images/icons/image-icon.svg',
+            default => '/images/icons/file-icon.svg'
+        };
+    }
+
+    /**
+     * Generate SVG icon data URL for different file types
+     */
+    private function generateFileTypeIcon(string $type, string $colorOption): string
+    {
+        // This method is no longer used, keeping for backward compatibility
+        return '/images/icons/print-icon.svg';
     }
 }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#059669"/>
+  <rect x="12" y="16" width="40" height="32" rx="4" fill="white"/>
+  <circle cx="22" cy="26" r="3" fill="#059669"/>
+  <path d="M12 40l8-8 6 6 12-12 10 8" stroke="#059669" stroke-width="2" fill="none"/>
+  <text x="50%" y="85%" text-anchor="middle" fill="white" font-size="8" font-family="Arial" dy=".1em">IMG</text>
+</svg>
