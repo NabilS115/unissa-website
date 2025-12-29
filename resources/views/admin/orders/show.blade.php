@@ -1,0 +1,449 @@
+@extends('layouts.app')
+
+@section('title', 'Unissa Cafe - Order Details - #' . $order->id)
+
+@section('content')
+<!-- Bootstrap + external admin orders show JS -->
+<script>
+    window.__adminOrder = {
+        csrf: '{{ csrf_token() }}',
+        updateStatusUrl: '{{ route('admin.orders.update-status', $order->id) }}',
+        updatePaymentUrl: '{{ route('admin.orders.update-payment-status', $order->id) }}',
+        orderId: {{ $order->id }}
+    };
+</script>
+<script src="/js/admin-orders-show.js"></script>
+
+<div class="min-h-screen bg-gray-50 py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Order #{{ $order->id }}</h1>
+                    <p class="text-gray-500 mt-1 text-sm">Placed on {{ $order->created_at->format('F j, Y \a\t g:i A') }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 shadow-sm
+                    {{ $order->status === 'pending' ? 'bg-yellow-50 text-yellow-800' : 
+                       ($order->status === 'confirmed' ? 'bg-blue-50 text-blue-800' : 
+                       ($order->status === 'processing' ? 'bg-purple-50 text-purple-800' : 
+                       ($order->status === 'ready_for_pickup' ? 'bg-orange-50 text-orange-800' : 
+                       ($order->status === 'picked_up' ? 'bg-green-50 text-green-800' : 
+                       ($order->status === 'cancelled' ? 'bg-red-50 text-red-800' : 'bg-gray-50 text-gray-800'))))) }}">
+                    {{ str_replace('_', ' ', ucwords($order->status, '_')) }}
+                </span>
+            </div>
+        </div>
+        <!-- Quick Actions -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm font-medium text-gray-700">Quick Actions:</span>
+                <div class="flex flex-wrap gap-2">
+                    @foreach(App\Models\Order::getStatuses() as $status => $label)
+                        @if($status !== $order->status)
+                            <button onclick="updateOrderStatus('{{ $status }}')"
+                                class="px-3 py-1 text-xs font-semibold rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2
+                                    {{ $status === 'pending' ? 'border-yellow-300 text-yellow-700 hover:bg-yellow-50' : 
+                                       ($status === 'confirmed' ? 'border-blue-300 text-blue-700 hover:bg-blue-50' : 
+                                       ($status === 'processing' ? 'border-purple-300 text-purple-700 hover:bg-purple-50' : 
+                                       ($status === 'ready_for_pickup' ? 'border-orange-300 text-orange-700 hover:bg-orange-50' : 
+                                       ($status === 'picked_up' ? 'border-green-300 text-green-700 hover:bg-green-50' : 
+                                       ($status === 'cancelled' ? 'border-red-300 text-red-700 hover:bg-red-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'))))) }}">
+                                Mark as {{ $label }}
+                            </button>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+            <div class="text-xs text-gray-400 mt-2 md:mt-0">
+                Last updated: {{ $order->updated_at->format('M d, Y g:i A') }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Order Items Information -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Order Items ({{ $order->orderItems->count() }})</h2>
+                    
+                    @if($order->orderItems->count() > 0)
+                        <div class="space-y-6">
+                            @foreach($order->orderItems as $item)
+                                <div class="flex items-start gap-6 p-4 border border-gray-200 rounded-xl">
+                                    @if($item->product && $item->product->category === 'Printing Services')
+                                        <div class="w-24 h-24 rounded-xl bg-teal-100 flex items-center justify-center text-2xl">
+                                            🖨️
+                                        </div>
+                                    @else
+                                        <img src="{{ $item->product?->img }}" alt="{{ $item->product?->name }}" 
+                                             class="w-24 h-24 rounded-xl object-cover border border-gray-200"
+                                             onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHJ4PSIxMiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTQlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOWNhM2FmIiBmb250LXNpemU9IjE0IiBmb250LWZhbWlseT0iQXJpYWwiIGR5PSIuM2VtIj5ObzwvdGV4dD48L3N2Zz4='">
+                                    @endif
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-semibold text-gray-900">{{ $item->product?->name ?? 'Product Not Found' }}</h3>
+                                        <p class="text-gray-600 mt-1">{{ $item->product?->category ?? 'Unknown Category' }}</p>
+                                        
+                                        @if($item->notes)
+                                            <p class="text-sm text-gray-500 mt-2 italic">Notes: {{ $item->notes }}</p>
+                                        @endif
+                                        
+                                        <div class="mt-4 grid grid-cols-3 gap-4">
+                                            <div>
+                                                <span class="text-sm text-gray-500">Quantity:</span>
+                                                <p class="font-medium">{{ $item->quantity }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="text-sm text-gray-500">Unit Price:</span>
+                                                <p class="font-medium">${{ number_format($item->unit_price, 2) }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="text-sm text-gray-500">Subtotal:</span>
+                                                <p class="font-medium text-teal-600">${{ number_format($item->total_price, 2) }}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        @if($item->product && $item->product->desc)
+                                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                                <h4 class="font-medium text-gray-900 mb-2">Product Description</h4>
+                                                <p class="text-gray-600 text-sm leading-relaxed">{{ $item->product->desc }}</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-500">No items found for this order.</p>
+                    @endif
+                </div>
+
+                <!-- Print Job Information (if applicable) -->
+                @if($order->hasPrintJobs())
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                            <svg class="w-6 h-6 mr-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                            </svg>
+                            Print Job Details
+                        </h2>
+                        
+                        @foreach($order->printJobs as $printJob)
+                            <div class="border border-gray-200 rounded-xl p-6 mb-4 last:mb-0">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $printJob->original_filename }}</h3>
+                                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <span class="text-gray-500">File Type:</span>
+                                                <span class="ml-2 font-medium">{{ strtoupper($printJob->file_type) }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">File Size:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->file_size_formatted }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Paper Size:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->paper_size }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Color:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->color_option_display }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Paper Type:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->paper_type_display }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Copies:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->copies }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Page Count:</span>
+                                                <span class="ml-2 font-medium">{{ $printJob->page_count }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500">Status:</span>
+                                                <span class="ml-2 px-2 py-1 rounded-full text-xs font-medium
+                                                    {{ $printJob->status === 'uploaded' ? 'bg-blue-100 text-blue-800' : 
+                                                       ($printJob->status === 'processing' ? 'bg-yellow-100 text-yellow-800' : 
+                                                       ($printJob->status === 'ready' ? 'bg-green-100 text-green-800' : 
+                                                       ($printJob->status === 'completed' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800'))) }}">
+                                                    {{ $printJob->status_display }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-2 ml-4">
+                                        <a href="{{ route('printing.download', $printJob) }}" 
+                                           class="inline-flex items-center px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                                            </svg>
+                                            Download File
+                                        </a>
+                                        <button onclick="updatePrintJobStatus({{ $printJob->id }})" 
+                                                class="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            Update Status
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                @if($printJob->notes)
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <h4 class="font-medium text-gray-900 mb-2">Customer Notes</h4>
+                                        <p class="text-gray-600 text-sm">{{ $printJob->notes }}</p>
+                                    </div>
+                                @endif
+                                
+                                @if($printJob->admin_notes)
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <h4 class="font-medium text-gray-900 mb-2">Admin Notes</h4>
+                                        <p class="text-gray-600 text-sm">{{ $printJob->admin_notes }}</p>
+                                    </div>
+                                @endif
+                                
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-500 text-sm">Total Cost:</span>
+                                        <span class="text-xl font-bold text-green-600">B${{ number_format($printJob->total_price, 2) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <!-- Special Instructions -->
+                @if($order->special_instructions)
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">Special Instructions</h2>
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                            <p class="text-gray-700">{{ $order->special_instructions }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Order Timeline -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Order Timeline</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">Order Placed</h4>
+                                <p class="text-sm text-gray-500">{{ $order->created_at->format('F j, Y \a\t g:i A') }}</p>
+                            </div>
+                        </div>
+                        
+                        @if($order->status !== 'pending')
+                            <div class="flex items-start gap-4">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Status: {{ ucfirst($order->status) }}</h4>
+                                    <p class="text-sm text-gray-500">Last updated: {{ $order->updated_at->format('F j, Y \a\t g:i A') }}</p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <!-- Customer Information -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Customer Information</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-sm text-gray-500">Name:</span>
+                            <p class="font-medium">{{ $order->customer_name }}</p>
+                            @if($order->user)
+                                <p class="text-xs text-gray-500">Registered user since {{ $order->user->created_at->format('M Y') }}</p>
+                            @else
+                                <p class="text-xs text-gray-500">Guest customer</p>
+                            @endif
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-500">Email:</span>
+                            <p class="font-medium break-all" title="{{ $order->customer_email }}">
+                                <a href="mailto:{{ $order->customer_email }}" class="text-blue-600 hover:text-blue-800">
+                                    {{ $order->customer_email }}
+                                </a>
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-500">Phone:</span>
+                            <p class="font-medium">
+                                <a href="tel:{{ $order->customer_phone }}" class="text-blue-600 hover:text-blue-800">
+                                    {{ $order->customer_phone }}
+                                </a>
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-500">Payment Method:</span>
+                            <div class="flex items-center mt-1">
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                    {{ $order->payment_method === 'cash' ? 'text-green-700 bg-green-50' : 
+                                       ($order->payment_method === 'bank_transfer' ? 'text-blue-700 bg-blue-50' : 'text-purple-700 bg-purple-50') }}">
+                                    <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                        @if($order->payment_method === 'cash')
+                                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
+                                        @elseif($order->payment_method === 'bank_transfer')
+                                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                                        @else
+                                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9z"/>
+                                        @endif
+                                    </svg>
+                                    {{ $order->payment_method_display }}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-500">Payment Status: </span>
+                            <select id="payment-status-select" 
+                                    onchange="updatePaymentStatus()" 
+                                    class="payment-status-select border border-gray-200 rounded px-2 py-1 text-xs font-medium
+                                        {{ $order->payment_status === 'paid' ? 'text-green-700 bg-green-100' : 
+                                           ($order->payment_status === 'pending' ? 'text-yellow-700 bg-yellow-100' : 
+                                           ($order->payment_status === 'refunded' ? 'text-purple-700 bg-purple-100' : 'text-red-700 bg-red-100')) }}"
+                                    data-order-id="{{ $order->id }}"
+                                    data-current-status="{{ $order->payment_status }}">
+                                @foreach(App\Models\Order::getPaymentStatuses() as $value => $label)
+                                    <option value="{{ $value }}" {{ $order->payment_status == $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @if($order->payment_method === 'cash' && $order->payment_status === 'pending')
+                            <p class="text-xs text-gray-500 mt-1">Payment due on pickup</p>
+                        @endif
+                        @if($order->notes)
+                            <div>
+                                <span class="text-sm text-gray-500">Order Notes:</span>
+                                <p class="font-medium text-sm">{{ $order->notes }}</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Order Summary</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span class="font-medium">${{ number_format($order->total_price, 2) }}</span>
+                        </div>
+                        @if($order->delivery_fee > 0)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Delivery Fee:</span>
+                                <span class="font-medium">${{ number_format($order->delivery_fee, 2) }}</span>
+                            </div>
+                        @endif
+                        @if($order->tax_amount > 0)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Tax:</span>
+                                <span class="font-medium">${{ number_format($order->tax_amount, 2) }}</span>
+                            </div>
+                        @endif
+                        <hr class="border-gray-200">
+                        <div class="flex justify-between text-lg font-bold">
+                            <span class="text-gray-900">Total:</span>
+                            <span class="text-gray-900">${{ number_format($order->total_price, 2) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Management -->
+                @if($order->payment_method === 'cash')
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Payment Management</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-600">Current Status:</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                    {{ $order->payment_status === 'paid' ? 'text-green-700 bg-green-100' : 
+                                       ($order->payment_status === 'pending' ? 'text-yellow-700 bg-yellow-100' : 'text-red-700 bg-red-100') }}">
+                                    {{ ucfirst($order->payment_status) }}
+                                </span>
+                            </div>
+                            @if($order->payment_status === 'pending')
+                                <p class="text-xs text-gray-500">Customer will pay on pickup</p>
+                            @endif
+                        </div>
+                        
+                        @if($order->payment_status !== 'paid')
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-700">Update Payment Status:</label>
+                            <select id="payment-status-select" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                @foreach(App\Models\Order::getPaymentStatuses() as $value => $label)
+                                    <option value="{{ $value }}" {{ $order->payment_status == $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <button onclick="updatePaymentStatus()" 
+                                    class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                                Update Payment Status
+                            </button>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+                <!-- Actions -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Actions</h3>
+                    <div class="space-y-3">
+                        <button onclick="window.print()" class="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors">
+                            Print Order
+                        </button>
+                        <a href="mailto:{{ $order->customer_email }}?subject=Order #{{ $order->id }} Update" 
+                           class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-center block">
+                            Email Customer
+                        </a>
+                        @if($order->status !== 'cancelled')
+                            <button onclick="updateOrderStatus('cancelled')" 
+                                    class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                                Cancel Order
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .bg-gray-50,
+    .shadow-lg,
+    .rounded-2xl {
+        background: white !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+    
+    button,
+    .bg-gray-50.rounded-xl,
+    .text-blue-600 {
+        display: none !important;
+    }
+}
+</style>
+@endsection
