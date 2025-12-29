@@ -12,9 +12,6 @@ class Order extends Model
      */
     protected $fillable = [
         'user_id',
-        'product_id',
-        'quantity',
-        'unit_price',
         'total_price',
         'status',
         'customer_name',
@@ -107,11 +104,19 @@ class Order extends Model
     }
 
     /**
-     * Get the product associated with the order
+     * Get the order items for this order
      */
-    public function product(): BelongsTo
+    public function orderItems()
     {
-        return $this->belongsTo(Product::class);
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Get all products through order items
+     */
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, OrderItem::class, 'order_id', 'id', 'id', 'product_id');
     }
 
     /**

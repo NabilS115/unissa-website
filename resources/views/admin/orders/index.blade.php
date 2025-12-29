@@ -198,7 +198,7 @@ window.__adminOrders = {
                                         <div class="flex items-center">
                                             <div>
                                                 <div class="font-medium text-gray-900">#{{ $order->id }}</div>
-                                                <div class="text-sm text-gray-500">{{ $order->quantity }} item{{ $order->quantity > 1 ? 's' : '' }}</div>
+                                                <div class="text-sm text-gray-500">{{ $order->orderItems->count() }} item{{ $order->orderItems->count() > 1 ? 's' : '' }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -210,19 +210,36 @@ window.__adminOrders = {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="flex items-center">
-                                            <img src="{{ $order->product->img }}" alt="{{ $order->product->name }}" class="w-10 h-10 rounded-lg object-cover mr-3" loading="lazy" decoding="async"
-                                                 onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHJ4PSI4IiBmaWxsPSIjZjlmYWZiIi8+PHRleHQgeD0iNTAlIiB5PSI1NCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5Y2EzYWYiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9IkFyaWFsIiBkeT0iLjNlbSI+Tm88L3RleHQ+PC9zdmc+'">
-                                            <div>
-                                                <div class="font-medium text-gray-900 truncate" title="{{ $order->product->name }}">{{ $order->product->name }}</div>
-                                                <div class="text-sm text-gray-500 truncate">{{ $order->product->category }}</div>
-                                            </div>
+                                        <div class="space-y-1">
+                                            @if($order->orderItems->count() > 0)
+                                                @foreach($order->orderItems->take(2) as $item)
+                                                    <div class="flex items-center">
+                                                        @if($item->product && $item->product->category === 'Printing Services')
+                                                            <div class="w-8 h-8 rounded bg-teal-100 flex items-center justify-center mr-3 text-teal-600 text-sm">
+                                                                🖨️
+                                                            </div>
+                                                        @else
+                                                            <img src="{{ $item->product?->img }}" alt="{{ $item->product?->name }}" class="w-8 h-8 rounded object-cover mr-3" loading="lazy" decoding="async"
+                                                                 onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI2IiBmaWxsPSIjZjlmYWZiIi8+PHRleHQgeD0iNTAlIiB5PSI1NCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5Y2EzYWYiIGZvbnQtc2l6ZT0iNiIgZm9udC1mYW1pbHk9IkFyaWFsIiBkeT0iLjNlbSI+Tm88L3RleHQ+PC9zdmc>'">
+                                                        @endif
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="text-sm font-medium text-gray-900 truncate" title="{{ $item->product?->name }}">{{ $item->product?->name }}</div>
+                                                            <div class="text-xs text-gray-500">Qty: {{ $item->quantity }}</div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                @if($order->orderItems->count() > 2)
+                                                    <div class="text-xs text-gray-400 italic">+ {{ $order->orderItems->count() - 2 }} more items</div>
+                                                @endif
+                                            @else
+                                                <div class="text-sm text-gray-500">No items</div>
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div>
                                             <div class="font-medium text-gray-900">${{ number_format($order->total_price, 2) }}</div>
-                                            <div class="text-sm text-gray-500">${{ number_format($order->unit_price, 2) }} each</div>
+                                            <div class="text-sm text-gray-500">Total Amount</div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">

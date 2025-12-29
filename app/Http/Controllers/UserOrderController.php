@@ -14,7 +14,7 @@ class UserOrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('product')
+        $orders = Order::with('orderItems.product')
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -32,7 +32,7 @@ class UserOrderController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $order->load('product');
+        $order->load('orderItems.product');
 
         return view('user.orders.show', compact('order'));
     }

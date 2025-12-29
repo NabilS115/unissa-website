@@ -280,22 +280,34 @@
 
         <!-- Product Details -->
         <div class="product-details">
-            <h3>Your Order</h3>
-            <div class="product-item">
-                <div class="product-image">
-                    🛍️
-                </div>
-                <div class="product-info">
-                    <div class="product-name">{{ $order->product ? $order->product->name : 'Product' }}</div>
-                    @if($order->product && $order->product->description)
-                        <div class="product-details-text">{{ Str::limit($order->product->description, 100) }}</div>
+            <h3>Your Order Items</h3>
+            @foreach($order->orderItems as $orderItem)
+                <div class="product-item">
+                    @if($orderItem->product && $orderItem->product->category === 'Printing Services')
+                        <div class="product-image" style="background: linear-gradient(135deg, #0d9488, #10b981); color: white; font-size: 20px;">
+                            🖨️
+                        </div>
+                    @else
+                        <div class="product-image">
+                            🛍️
+                        </div>
                     @endif
-                    <div class="product-price">
-                        <span>Quantity: {{ $order->quantity }}</span>
-                        <span>B${{ number_format($order->unit_price, 2) }} each</span>
+                    <div class="product-info">
+                        <div class="product-name">{{ $orderItem->product ? $orderItem->product->name : 'Product' }}</div>
+                        @if($orderItem->product && $orderItem->product->desc)
+                            <div class="product-details-text">{{ Str::limit($orderItem->product->desc, 100) }}</div>
+                        @endif
+                        @if($orderItem->notes)
+                            <div class="product-details-text"><strong>Notes:</strong> {{ Str::limit($orderItem->notes, 100) }}</div>
+                        @endif
+                        <div class="product-price">
+                            <span>Quantity: {{ $orderItem->quantity }}</span>
+                            <span>B${{ number_format($orderItem->unit_price, 2) }} each</span>
+                            <span style="font-weight: bold; color: #0d9488;">Subtotal: B${{ number_format($orderItem->total_price, 2) }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
         </div>
 
         <!-- Total -->
@@ -309,20 +321,43 @@
             <div class="next-steps" style="background: linear-gradient(135deg, #f0fdf4, #ecfdf5); border: 2px solid #4ade80;">
                 <h3 style="color: #16a34a; margin: 0 0 16px; font-size: 18px;">💰 Cash Payment Instructions</h3>
                 <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                    <div style="background: #f0fdf4; padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #4ade80;">
+                        <div style="text-align: center;">
+                            <span style="font-size: 24px; font-weight: bold; color: #16a34a;">B${{ number_format($order->total_price, 2) }}</span>
+                            <div style="font-size: 14px; color: #15803d; margin-top: 4px;">Total Amount Due (Please bring exact amount)</div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color: #16a34a; margin: 0 0 12px; font-size: 16px; font-weight: 600;">📋 Payment Details:</h4>
                     <ul style="margin: 0; padding: 0 0 0 20px; color: #15803d;">
-                        <li style="margin-bottom: 12px;"><strong>Amount Due:</strong> B${{ number_format($order->total_price, 2) }} (please bring exact amount)</li>
                         <li style="margin-bottom: 12px;"><strong>Payment Due:</strong> When you come to collect your order</li>
+                        <li style="margin-bottom: 12px;"><strong>Accepted:</strong> Cash only (exact amount preferred)</li>
                         <li style="margin-bottom: 12px;"><strong>Bring This Email:</strong> Show this confirmation for faster service</li>
-                        <li style="margin-bottom: 12px;"><strong>Contact:</strong> Call/WhatsApp +673 8123456 for any questions</li>
-                        <li style="margin-bottom: 12px;"><strong>Location:</strong> Unissa Cafe - We'll notify you when ready!</li>
+                        <li style="margin-bottom: 12px;"><strong>Order ID:</strong> #{{ $order->id }} (mention this when collecting)</li>
                     </ul>
+                    
+                    <div style="background: #ecfdf5; padding: 16px; border-radius: 8px; border: 1px solid #a7f3d0; margin-top: 16px;">
+                        <h4 style="color: #16a34a; margin: 0 0 8px; font-size: 14px; font-weight: 600;">📍 Collection Information:</h4>
+                        <p style="margin: 0; color: #15803d; font-size: 14px;">
+                            <strong>Location:</strong> Unissa Cafe<br>
+                            <strong>Contact:</strong> +673 8123456 (Call/WhatsApp)<br>
+                            <strong>Note:</strong> We'll notify you when your order is ready for pickup
+                        </p>
+                    </div>
                 </div>
             </div>
         @elseif($order->payment_method === 'bank_transfer')
             <div class="next-steps" style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid #14b8a6;">
                 <h3 style="color: #0d9488; margin: 0 0 16px; font-size: 18px;">🏦 BIBD Bank Transfer Instructions</h3>
                 <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #5eead4;">
-                    <div style="background: #f0fdfa; padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #14b8a6;">
+                    
+                    <div style="background: #fed7d7; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #fc8181; text-align: center;">
+                        <div style="color: #c53030; font-weight: bold; margin-bottom: 8px;">⏰ URGENT: Transfer Required Within 24 Hours</div>
+                        <div style="color: #742a2a; font-size: 14px;">Your order may be cancelled if payment is not received within 24 hours</div>
+                    </div>
+                    
+                    <div style="background: #f0fdfa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #14b8a6;">
+                        <h4 style="color: #0d9488; margin: 0 0 16px; font-size: 16px; font-weight: 600; text-align: center;">💳 Bank Transfer Details</h4>
                         <div style="display: grid; gap: 12px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-weight: 600; color: #374151;">Bank:</span>
@@ -338,25 +373,112 @@
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-weight: 600; color: #374151;">Amount:</span>
-                                <span style="color: #dc2626; font-weight: bold; font-size: 18px;">B${{ number_format($order->total_price, 2) }}</span>
+                                <span style="color: #dc2626; font-weight: bold; font-size: 18px; background: #fef2f2; padding: 8px 12px; border-radius: 6px;">B${{ number_format($order->total_price, 2) }}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #374151;">Reference:</span>
+                                <span style="background: #fbbf24; color: #92400e; padding: 8px 12px; border-radius: 6px; font-weight: 600;">{{ $order->customer_phone }} (Your Phone)</span>
                             </div>
                         </div>
                     </div>
                     
                     <div style="background: #fef3c7; padding: 16px; border-radius: 8px; border: 1px solid #f59e0b; margin-bottom: 16px;">
-                        <h4 style="color: #92400e; margin: 0 0 12px; font-size: 16px; font-weight: 600;">📝 Transfer Instructions:</h4>
-                        <ul style="margin: 0; padding: 0 0 0 20px; color: #92400e;">
-                            <li style="margin-bottom: 8px;">Transfer exactly <strong>B${{ number_format($order->total_price, 2) }}</strong> from your BIBD account</li>
-                            <li style="margin-bottom: 8px;">Use your <strong>phone number</strong> as transfer reference</li>
-                            <li style="margin-bottom: 8px;">Transfer is instant between BIBD accounts</li>
-                            <li style="margin-bottom: 8px;">Keep your transfer receipt for verification</li>
-                            <li style="margin-bottom: 8px;">WhatsApp confirmation to <strong>+673 8123456</strong></li>
-                        </ul>
+                        <h4 style="color: #92400e; margin: 0 0 12px; font-size: 16px; font-weight: 600;">📝 Step-by-Step Transfer Instructions:</h4>
+                        <ol style="margin: 0; padding: 0 0 0 20px; color: #92400e;">
+                            <li style="margin-bottom: 8px;">Login to your BIBD mobile app or visit a branch</li>
+                            <li style="margin-bottom: 8px;">Select <strong>"Transfer"</strong> option</li>
+                            <li style="margin-bottom: 8px;">Enter account number: <strong>{{ \App\Models\ContentBlock::get('bank_account_number', '[Account Number]', 'text', 'bank-transfer') }}</strong></li>
+                            <li style="margin-bottom: 8px;">Transfer exactly <strong>B${{ number_format($order->total_price, 2) }}</strong></li>
+                            <li style="margin-bottom: 8px;">Use your phone number <strong>{{ $order->customer_phone }}</strong> as reference</li>
+                            <li style="margin-bottom: 8px;">Complete the transfer and save the receipt</li>
+                        </ol>
                     </div>
 
+                    <div style="background: #dbeafe; padding: 16px; border-radius: 8px; border: 1px solid #3b82f6; margin-bottom: 16px;">
+                        <h4 style="color: #1e40af; margin: 0 0 8px; font-size: 16px; font-weight: 600;">📱 After Successful Transfer:</h4>
+                        <ol style="margin: 0; padding: 0 0 0 20px; color: #1e40af;">
+                            <li style="margin-bottom: 8px;">Take a screenshot or photo of your transfer receipt</li>
+                            <li style="margin-bottom: 8px;">WhatsApp the receipt to <strong>+673 8123456</strong></li>
+                            <li style="margin-bottom: 8px;">Include your order number: <strong>#{{ $order->id }}</strong></li>
+                            <li style="margin-bottom: 8px;">We'll confirm receipt and start preparing your order!</li>
+                        </ol>
+                    </div>
+
+                    <div style="background: #ecfdf5; padding: 16px; border-radius: 8px; border: 1px solid #4ade80; text-align: center;">
+                        <p style="margin: 0; color: #16a34a; font-weight: 600;">
+                            💬 <strong>WhatsApp:</strong> +673 8123456 | <strong>Order ID:</strong> #{{ $order->id }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @elseif($order->payment_method === 'online' || $order->payment_method === 'paypal' || $order->payment_method === 'card')
+            <div class="next-steps" style="background: linear-gradient(135deg, #fef7ff, #f3e8ff); border: 2px solid #8b5cf6;">
+                <h3 style="color: #7c3aed; margin: 0 0 16px; font-size: 18px;">💳 Online Payment Instructions</h3>
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #c4b5fd;">
+                    
+                    @if($order->payment_status === 'paid')
+                        <div style="background: #ecfdf5; padding: 16px; border-radius: 8px; border: 1px solid #4ade80; text-align: center; margin-bottom: 16px;">
+                            <div style="color: #16a34a; font-weight: bold; font-size: 16px; margin-bottom: 8px;">✅ Payment Successfully Processed</div>
+                            <div style="color: #15803d; font-size: 14px;">Your payment of B${{ number_format($order->total_price, 2) }} has been confirmed</div>
+                        </div>
+                    @elseif($order->payment_status === 'pending')
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 8px; border: 1px solid #f59e0b; margin-bottom: 16px;">
+                            <div style="color: #92400e; font-weight: bold; font-size: 16px; margin-bottom: 8px;">⏳ Payment Processing</div>
+                            <div style="color: #92400e; font-size: 14px;">
+                                Your online payment is currently being processed. You will receive an update shortly.
+                            </div>
+                        </div>
+                        
+                        <h4 style="color: #7c3aed; margin: 0 0 12px; font-size: 16px; font-weight: 600;">📋 Payment Details:</h4>
+                        <ul style="margin: 0 0 16px; padding: 0 0 0 20px; color: #7c3aed;">
+                            <li style="margin-bottom: 8px;"><strong>Amount:</strong> B${{ number_format($order->total_price, 2) }}</li>
+                            <li style="margin-bottom: 8px;"><strong>Payment Method:</strong> {{ ucfirst($order->payment_method) }}</li>
+                            <li style="margin-bottom: 8px;"><strong>Status:</strong> Processing</li>
+                            <li style="margin-bottom: 8px;"><strong>Order ID:</strong> #{{ $order->id }}</li>
+                        </ul>
+                        
+                        <div style="background: #dbeafe; padding: 16px; border-radius: 8px; border: 1px solid #3b82f6;">
+                            <p style="margin: 0; color: #1e40af; font-size: 14px; text-align: center;">
+                                💬 Questions about your payment? Contact us at <strong>+673 8123456</strong>
+                            </p>
+                        </div>
+                    @else
+                        <div style="background: #fef2f2; padding: 16px; border-radius: 8px; border: 1px solid #fc8181; margin-bottom: 16px;">
+                            <div style="color: #c53030; font-weight: bold; font-size: 16px; margin-bottom: 8px;">❌ Payment Issue Detected</div>
+                            <div style="color: #742a2a; font-size: 14px;">
+                                There seems to be an issue with your online payment. Please contact us immediately.
+                            </div>
+                        </div>
+                        
+                        <div style="background: #dbeafe; padding: 16px; border-radius: 8px; border: 1px solid #3b82f6;">
+                            <h4 style="color: #1e40af; margin: 0 0 8px; font-size: 16px; font-weight: 600;">📞 Contact Support:</h4>
+                            <p style="margin: 0; color: #1e40af; font-size: 14px;">
+                                <strong>WhatsApp/Call:</strong> +673 8123456<br>
+                                <strong>Order Reference:</strong> #{{ $order->id }}<br>
+                                <strong>Email:</strong> Show this email when contacting us
+                            </p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @else
+            <!-- Fallback for any other payment methods -->
+            <div class="next-steps" style="background: linear-gradient(135deg, #f9fafb, #f3f4f6); border: 2px solid #9ca3af;">
+                <h3 style="color: #374151; margin: 0 0 16px; font-size: 18px;">💼 Payment Information</h3>
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #d1d5db;">
+                    <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #374151; margin: 0 0 12px; font-size: 16px; font-weight: 600;">📋 Payment Details:</h4>
+                        <ul style="margin: 0; padding: 0 0 0 20px; color: #374151;">
+                            <li style="margin-bottom: 8px;"><strong>Payment Method:</strong> {{ ucfirst($order->payment_method) }}</li>
+                            <li style="margin-bottom: 8px;"><strong>Amount:</strong> B${{ number_format($order->total_price, 2) }}</li>
+                            <li style="margin-bottom: 8px;"><strong>Status:</strong> {{ ucfirst($order->payment_status) }}</li>
+                            <li style="margin-bottom: 8px;"><strong>Order ID:</strong> #{{ $order->id }}</li>
+                        </ul>
+                    </div>
+                    
                     <div style="background: #dbeafe; padding: 16px; border-radius: 8px; border: 1px solid #3b82f6;">
                         <p style="margin: 0; color: #1e40af; font-weight: 600; text-align: center;">
-                            💬 After Transfer: WhatsApp us your transfer receipt at <strong>+673 8123456</strong>
+                            📞 For payment instructions, please contact us at <strong>+673 8123456</strong>
                         </p>
                     </div>
                 </div>

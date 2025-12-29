@@ -91,9 +91,6 @@ class CheckoutController extends Controller
 
         $order = Order::create([
             'user_id' => Auth::id(),
-            'product_id' => $validated['product_id'],
-            'quantity' => $validated['quantity'],
-            'unit_price' => $unitPrice,
             'total_price' => $totalPrice,
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
@@ -106,6 +103,15 @@ class CheckoutController extends Controller
             'payment_reference' => $validated['payment_method'] === 'bank_transfer' && isset($validated['bank_reference']) 
                 ? $validated['bank_name'] . ' - ' . $validated['bank_reference'] 
                 : null,
+        ]);
+
+        // Create the order item for this single product
+        $order->orderItems()->create([
+            'product_id' => $validated['product_id'],
+            'quantity' => $validated['quantity'],
+            'unit_price' => $unitPrice,
+            'total_price' => $totalPrice,
+            'notes' => $validated['notes'],
         ]);
 
         // Send order confirmation email
@@ -211,44 +217,43 @@ class CheckoutController extends Controller
             'online' => Order::PAYMENT_STATUS_PENDING,      // Requires actual payment processing
             default => Order::PAYMENT_STATUS_PENDING
         };
-        $orders = [];
 
-        // Create separate orders for each cart item
+        // Calculate total price for the entire order
+        $totalPrice = $cartItems->sum('total_price');
+
+        // Create a single order for all cart items
+        $orderData = [
+            'user_id' => Auth::id(),
+            'total_price' => $totalPrice,
+            'customer_name' => $validated['customer_name'],
+            'customer_email' => $validated['customer_email'],
+            'customer_phone' => $validated['customer_phone'],
+            'pickup_notes' => $validated['pickup_notes'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'status' => Order::STATUS_PENDING,
+            'payment_method' => $validated['payment_method'],
+            'payment_status' => $paymentStatus,
+        ];
+
+        // Add payment reference for bank transfer
+        if ($validated['payment_method'] === 'bank_transfer' && isset($validated['bank_reference'])) {
+            $orderData['payment_reference'] = $validated['bank_name'] . ' - ' . $validated['bank_reference'];
+        }
+
+        $order = Order::create($orderData);
+
+        // Create order items for each cart item
         foreach ($cartItems as $item) {
-            $orderData = [
-                'user_id' => Auth::id(),
+            $orderItem = $order->orderItems()->create([
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->product->price,
                 'total_price' => $item->total_price,
-                'customer_name' => $validated['customer_name'],
-                'customer_email' => $validated['customer_email'],
-                'customer_phone' => $validated['customer_phone'],
-                'pickup_notes' => $validated['pickup_notes'] ?? null,
-                'notes' => $validated['notes'] ?? null,
-                'status' => Order::STATUS_PENDING,
-                'payment_method' => $validated['payment_method'],
-                'payment_status' => $paymentStatus,
-            ];
-
-            // Add payment reference for bank transfer
-            if ($validated['payment_method'] === 'bank_transfer' && isset($validated['bank_reference'])) {
-                $orderData['payment_reference'] = $validated['bank_name'] . ' - ' . $validated['bank_reference'];
-            }
-
-            $order = Order::create($orderData);
-            $orders[] = $order;
+                'notes' => $item->notes,
+            ]);
 
             // Link print jobs to order if this is a print service
             \App\Models\PrintJob::linkToOrder($order, $item->notes);
-
-            // Send order confirmation email for each order
-            try {
-                Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));
-            } catch (\Exception $e) {
-                // Log email error but don't fail the order
-                \Log::error('Failed to send order confirmation email for order #' . $order->id . ': ' . $e->getMessage());
-            }
 
             // Update stock quantities if tracking
             if ($item->product->track_stock) {
@@ -256,21 +261,28 @@ class CheckoutController extends Controller
             }
         }
 
-        $totalPrice = $cartItems->sum('total_price');
-        $orderCount = count($orders);
+        // Send order confirmation email with the single order
+        try {
+            Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));
+        } catch (\Exception $e) {
+            // Log email error but don't fail the order
+            \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+        }
+
+        $totalPrice = $order->total_price;
 
         // Clear the cart after successful order
         \App\Models\Cart::where('user_id', Auth::id())->delete();
 
         $successMessage = match($validated['payment_method']) {
-            'online' => 'Your orders have been placed! Credit card payment will be processed securely. We\'ll notify you when ready for pickup. Contact: +673 8123456',
-            'bank_transfer' => "Your orders have been placed! Please transfer $" . number_format($totalPrice, 2) . " to " . \App\Models\ContentBlock::get('bank_account_name', 'UNISSA Café', 'text', 'bank-transfer') . " via BIBD (Account: " . \App\Models\ContentBlock::get('bank_account_number', '[Your Account Number]', 'text', 'bank-transfer') . "). Use your phone number as reference. WhatsApp confirmation to +673 8123456",
-            'cash' => 'Your orders have been placed successfully! Please bring exact amount ($' . number_format($totalPrice, 2) . ') when collecting your order. Contact: +673 8123456',
-            default => 'Your orders have been placed successfully! Contact us at +673 8123456 for any questions.'
+            'online' => 'Your order has been placed! Credit card payment will be processed securely. We\'ll notify you when ready for pickup. Contact: +673 8123456',
+            'bank_transfer' => "Your order has been placed! Please transfer $" . number_format($totalPrice, 2) . " to " . \App\Models\ContentBlock::get('bank_account_name', 'UNISSA Café', 'text', 'bank-transfer') . " via BIBD (Account: " . \App\Models\ContentBlock::get('bank_account_number', '[Your Account Number]', 'text', 'bank-transfer') . "). Use your phone number as reference. WhatsApp confirmation to +673 8123456",
+            'cash' => 'Your order has been placed successfully! Please bring exact amount ($' . number_format($totalPrice, 2) . ') when collecting your order. Contact: +673 8123456',
+            default => 'Your order has been placed successfully! Contact us at +673 8123456 for any questions.'
         };
 
         return redirect()->route('unissa-cafe.homepage')
-            ->with('success', $successMessage . " {$orderCount} order(s) created with total amount: $" . number_format($totalPrice, 2))
+            ->with('success', $successMessage . " Order ID: #{$order->id}")
             ->with('payment_method', $validated['payment_method']);
     }
 }

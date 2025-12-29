@@ -18,7 +18,7 @@ class AdminOrderController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Order::with(['user', 'product']);
+            $query = Order::with(['user', 'orderItems.product']);
 
             // Apply filters
             if ($request->filled('status')) {
@@ -32,7 +32,7 @@ class AdminOrderController extends Controller
                       ->orWhere('customer_name', 'like', "%{$search}%")
                       ->orWhere('customer_email', 'like', "%{$search}%")
                       ->orWhere('customer_phone', 'like', "%{$search}%")
-                      ->orWhereHas('product', function ($productQuery) use ($search) {
+                      ->orWhereHas('orderItems.product', function ($productQuery) use ($search) {
                           $productQuery->where('name', 'like', "%{$search}%");
                       })
                       ->orWhereHas('user', function ($userQuery) use ($search) {
@@ -87,7 +87,7 @@ class AdminOrderController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load(['user', 'product']);
+        $order->load(['user', 'orderItems.product']);
         
         return view('admin.orders.show', compact('order'));
     }

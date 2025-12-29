@@ -48,11 +48,23 @@
                             <div class="flex items-start gap-6 flex-1">
                                 <!-- Product Image -->
                                 <div class="w-20 h-20 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                    @if($order->product && $order->product->img)
-                                        <img src="{{ $order->product->img }}" 
-                                             alt="{{ $order->product->name }}" 
+                                    @if($order->orderItems->count() > 0 && $order->orderItems->first()->product && $order->orderItems->first()->product->img)
+                                        <img src="{{ $order->orderItems->first()->product->img }}" 
+                                             alt="{{ $order->orderItems->first()->product->name }}" 
                                              class="w-full h-full object-cover rounded-2xl" loading="lazy" decoding="async"
                                              onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI2Y0ZjRmNSIvPgo8cGF0aCBkPSJNMTYgMTFWN2E0IDQgMCAwMC04IDB2NE01IDloMTRsMSAxMkg0TDUgOXoiIHN0cm9rZT0iIzljYTNhZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+'; this.classList.add('opacity-50');">
+                                        @if($order->orderItems->count() > 1)
+                                            <div class="absolute -top-1 -right-1 bg-teal-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                                                {{ $order->orderItems->count() }}
+                                            </div>
+                                        @endif
+                                    @elseif($order->orderItems->count() > 0 && $order->orderItems->first()->product && $order->orderItems->first()->product->category === 'Printing Services')
+                                        <div class="w-10 h-10 text-teal-500 text-2xl">🖨️</div>
+                                        @if($order->orderItems->count() > 1)
+                                            <div class="absolute -top-1 -right-1 bg-teal-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                                                {{ $order->orderItems->count() }}
+                                            </div>
+                                        @endif
                                     @else
                                         <svg class="w-10 h-10 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
@@ -64,7 +76,19 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between mb-3">
                                         <div>
-                                            <h3 class="text-xl font-bold text-gray-800 mb-1">{{ $order->product ? $order->product->name : 'Product Not Found' }}</h3>
+                                            @if($order->orderItems->count() > 1)
+                                                <h3 class="text-xl font-bold text-gray-800 mb-1">Multiple Items ({{ $order->orderItems->count() }})</h3>
+                                                <p class="text-sm text-gray-600 mb-1">
+                                                    @foreach($order->orderItems->take(2) as $item)
+                                                        {{ $item->product ? $item->product->name : 'Unknown Product' }}{{ !$loop->last && $loop->index < 1 ? ', ' : '' }}
+                                                    @endforeach
+                                                    @if($order->orderItems->count() > 2)
+                                                        and {{ $order->orderItems->count() - 2 }} more...
+                                                    @endif
+                                                </p>
+                                            @else
+                                                <h3 class="text-xl font-bold text-gray-800 mb-1">{{ $order->orderItems->first()->product ? $order->orderItems->first()->product->name : 'Product Not Found' }}</h3>
+                                            @endif
                                             <p class="text-sm text-gray-500 mb-2">Order #{{ $order->id }} • {{ $order->created_at->format('M d, Y at g:i A') }}</p>
                                         </div>
                                         
