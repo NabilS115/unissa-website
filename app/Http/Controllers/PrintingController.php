@@ -107,7 +107,7 @@ class PrintingController extends Controller
         $productDesc = "Print specifications: {$printJob->copies} copies, {$printJob->color_option_display}, {$printJob->paper_size} {$printJob->paper_type_display}";
 
         // Create a proper image for the print job based on file type
-        $printJobImage = $this->generatePrintJobImage($printJob, $originalName, $extension);
+        $printJobImage = $this->generatePrintJobImage($printJob, $printJob->original_filename, $printJob->file_type);
 
         // Create temporary product for the print job
         $product = Product::create([
