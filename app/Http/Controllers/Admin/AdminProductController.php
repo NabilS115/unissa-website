@@ -18,7 +18,8 @@ class AdminProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with('orders');
+        $query = Product::with('orders')
+            ->where('category', '!=', 'Printing Services'); // Exclude printing jobs
 
         // Apply filters
         if ($request->filled('search')) {
@@ -572,16 +573,17 @@ class AdminProductController extends Controller
     private function getProductStatistics(): array
     {
         return Cache::remember('admin.product.stats', now()->addMinutes(10), function () {
-            $total = Product::count();
-            $active = Product::where('status', Product::STATUS_ACTIVE)->count();
-            $inactive = Product::where('status', Product::STATUS_INACTIVE)->count();
-            $outOfStock = Product::where('status', Product::STATUS_OUT_OF_STOCK)->count();
-            $discontinued = Product::where('status', Product::STATUS_DISCONTINUED)->count();
-            $lowStock = Product::lowStock()->count();
-            $recent = Product::where('created_at', '>=', now()->subDays(7))->count();
+            $total = Product::where('category', '!=', 'Printing Services')->count();
+            $active = Product::where('category', '!=', 'Printing Services')->where('status', Product::STATUS_ACTIVE)->count();
+            $inactive = Product::where('category', '!=', 'Printing Services')->where('status', Product::STATUS_INACTIVE)->count();
+            $outOfStock = Product::where('category', '!=', 'Printing Services')->where('status', Product::STATUS_OUT_OF_STOCK)->count();
+            $discontinued = Product::where('category', '!=', 'Printing Services')->where('status', Product::STATUS_DISCONTINUED)->count();
+            $lowStock = Product::where('category', '!=', 'Printing Services')->lowStock()->count();
+            $recent = Product::where('category', '!=', 'Printing Services')->where('created_at', '>=', now()->subDays(7))->count();
             
             // Calculate "available" as active products that are not out of stock
-            $available = Product::where('status', Product::STATUS_ACTIVE)
+            $available = Product::where('category', '!=', 'Printing Services')
+                              ->where('status', Product::STATUS_ACTIVE)
                               ->where(function($q) {
                                   $q->where('track_stock', false)
                                     ->orWhere(function($subQ) {
