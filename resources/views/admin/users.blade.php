@@ -58,7 +58,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
-                            <dd class="text-lg font-semibold text-gray-900">{{ $totalUsers ?? 0 }}</dd>
+                            <dd id="total-users" class="text-lg font-semibold text-gray-900">{{ $totalUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Active Users</dt>
-                            <dd class="text-lg font-semibold text-gray-900">{{ $activeUsers ?? 0 }}</dd>
+                            <dd id="active-users" class="text-lg font-semibold text-gray-900">{{ $activeUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Admins</dt>
-                            <dd class="text-lg font-semibold text-gray-900">{{ $adminUsers ?? 0 }}</dd>
+                            <dd id="admin-users" class="text-lg font-semibold text-gray-900">{{ $adminUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">New This Month</dt>
-                            <dd class="text-lg font-semibold text-gray-900">{{ $newUsers ?? 0 }}</dd>
+                            <dd id="new-users" class="text-lg font-semibold text-gray-900">{{ $newUsers ?? 0 }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -137,10 +137,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Role Filter</label>
-                    <select id="role-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                        <option value="">All Roles</option>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Admin Level Filter</label>
+                    <select id="admin-level-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        <option value="">All Levels</option>
+                        <option value="super_admin">Super Admin</option>
                         <option value="admin">Admin</option>
+                        <option value="moderator">Moderator</option>
                         <option value="user">User</option>
                     </select>
                 </div>
@@ -151,13 +153,21 @@
                         <option value="">All Status</option>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
+                        <option value="deleted">Deleted</option>
                     </select>
                 </div>
 
                 <div class="flex items-end">
-                    <button id="clear-filters" class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                    <button id="clear-filters" class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors mb-2">
                         Clear Filters
                     </button>
+                </div>
+                
+                <div class="md:col-span-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="include-deleted" class="rounded border-gray-300 text-teal-600 mr-2">
+                        <span class="text-sm text-gray-700">Include deleted users</span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -173,7 +183,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admin Level</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reviews</th>
@@ -185,7 +195,7 @@
                         <tr>
                             <td colspan="6" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center">
-                                    <div class="rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>
+                                    <div class="animate-spin rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>
                                     <p class="text-gray-600">Loading users...</p>
                                 </div>
                             </td>
@@ -203,7 +213,7 @@
 </div>
 
 <!-- Add/Edit User Modal -->
-<div id="user-modal" data-initial-hidden class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 hidden">
+<div id="user-modal" data-initial-hidden class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50 hidden" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
         <div class="p-6">
             <div class="flex items-center justify-between mb-6">
@@ -228,31 +238,26 @@
                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                 </div>
                 
-                <div class="relative" id="password-section">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input type="password" name="password" id="add-user-password" required
-                           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                    <button type="button" id="toggle-add-user-password" class="absolute right-3 top-9 text-gray-500 hover:text-teal-600 text-sm focus:outline-none">
-                        Show
-                    </button>
-                    <p class="text-xs text-gray-500 mt-1">Leave blank to keep current password (when editing)</p>
-                </div>
-
-                <div class="relative">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                    <input type="password" name="password_confirmation" id="add-user-password-confirm" required
-                           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                    <button type="button" id="toggle-add-user-password-confirm" class="absolute right-3 top-9 text-gray-500 hover:text-teal-600 text-sm focus:outline-none">
-                        Show
-                    </button>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-medium text-blue-800 mb-1">Password Management</h4>
+                            <p class="text-sm text-blue-700">Users must reset their own passwords for security. New users will receive an email to set their password.</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                        <select name="role" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Admin Level</label>
+                        <select name="admin_level" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                             <option value="user">User</option>
+                            <option value="moderator">Moderator</option>
                             <option value="admin">Admin</option>
+                            <option value="super_admin">Super Admin</option>
                         </select>
                     </div>
                     

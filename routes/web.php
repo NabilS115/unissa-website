@@ -373,18 +373,28 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->store($request);
     })->name('users.store');
-    Route::put('/users/{user}', function (\Illuminate\Http\Request $request, $user) {
+    Route::put('/users/{user}', function (\Illuminate\Http\Request $request, \App\Models\User $user) {
         session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
         return app(\App\Http\Controllers\Admin\UserController::class)->update($request, $user);
     })->name('users.update');
-    Route::delete('/users/{user}', function (\Illuminate\Http\Request $request, $user) {
+    Route::delete('/users/{user}', function (\Illuminate\Http\Request $request, \App\Models\User $user) {
         session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
-        return app(\App\Http\Controllers\Admin\UserController::class)->destroy($request, $user);
+        return app(\App\Http\Controllers\Admin\UserController::class)->destroy($user);
     })->name('users.destroy');
-    Route::patch('/users/{user}/toggle-status', function (\Illuminate\Http\Request $request, $user) {
+    Route::patch('/users/{user}/toggle-status', function (\Illuminate\Http\Request $request, \App\Models\User $user) {
         session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
-        return app(\App\Http\Controllers\Admin\UserController::class)->toggleStatus($request, $user);
+        return app(\App\Http\Controllers\Admin\UserController::class)->toggleStatus($user);
     })->name('users.toggle-status');
+    
+    Route::post('/users/{user}/restore', function (\Illuminate\Http\Request $request, $user) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
+        return app(\App\Http\Controllers\Admin\UserController::class)->restore($user);
+    })->name('users.restore');
+    
+    Route::delete('/users/{user}/force-delete', function (\Illuminate\Http\Request $request, $user) {
+        session(['header_context' => 'tijarah']); // Admin pages default to Tijarah
+        return app(\App\Http\Controllers\Admin\UserController::class)->forceDelete($user);
+    })->name('users.force-delete');
 
     // Order Management
     Route::get('/orders', function (\Illuminate\Http\Request $request) {

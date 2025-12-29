@@ -6,8 +6,9 @@
 
   let currentPage = 1;
   let currentSearch = '';
-  let currentRoleFilter = '';
+  let currentAdminLevelFilter = '';
   let currentStatusFilter = '';
+  let includeDeleted = false;
   let isEditing = false;
   let editingUserId = null;
 
@@ -23,14 +24,40 @@
   async function loadUsers(){
     const tableBody = document.getElementById('users-table-body');
     if(!tableBody) return;
-    tableBody.innerHTML = `\n        <tr>\n            <td colspan="6" class="px-6 py-12 text-center">\n                <div class="flex flex-col items-center">\n                    <div class="rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>\n                    <p class="text-gray-600">Loading users...</p>\n                </div>\n            </td>\n        </tr>\n    `;
+    tableBody.innerHTML = `\n        <tr>\n            <td colspan="6" class="px-6 py-12 text-center">\n                <div class="flex flex-col items-center">\n                    <div class="animate-spin rounded-full h-8 w-8 border-4 border-teal-200 border-t-teal-600 mb-4"></div>\n                    <p class="text-gray-600">Loading users...</p>\n                </div>\n            </td>\n        </tr>\n    `;
 
     try{
-      const params = new URLSearchParams({ page: currentPage, search: currentSearch, role: currentRoleFilter, status: currentStatusFilter });
-      const response = await fetch(`/admin/users/api?${params}`, { headers: { 'Accept':'application/json', 'X-CSRF-TOKEN': getCsrf() } });
-      if(response.ok){ const data = await response.json(); displayUsers(data.users||[]); updatePagination(data.pagination||{}); updateStats(data.stats||{}); }
-      else { tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Failed to load users. Please try again.</td></tr>`; }
-    }catch(e){ console.error('Error loading users', e); tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Network error occurred. Please try again.</td></tr>`; }
+      const params = new URLSearchParams({ page: currentPage, search: currentSearch, admin_level: currentAdminLevelFilter, status: currentStatusFilter, include_deleted: includeDeleted });
+      
+      // Add timeout to the fetch request
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      const response = await fetch(`/admin/users/api?${params}`, { 
+        headers: { 'Accept':'application/json', 'X-CSRF-TOKEN': getCsrf() }, 
+        signal: controller.signal 
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if(response.ok){ 
+        const data = await response.json(); 
+        console.log('API Response:', data); // Debug log
+        displayUsers(data.users||[]); 
+        updatePagination(data.pagination||{}); 
+        updateStats(data.stats||{}); 
+      } else { 
+        console.error('API Error:', response.status, response.statusText);
+        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Failed to load users (${response.status}). Please try again.</td></tr>`; 
+      }
+    }catch(e){ 
+      console.error('Error loading users', e); 
+      if(e.name === 'AbortError') {
+        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Request timed out. Please check your connection and try again.</td></tr>`;
+      } else {
+        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-600">Network error: ${e.message}. Please try again.</td></tr>`; 
+      }
+    }
   }
 
   function displayUsers(users){
@@ -39,13 +66,32 @@
 
     const usersHtml = users.map(user => {
       const avatar = user.profile_photo_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=14b8a6&color=fff');
-      const roleBadge = user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800';
-      const statusBadge = user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-      const editBtn = `<button onclick="editUser(${user.id})" class="text-teal-600 hover:text-teal-900 transition-colors">Edit</button>`;
-      const toggleBtn = `<button onclick="toggleUserStatus(${user.id})" class="text-blue-600 hover:text-blue-900 transition-colors">${user.is_active ? 'Deactivate' : 'Activate'}</button>`;
-      const deleteBtn = (authId && user.id !== authId) ? `<button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>` : '';
+      const adminLevelColors = {
+        'super_admin': 'bg-red-100 text-red-800',
+        'admin': 'bg-purple-100 text-purple-800',
+        'moderator': 'bg-blue-100 text-blue-800',
+        'user': 'bg-gray-100 text-gray-800'
+      };
+      const roleBadge = adminLevelColors[user.admin_level] || 'bg-gray-100 text-gray-800';
+      const statusBadge = user.deleted_at ? 'bg-gray-100 text-gray-800' : (user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800');
+      const statusText = user.deleted_at ? 'Deleted' : (user.is_active ? 'Active' : 'Inactive');
+      
+      let actionButtons = '';
+      if (user.deleted_at) {
+        // Deleted user actions
+        actionButtons = `
+          <button onclick="restoreUser(${user.id})" class="text-green-600 hover:text-green-900 transition-colors">Restore</button>
+          <button onclick="forceDeleteUser(${user.id})" class="text-red-600 hover:text-red-900 transition-colors">Permanent Delete</button>
+        `;
+      } else {
+        // Active/inactive user actions
+        const editBtn = `<button onclick="editUser(${user.id})" class="text-teal-600 hover:text-teal-900 transition-colors">Edit</button>`;
+        const toggleBtn = `<button onclick="toggleUserStatus(${user.id})" class="text-blue-600 hover:text-blue-900 transition-colors">${user.is_active ? 'Deactivate' : 'Activate'}</button>`;
+        const deleteBtn = (authId && user.id !== authId) ? `<button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>` : '';
+        actionButtons = `${editBtn} ${toggleBtn} ${deleteBtn}`;
+      }
 
-      return `\n        <tr class="hover:bg-gray-50">\n            <td class="px-6 py-4 whitespace-nowrap">\n                <div class="flex items-center">\n                    <img src="${avatar}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">\n                    <div class="ml-4">\n                        <div class="text-sm font-medium text-gray-900">${user.name}</div>\n                        <div class="text-sm text-gray-500">${user.email}</div>\n                    </div>\n                </div>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleBadge}">${user.role === 'admin' ? 'Admin' : 'User'}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge}">${user.is_active ? 'Active' : 'Inactive'}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\n                ${new Date(user.created_at).toLocaleDateString()}\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\n                ${user.reviews_count || 0}\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">\n                <div class="flex items-center gap-2">\n                    ${editBtn}\n                    ${toggleBtn}\n                    ${deleteBtn}\n                </div>\n            </td>\n        </tr>\n      `;
+      return `\n        <tr class="hover:bg-gray-50 ${user.deleted_at ? 'opacity-60' : ''}">\n            <td class="px-6 py-4 whitespace-nowrap">\n                <div class="flex items-center">\n                    <img src="${avatar}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">\n                    <div class="ml-4">\n                        <div class="text-sm font-medium text-gray-900">${user.name}</div>\n                        <div class="text-sm text-gray-500">${user.email}</div>\n                    </div>\n                </div>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleBadge}">${user.admin_level ? user.admin_level.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'User'}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap">\n                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge}">${statusText}</span>\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\n                ${new Date(user.created_at).toLocaleDateString()}\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\n                ${user.reviews_count ?? 0}\n            </td>\n            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">\n                <div class="flex items-center gap-2">\n                    ${actionButtons}\n                </div>\n            </td>\n        </tr>\n      `;
     }).join('');
 
     tableBody.innerHTML = usersHtml;
@@ -70,15 +116,20 @@
 
   function showUserModal(user=null){
     isEditing = user !== null; editingUserId = user ? user.id : null;
-    const modal = document.getElementById('user-modal'); const title = document.getElementById('modal-title'); const form = document.getElementById('user-form'); const passwordSection = document.getElementById('password-section');
+    const modal = document.getElementById('user-modal'); const title = document.getElementById('modal-title'); const form = document.getElementById('user-form');
     if(!modal || !form) return;
     title.textContent = isEditing ? 'Edit User' : 'Add New User';
-    if(isEditing){ form.name.value = user.name; form.email.value = user.email; form.role.value = user.role; form.is_active.checked = !!user.is_active; form.password.required = false; if(passwordSection) passwordSection.querySelector('p').style.display = 'block'; }
-    else { form.reset(); form.password.required = true; if(passwordSection) passwordSection.querySelector('p').style.display = 'none'; }
+    if(isEditing){ 
+      form.name.value = user.name; form.email.value = user.email; form.admin_level.value = user.admin_level; form.is_active.checked = !!user.is_active; 
+    }
+    else { 
+      form.reset(); 
+    }
     modal.classList.remove('hidden');
+    modal.classList.add('flex');
   }
 
-  function closeUserModal(){ const modal = document.getElementById('user-modal'); if(modal) modal.classList.add('hidden'); }
+  function closeUserModal(){ const modal = document.getElementById('user-modal'); if(modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); } }
 
   async function saveUser(){
     const form = document.getElementById('user-form'); if(!form) return; const formData = new FormData(form); formData.set('is_active', formData.get('is_active') ? '1' : '0');
@@ -96,22 +147,22 @@
 
   async function deleteUser(userId){ if(!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return; try{ const response = await fetch(`/admin/users/${userId}`, { method:'DELETE', headers:{ 'X-CSRF-TOKEN': getCsrf(), 'Accept':'application/json' } }); const result = await response.json().catch(()=>({})); if(response.ok){ alert(result.message || 'User deleted successfully!'); loadUsers(); } else { alert(result.message || 'Failed to delete user.'); } } catch(e){ console.error(e); alert('Network error occurred.'); } }
 
-  async function exportUsers(){ try{ const params = new URLSearchParams({ search: currentSearch, role: currentRoleFilter, status: currentStatusFilter }); const response = await fetch(`/admin/users/export?${params}`, { headers:{ 'X-CSRF-TOKEN': getCsrf() } }); if(response.ok){ const blob = await response.blob(); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = 'users_export.csv'; document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url); } else { alert('Failed to export users.'); } } catch(e){ console.error(e); alert('Network error occurred.'); } }
+  async function exportUsers(){ try{ const params = new URLSearchParams({ search: currentSearch, admin_level: currentAdminLevelFilter, status: currentStatusFilter }); const response = await fetch(`/admin/users/export?${params}`, { headers:{ 'X-CSRF-TOKEN': getCsrf() } }); if(response.ok){ const blob = await response.blob(); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = 'users_export.csv'; document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url); } else { alert('Failed to export users.'); } } catch(e){ console.error('Export error:', e); alert('Export failed.'); } }
 
-  // password toggle helper
-  function setupPasswordToggle(inputId, toggleId){ const input = document.getElementById(inputId); const toggle = document.getElementById(toggleId); if(input && toggle){ toggle.addEventListener('click', function(){ if(input.type === 'password'){ input.type = 'text'; toggle.textContent = 'Hide'; } else { input.type = 'password'; toggle.textContent = 'Show'; } }); } }
+  async function restoreUser(userId){ if(!confirm('Are you sure you want to restore this user?')) return; try{ const response = await fetch(`/admin/users/${userId}/restore`, { method:'POST', headers:{ 'X-CSRF-TOKEN': getCsrf(), 'Accept':'application/json' } }); const result = await response.json().catch(()=>({})); if(response.ok){ alert(result.message || 'User restored successfully!'); loadUsers(); } else { alert(result.message || 'Failed to restore user.'); } } catch(e){ console.error(e); alert('Network error occurred.'); } }
+
+  async function forceDeleteUser(userId){ if(!confirm('Are you sure you want to permanently delete this user? This action cannot be undone and will remove all their data permanently!')) return; try{ const response = await fetch(`/admin/users/${userId}/force-delete`, { method:'DELETE', headers:{ 'X-CSRF-TOKEN': getCsrf(), 'Accept':'application/json' } }); const result = await response.json().catch(()=>({})); if(response.ok){ alert(result.message || 'User permanently deleted!'); loadUsers(); } else { alert(result.message || 'Failed to permanently delete user.'); } } catch(e){ console.error(e); alert('Network error occurred.'); } }
 
   // Event wiring
   document.addEventListener('DOMContentLoaded', function(){
-    // setup listeners
     const searchEl = document.getElementById('user-search'); if(searchEl) searchEl.addEventListener('input', debounce(function(e){ currentSearch = e.target.value; currentPage = 1; loadUsers(); },300));
-    const roleEl = document.getElementById('role-filter'); if(roleEl) roleEl.addEventListener('change', function(e){ currentRoleFilter = e.target.value; currentPage = 1; loadUsers(); });
+    const adminLevelEl = document.getElementById('admin-level-filter'); if(adminLevelEl) adminLevelEl.addEventListener('change', function(e){ currentAdminLevelFilter = e.target.value; currentPage = 1; loadUsers(); });
     const statusEl = document.getElementById('status-filter'); if(statusEl) statusEl.addEventListener('change', function(e){ currentStatusFilter = e.target.value; currentPage = 1; loadUsers(); });
-    const clearBtn = document.getElementById('clear-filters'); if(clearBtn) clearBtn.addEventListener('click', function(){ const us = document.getElementById('user-search'); if(us) us.value=''; if(roleEl) roleEl.value=''; if(statusEl) statusEl.value=''; currentSearch=''; currentRoleFilter=''; currentStatusFilter=''; currentPage=1; loadUsers(); });
+    const includeDeletedEl = document.getElementById('include-deleted'); if(includeDeletedEl) includeDeletedEl.addEventListener('change', function(e){ includeDeleted = e.target.checked; currentPage = 1; loadUsers(); });
+    const clearBtn = document.getElementById('clear-filters'); if(clearBtn) clearBtn.addEventListener('click', function(){ const us = document.getElementById('user-search'); if(us) us.value=''; if(adminLevelEl) adminLevelEl.value=''; if(statusEl) statusEl.value=''; const incDel = document.getElementById('include-deleted'); if(incDel) incDel.checked=false; currentSearch=''; currentAdminLevelFilter=''; currentStatusFilter=''; includeDeleted=false; currentPage=1; loadUsers(); });
     const addBtn = document.getElementById('add-user-btn'); if(addBtn) addBtn.addEventListener('click', function(){ showUserModal(); });
     const form = document.getElementById('user-form'); if(form) form.addEventListener('submit', function(e){ e.preventDefault(); saveUser(); });
     const exportBtn = document.getElementById('export-users-btn'); if(exportBtn) exportBtn.addEventListener('click', function(){ exportUsers(); });
-    setupPasswordToggle('add-user-password','toggle-add-user-password'); setupPasswordToggle('add-user-password-confirm','toggle-add-user-password-confirm');
     loadUsers();
   });
 
@@ -120,5 +171,9 @@
   window.toggleUserStatus = toggleUserStatus;
   window.deleteUser = deleteUser;
   window.changePage = changePage;
+  window.closeUserModal = closeUserModal;
+  window.showUserModal = showUserModal;
+  window.restoreUser = restoreUser;
+  window.forceDeleteUser = forceDeleteUser;
 
 })();

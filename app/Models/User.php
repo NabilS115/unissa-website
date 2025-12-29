@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +22,7 @@ class User extends Authenticatable
     'name',
     'email',
     'password',
-    'role',
+    'admin_level',
     'is_active',
     'profile_photo_url',
     'phone',
@@ -82,14 +83,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is admin
-     */
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    /**
      * Check if user is active
      */
     public function isActive(): bool
@@ -119,6 +112,62 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Check if user can perform admin actions
+     */
+    public function canManageUsers(): bool
+    {
+        return in_array($this->admin_level, ['admin', 'super_admin']);
+    }
+
+    /**
+     * Check if user can delete/restore users
+     */
+    public function canDeleteUsers(): bool
+    {
+        return in_array($this->admin_level, ['admin', 'super_admin']);
+    }
+
+    /**
+     * Check if user can permanently delete users
+     */
+    public function canForceDeleteUsers(): bool
+    {
+        return $this->admin_level === 'super_admin';
+    }
+
+    /**
+     * Check if user can manage admin levels
+     */
+    public function canManageAdminLevels(): bool
+    {
+        return $this->admin_level === 'super_admin';
+    }
+
+    /**
+     * Check if user is moderator or above
+     */
+    public function isModerator(): bool
+    {
+        return in_array($this->admin_level, ['moderator', 'admin', 'super_admin']);
+    }
+
+    /**
+     * Check if user is admin or above
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->admin_level, ['admin', 'super_admin']);
+    }
+
+    /**
+     * Check if user is super admin
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->admin_level === 'super_admin';
     }
 }
 
