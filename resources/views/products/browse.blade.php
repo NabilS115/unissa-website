@@ -885,14 +885,7 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(food.price).toFixed(2)"></span></span>
                                     </div>
-                                    <template x-if="window.userRole === 'admin'">
-                                        <a :href="`/admin/products/${food.id}/edit`" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important; text-decoration: none;">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                            <span>Edit Product</span>
-                                        </a>
-                                    </template>
+
                                     <template x-if="window.userRole !== 'admin'">
                                         <button @click.stop="addToCart(food.id, food.name, food.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                             Add to Cart
@@ -973,14 +966,7 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(merch.price).toFixed(2)"></span></span>
                                     </div>
-                                    <template x-if="window.userRole === 'admin'">
-                                        <a :href="`/admin/products/${merch.id}/edit`" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important; text-decoration: none;">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                            <span>Edit Product</span>
-                                        </a>
-                                    </template>
+
                                     <template x-if="window.userRole !== 'admin'">
                                         <button @click.stop="addToCart(merch.id, merch.name, merch.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                             Add to Cart
@@ -1022,6 +1008,30 @@
         <!-- Others Cards -->
         <template x-if="tab === 'others'">
             <div class="tab-content animate-fade-in">
+            
+            <!-- Printing Services Section -->
+            <div class="max-w-6xl mx-auto px-4 md:px-8 mb-8">
+                <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-2xl p-8 text-white shadow-xl">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="text-center md:text-left">
+                            <h3 class="text-3xl font-bold mb-3">🖨️ Printing Services</h3>
+                            <p class="text-teal-100 text-lg mb-4">Professional printing services for documents, photos, and more</p>
+                            <div class="flex flex-wrap gap-2 text-sm">
+                                <span class="bg-white/20 px-3 py-1 rounded-full">Document Printing</span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full">Photo Printing</span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full">Color & B/W</span>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <a href="{{ route('printing.index') }}" 
+                               class="bg-white text-teal-600 hover:bg-teal-50 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                                Start Printing
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-8 mb-20">
                 <template x-for="other in pagedOthers" :key="other.id">
                     <div class="bg-white rounded-xl md:rounded-3xl shadow-md md:shadow-2xl hover:shadow-lg md:hover:shadow-3xl border border-teal-100 hover:border-teal-200 transition-all duration-300 overflow-hidden group cursor-pointer other-card transform hover:-translate-y-1 md:hover:-translate-y-2 flex flex-col h-full" style="margin-bottom: 12px !important;"
@@ -1061,14 +1071,7 @@
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-lg font-bold text-teal-600">B$<span x-text="parseFloat(other.price).toFixed(2)"></span></span>
                                     </div>
-                                    <template x-if="window.userRole === 'admin'">
-                                        <a :href="`/admin/products/${other.id}/edit`" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important; text-decoration: none;">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                            <span>Edit Product</span>
-                                        </a>
-                                    </template>
+
                                     <template x-if="window.userRole !== 'admin'">
                                         <button @click.stop="addToCart(other.id, other.name, other.price)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" style="padding: 10px !important; font-size: 14px !important; border-radius: 8px !important; font-weight: 600 !important; background-color:#0d9488 !important;">
                                             Add to Cart

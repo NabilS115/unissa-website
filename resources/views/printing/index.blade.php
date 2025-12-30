@@ -68,7 +68,7 @@
                    class="group inline-flex items-center gap-3 bg-white text-teal-600 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
                     ← Back to Homepage
                 </a>
-                <a href="{{ route('unissa-cafe.catalog') }}" 
+                <a href="{{ route('unissa-cafe.catalog') }}?tab=others" 
                    class="group inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-white/30 hover:border-white/50 transform hover:-translate-y-1">
                     Browse Products
                 </a>

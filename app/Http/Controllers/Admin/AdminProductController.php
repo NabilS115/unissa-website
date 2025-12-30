@@ -95,7 +95,7 @@ class AdminProductController extends Controller
                 'name' => 'required|string|max:255',
                 'desc' => 'required|string',
                 'category' => 'required|string|max:255',
-                'type' => 'required|in:food,merch',
+                'type' => 'required|in:food,merch,others',
                 'price' => 'required|numeric|min:0',
                 'img' => 'nullable|image|max:20480', // Increased to 20MB like catalog
                 'cropped_image' => 'nullable|string',
@@ -250,7 +250,7 @@ class AdminProductController extends Controller
             'name' => 'required|string|max:255',
             'desc' => 'required|string',
             'category' => 'required|string|max:255',
-            'type' => 'required|in:food,merch',
+            'type' => 'required|in:food,merch,others',
             'price' => 'required|numeric|min:0',
             'img' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
@@ -277,7 +277,10 @@ class AdminProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('admin.products.index')
+        // Get return URL from request or default to products index
+        $returnUrl = $request->input('return_url', route('admin.products.index'));
+        
+        return redirect($returnUrl)
                         ->with('success', 'Product updated successfully!');
     }
 

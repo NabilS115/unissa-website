@@ -43,6 +43,9 @@
                     @csrf
                     @method('PUT')
                     
+                    <!-- Hidden field to store return URL -->
+                    <input type="hidden" name="return_url" value="{{ request()->header('referer') ?? route('admin.products.index') }}">
+                    
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Product Name -->
                         <div class="space-y-2">
@@ -87,6 +90,7 @@
                                 <option value="">Select Type</option>
                                 <option value="food" {{ old('type', $product->type) == 'food' ? 'selected' : '' }}>Food</option>
                                 <option value="merch" {{ old('type', $product->type) == 'merch' ? 'selected' : '' }}>Merchandise</option>
+                                <option value="others" {{ old('type', $product->type) == 'others' ? 'selected' : '' }}>Others</option>
                             </select>
                             @error('type')
                                 <p class="text-sm text-red-600 flex items-center gap-1">
