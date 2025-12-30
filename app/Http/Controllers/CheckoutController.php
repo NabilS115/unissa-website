@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderConfirmationMail;
+use App\Mail\AdminOrderNotificationMail;
 use Illuminate\Support\Facades\Session;
 
 class CheckoutController extends Controller
@@ -117,9 +118,24 @@ class CheckoutController extends Controller
         // Send order confirmation email
         try {
             Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));
+            \Log::info("Order confirmation email sent successfully to customer: {$order->customer_email}");
         } catch (\Exception $e) {
             // Log email error but don't fail the order
             \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+        }
+
+        // Add small delay to prevent rate limiting
+        sleep(2);
+
+        // Send admin notification email
+        try {
+            $adminEmail = config('mail.admin_email', 'admin@unissa.com');
+            Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
+            \Log::info("Admin notification email sent successfully to: {$adminEmail} for order #{$order->id}");
+        } catch (\Exception $e) {
+            // Log detailed error but don't fail the order
+            \Log::error("Failed to send admin notification email for order #{$order->id}: " . $e->getMessage());
+            \Log::info("Order #{$order->id} was created successfully, only email notification failed");
         }
 
         // Set success message based on payment method
@@ -264,9 +280,24 @@ class CheckoutController extends Controller
         // Send order confirmation email with the single order
         try {
             Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));
+            \Log::info("Cart order confirmation email sent successfully to customer: {$order->customer_email}");
         } catch (\Exception $e) {
             // Log email error but don't fail the order
             \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+        }
+
+        // Add small delay to prevent rate limiting
+        sleep(2);
+
+        // Send admin notification email
+        try {
+            $adminEmail = config('mail.admin_email', 'admin@unissa.com');
+            Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
+            \Log::info("Admin notification email sent successfully to: {$adminEmail} for cart order #{$order->id}");
+        } catch (\Exception $e) {
+            // Log detailed error but don't fail the order
+            \Log::error("Failed to send admin notification email for order #{$order->id}: " . $e->getMessage());
+            \Log::info("Order #{$order->id} was created successfully, only email notification failed");
         }
 
         $totalPrice = $order->total_price;
