@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +19,19 @@ class AdminOrderController extends Controller
     public function index(Request $request)
     {
         try {
+            // Get unread order notifications first (before marking them as read)
+            $unreadNotifications = AdminNotification::where('type', 'new_order')
+                ->where('read', false)
+                ->get();
+
+            // Get order IDs that have unread notifications (to highlight them)
+            $recentlyNotifiedOrders = $unreadNotifications->pluck('data')
+                ->pluck('order_id')
+                ->unique()
+                ->toArray();
+
+            // We'll mark them as read AFTER the page is rendered, via JavaScript
+
             $query = Order::with(['user', 'orderItems.product']);
 
             // Apply filters
@@ -70,7 +84,10 @@ class AdminOrderController extends Controller
                 'recent_orders' => Order::where('created_at', '>=', now()->subDays(7))->count(),
             ];
 
-            return view('admin.orders.index', compact('orders', 'stats'));
+            // Use the orders that have unread notifications (will be marked as read via JS)
+            $recentlyNotifiedOrders = $recentlyNotifiedOrders;
+
+            return view('admin.orders.index', compact('orders', 'stats', 'recentlyNotifiedOrders'));
         } catch (\Exception $e) {
             Log::error('Error loading admin orders page: ' . $e->getMessage(), [
                 'exception' => $e,

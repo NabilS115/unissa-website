@@ -203,6 +203,108 @@ console.log('Header.js is loading...');
         console.log('[Header] Header initialization complete');
     }
 
+    // --- Admin Notifications Count ---
+    async function loadAdminNotificationsCount() {
+        // Skip admin notifications for non-admin users
+        if (!window.__isAuthenticated || !window.__isAdmin) {
+            console.log('[AdminNotifications] Skipping admin notifications - user not admin');
+            return;
+        }
+
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            
+            const response = await fetch('/api/admin/notifications/count', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : '',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (!response.ok) {
+                console.warn('[AdminNotifications] Failed to load admin notification count:', response.status);
+                return;
+            }
+
+            const data = await response.json();
+            if (data.success) {
+                console.log('[AdminNotifications] Notification count received:', data.count);
+                updateAdminNotificationsCount(data.count);
+            }
+            
+        } catch (error) {
+            console.error('[AdminNotifications] Error loading notification count:', error);
+        }
+    }
+
+    function updateAdminNotificationsCount(count) {
+        // Desktop notification elements
+        const notificationGroup = document.getElementById('admin-notifications-group');
+        const desktopBadge = document.getElementById('admin-notifications-count');
+        
+        // Mobile notification elements
+        const mobileNotificationGroup = document.getElementById('admin-notifications-group-mobile');
+        const mobileBadge = document.getElementById('admin-notifications-count-mobile');
+        
+        console.log('[AdminNotifications] Updating icons and badges with count:', count);
+        
+        // Show/hide entire notification icons based on count
+        if (count > 0) {
+            // Show desktop notification icon
+            if (notificationGroup) {
+                notificationGroup.style.display = 'block';
+            }
+            if (desktopBadge) {
+                desktopBadge.textContent = count;
+                desktopBadge.style.display = 'flex';
+            }
+            
+            // Show mobile notification icon
+            if (mobileNotificationGroup) {
+                mobileNotificationGroup.style.display = 'block';
+            }
+            if (mobileBadge) {
+                mobileBadge.textContent = count;
+                mobileBadge.style.display = 'flex';
+            }
+        } else {
+            // Hide entire notification icons when no notifications
+            if (notificationGroup) {
+                notificationGroup.style.display = 'none';
+            }
+            if (mobileNotificationGroup) {
+                mobileNotificationGroup.style.display = 'none';
+            }
+        }
+    }
+
+    // Initialize everything
+    function init() {
+        console.log('[Header] Initializing header components...');
+        initializeHeaderInteractions();
+        initializeMobileMenu();
+        loadCartCount();
+        loadAdminNotificationsCount(); // Add admin notifications loading
+        
+        // Start auto-polling for admin notifications (every 30 seconds)
+        if (window.__isAuthenticated && window.__isAdmin) {
+            setInterval(() => {
+                console.log('[AdminNotifications] Auto-polling for notification updates...');
+                loadAdminNotificationsCount();
+            }, 30000); // 30 seconds
+        }
+        
+        // Make updateCartCount globally available
+        window.updateCartCount = updateCartCount;
+        // Make updateAdminNotificationsCount globally available
+        window.updateAdminNotificationsCount = updateAdminNotificationsCount;
+        
+        console.log('[Header] Header initialization complete');
+    }
+
     // Run when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

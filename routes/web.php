@@ -521,6 +521,23 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/{cartItem}', [App\Http\Controllers\CartController::class, 'removeItem'])->name('cart.remove');
     Route::get('/api/cart/count', [App\Http\Controllers\CartController::class, 'getCartCount'])->name('cart.count');
+    
+    // Admin notification API
+    Route::post('/api/admin/notifications/count', function() {
+        if (auth()->user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        return response()->json(['success' => true, 'count' => \App\Models\AdminNotification::unreadCount()]);
+    })->name('admin.notifications.count');
+    
+    // Mark admin notifications as read
+    Route::post('/api/admin/notifications/mark-read', function() {
+        if (auth()->user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        \App\Models\AdminNotification::where('read', false)->update(['read' => true, 'read_at' => now()]);
+        return response()->json(['success' => true]);
+    })->name('admin.notifications.mark-read');
 });
 
 // User Order routes

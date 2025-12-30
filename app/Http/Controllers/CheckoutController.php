@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -127,17 +128,29 @@ class CheckoutController extends Controller
         // Add small delay to prevent rate limiting
         sleep(2);
 
-        // Send admin notification email
+        // Create admin notification in database (always works)
+        try {
+            AdminNotification::createOrderNotification($order);
+            \Log::info("Database admin notification created successfully for order #{$order->id}");
+        } catch (\Exception $e) {
+            \Log::error("Failed to create database admin notification for order #{$order->id}: " . $e->getMessage());
+        }
+
+        // Try to send admin email notification (but don't fail if it doesn't work)
         try {
             $adminEmail = config('mail.admin_email', 'admin@unissa.com');
             // Load the product relationship for the email template
             $order->load('orderItems.product');
             Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
             \Log::info("Admin notification email sent successfully to: {$adminEmail} for order #{$order->id}");
+            
+            // Mark email as sent in the notification
+            AdminNotification::where('type', 'new_order')
+                ->whereJsonContains('data->order_id', $order->id)
+                ->update(['email_sent' => true]);
         } catch (\Exception $e) {
-            // Log detailed error but don't fail the order
-            \Log::error("Failed to send admin notification email for order #{$order->id}: " . $e->getMessage());
-            \Log::info("Order #{$order->id} was created successfully, only email notification failed");
+            // Log error but don't fail the order - database notification is the primary method
+            \Log::warning("Email notification failed for order #{$order->id} (database notification still created): " . $e->getMessage());
         }
 
         // Set success message based on payment method
@@ -291,17 +304,29 @@ class CheckoutController extends Controller
         // Add small delay to prevent rate limiting
         sleep(2);
 
-        // Send admin notification email
+        // Create admin notification in database (always works)
+        try {
+            AdminNotification::createOrderNotification($order);
+            \Log::info("Database admin notification created successfully for cart order #{$order->id}");
+        } catch (\Exception $e) {
+            \Log::error("Failed to create database admin notification for order #{$order->id}: " . $e->getMessage());
+        }
+
+        // Try to send admin email notification (but don't fail if it doesn't work)
         try {
             $adminEmail = config('mail.admin_email', 'admin@unissa.com');
             // Load the product relationship for the email template
             $order->load('orderItems.product');
             Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
             \Log::info("Admin notification email sent successfully to: {$adminEmail} for cart order #{$order->id}");
+            
+            // Mark email as sent in the notification
+            AdminNotification::where('type', 'new_order')
+                ->whereJsonContains('data->order_id', $order->id)
+                ->update(['email_sent' => true]);
         } catch (\Exception $e) {
-            // Log detailed error but don't fail the order
-            \Log::error("Failed to send admin notification email for order #{$order->id}: " . $e->getMessage());
-            \Log::info("Order #{$order->id} was created successfully, only email notification failed");
+            // Log error but don't fail the order - database notification is the primary method
+            \Log::warning("Email notification failed for order #{$order->id} (database notification still created): " . $e->getMessage());
         }
 
         $totalPrice = $order->total_price;

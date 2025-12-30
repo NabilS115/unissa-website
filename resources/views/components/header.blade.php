@@ -55,6 +55,16 @@
                             </a>
                             <span id="cart-count-mobile" class="absolute bg-red-500 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center -top-1 -right-1 shadow-sm" style="display: none; font-size: 9px;">0</span>
                         </div>
+                    @else
+                        <!-- Mobile Admin Notifications -->
+                        <div class="relative" id="admin-notifications-group-mobile" style="display: none;">
+                            <a href="{{ route('admin.orders.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 active:scale-95" title="Order Notifications">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                            </a>
+                            <span id="admin-notifications-count-mobile" class="absolute bg-red-500 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center -top-1 -right-1 shadow-sm" style="display: none; font-size: 9px;">0</span>
+                        </div>
                     @endif
                 @endauth
             @endif
@@ -105,6 +115,25 @@
                     @endif
                 @endauth
                 <!-- cart/count logic moved to public/js/header.js -->
+            @endif
+
+            <!-- Admin Notification Icon (only show for admin users) -->
+            @if($shouldShowUnissaBranding)
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <!-- Desktop Admin Notifications -->
+                        <div class="relative z-50 overflow-visible" id="admin-notifications-group" style="display: none;">
+                            <a href="{{ route('admin.orders.index') }}" class="w-10 h-10 bg-white text-teal-600 rounded-full flex items-center justify-center shadow hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 overflow-visible" title="Order Notifications">
+                                <!-- Bell Icon for Notifications -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 stroke-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                            </a>
+                            <!-- Notification Bubble -->
+                            <span id="admin-notifications-count" class="absolute bg-red-600 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center shadow border border-white -top-1 -right-1 z-50 overflow-visible" style="display: none; font-size: 8px; line-height: 1;">0</span>
+                        </div>
+                    @endif
+                @endauth
             @endif
 
             <!-- Profile Icon -->
@@ -546,14 +575,17 @@
                 window.__cartCountUrl = '{{ route('cart.count') }}';
                 window.__isAuthenticated = true;
                 window.__userId = {{ auth()->id() }};
+                window.__isAdmin = {{ auth()->user()->role === 'admin' ? 'true' : 'false' }};
                 console.log('🔑 User authenticated in Blade:', {
                     userId: {{ auth()->id() }}, 
+                    isAdmin: {{ auth()->user()->role === 'admin' ? 'true' : 'false' }},
                     cartUrl: '{{ route('cart.count') }}'
                 });
             @else
                 window.__cartCountUrl = null;
                 window.__isAuthenticated = false;
                 window.__userId = null;
+                window.__isAdmin = false;
                 console.log('🚫 User not authenticated in Blade');
             @endauth
             

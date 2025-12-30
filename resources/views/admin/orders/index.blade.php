@@ -190,12 +190,21 @@ window.__adminOrders = {
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             @foreach($orders as $order)
-                                <tr class="hover:bg-gray-50">
+                                <tr class="hover:bg-gray-50 {{ in_array($order->id, $recentlyNotifiedOrders) ? 'bg-gradient-to-r from-blue-50 to-teal-50 border-l-4 border-l-teal-500 animate-pulse' : '' }}" 
+                                    {{ in_array($order->id, $recentlyNotifiedOrders) ? 'data-new-order=true' : '' }}>
                                     <td class="px-6 py-4">
                                         <input type="checkbox" name="order_ids[]" value="{{ $order->id }}" class="order-checkbox rounded border-gray-300">
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
+                                            @if(in_array($order->id, $recentlyNotifiedOrders))
+                                                <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800 mr-3">
+                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 2L3 7v11a2 2 0 002 2h10a2 2 0 002-2V7l-7-5z"/>
+                                                    </svg>
+                                                    NEW
+                                                </div>
+                                            @endif
                                             <div>
                                                 <div class="font-medium text-gray-900">#{{ $order->id }}</div>
                                                 <div class="text-sm text-gray-500">{{ $order->orderItems->count() }} item{{ $order->orderItems->count() > 1 ? 's' : '' }}</div>
@@ -640,7 +649,74 @@ window.__adminOrders = {
         font-size: 16px !important;
         padding: 0.875rem !important;
     }
+    
+    /* New order highlighting */
+    [data-new-order="true"] {
+        box-shadow: 0 4px 6px -1px rgba(20, 184, 166, 0.1), 0 2px 4px -1px rgba(20, 184, 166, 0.06);
+    }
+    
+    [data-new-order="true"]:hover {
+        background: linear-gradient(to right, #f0f9ff, #f0fdfa) !important;
+    }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // First, handle highlighting and scrolling
+    const newOrders = document.querySelectorAll('[data-new-order="true"]');
+    
+    if (newOrders.length > 0) {
+        // Add a subtle scroll to first new order
+        const firstNewOrder = newOrders[0];
+        setTimeout(() => {
+            firstNewOrder.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 500);
+        
+        // Remove animation from new orders after 5 seconds
+        setTimeout(() => {
+            newOrders.forEach(row => {
+                row.classList.remove('animate-pulse');
+                row.classList.add('transition-all', 'duration-500');
+            });
+        }, 5000);
+        
+        // After highlighting is shown, mark notifications as read
+        setTimeout(() => {
+            markNotificationsAsRead();
+        }, 2000); // Wait 2 seconds to ensure user sees the highlighting
+    }
+    
+    // Update admin notification count to 0 since they're viewing the orders
+    if (typeof window.updateAdminNotificationsCount === 'function') {
+        window.updateAdminNotificationsCount(0);
+    }
+});
+
+function markNotificationsAsRead() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    
+    fetch('/api/admin/notifications/mark-read', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : '',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Notifications marked as read');
+        }
+    })
+    .catch(error => {
+        console.error('Error marking notifications as read:', error);
+    });
+}
+</script>
 
 @endsection
