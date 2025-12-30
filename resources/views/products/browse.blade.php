@@ -1013,8 +1013,8 @@
             <div class="max-w-6xl mx-auto px-4 md:px-8 mb-8">
                 <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-2xl p-8 text-white shadow-xl">
                     <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div class="text-center md:text-left">
-                            <h3 class="text-3xl font-bold mb-3">🖨️ Printing Services</h3>
+                        <div class="text-left">
+                            <h3 class="text-3xl font-bold mb-3">Printing Services</h3>
                             <p class="text-teal-100 text-lg mb-4">Professional printing services for documents, photos, and more</p>
                             <div class="flex flex-wrap gap-2 text-sm">
                                 <span class="bg-white/20 px-3 py-1 rounded-full">Document Printing</span>
