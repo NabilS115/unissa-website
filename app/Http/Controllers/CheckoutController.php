@@ -130,6 +130,8 @@ class CheckoutController extends Controller
         // Send admin notification email
         try {
             $adminEmail = config('mail.admin_email', 'admin@unissa.com');
+            // Load the product relationship for the email template
+            $order->load('orderItems.product');
             Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
             \Log::info("Admin notification email sent successfully to: {$adminEmail} for order #{$order->id}");
         } catch (\Exception $e) {
@@ -292,6 +294,8 @@ class CheckoutController extends Controller
         // Send admin notification email
         try {
             $adminEmail = config('mail.admin_email', 'admin@unissa.com');
+            // Load the product relationship for the email template
+            $order->load('orderItems.product');
             Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
             \Log::info("Admin notification email sent successfully to: {$adminEmail} for cart order #{$order->id}");
         } catch (\Exception $e) {
