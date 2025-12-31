@@ -339,8 +339,10 @@
                     <div style="background: #ecfdf5; padding: 16px; border-radius: 8px; border: 1px solid #a7f3d0; margin-top: 16px;">
                         <h4 style="color: #16a34a; margin: 0 0 8px; font-size: 14px; font-weight: 600;">📍 Collection Information:</h4>
                         <p style="margin: 0; color: #15803d; font-size: 14px;">
-                            <strong>Location:</strong> Unissa Cafe<br>
-                            <strong>Contact:</strong> +673 8123456 (Call/WhatsApp)<br>
+                            <strong>Location:</strong> {{ \App\Models\ContentBlock::get('pickup_location_name', 'Unissa Cafe', 'text', 'cash-pickup') }}<br>
+                            <strong>Address:</strong> {!! nl2br(e(\App\Models\ContentBlock::get('pickup_location_address', 'Unissa Cafe', 'text', 'cash-pickup'))) !!}<br>
+                            <strong>Contact:</strong> {{ \App\Models\ContentBlock::get('pickup_contact_phone', '+673 8123456', 'text', 'cash-pickup') }} (Call/WhatsApp)<br>
+                            <strong>Hours:</strong> {{ \App\Models\ContentBlock::get('pickup_business_hours', 'Monday-Sunday, 8:00 AM - 8:00 PM', 'text', 'cash-pickup') }}<br>
                             <strong>Note:</strong> We'll notify you when your order is ready for pickup
                         </p>
                     </div>

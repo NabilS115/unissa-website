@@ -509,6 +509,8 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
     Route::post('/admin/content/unissa-cafe', [App\Http\Controllers\ContentController::class, 'updateUnissaCafeHomepage'])->name('content.unissa-cafe.update');
     Route::get('/admin/content/printing', [App\Http\Controllers\ContentController::class, 'printing'])->name('content.printing');
     Route::post('/admin/content/printing', [App\Http\Controllers\ContentController::class, 'updatePrinting'])->name('content.printing.update');
+    Route::get('/admin/content/cash-pickup', [App\Http\Controllers\ContentController::class, 'cashPickup'])->name('content.cash-pickup');
+    Route::post('/admin/content/cash-pickup', [App\Http\Controllers\ContentController::class, 'updateCashPickupSettings'])->name('content.cash-pickup.update');
     Route::post('/admin/content/bank-transfer', [App\Http\Controllers\ContentController::class, 'updateBankTransferSettings'])->name('content.bank-transfer.update');
     Route::post('/admin/content/upload-image', [App\Http\Controllers\ContentController::class, 'uploadImage'])->name('content.upload.image');
 });

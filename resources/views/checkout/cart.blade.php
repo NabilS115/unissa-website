@@ -428,8 +428,8 @@
                                     <span class="text-2xl font-bold text-green-600">B${{ number_format($totalPrice, 2) }}</span>
                                 </div>
                                 <div class="text-sm text-gray-600">
-                                    <p class="mb-2"><strong>Pickup Location:</strong> UNISSA Café, [Your Address]</p>
-                                    <p><strong>Business Hours:</strong> Monday-Sunday, 8:00 AM - 8:00 PM</p>
+                                    <p class="mb-2"><strong>Pickup Location:</strong> {{ \App\Models\ContentBlock::get('pickup_location_name', 'UNISSA Café', 'text', 'cash-pickup') }}, {{ \App\Models\ContentBlock::get('pickup_location_address', '[Your Address]', 'text', 'cash-pickup') }}</p>
+                                    <p><strong>Business Hours:</strong> {{ \App\Models\ContentBlock::get('pickup_business_hours', 'Monday-Sunday, 8:00 AM - 8:00 PM', 'text', 'cash-pickup') }}</p>
                                 </div>
                             </div>
                             

@@ -118,6 +118,40 @@ class ContentBlockSeeder extends Seeder
                 'section' => 'contact',
                 'order' => 6,
             ],
+            [
+                'key' => 'pickup_location_name',
+                'type' => 'text',
+                'content' => 'UNISSA Café',
+                'page' => 'cash-pickup',
+                'section' => 'pickup',
+                'order' => 1,
+            ],
+            [
+                'key' => 'pickup_location_address',
+                'type' => 'text',
+                'content' => 'UBD Campus, Jalan Tungku Link, Gadong BE1410, Brunei Darussalam',
+                'page' => 'cash-pickup',
+                'section' => 'pickup',
+                'order' => 2,
+            ],
+            [
+                'key' => 'pickup_business_hours',
+                'type' => 'text',
+                'content' => 'Monday-Friday: 8:00 AM - 5:00 PM
+Saturday: 9:00 AM - 2:00 PM
+Sunday: Closed',
+                'page' => 'cash-pickup',
+                'section' => 'pickup',
+                'order' => 3,
+            ],
+            [
+                'key' => 'pickup_contact_phone',
+                'type' => 'text',
+                'content' => '+673 8602877',
+                'page' => 'cash-pickup',
+                'section' => 'pickup',
+                'order' => 4,
+            ],
         ];
 
         foreach ($content_blocks as $block) {

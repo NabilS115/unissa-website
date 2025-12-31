@@ -66,7 +66,7 @@
                 
                 allUploadAreas.forEach((uploadArea, index) => {
                   if (uploadArea.innerHTML.includes('Image uploaded and cropped successfully')) {
-                    console.log(`🧽 Cleaning upload area ${index + 1}`);
+                    // 🧽 Cleaning upload area
                     uploadArea.innerHTML = `
                       <div class="space-y-1 text-center">
                         <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -99,7 +99,7 @@
                 if (hiddenInput) {
                   hiddenInput.value = '';
                   hiddenInput.removeAttribute('data-has-image');
-                  console.log('✅ Hidden input cleared');
+                  // ✅ Hidden input cleared
                 }
                 
                 if (previewContainer) {
@@ -114,10 +114,10 @@
                 if (window.addCropper) {
                   window.addCropper.destroy();
                   window.addCropper = null;
-                  console.log('✅ Cropper destroyed');
+                  // ✅ Cropper destroyed
                 }
                 
-                console.log('🎉 Form cleanup complete');
+                // 🎉 Form cleanup complete
               }, 50);
             });
           }
@@ -281,7 +281,7 @@
       },
 
       removeProductFromList(productId) {
-        console.log('🗑️ Removing product from lists:', productId);
+        // 🗑️ Removing product from lists:
         console.log('📋 Current arrays:', {
           food: Array.isArray(this.food) ? this.food.length : 'NOT_ARRAY',
           merchandise: Array.isArray(this.merchandise) ? this.merchandise.length : 'NOT_ARRAY', 
@@ -349,7 +349,7 @@
           }
         })
         .catch(err => {
-          console.error('❌ Could not refresh data:', err);
+          // ❌ Could not refresh data:
         });
       },
 

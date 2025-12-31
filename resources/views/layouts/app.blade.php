@@ -520,8 +520,8 @@
     </main>
     @include('components.footer')
     @stack('scripts')
-    {{-- Alpine.js should only be included once. --}}
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- Alpine.js CDN loading --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <!-- Immediate cart count update function fallback -->
     <script>
@@ -547,71 +547,5 @@
     <!-- Externalized: layout overlay unguard logic -->
     <script src="/js/layout-unguard.js"></script>
     
-    <!-- Optimized navigation handler -->
-    <script>
-        // Prevent page flash during navigation
-        let navigationInProgress = false;
-        
-        // Faster page showing and Alpine.js initialization
-        function initializePage() {
-            // Remove x-cloak from all elements
-            document.querySelectorAll('[x-cloak]').forEach(el => {
-                el.removeAttribute('x-cloak');
-                el.style.display = 'block';
-                el.style.opacity = '1';
-            });
-            
-            // Mark Alpine components as initialized
-            document.querySelectorAll('[x-data]').forEach(el => {
-                el.setAttribute('data-alpine-initialized', 'true');
-                el.style.opacity = '1';
-                el.style.display = 'block';
-            });
-            
-            // Mark page as loaded for any systems that need it
-            document.body.classList.add('loaded');
-        }
-        
-        // Initialize immediately if possible
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializePage);
-        } else {
-            initializePage();
-        }
-        
-        // Also initialize when Alpine is ready
-        document.addEventListener('alpine:init', initializePage);
-        
-        // Fallback - force initialization after 1 second
-        setTimeout(initializePage, 1000);
-        
-        // Optimized navigation handling
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('a[href]');
-            if (link && 
-                !link.target && 
-                !link.download && 
-                !link.href.includes('#') &&
-                link.href.startsWith(window.location.origin) &&
-                link.href !== window.location.href) {
-                
-                navigationInProgress = true;
-                
-                // Let browser handle navigation naturally - no opacity changes
-                // The preloaded resources will make this faster
-            }
-        });
-        
-        // Handle browser navigation (back/forward)
-        window.addEventListener('pageshow', function(e) {
-            navigationInProgress = false;
-            initializePage();
-        });
-        
-        // Reset state on page unload
-        window.addEventListener('beforeunload', function() {
-            navigationInProgress = false;
-        });
-    </script>
 </body>
 </html>

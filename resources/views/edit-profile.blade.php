@@ -355,6 +355,76 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Divider -->
+                            <div class="border-t border-gray-200 my-8"></div>
+
+                            <!-- Admin Cash Pickup Settings -->
+                            <div class="space-y-6">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <h4 class="text-xl font-bold text-amber-600">Cash Pickup Settings</h4>
+                                </div>
+                                <p class="text-gray-600 mb-6">Configure the pickup location, hours, and contact details that customers will see for cash on pickup orders</p>
+                                
+                                <div class="space-y-6">
+                                    <div>
+                                        <label for="admin_pickup_location_name" class="block text-sm font-semibold text-amber-600 mb-2">Pickup Location Name</label>
+                                        <input type="text" id="admin_pickup_location_name"
+                                            value="{{ \App\Models\ContentBlock::get('pickup_location_name', 'UNISSA Café', 'text', 'cash-pickup') }}"
+                                            class="w-full px-4 py-3 border border-amber-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-amber-600 placeholder-amber-400 bg-white" 
+                                            placeholder="e.g., UNISSA Café"
+                                            onchange="updateCashPickupSetting('pickup_location_name', this.value)" />
+                                        <p class="text-xs text-gray-500 mt-1">The name of your business/pickup location</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="admin_pickup_location_address" class="block text-sm font-semibold text-amber-600 mb-2">Pickup Address</label>
+                                        <textarea id="admin_pickup_location_address" rows="3"
+                                            class="w-full px-4 py-3 border border-amber-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-amber-600 placeholder-amber-400 bg-white" 
+                                            placeholder="e.g., 123 Main Street&#10;City Center, State 12345"
+                                            onchange="updateCashPickupSetting('pickup_location_address', this.value)">{{ \App\Models\ContentBlock::get('pickup_location_address', '123 Main Street, City Center', 'text', 'cash-pickup') }}</textarea>
+                                        <p class="text-xs text-gray-500 mt-1">The full address where customers can pick up their orders</p>
+                                    </div>
+
+                                    <div>
+                                        <label for="admin_pickup_business_hours" class="block text-sm font-semibold text-amber-600 mb-2">Business Hours</label>
+                                        <textarea id="admin_pickup_business_hours" rows="3"
+                                            class="w-full px-4 py-3 border border-amber-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-amber-600 placeholder-amber-400 bg-white" 
+                                            placeholder="e.g., Monday-Friday: 9:00 AM - 6:00 PM&#10;Saturday: 9:00 AM - 2:00 PM&#10;Sunday: Closed"
+                                            onchange="updateCashPickupSetting('pickup_business_hours', this.value)">{{ \App\Models\ContentBlock::get('pickup_business_hours', 'Monday-Sunday, 8:00 AM - 8:00 PM', 'text', 'cash-pickup') }}</textarea>
+                                        <p class="text-xs text-gray-500 mt-1">When customers can collect their orders</p>
+                                    </div>
+
+                                    <div>
+                                        <label for="admin_pickup_contact_phone" class="block text-sm font-semibold text-amber-600 mb-2">Contact Phone</label>
+                                        <input type="text" id="admin_pickup_contact_phone"
+                                            value="{{ \App\Models\ContentBlock::get('pickup_contact_phone', '+673 8123456', 'text', 'cash-pickup') }}"
+                                            class="w-full px-4 py-3 border border-amber-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-amber-600 placeholder-amber-400 bg-white" 
+                                            placeholder="e.g., +673 8123456"
+                                            onchange="updateCashPickupSetting('pickup_contact_phone', this.value)" />
+                                        <p class="text-xs text-gray-500 mt-1">Phone number for customers to call about their orders</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <svg class="h-5 w-5 text-orange-400" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm text-orange-700">
+                                                <strong>Admin Only:</strong> These settings control what customers see during cash on pickup checkout. Changes apply immediately to all new orders.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     @endif
 
@@ -621,6 +691,43 @@
                                 toast.classList.remove('bg-green-500', 'bg-red-500');
                             }, 300);
                         }, 3000);
+                    }
+
+                    // Cash pickup settings update function
+                    async function updateCashPickupSetting(field, value) {
+                        try {
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                            if (!csrfToken) {
+                                showToast('CSRF token not found', 'error');
+                                return;
+                            }
+
+                            const response = await fetch('/admin/content/cash-pickup', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                                    'Accept': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    content: {
+                                        [field]: value
+                                    }
+                                })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                showToast('Cash pickup setting updated successfully!', 'success');
+                            } else {
+                                console.error('Update failed:', result);
+                                showToast(result.message || 'Error updating cash pickup setting', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Network error:', error);
+                            showToast('Network error updating cash pickup setting', 'error');
+                        }
                     }
                 </script>
                 

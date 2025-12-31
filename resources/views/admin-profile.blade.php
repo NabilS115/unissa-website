@@ -281,8 +281,8 @@
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-base font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300 line-clamp-2">Payment Settings</h3>
-                                <p class="text-gray-600 mb-3 text-xs leading-relaxed line-clamp-3">Configure bank transfer details and payment methods for customer checkout options.</p>
+                                <h3 class="text-base font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300 line-clamp-2">Bank Transfer Settings</h3>
+                                <p class="text-gray-600 mb-3 text-xs leading-relaxed line-clamp-3">Configure bank transfer account details for customer payments.</p>
                                 <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                                     <div class="flex items-center gap-1">
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -300,6 +300,44 @@
                             </div>
                         </div>
                     </button>
+
+                    <!-- Cash Pickup Settings Card -->
+                    <a href="{{ route('content.cash-pickup') }}" class="group block w-full">
+                        <div class="bg-white rounded-2xl shadow-xl border border-amber-100 p-4 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group-hover:border-amber-300 h-full">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="w-12 h-12 bg-gradient-to-r from-amber-100 to-orange-100 rounded-xl flex items-center justify-center group-hover:from-amber-200 group-hover:to-orange-200 transition-all duration-300">
+                                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex items-center text-amber-600 group-hover:text-amber-700 transition-colors duration-300">
+                                    <span class="text-sm font-medium mr-2">Configure</span>
+                                    <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-base font-bold text-gray-900 mb-2 group-hover:text-amber-900 transition-colors duration-300 line-clamp-2">Cash Pickup Settings</h3>
+                                <p class="text-gray-600 mb-3 text-xs leading-relaxed line-clamp-3">Configure pickup location, hours, and contact details for cash on pickup orders.</p>
+                                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>Pickup Location</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>Business Hours</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
 
                 <!-- Enhanced Statistics Overview Card -->

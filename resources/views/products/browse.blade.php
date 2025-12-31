@@ -4,6 +4,7 @@
 
 @push('styles')
 <style>
+
 /* Ensure main container is visible immediately to prevent flash */
 #browse-container {
     opacity: 1 !important;
@@ -84,6 +85,8 @@
 @endpush
 
 @section('content')
+
+
 @php
     $food = $food ?? [];
     $merchandise = $merchandise ?? [];

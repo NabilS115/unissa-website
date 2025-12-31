@@ -345,10 +345,9 @@ input[type="number"] {
                                 Pickup Location
                             </h3>
                             <p class="text-teal-700 text-sm">
-                                <strong>Unissa Café</strong><br>
-                                123 Main Street<br>
-                                City Center, State 12345<br>
-                                <span class="text-teal-600 font-medium">📞 Phone: (555) 123-4567</span>
+                                <strong>{{ \App\Models\ContentBlock::get('pickup_location_name', 'Unissa Café', 'text', 'cash-pickup') }}</strong><br>
+                                {!! nl2br(e(\App\Models\ContentBlock::get('pickup_location_address', '123 Main Street<br>City Center, State 12345', 'text', 'cash-pickup'))) !!}<br>
+                                <span class="text-teal-600 font-medium">📞 Phone: {{ \App\Models\ContentBlock::get('pickup_contact_phone', '(555) 123-4567', 'text', 'cash-pickup') }}</span>
                             </p>
                         </div>
 

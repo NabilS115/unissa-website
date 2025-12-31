@@ -233,6 +233,44 @@ class ContentController extends Controller
         }
     }
 
+    public function cashPickup()
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('admin.content.editcashpickup');
+    }
+
+    public function updateCashPickupSettings(Request $request)
+    {
+        // Only allow admin access
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $validated = $request->validate([
+                'content.pickup_location_name' => 'nullable|string|max:255',
+                'content.pickup_location_address' => 'nullable|string|max:500',
+                'content.pickup_business_hours' => 'nullable|string|max:500',
+                'content.pickup_contact_phone' => 'nullable|string|max:50',
+            ]);
+
+            foreach ($validated['content'] as $key => $content) {
+                if (trim($content) !== '') {
+                    ContentBlock::set($key, $content, 'text', 'cash-pickup');
+                }
+            }
+
+            return response()->json(['success' => true, 'message' => 'Cash pickup settings updated successfully!']);
+        } catch (\Exception $e) {
+            \Log::error('Cash pickup settings update error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error updating settings: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function uploadImage(Request $request)
     {
         // Only allow admin access
