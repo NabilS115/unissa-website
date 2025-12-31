@@ -86,8 +86,16 @@
                                                         and {{ $order->orderItems->count() - 2 }} more...
                                                     @endif
                                                 </p>
+                                            @elseif($order->orderItems->count() === 1)
+                                                @php 
+                                                    $firstItem = $order->orderItems->first();
+                                                @endphp
+                                                <h3 class="text-xl font-bold text-gray-800 mb-1">
+                                                    {{ $firstItem && $firstItem->product ? $firstItem->product->name : 'Product Not Found' }}
+                                                </h3>
                                             @else
-                                                <h3 class="text-xl font-bold text-gray-800 mb-1">{{ $order->orderItems->first()->product ? $order->orderItems->first()->product->name : 'Product Not Found' }}</h3>
+                                                <h3 class="text-xl font-bold text-gray-800 mb-1">No Items</h3>
+                                                <p class="text-sm text-gray-500">This order appears to have no items.</p>
                                             @endif
                                             <p class="text-sm text-gray-500 mb-2">Order #{{ $order->id }} • {{ $order->created_at->format('M d, Y at g:i A') }}</p>
                                         </div>

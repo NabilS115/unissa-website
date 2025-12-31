@@ -509,8 +509,12 @@ class CatalogController extends Controller
      */
     public function getData()
     {
-        $food = Product::where('type', 'food')->get();
-        $merchandise = Product::where('type', 'merch')->get();
+        $food = Product::where('type', 'food')->where('is_active', true)->get();
+        $merchandise = Product::where('type', 'merch')->where('is_active', true)->get();
+        $others = Product::where('type', 'others')
+            ->where('is_active', true)
+            ->where('category', '!=', 'Printing Services')
+            ->get();
         
         // Calculate ratings for each product
         foreach ($food as $product) {
@@ -521,9 +525,14 @@ class CatalogController extends Controller
             $this->calculateProductRating($product);
         }
         
+        foreach ($others as $product) {
+            $this->calculateProductRating($product);
+        }
+        
         return response()->json([
             'food' => $food,
-            'merchandise' => $merchandise
+            'merchandise' => $merchandise,
+            'others' => $others
         ]);
     }
 

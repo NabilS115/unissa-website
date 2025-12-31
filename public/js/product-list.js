@@ -322,6 +322,48 @@
         url.searchParams.set('tab', newTab);
         window.history.pushState(null, '', url);
         this.tab = newTab;
+        
+        // Always refresh data when switching to "Others" tab
+        if (newTab === 'others') {
+          this.refreshTabData(newTab);
+        }
+      },
+      
+      refreshTabData(tabName) {
+        console.log(`🔄 Refreshing ${tabName} data...`);
+        
+        fetch('/catalog/data', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('📦 Received fresh data:', data);
+          if (data.food) {
+            this.food = data.food;
+            console.log(`✅ Updated food: ${data.food.length} items`);
+          }
+          if (data.merchandise) {
+            this.merchandise = data.merchandise;
+            console.log(`✅ Updated merchandise: ${data.merchandise.length} items`);
+          }
+          if (data.others) {
+            this.others = data.others;
+            console.log(`✅ Updated others: ${data.others.length} items`);
+          }
+          console.log(`🎉 ${tabName} data refreshed successfully`);
+        })
+        .catch(err => {
+          console.error('❌ Could not refresh data:', err);
+        });
       },
 
       // AJAX form submission methods

@@ -242,7 +242,9 @@
     // Separate categories for food, merch, and others
     $foodCategories = \App\Models\Product::where('type', 'food')->pluck('category')->unique()->values()->all();
     $merchCategories = \App\Models\Product::where('type', 'merch')->pluck('category')->unique()->values()->all();
-    $otherCategories = \App\Models\Product::where('type', 'others')->pluck('category')->unique()->values()->all();
+    $otherCategories = \App\Models\Product::where('type', 'others')
+        ->where('category', '!=', 'Printing Services')
+        ->pluck('category')->unique()->values()->all();
 @endphp
 
 <div x-data="foodMerchComponent()" class="alpine-component" id="browse-container" x-cloak>

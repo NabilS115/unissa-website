@@ -14,10 +14,21 @@ class UserOrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('orderItems.product')
+        $orders = Order::with(['orderItems.product'])
             ->where('user_id', Auth::id())
+            ->whereHas('orderItems') // Only include orders that have order items
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+
+        // Filter out any orders with no items during collection processing
+        $orders->getCollection()->transform(function ($order) {
+            // Double-check and log any problematic orders
+            if ($order->orderItems->isEmpty()) {
+                Log::warning("Order {$order->id} has no order items - this should not appear due to whereHas filter");
+                return null; // Mark for removal
+            }
+            return $order;
+        })->filter(); // Remove null entries
 
         return view('user.orders.index', compact('orders'));
     }
