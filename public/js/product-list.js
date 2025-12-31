@@ -35,6 +35,7 @@
       currentOthersPage: 1,
       itemsPerPage: 12,
       isLoading: false,
+      loadingMessage: 'Loading...',
       isSubmitting: false,
       showAddModal: false,
       showEditModal: false,
@@ -50,6 +51,84 @@
         if (data.highlightProduct) {
           this.$nextTick(() => { this.highlightProduct(data.highlightProduct); });
         }
+        
+        // Watch for modal state changes and reset form when opening
+        this.$watch('showAddModal', (value) => {
+          if (value === true) {
+            // Modal opening - AGGRESSIVELY reset all form state
+            this.$nextTick(() => {
+              setTimeout(() => {
+                console.log('🧹 Aggressively cleaning form state...');
+                
+                // Reset the main form first
+                const form = document.querySelector('form[action*="products.store"]');
+                if (form) {
+                  form.reset();
+                  console.log('✅ Form reset');
+                }
+                
+                // Find and reset ALL upload areas with success messages
+                const allUploadAreas = document.querySelectorAll('.border-dashed');
+                console.log(`🔍 Found ${allUploadAreas.length} upload areas`);
+                
+                allUploadAreas.forEach((uploadArea, index) => {
+                  if (uploadArea.innerHTML.includes('Image uploaded and cropped successfully')) {
+                    console.log(`🧽 Cleaning upload area ${index + 1}`);
+                    uploadArea.innerHTML = `
+                      <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="flex text-sm text-gray-600">
+                          <label for="add-image-input" class="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
+                            <span>Upload an image</span>
+                            <input id="add-image-input" type="file" accept="image/*" class="sr-only" x-on:change="initAddCropper($event)">
+                          </label>
+                          <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                      </div>
+                    `;
+                  }
+                });
+                
+                // Reset hidden inputs and validation state
+                const fileInput = document.getElementById('add-image-input');
+                const hiddenInput = document.getElementById('add-cropped-data');
+                const previewContainer = document.getElementById('add-preview-container');
+                const cropperContainer = document.getElementById('add-cropper-container');
+                
+                if (fileInput) {
+                  fileInput.value = '';
+                  console.log('✅ File input cleared');
+                }
+                
+                if (hiddenInput) {
+                  hiddenInput.value = '';
+                  hiddenInput.removeAttribute('data-has-image');
+                  console.log('✅ Hidden input cleared');
+                }
+                
+                if (previewContainer) {
+                  previewContainer.classList.add('hidden');
+                }
+                
+                if (cropperContainer) {
+                  cropperContainer.classList.add('hidden');
+                }
+                
+                // Destroy any existing cropper
+                if (window.addCropper) {
+                  window.addCropper.destroy();
+                  window.addCropper = null;
+                  console.log('✅ Cropper destroyed');
+                }
+                
+                console.log('🎉 Form cleanup complete');
+              }, 50);
+            });
+          }
+        });
       },
 
       get pagedFoods() {
@@ -637,6 +716,7 @@
         if (!confirm('Are you sure you want to delete this product?')) return;
         
         this.isLoading = true;
+        this.loadingMessage = 'Deleting product...';
         fetch(`/products/${productId}`, {
           method: 'DELETE',
           headers: { 'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]')||{}).getAttribute ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '' , 'Content-Type':'application/json','Accept':'application/json' },
@@ -683,6 +763,7 @@
         })
         .finally(() => {
           this.isLoading = false;
+          this.loadingMessage = 'Loading...';
         });
       }
     };

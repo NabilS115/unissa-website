@@ -837,7 +837,7 @@
     <div x-show="isLoading" data-initial-hidden class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-40" style="display: none;">
         <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
             <div class="rounded-full h-12 w-12 border-4 border-teal-200 border-t-teal-600 mb-4"></div>
-            <p class="text-gray-600 font-medium">Switching catalog...</p>
+            <p class="text-gray-600 font-medium" x-text="loadingMessage || 'Loading...'"></p>
         </div>
     </div>
 
