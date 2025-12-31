@@ -288,11 +288,32 @@
       },
 
       removeProductFromList(productId) {
-        const lists = [this.food, this.merchandise, this.others];
-        lists.forEach(list => {
-          const index = list.findIndex(p => p.id === productId);
-          if (index !== -1) list.splice(index, 1);
+        console.log('🗑️ Removing product from lists:', productId);
+        console.log('📋 Current arrays:', {
+          food: Array.isArray(this.food) ? this.food.length : 'NOT_ARRAY',
+          merchandise: Array.isArray(this.merchandise) ? this.merchandise.length : 'NOT_ARRAY', 
+          others: Array.isArray(this.others) ? this.others.length : 'NOT_ARRAY'
         });
+        
+        const lists = [
+          { name: 'food', array: this.food },
+          { name: 'merchandise', array: this.merchandise },
+          { name: 'others', array: this.others }
+        ];
+        
+        lists.forEach(({ name, array }) => {
+          if (Array.isArray(array)) {
+            const index = array.findIndex(p => p && p.id === productId);
+            if (index !== -1) {
+              array.splice(index, 1);
+              console.log(`✅ Removed product ${productId} from ${name} array`);
+            }
+          } else {
+            console.error(`❌ ${name} is not an array:`, typeof array, array);
+          }
+        });
+        
+        console.log('🎉 Product removal complete');
       },
 
       switchTab(newTab) {
@@ -719,16 +740,37 @@
         this.loadingMessage = 'Deleting product...';
         fetch(`/products/${productId}`, {
           method: 'DELETE',
-          headers: { 'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]')||{}).getAttribute ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '' , 'Content-Type':'application/json','Accept':'application/json' },
+          headers: { 
+            'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]')||{}).getAttribute ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json' 
+          },
           redirect: 'manual'
         })
         .then(response => {
-          if (response.status >= 300 && response.status < 400) return { success: true, message: 'Product deleted successfully!' };
-          if (response.ok) {
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) return response.json();
+          console.log('Delete response status:', response.status);
+          console.log('Delete response headers:', response.headers);
+          
+          // Consider 2xx status codes as success
+          if (response.status >= 200 && response.status < 300) {
+            console.log('Delete successful - status 2xx');
             return { success: true, message: 'Product deleted successfully!' };
           }
+          
+          // Handle redirects as success (3xx)
+          if (response.status >= 300 && response.status < 400) {
+            console.log('Delete successful - redirect');
+            return { success: true, message: 'Product deleted successfully!' };
+          }
+          
+          // Log the error response for debugging
+          console.error('Delete failed with status:', response.status);
+          response.text().then(text => {
+            console.error('Error response body:', text);
+          }).catch(err => {
+            console.error('Could not read error response:', err);
+          });
+          
           throw new Error(`HTTP error! status: ${response.status}`);
         })
         .then(data => {
@@ -759,7 +801,7 @@
           } else {
             alert('Failed to delete product. Please check your connection and try again.');
           }
-          this.removeProductFromList(productId);
+          // DO NOT remove product from list on error - it wasn't actually deleted
         })
         .finally(() => {
           this.isLoading = false;
