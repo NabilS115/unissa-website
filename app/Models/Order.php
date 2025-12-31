@@ -29,7 +29,9 @@ class Order extends Model
      */
     protected $appends = [
         'payment_method_display',
-        'payment_status_display'
+        'payment_status_display',
+        'unit_price',
+        'quantity'
     ];
 
     /**
@@ -181,5 +183,30 @@ class Order extends Model
             'refunded' => 'Refunded',
             default => ucfirst(str_replace('_', ' ', $this->payment_status))
         };
+    }
+
+    /**
+     * Get unit price for display (first item's unit price or average)
+     */
+    public function getUnitPriceAttribute(): float
+    {
+        if ($this->orderItems->count() === 1) {
+            return $this->orderItems->first()->unit_price ?? 0;
+        }
+        
+        // For multiple items, show average unit price
+        if ($this->orderItems->count() > 0) {
+            return $this->orderItems->avg('unit_price') ?? 0;
+        }
+        
+        return 0;
+    }
+
+    /**
+     * Get total quantity for display
+     */
+    public function getQuantityAttribute(): int
+    {
+        return $this->orderItems->sum('quantity') ?? 0;
     }
 }
