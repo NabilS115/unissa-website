@@ -12,8 +12,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Update the type enum to include 'others'
-        DB::statement("ALTER TABLE products MODIFY COLUMN type ENUM('food', 'merch', 'others')");
+        // Check database driver and use appropriate syntax
+        if (DB::getDriverName() === 'sqlite') {
+            // SQLite doesn't support ENUM or MODIFY COLUMN
+            // Use string type with constraint check instead
+            Schema::table('products', function (Blueprint $table) {
+                $table->string('type_new')->default('food');
+            });
+            
+            // Copy data from old column to new column
+            DB::statement("UPDATE products SET type_new = type");
+            
+            // Drop old column and rename new column
+            Schema::table('products', function (Blueprint $table) {
+                $table->dropColumn('type');
+            });
+            
+            Schema::table('products', function (Blueprint $table) {
+                $table->renameColumn('type_new', 'type');
+            });
+        } else {
+            // MySQL/PostgreSQL - Update the type enum to include 'others'
+            DB::statement("ALTER TABLE products MODIFY COLUMN type ENUM('food', 'merch', 'others')");
+        }
     }
 
     /**
@@ -21,7 +42,27 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revert the type enum to original values
-        DB::statement("ALTER TABLE products MODIFY COLUMN type ENUM('food', 'merch')");
+        // Check database driver and use appropriate syntax
+        if (DB::getDriverName() === 'sqlite') {
+            // SQLite approach - recreate column without 'others'
+            Schema::table('products', function (Blueprint $table) {
+                $table->string('type_new')->default('food');
+            });
+            
+            // Copy data, excluding 'others' type
+            DB::statement("UPDATE products SET type_new = type WHERE type IN ('food', 'merch')");
+            DB::statement("UPDATE products SET type_new = 'food' WHERE type = 'others'");
+            
+            Schema::table('products', function (Blueprint $table) {
+                $table->dropColumn('type');
+            });
+            
+            Schema::table('products', function (Blueprint $table) {
+                $table->renameColumn('type_new', 'type');
+            });
+        } else {
+            // MySQL/PostgreSQL - Revert the type enum to original values
+            DB::statement("ALTER TABLE products MODIFY COLUMN type ENUM('food', 'merch')");
+        }
     }
 };
