@@ -9,7 +9,7 @@ let isRefreshing = false;
 let refreshTimeout = null;
 
 function refreshAllCarousels() {
-    console.log('Refreshing carousels...');
+    // Refreshing carousels...
     try {
         const bgTrack = document.getElementById('event-bg-track');
         if (bgTrack) {
@@ -25,7 +25,7 @@ function refreshAllCarousels() {
         if (typeof resetEventInterval === 'function') {
             resetEventInterval();
         }
-        console.log('Carousels refreshed successfully');
+        // Carousels refreshed successfully
         const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
         if (galleryContainer) {
             galleryContainer.style.width = '';
@@ -33,12 +33,12 @@ function refreshAllCarousels() {
             void galleryContainer.offsetHeight;
         }
     } catch (error) {
-        console.log('Error in carousel refresh:', error);
+        // Error in carousel refresh:
     }
 }
 
 function checkAuthStateChange() {
-    console.log('Auth state check disabled to prevent loops');
+    // Auth state check disabled to prevent loops
 }
 
 let lastAuthCheck = Date.now();
@@ -49,7 +49,7 @@ function checkAndRefreshOnAuthChange() {
         .then(response => response.json())
         .then(data => {
             if (data.authenticated !== currentAuthState || data.role !== currentUserRole) {
-                console.log('Authentication state changed, refreshing carousels...');
+                // Authentication state changed, refreshing carousels...
                 currentAuthState = data.authenticated;
                 currentUserRole = data.role;
                 setTimeout(refreshAllCarousels, 100);
@@ -66,18 +66,17 @@ document.addEventListener('submit', function(e) {
     const form = e.target;
     if (form.action && (form.action.includes('/login') || form.action.includes('/logout'))) {
         setTimeout(() => {
-            console.log('Login/logout form submitted, checking auth state...');
+            // Login/logout form submitted, checking auth state...
             checkAndRefreshOnAuthChange();
         }, 1000);
     }
 });
 
 let galleryData = window.__galleryData || [];
-console.log('=== BACKEND DATA DEBUG ===');
-console.log('Raw galleryData:', galleryData);
-console.log('Gallery count:', galleryData ? galleryData.length : 0);
-
-console.log('Gallery data loaded:', galleryData);
+// === BACKEND DATA DEBUG ===
+// Raw galleryData:
+// Gallery count:
+// Gallery data loaded:
 
 let eventImages = [];
 if (galleryData && galleryData.length > 0) {
@@ -98,21 +97,21 @@ function getNextBtn() { return document.getElementById('event-carousel-next'); }
 function getDotsEl() { return document.getElementById('event-carousel-dots'); }
 
 function renderEventBgCarousel() {
-    console.log('Running renderEventBgCarousel...');
+    // Running renderEventBgCarousel...
     const galleryContainer = document.querySelector('.bg-white.rounded-2xl');
     const bgTrack = document.getElementById('event-bg-track');
-    console.log('Gallery render check:', { galleryContainer: !!galleryContainer, bgTrack: !!bgTrack, eventImages: eventImages ? eventImages.length : 'no eventImages' });
+    // Gallery render check:
     if (!galleryContainer || !bgTrack) {
         console.error('Gallery elements missing for rendering');
         return;
     }
     if (!eventImages || eventImages.length === 0) {
-        console.log('No gallery images, showing empty state');
+        // No gallery images, showing empty state
         galleryContainer.style.display = 'block';
         showGalleryEmptyState();
         return;
     }
-    console.log('Rendering gallery with', eventImages.length, 'images');
+    // Rendering gallery with images
     galleryContainer.style.display = 'block';
     hideGalleryEmptyState();
     bgTrack.innerHTML = '';
@@ -236,8 +235,8 @@ function setupImageUpload(type) {
     const imageInput = document.getElementById(`${prefix}image-upload`);
     const imagePreview = document.getElementById(`${prefix}image-preview`);
     const previewImg = document.getElementById(`${prefix}preview-img`);
-    console.log('Setting up image upload for type:', type);
-    console.log('Looking for elements:', { dropZone: dropZoneId, imageInput: `${prefix}image-upload`, imagePreview: `${prefix}image-preview`, previewImg: `${prefix}preview-img` });
+    // Setting up image upload for type:
+    // Looking for elements:
     if (!dropZone || !imageInput || !imagePreview || !previewImg) { console.error('Required elements not found for image upload setup', { dropZone: !!dropZone, imageInput: !!imageInput, imagePreview: !!imagePreview, previewImg: !!previewImg }); return; }
     imageInput.addEventListener('change', function(e) { const file = e.target.files[0]; if (file) { handleImageFile(file, previewImg, imagePreview); } });
     dropZone.addEventListener('click', function(e) { if ( e.target === dropZone || (e.target.closest('.space-y-1') && !e.target.closest('label[for="' + imageInput.id + '"]')) ) { imageInput.click(); } });
@@ -253,7 +252,7 @@ function handleImageFile(file, previewImg, imagePreview) { const reader = new Fi
 if (currentAuthState && currentUserRole === 'admin') {
     document.addEventListener('click', function(e) {
         try {
-            console.log('Gallery delegation click:', {target: e.target && e.target.tagName, href: (e.target && e.target.getAttribute) ? e.target.getAttribute('href') : null});
+            // Gallery delegation click:
             const addBtn = e.target.closest && e.target.closest('#add-gallery-btn');
             if (addBtn) { e.preventDefault(); showGalleryModal(); return; }
             const manageBtn = e.target.closest && e.target.closest('#manage-gallery-btn');

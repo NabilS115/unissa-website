@@ -7,9 +7,7 @@
 
   // Expose Alpine component factory on window
   window.foodMerchComponent = function() {
-    console.log('🔄 Initializing foodMerchComponent');
     const data = bs();
-    console.log('📊 Component data:', data);
     return {
       tab: data.activeTab || (new URLSearchParams(window.location.search).get('tab') || 'food'),
       food: data.food || [],
@@ -42,10 +40,6 @@
       editingProduct: null,
 
       init() {
-        console.log('✅ foodMerchComponent initialized successfully');
-        console.log('🍕 Food items:', this.food.length);
-        console.log('🛍️ Merchandise items:', this.merchandise.length);
-        console.log('📦 Others items:', this.others.length);
         this.showAddModal = false;
         this.showEditModal = false;
         if (data.highlightProduct) {
@@ -58,18 +52,17 @@
             // Modal opening - AGGRESSIVELY reset all form state
             this.$nextTick(() => {
               setTimeout(() => {
-                console.log('🧹 Aggressively cleaning form state...');
                 
                 // Reset the main form first
                 const form = document.querySelector('form[action*="products.store"]');
                 if (form) {
                   form.reset();
-                  console.log('✅ Form reset');
+                  // ✅ Form reset
                 }
                 
                 // Find and reset ALL upload areas with success messages
                 const allUploadAreas = document.querySelectorAll('.border-dashed');
-                console.log(`🔍 Found ${allUploadAreas.length} upload areas`);
+                // 🔍 Found allUploadAreas.length upload areas
                 
                 allUploadAreas.forEach((uploadArea, index) => {
                   if (uploadArea.innerHTML.includes('Image uploaded and cropped successfully')) {
@@ -100,7 +93,7 @@
                 
                 if (fileInput) {
                   fileInput.value = '';
-                  console.log('✅ File input cleared');
+                  // ✅ File input cleared
                 }
                 
                 if (hiddenInput) {
@@ -330,7 +323,6 @@
       },
       
       refreshTabData(tabName) {
-        console.log(`🔄 Refreshing ${tabName} data...`);
         
         fetch('/catalog/data', {
           method: 'GET',
@@ -346,20 +338,15 @@
           return response.json();
         })
         .then(data => {
-          console.log('📦 Received fresh data:', data);
           if (data.food) {
             this.food = data.food;
-            console.log(`✅ Updated food: ${data.food.length} items`);
           }
           if (data.merchandise) {
             this.merchandise = data.merchandise;
-            console.log(`✅ Updated merchandise: ${data.merchandise.length} items`);
           }
           if (data.others) {
             this.others = data.others;
-            console.log(`✅ Updated others: ${data.others.length} items`);
           }
-          console.log(`🎉 ${tabName} data refreshed successfully`);
         })
         .catch(err => {
           console.error('❌ Could not refresh data:', err);
@@ -790,8 +777,6 @@
           redirect: 'manual'
         })
         .then(response => {
-          console.log('Delete response status:', response.status);
-          console.log('Delete response headers:', response.headers);
           
           // Consider 2xx status codes as success
           if (response.status >= 200 && response.status < 300) {

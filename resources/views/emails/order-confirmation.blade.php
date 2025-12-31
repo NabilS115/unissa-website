@@ -411,7 +411,7 @@
                     </div>
                 </div>
             </div>
-        @elseif($order->payment_method === 'online' || $order->payment_method === 'paypal' || $order->payment_method === 'card')
+        @elseif($order->payment_method === 'online' || $order->payment_method === 'card')
             <div class="next-steps" style="background: linear-gradient(135deg, #fef7ff, #f3e8ff); border: 2px solid #8b5cf6;">
                 <h3 style="color: #7c3aed; margin: 0 0 16px; font-size: 18px;">💳 Online Payment Instructions</h3>
                 <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #c4b5fd;">

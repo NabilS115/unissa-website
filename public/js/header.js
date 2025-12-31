@@ -1,18 +1,8 @@
 // Header interactions (extracted from Blade)
 // Expects window.__cartCountUrl to be set by Blade bootstrap.
 
-console.log('Header.js is loading...');
-
 (function() {
-    console.log('Header.js IIFE started');
     const CART_COUNT_URL = window.__cartCountUrl;
-    
-    console.log('🔍 Debug Cart URL:', {
-        cartCountUrl: CART_COUNT_URL,
-        windowCartCountUrl: window.__cartCountUrl,
-        isNull: CART_COUNT_URL === null,
-        isUndefined: CART_COUNT_URL === undefined
-    });
 
     // --- Header interactions (profile dropdown only) ---
     function initializeHeaderInteractions() {
@@ -47,19 +37,11 @@ console.log('Header.js is loading...');
     async function loadCartCount() {
         // Skip cart count loading for unauthenticated users
         if (!window.__isAuthenticated || !CART_COUNT_URL || CART_COUNT_URL === null) {
-            console.log('[CartCount] Skipping cart count - user not authenticated', { 
-                isAuthenticated: window.__isAuthenticated,
-                CART_COUNT_URL,
-                userId: window.__userId
-            });
+            // [CartCount] Skipping cart count - user not authenticated
             return;
         }
         
-        console.log('[CartCount] Loading cart count for authenticated user:', {
-            userId: window.__userId,
-            url: CART_COUNT_URL,
-            isAuth: window.__isAuthenticated
-        });
+        // Load cart count for authenticated user
         
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]');
@@ -74,7 +56,7 @@ console.log('Header.js is loading...');
                 headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
             }
             
-            console.log('[CartCount] Making request with headers:', headers);
+            // [CartCount] Making request with headers:
             
             const resp = await fetch(CART_COUNT_URL, { 
                 method: 'GET',
@@ -82,7 +64,7 @@ console.log('Header.js is loading...');
                 credentials: 'same-origin'
             });
             
-            console.log('[CartCount] Response status:', resp.status, resp.statusText);
+            // [CartCount] Response status: resp.status, resp.statusText
             
             if (!resp.ok) {
                 if (resp.status === 401) {
@@ -96,7 +78,7 @@ console.log('Header.js is loading...');
             }
             
             const data = await resp.json();
-            console.log('[CartCount] Received data:', data);
+            // [CartCount] Received data:
             
             const cartCount = document.getElementById('cart-count');
             const mobileCartCount = document.getElementById('cart-count-mobile');
@@ -136,19 +118,19 @@ console.log('Header.js is loading...');
 
     // --- Cart count update function for external calls ---
     function updateCartCount(newCount) {
-        console.log('🛒 updateCartCount called with:', newCount);
+        // 🛒 updateCartCount called with:
         const cartCount = document.getElementById('cart-count');
         const mobileCartCount = document.getElementById('cart-count-mobile');
         
         if (cartCount) {
             cartCount.textContent = newCount || 0;
             cartCount.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
-            console.log('Updated desktop cart badge to:', newCount);
+            // Updated desktop cart badge to:
         }
         if (mobileCartCount) {
             mobileCartCount.textContent = newCount || 0;
             mobileCartCount.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
-            console.log('Updated mobile cart badge to:', newCount);
+            // Updated mobile cart badge to:
         }
     }
 
@@ -188,7 +170,7 @@ console.log('Header.js is loading...');
 
     // --- Initialization ---
     function init() {
-        console.log('[Header] Initializing header functionality...');
+        // [Header] Initializing header functionality...
         initializeHeaderInteractions();
         initializeMobileMenu();
         
@@ -200,14 +182,14 @@ console.log('Header.js is loading...');
         // Make updateCartCount globally available
         window.updateCartCount = updateCartCount;
         
-        console.log('[Header] Header initialization complete');
+        // [Header] Header initialization complete
     }
 
     // --- Admin Notifications Count ---
     async function loadAdminNotificationsCount() {
         // Skip admin notifications for non-admin users
         if (!window.__isAuthenticated || !window.__isAdmin) {
-            console.log('[AdminNotifications] Skipping admin notifications - user not admin');
+            // [AdminNotifications] Skipping admin notifications - user not admin
             return;
         }
 
@@ -231,7 +213,7 @@ console.log('Header.js is loading...');
 
             const data = await response.json();
             if (data.success) {
-                console.log('[AdminNotifications] Notification count received:', data.count);
+                // [AdminNotifications] Notification count received:
                 updateAdminNotificationsCount(data.count);
             }
             
@@ -249,7 +231,7 @@ console.log('Header.js is loading...');
         const mobileNotificationGroup = document.getElementById('admin-notifications-group-mobile');
         const mobileBadge = document.getElementById('admin-notifications-count-mobile');
         
-        console.log('[AdminNotifications] Updating icons and badges with count:', count);
+        // [AdminNotifications] Updating icons and badges with count:
         
         // Show/hide entire notification icons based on count
         if (count > 0) {
@@ -283,7 +265,7 @@ console.log('Header.js is loading...');
 
     // Initialize everything
     function init() {
-        console.log('[Header] Initializing header components...');
+        // [Header] Initializing header components...
         initializeHeaderInteractions();
         initializeMobileMenu();
         loadCartCount();
@@ -292,7 +274,7 @@ console.log('Header.js is loading...');
         // Start auto-polling for admin notifications (every 30 seconds)
         if (window.__isAuthenticated && window.__isAdmin) {
             setInterval(() => {
-                console.log('[AdminNotifications] Auto-polling for notification updates...');
+                // [AdminNotifications] Auto-polling for notification updates...
                 loadAdminNotificationsCount();
             }, 30000); // 30 seconds
         }
@@ -302,7 +284,7 @@ console.log('Header.js is loading...');
         // Make updateAdminNotificationsCount globally available
         window.updateAdminNotificationsCount = updateAdminNotificationsCount;
         
-        console.log('[Header] Header initialization complete');
+        // [Header] Header initialization complete
     }
 
     // Run when DOM is ready
@@ -316,4 +298,4 @@ console.log('Header.js is loading...');
     setTimeout(init, 500);
 })();
 
-console.log('Header.js loaded successfully');
+// Header.js loaded successfully

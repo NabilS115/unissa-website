@@ -394,7 +394,7 @@
                 // const suggestions = await response.json();
                 // displaySuggestions(suggestions, query);
             } catch (error) {
-                console.log('Search suggestions not implemented yet');
+                // Search suggestions not implemented yet
             }
         }
     }
@@ -1609,10 +1609,10 @@ document.addEventListener('alpine:init', () => {
             },
             
             storeScrollPositionAndNavigate(productUrl) {
-                console.log('=== storeScrollPositionAndNavigate CALLED ===');
-                console.log('Current tab:', this.tab);
-                console.log('Product URL:', productUrl);
-                console.log('this context:', this);
+                // === storeScrollPositionAndNavigate CALLED ===
+                // Current tab: this.tab
+                // Product URL:
+                // this context:
                 
                 const currentState = {
                     source: 'catalog',
@@ -1630,7 +1630,7 @@ document.addEventListener('alpine:init', () => {
                     timestamp: Date.now()
                 };
                 
-                console.log('Storing catalog state with tab:', this.tab, currentState);
+                // Storing catalog state with tab:
                 sessionStorage.setItem('catalogState', JSON.stringify(currentState));
                 window.location.href = productUrl;
             },
@@ -1641,13 +1641,13 @@ document.addEventListener('alpine:init', () => {
                 if (restoreState) {
                     try {
                         const state = JSON.parse(restoreState);
-                        console.log('Restoring catalog state:', state);
-                        console.log('Current tab before restoration:', this.tab);
+                        // Restoring catalog state:
+                        // Current tab before restoration:
                         
                         // Set tab first, before other properties
                         this.tab = state.tab || 'food';
-                        console.log('Setting tab to:', this.tab);
-                        console.log('Tab after setting:', this.tab);
+                        // Setting tab to: this.tab
+                        // Tab after setting: this.tab
                         
                         this.foodFilter = state.foodFilter || 'All';
                         this.merchFilter = state.merchFilter || 'All';
@@ -1671,7 +1671,7 @@ document.addEventListener('alpine:init', () => {
                         }, 300);
                         
                         sessionStorage.removeItem('restoreCatalogState');
-                        console.log('State restoration completed. Current tab:', this.tab);
+                        // State restoration completed. Current tab: this.tab
                     } catch (e) {
                         console.error('Error restoring catalog state:', e);
                     }
@@ -1771,7 +1771,7 @@ document.addEventListener('alpine:init', () => {
                         // Clear caches since we have new data
                         this.invalidateCache();
                         
-                        console.log('Backend search completed:', data.products.length, 'results');
+                        // Backend search completed: data.products.length results
                         
                         this.$nextTick(() => {
                             this.animateCards();
@@ -1794,8 +1794,8 @@ document.addEventListener('alpine:init', () => {
             
             // Enhanced clear search with backend support
             async clearSearch() {
-                console.log('=== CLEAR SEARCH ===');
-                console.log('Current tab:', this.tab);
+                // === CLEAR SEARCH ===
+                // Current tab: this.tab
                 
                 if (this.tab === 'food') {
                     this.foodSearchInput = '';
@@ -1854,7 +1854,7 @@ document.addEventListener('alpine:init', () => {
             // Method to toggle between frontend and backend search
             toggleSearchMode() {
                 this.useBackendSearch = !this.useBackendSearch;
-                console.log('Search mode:', this.useBackendSearch ? 'Backend' : 'Frontend');
+                // Search mode: this.useBackendSearch ? 'Backend' : 'Frontend'
             },
             
             // Optimized watchers with debouncing

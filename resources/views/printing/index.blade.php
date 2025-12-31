@@ -401,7 +401,7 @@
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            console.log('Form submitted'); // Debug log
+            // Form submitted
             
             const uploadBtn = document.getElementById('upload-btn');
             const uploadText = document.getElementById('upload-text');
@@ -420,7 +420,7 @@
 
             try {
                 const formData = new FormData(uploadForm);
-                console.log('Sending request to:', '{{ route("printing.upload") }}'); // Debug log
+                // Sending request to: '{{ route("printing.upload") }}'
                 
                 const response = await fetch('{{ route("printing.upload") }}', {
                     method: 'POST',
@@ -430,7 +430,7 @@
                     }
                 });
 
-                console.log('Response status:', response.status); // Debug log
+                // Response status: response.status
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -439,7 +439,7 @@
                 }
 
                 const result = await response.json();
-                console.log('Response result:', result); // Debug log
+                // Response result: result
 
                 if (result.success) {
                     currentPrintJob = result.print_job;

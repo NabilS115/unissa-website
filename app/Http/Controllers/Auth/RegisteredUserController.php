@@ -36,7 +36,25 @@ class RegisteredUserController extends Controller
 
         $photoData = null;
         if ($request->hasFile('photo')) {
-            $photoData = file_get_contents($request->file('photo')->getRealPath());
+            $file = $request->file('photo');
+            
+            // Security validation
+            if (!$file->isValid()) {
+                throw new \Exception('Invalid file uploaded');
+            }
+            
+            // Additional MIME type validation
+            $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($file->getMimeType(), $allowedMimes)) {
+                throw new \Exception('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.');
+            }
+            
+            // Size validation (5MB max)
+            if ($file->getSize() > 5 * 1024 * 1024) {
+                throw new \Exception('File size must be less than 5MB');
+            }
+            
+            $photoData = $file->getContent();
         }
 
         $user = User::create([

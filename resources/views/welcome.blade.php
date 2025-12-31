@@ -738,7 +738,7 @@
         @if(auth()->check() && auth()->user()->role === 'admin')
             // Gallery management button handlers - simple and direct
             function attachGalleryHandlers() {
-                console.log('Attaching gallery handlers...');
+                // Attaching gallery handlers...
                 
                 const addBtn = document.getElementById('add-gallery-btn');
                 const manageBtn = document.getElementById('manage-gallery-btn');
@@ -746,11 +746,11 @@
                 const deleteBtn = document.getElementById('delete-current-gallery-btn');
                 
                 if (addBtn) {
-                    console.log('Found add button, attaching listener');
+                    // Found add button, attaching listener
                     addBtn.onclick = function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('Add button clicked!');
+                        // Add button clicked
                         showGalleryModal();
                     };
                     addBtn.style.pointerEvents = 'auto';
@@ -758,11 +758,11 @@
                 }
                 
                 if (manageBtn) {
-                    console.log('Found manage button, attaching listener');
+                    // Found manage button, attaching listener
                     manageBtn.onclick = function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('Manage button clicked!');
+                        // Manage button clicked
                         showGalleryManagementModal();
                     };
                     manageBtn.style.pointerEvents = 'auto';
@@ -787,7 +787,7 @@
                     };
                 }
                 
-                console.log('Gallery handlers attached!');
+                // Gallery handlers attached!
             }
             
             // Ensure buttons work on page load

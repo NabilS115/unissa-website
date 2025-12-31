@@ -710,7 +710,7 @@ function markNotificationsAsRead() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log('Notifications marked as read');
+            // Notifications marked as read
         }
     })
     .catch(error => {

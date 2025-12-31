@@ -42,7 +42,7 @@
       
       if(response.ok){ 
         const data = await response.json(); 
-        console.log('API Response:', data); // Debug log
+        // API Response: data
         displayUsers(data.users||[]); 
         updatePagination(data.pagination||{}); 
         updateStats(data.stats||{}); 

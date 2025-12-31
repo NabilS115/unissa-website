@@ -34,7 +34,7 @@
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log('Cart update response:', data, 'for formId:', formId);
+                // Cart update response: data, 'for formId:', formId
                 
                 // Find the specific item's container and update ALL total elements within it
                 const form = document.getElementById(`cart-form-${formId}`);
@@ -43,21 +43,21 @@
                 if (itemContainer && data.item_total) {
                     // Find ALL data-item-total elements within this specific item container
                     const itemTotalElements = itemContainer.querySelectorAll('[data-item-total]');
-                    console.log('Found', itemTotalElements.length, 'item total elements to update');
+                    // Found itemTotalElements.length item total elements to update
                     
                     // Update each element (mobile and desktop versions)
                     itemTotalElements.forEach((element, index) => {
-                        console.log(`Updating item total element ${index + 1} to: B$${parseFloat(data.item_total).toFixed(2)}`);
+                        // Updating item total element
                         element.textContent = 'B$' + parseFloat(data.item_total).toFixed(2);
                     });
                 } else {
-                    console.log('Could not find item container. Form:', form, 'Container:', itemContainer);
+                    // Could not find item container
                 }
                 if (data.cart_total) {
-                    console.log('Updating cart totals to: B$' + parseFloat(data.cart_total).toFixed(2));
+                    // Updating cart totals to:
                     const subtotalElements = document.querySelectorAll('[data-subtotal]');
                     subtotalElements.forEach(el => {
-                        console.log('Updating subtotal element:', el);
+                        // Updating subtotal element:
                         el.textContent = 'B$' + parseFloat(data.cart_total).toFixed(2);
                     });
                 }

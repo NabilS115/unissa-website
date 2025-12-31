@@ -4,13 +4,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Handle Livewire navigation events
     document.addEventListener('livewire:navigate', function() {
-        console.log('🔄 Livewire navigation started');
+        // 🔄 Livewire navigation started
         document.body.style.opacity = '0.9';
         document.body.style.transition = 'opacity 0.2s ease';
     });
     
     document.addEventListener('livewire:navigated', function() {
-        console.log('✅ Livewire navigation completed');
+        // ✅ Livewire navigation completed
         
         // Reset opacity
         document.body.style.opacity = '1';

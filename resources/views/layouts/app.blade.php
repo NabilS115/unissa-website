@@ -527,19 +527,19 @@
     <script>
     // Provide immediate updateCartCount function before header.js loads
     window.updateCartCount = window.updateCartCount || function(newCount) {
-        console.log('Fallback updateCartCount called with:', newCount);
+        // Fallback updateCartCount called with:
         const cartBadge = document.getElementById('cart-count');
         const mobileCartBadge = document.getElementById('cart-count-mobile');
         
         if (cartBadge) {
             cartBadge.textContent = newCount || 0;
             cartBadge.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
-            console.log('Fallback updated desktop cart badge to:', newCount);
+            // Fallback updated desktop cart badge to:
         }
         if (mobileCartBadge) {
             mobileCartBadge.textContent = newCount || 0;
             mobileCartBadge.style.display = (newCount && newCount > 0) ? 'flex' : 'none';
-            console.log('Fallback updated mobile cart badge to:', newCount);
+            // Fallback updated mobile cart badge to:
         }
     };
     </script>

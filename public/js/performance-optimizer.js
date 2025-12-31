@@ -2,7 +2,7 @@
 // Additional performance optimizations for faster loading
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Performance optimizer initialized');
+    // 🚀 Performance optimizer initialized
     
     // 1. Optimize image loading with Intersection Observer
     const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function optimizeFonts() {
         if ('fonts' in document) {
             document.fonts.ready.then(() => {
-                console.log('✅ Fonts loaded');
+                // ✅ Fonts loaded
                 document.body.classList.add('fonts-loaded');
             });
         }
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     incrementImageLoad() {
                         this.imageLoadCount++;
                         if (this.imageLoadCount % 10 === 0) {
-                            console.log(`📊 Loaded ${this.imageLoadCount} images`);
+                            // 📋 Loaded images
                         }
                     }
                 });
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 const timing = performance.timing;
                 const loadTime = timing.loadEventEnd - timing.navigationStart;
-                console.log(`⚡ Page load time: ${loadTime}ms`);
+                // ⚡ Page load time: loadTime ms
             }, 100);
         });
     }

@@ -165,7 +165,7 @@
                                 Profile updated successfully!
                             </div>
                         @endif
-                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" onclick="console.log('Update Profile button clicked');">
+                        <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 focus:ring-teal-500 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105" onclick="">
                             Update Profile
                         </button>
                     </div>
@@ -474,17 +474,17 @@
                 <!-- Robust tab switching functionality -->
                 <script>
                 (function() {
-                    console.log('Edit profile tabs initializing...');
+                    // Edit profile tabs initializing...
                     
                     function initTabSwitching() {
                         // Function to switch tabs with robust error handling
                         function switchToTab(tabName) {
-                            console.log('Switching to tab:', tabName);
+                            // Switching to tab:
                             
                             try {
                                 // Hide all tab contents first
                                 const allTabs = document.querySelectorAll('.tab-content');
-                                console.log('Found tabs:', allTabs.length);
+                                // Found tabs:
                                 
                                 allTabs.forEach(function(tab) {
                                     tab.style.display = 'none';
@@ -494,13 +494,13 @@
                                 
                                 // Show the target tab
                                 const targetTab = document.getElementById('tab-content-' + tabName);
-                                console.log('Target tab element:', targetTab);
+                                // Target tab element:
                                 
                                 if (targetTab) {
                                     targetTab.style.display = 'block';
                                     targetTab.classList.remove('hidden');
                                     targetTab.classList.add('tab-visible');
-                                    console.log('Successfully showed tab:', tabName);
+                                    // Successfully showed tab:
                                 } else {
                                     console.error('Tab not found:', 'tab-content-' + tabName);
                                 }
@@ -514,7 +514,7 @@
                                 const activeButton = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
                                 if (activeButton) {
                                     activeButton.classList.add('border-teal-500', 'text-teal-900');
-                                    console.log('Updated button styles for:', tabName);
+                                    // Updated button styles for:
                                 }
                                 
                             } catch (error) {
@@ -524,21 +524,21 @@
                         
                         // Add event listeners to tab buttons
                         const tabButtons = document.querySelectorAll('.tab-btn');
-                        console.log('Found tab buttons:', tabButtons.length);
+                        // Found tab buttons:
                         
                         tabButtons.forEach(function(button) {
                             const tabName = button.getAttribute('data-tab');
-                            console.log('Setting up button for tab:', tabName);
+                            // Setting up button for tab:
                             
                             button.addEventListener('click', function(e) {
                                 e.preventDefault();
-                                console.log('Button clicked for tab:', tabName);
+                                // Button clicked for tab:
                                 switchToTab(tabName);
                             });
                         });
                         
                         // Initialize with profile tab
-                        console.log('Initializing with profile tab');
+                        // Initializing with profile tab
                         switchToTab('profile');
                         
                         // Make function globally available for debugging

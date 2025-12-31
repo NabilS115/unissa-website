@@ -463,7 +463,7 @@
                         }
                     }
 
-                    console.log('Sending data:', data); // Debug log
+                    // Sending data: data
 
                     const response = await fetch('{{ route("content.homepage.update") }}', {
                         method: 'POST',

@@ -576,22 +576,18 @@
                 window.__isAuthenticated = true;
                 window.__userId = {{ auth()->id() }};
                 window.__isAdmin = {{ auth()->user()->role === 'admin' ? 'true' : 'false' }};
-                console.log('🔑 User authenticated in Blade:', {
-                    userId: {{ auth()->id() }}, 
-                    isAdmin: {{ auth()->user()->role === 'admin' ? 'true' : 'false' }},
-                    cartUrl: '{{ route('cart.count') }}'
-                });
+                // 🔑 User authenticated in Blade:
             @else
                 window.__cartCountUrl = null;
                 window.__isAuthenticated = false;
                 window.__userId = null;
                 window.__isAdmin = false;
-                console.log('🚫 User not authenticated in Blade');
+                // 🚫 User not authenticated in Blade
             @endauth
             
             // Global function to close mobile menu (accessible everywhere)
             window.closeMobileMenu = function() {
-                console.log('🔴 Closing mobile menu...');
+                // 🔴 Closing mobile menu...
                 const mobileMenu = document.getElementById('mobile-menu');
                 const mobileMenuPanel = document.getElementById('mobile-menu-panel');
                 const menuIcon = document.getElementById('menu-icon');
@@ -609,7 +605,7 @@
             
             // Setup mobile menu functionality
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('🔧 DOM loaded, setting up mobile menu...');
+                // 🔧 DOM loaded, setting up mobile menu...
                 
                 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
                 const mobileMenu = document.getElementById('mobile-menu');
@@ -617,17 +613,11 @@
                 const menuIcon = document.getElementById('menu-icon');
                 const closeIcon = document.getElementById('close-icon');
                 
-                console.log('📱 Mobile menu elements found:', {
-                    btn: !!mobileMenuBtn,
-                    menu: !!mobileMenu,
-                    panel: !!mobileMenuPanel,
-                    menuIcon: !!menuIcon,
-                    closeIcon: !!closeIcon
-                });
+                // 📱 Mobile menu elements found:
                 
                 // Open menu function
                 function openMobileMenu() {
-                    console.log('📱 Opening mobile menu...');
+                    // 📱 Opening mobile menu...
                     if (mobileMenu) mobileMenu.classList.remove('hidden');
                     if (mobileMenuPanel) mobileMenuPanel.style.transform = 'translateX(0)';
                     if (menuIcon) menuIcon.classList.add('hidden');
@@ -644,7 +634,7 @@
                 // ESC key to close menu
                 document.addEventListener('keydown', function(e) {
                     if (e.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                        console.log('⌨️ ESC pressed, closing menu...');
+                        // ⌨️ ESC pressed, closing menu...
                         window.closeMobileMenu();
                     }
                 });

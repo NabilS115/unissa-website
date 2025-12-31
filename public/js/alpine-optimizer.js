@@ -33,7 +33,7 @@ document.addEventListener('alpine:init', () => {
 
 // Optimize Alpine.js component initialization
 document.addEventListener('alpine:initialized', () => {
-    console.log('✅ Alpine.js fully initialized');
+    // ✅ Alpine.js fully initialized
     
     // Remove any remaining x-cloak elements
     document.querySelectorAll('[x-cloak]').forEach(el => {

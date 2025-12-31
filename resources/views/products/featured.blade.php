@@ -711,35 +711,35 @@ function addToCart(productId, productName, productPrice) {
                 
                 // Update cart count if cart badge exists
                 if (data.cart_count !== undefined) {
-                    console.log('Cart count received:', data.cart_count);
-                    console.log('updateCartCount function available:', typeof window.updateCartCount);
+                    // Cart count received:
+                    // updateCartCount function available:
                     
                     // Use the global updateCartCount function if available
                     if (typeof window.updateCartCount === 'function') {
                         window.updateCartCount(data.cart_count);
                     } else {
                         // Fallback: update cart badges directly
-                        console.log('Using fallback cart count update');
+                        // Using fallback cart count update
                         const cartBadge = document.getElementById('cart-count');
                         const mobileCartBadge = document.getElementById('cart-count-mobile');
                         
-                        console.log('Cart badges found:', { desktop: !!cartBadge, mobile: !!mobileCartBadge });
+                        // Cart badges found:
                         
                         if (cartBadge) {
                             cartBadge.textContent = data.cart_count;
                             cartBadge.style.display = data.cart_count > 0 ? 'flex' : 'none';
-                            console.log('Updated desktop cart badge to:', data.cart_count);
+                            // Updated desktop cart badge to:
                         }
                         if (mobileCartBadge) {
                             mobileCartBadge.textContent = data.cart_count;
                             mobileCartBadge.style.display = data.cart_count > 0 ? 'flex' : 'none';
-                            console.log('Updated mobile cart badge to:', data.cart_count);
+                            // Updated mobile cart badge to:
                         }
                         
                         // Try again after a short delay in case the function loads later
                         setTimeout(() => {
                             if (typeof window.updateCartCount === 'function') {
-                                console.log('updateCartCount now available, using it');
+                                // updateCartCount now available, using it
                                 window.updateCartCount(data.cart_count);
                             }
                         }, 100);
